@@ -1,0 +1,10 @@
+{
+  "appId": "com.hongmyeongguk.app",
+  "appName": "홍기문 명국",
+  "webDir": "www",
+  "plugins": {
+    "LocalNotifications": {
+      "iconColor": "#ff8fb3"
+    }
+  }
+}
