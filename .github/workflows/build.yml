@@ -3,6 +3,9 @@ name: 앱 만들기 (APK)
 on:
   push:
     branches: [main]
+    paths-ignore:
+      - "promo/**"
+      - ".github/workflows/shorts.yml"
   workflow_dispatch:
 
 permissions:
