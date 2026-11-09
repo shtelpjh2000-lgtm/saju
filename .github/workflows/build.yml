@@ -34,6 +34,11 @@ jobs:
           npx cap add android
           npx cap sync android
 
+      - name: 고정 서명 키 넣기 (업데이트할 때 앱을 안 지워도 되게)
+        run: |
+          mkdir -p ~/.android
+          cp signing/debug.keystore ~/.android/debug.keystore
+
       - name: APK 만들기
         working-directory: android
         run: |
