@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>천기 · 오늘의 쇼츠</title>
+<link rel="icon" href="../store/icon_512.png">
+<style>
+  @font-face { font-family: Jua; src: url("../promo/fonts/Jua-Regular.ttf"); font-display: swap; }
+  :root { --pink:#ff6fa1; --ink:#3a2f4b; --mute:#8a7f9a; --bg1:#fff4f8; --bg2:#f1ecff; --card:#fff; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family: -apple-system, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif; color:var(--ink);
+         background:linear-gradient(180deg,var(--bg1),var(--bg2)) fixed; min-height:100vh; }
+  main { max-width:460px; margin:0 auto; padding:20px 16px 48px; }
+  header { display:flex; align-items:center; gap:12px; margin-bottom:14px; }
+  header img { width:52px; height:52px; border-radius:16px; }
+  h1 { font-family:Jua, sans-serif; font-weight:400; font-size:26px; margin:0; }
+  header p { margin:2px 0 0; color:var(--mute); font-size:13px; }
+  .card { background:var(--card); border-radius:22px; padding:16px; box-shadow:0 6px 24px rgba(120,80,160,.10); margin-bottom:14px; }
+  .date { font-family:Jua, sans-serif; font-size:20px; margin:0 0 10px; display:flex; justify-content:space-between; align-items:center; }
+  .badge { font-family:inherit; font-size:12px; background:#ffe3ee; color:var(--pink); padding:4px 10px; border-radius:99px; }
+  video { width:100%; aspect-ratio:9/16; border-radius:16px; background:#eee; display:block; }
+  .btns { display:grid; grid-template-columns:1fr; gap:8px; margin-top:12px; }
+  .btn { display:flex; align-items:center; justify-content:center; gap:8px; border:0; border-radius:16px; padding:14px; font-size:16px;
+         font-weight:700; text-decoration:none; cursor:pointer; font-family:inherit; }
+  .primary { background:var(--pink); color:#fff; }
+  .soft { background:#f4effc; color:var(--ink); }
+  .field { margin-top:12px; }
+  .field label { font-size:13px; color:var(--mute); display:block; margin-bottom:4px; }
+  .field textarea { width:100%; border:1px solid #eadff5; border-radius:12px; padding:10px; font:inherit; font-size:14px; color:var(--ink);
+                    resize:vertical; background:#fcfaff; }
+  .checks { display:flex; gap:8px; margin-top:12px; }
+  .checks label { flex:1; display:flex; align-items:center; justify-content:center; gap:6px; background:#f7f3fd; border-radius:14px;
+                  padding:10px; font-size:14px; cursor:pointer; }
+  .checks input { width:18px; height:18px; accent-color:var(--pink); }
+  details { margin-top:4px; }
+  summary { cursor:pointer; font-weight:700; padding:4px 0; }
+  ol { margin:8px 0 0; padding-left:20px; font-size:14px; line-height:1.7; }
+  .past a { display:flex; justify-content:space-between; padding:12px 4px; border-bottom:1px solid #f1e9f7; color:var(--ink); text-decoration:none; font-size:15px; }
+  .past a:last-child { border-bottom:0; }
+  .past a span { color:var(--mute); font-size:13px; }
+  .toast { position:fixed; left:50%; bottom:28px; transform:translateX(-50%) translateY(20px); background:var(--ink); color:#fff; padding:10px 18px;
+           border-radius:99px; font-size:14px; opacity:0; transition:.25s; pointer-events:none; }
+  .toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+  .msg { text-align:center; color:var(--mute); padding:30px 0; }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <img src="../store/icon_512.png" alt="">
+    <div><h1>오늘의 쇼츠</h1><p>매일 아침 7시쯤 새 영상이 만들어져요</p></div>
+  </header>
+
+  <section class="card" id="today"><div class="msg">영상 불러오는 중…</div></section>
+
+  <section class="card">
+    <details>
+      <summary>📱 올리는 방법</summary>
+      <ol>
+        <li><b>영상 저장</b>을 눌러 휴대폰에 받아요.</li>
+        <li><b>유튜브</b>: 앱의 ＋ → 동영상 업로드 → 받은 영상 선택 → <b>제목 복사</b>해서 붙여넣기 → 업로드</li>
+        <li><b>인스타</b>: ＋ → 릴스 → 받은 영상 선택 → 다음 → <b>설명 복사</b>해서 캡션에 붙여넣기 → 공유</li>
+        <li>다 올렸으면 아래 체크를 눌러 두세요.</li>
+      </ol>
+    </details>
+  </section>
+
+  <section class="card past"><div class="date">지난 영상</div><div id="past"></div></section>
+</main>
+<div class="toast" id="toast"></div>
+
+<script>
+const REPO = "shtelpjh2000-lgtm/saju";
+const $ = (id) => document.getElementById(id);
+
+function toast(t) { const el = $("toast"); el.textContent = t; el.classList.add("show"); setTimeout(() => el.classList.remove("show"), 1600); }
+
+async function copy(text, label) {
+  try { await navigator.clipboard.writeText(text); }
+  catch (e) {
+    const ta = document.createElement("textarea"); ta.value = text; document.body.appendChild(ta); ta.select();
+    try { document.execCommand("copy"); } catch (e2) {} ta.remove();
+  }
+  toast(label + " 복사했어요");
+}
+
+// 올린 표시는 이 휴대폰에만 저장돼요
+function getDone(key) { try { return JSON.parse(localStorage.getItem("shorts-done-" + key) || "{}"); } catch (e) { return {}; } }
+function setDone(key, v) { try { localStorage.setItem("shorts-done-" + key, JSON.stringify(v)); } catch (e) {} }
+
+function parse(rel) {
+  const m = rel.tag_name.match(/shorts-(\d{4})(\d{2})(\d{2})/);
+  const date = m ? `${+m[2]}월 ${+m[3]}일` : rel.tag_name;
+  const body = (rel.body || "").trim();
+  let title = rel.name || "";
+  if (!title || title.startsWith("운세 쇼츠")) {
+    // 예전 영상은 설명 첫 줄로 제목을 만들어요
+    title = (body.split("\n")[0] || "").replace(/^🔮\s*/, "").slice(0, 90) + " #shorts";
+  }
+  const asset = (n) => (rel.assets.find(a => a.name === n) || {}).browser_download_url;
+  return { key: m ? m[1] + m[2] + m[3] : rel.tag_name, date, title, body, video: asset("shorts.mp4"), thumb: asset("thumb.jpg"), url: rel.html_url };
+}
+
+function esc(s) { return s.replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c])); }
+
+function show(it, isToday) {
+  const done = getDone(it.key);
+  $("today").innerHTML = `
+    <div class="date">${esc(it.date)} 영상 <span class="badge">${isToday ? "오늘" : "지난 영상"}</span></div>
+    <video src="${it.video}" poster="${it.thumb || ""}" controls playsinline preload="metadata"></video>
+    <div class="btns">
+      <a class="btn primary" href="${it.video}" download="천기-쇼츠-${it.key}.mp4">⬇️ 영상 저장</a>
+      <button class="btn soft" id="cpT">📋 제목 복사 (유튜브)</button>
+      <button class="btn soft" id="cpB">📋 설명 복사 (유튜브 설명 · 인스타 캡션)</button>
+    </div>
+    <div class="field"><label>제목</label><textarea rows="2" readonly>${esc(it.title)}</textarea></div>
+    <div class="field"><label>설명 · 해시태그</label><textarea rows="7" readonly>${esc(it.body)}</textarea></div>
+    <div class="checks">
+      <label><input type="checkbox" id="ckY" ${done.yt ? "checked" : ""}> 유튜브 올림</label>
+      <label><input type="checkbox" id="ckI" ${done.ig ? "checked" : ""}> 인스타 올림</label>
+    </div>`;
+  $("cpT").onclick = () => copy(it.title, "제목");
+  $("cpB").onclick = () => copy(it.body, "설명");
+  const save = () => setDone(it.key, { yt: $("ckY").checked, ig: $("ckI").checked });
+  $("ckY").onchange = save; $("ckI").onchange = save;
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+async function load() {
+  try {
+    const r = await fetch(`https://api.github.com/repos/${REPO}/releases?per_page=60`);
+    if (!r.ok) throw new Error(r.status);
+    const list = (await r.json()).filter(x => x.tag_name.startsWith("shorts-") && x.assets.some(a => a.name === "shorts.mp4"));
+    if (!list.length) { $("today").innerHTML = '<div class="msg">아직 만들어진 영상이 없어요</div>'; return; }
+    // 같은 날 여러 번 만들었으면 가장 최근 것만 남겨요
+    const seen = new Set(), items = [];
+    for (const rel of list) { const it = parse(rel); if (!seen.has(it.key)) { seen.add(it.key); items.push(it); } }
+    const now = new Date(Date.now() + 9 * 3600e3);
+    const todayKey = now.toISOString().slice(0, 10).replace(/-/g, "");
+    show(items[0], items[0].key === todayKey);
+    $("past").innerHTML = items.slice(1, 15).map((it, i) => {
+      const d = getDone(it.key);
+      return `<a href="#" data-i="${i + 1}">${esc(it.date)} <span>${d.yt ? "유튜브✓ " : ""}${d.ig ? "인스타✓" : ""}</span></a>`;
+    }).join("") || '<div class="msg">아직 없어요</div>';
+    $("past").querySelectorAll("a").forEach(a => a.onclick = (e) => { e.preventDefault(); show(items[+a.dataset.i], false); });
+  } catch (e) {
+    $("today").innerHTML = '<div class="msg">영상을 불러오지 못했어요. 잠시 뒤 새로고침해 주세요.</div>';
+  }
+}
+load();
+</script>
+</body>
+</html>
