@@ -6,20 +6,21 @@
 import math
 
 S = 1024
-C = (470.0, 500.0)  # 몸이 감고 도는 중심
-P = (440.0, 640.0)  # 여의주 중심
+C = (512.0, 560.0)  # 몸 중심(참고용)
+P = (300.0, 200.0)  # 여의주 중심 (위쪽, 용이 올려다봐요)
 
 
 def body_point(t):
     """t: 0(꼬리) → 1(목). 여의주를 1바퀴 남짓 감는 나선"""
-    a0, a1 = math.radians(235), math.radians(-28)
-    a = a0 + (a1 - a0) * t
-    r = 250 + 70 * math.sin(t * math.pi) - 40 * t + 18 * math.sin(t * math.pi * 4)
-    return C[0] + r * math.cos(a), C[1] + r * math.sin(a)
+    # 아래 구름에서 위로 솟구치는 S자
+    y = 940 - 560 * t
+    amp = 200 * (1 - 0.35 * t)
+    x = 540 + amp * math.sin(t * math.pi * 2.7 + 0.2) + 40 * t
+    return x, y
 
 
 def width(t):
-    return 14 + 92 * math.sin(min(1.0, t * 1.05) * math.pi * 0.5) ** 0.8
+    return 12 + 88 * math.sin(min(1.0, t * 1.1) * math.pi * 0.5) ** 0.75
 
 
 def unit(dx, dy):
@@ -43,7 +44,7 @@ def build(with_bg=True, scale=1.0, prefix="dg", bg_only=False, size=None):
     # 바깥쪽(여의주에서 먼 쪽)을 찾아요
     mx, my = pts[N // 2]
     lx, ly = left[N // 2]
-    outer_is_left = math.hypot(lx - C[0], ly - C[1]) > math.hypot(mx - C[0], my - C[1])
+    outer_is_left = False
     outer, inner = (left, right) if outer_is_left else (right, left)
     sgn = 1 if outer_is_left else -1
 
@@ -74,6 +75,18 @@ def build(with_bg=True, scale=1.0, prefix="dg", bg_only=False, size=None):
         return _ids("\n".join(out), prefix)
     dx, dy = 40, 10
     out.append(f'<g transform="translate(512 512) scale({scale}) translate({-512 + dx} {-512 + dy})">')
+    # 위에서 내려오는 빛줄기
+    rays = []
+    for k_ in range(9):
+        a_ = math.radians(-90 + (k_ - 4) * 13)
+        x2, y2 = P[0] + 900 * math.cos(a_ + math.pi), P[1] + 900 * math.sin(a_ + math.pi)
+        rays.append(f'<polygon points="{P[0]:.0f},{P[1]:.0f} {x2 - 40:.0f},{y2:.0f} {x2 + 40:.0f},{y2:.0f}" fill="#ffd36b" opacity=".05"/>')
+    clouds = []
+    for cx_, cy_, rr_ in [(230, 890, 80), (360, 915, 95), (520, 890, 105), (680, 920, 95), (810, 890, 80), (130, 930, 60), (930, 930, 60)]:
+        clouds.append(f'<circle cx="{cx_}" cy="{cy_}" r="{rr_}" fill="#efe6ff" stroke="#2a1840" stroke-width="7"/>')
+    for cx_, cy_, rr_ in [(230, 890, 80), (360, 915, 95), (520, 890, 105), (680, 920, 95), (810, 890, 80), (130, 930, 60), (930, 930, 60)]:
+        clouds.append(f'<circle cx="{cx_}" cy="{cy_}" r="{rr_ - 4}" fill="#efe6ff"/>')
+        clouds.append(f'<path d="M{cx_ - rr_ * .5:.0f},{cy_ - rr_ * .1:.0f} q{rr_ * .5:.0f},{-rr_ * .45:.0f} {rr_:.0f},0" fill="none" stroke="#b9a8ff" stroke-width="6" stroke-linecap="round"/>')
     # 꼬리 끝 불꽃
     tx0, ty0 = pts[0]
     _, _, ttx, tty = normals[0]
@@ -84,7 +97,7 @@ def build(with_bg=True, scale=1.0, prefix="dg", bg_only=False, size=None):
         tf.append(f'<path d="M{tx0:.1f},{ty0:.1f} Q{tx0 + dx_ * L_ * .5 - dy_ * 18:.1f},{ty0 + dy_ * L_ * .5 + dx_ * 18:.1f} {tx0 + dx_ * L_:.1f},{ty0 + dy_ * L_:.1f} Q{tx0 + dx_ * L_ * .45 + dy_ * 10:.1f},{ty0 + dy_ * L_ * .45 - dx_ * 10:.1f} {tx0:.1f},{ty0:.1f}Z" fill="url(#fin)" stroke="#3a0a14" stroke-width="4" stroke-linejoin="round"/>')
     tail_fl = tf
     # 여의주 빛
-    out.append(f'<circle cx="{P[0]}" cy="{P[1]}" r="230" fill="url(#glow)"/>')
+    out.append(f'<circle cx="{P[0]}" cy="{P[1]}" r="210" fill="url(#glow)"/>')
     # 등지느러미(바깥쪽 불꽃 가시)
     fins = []
     for k in range(10, N - 6, 9):
@@ -98,6 +111,7 @@ def build(with_bg=True, scale=1.0, prefix="dg", bg_only=False, size=None):
         p2 = (bx + tx * 14, by + ty * 14)
         tip = (bx + sgn * nx * h - tx * 18, by + sgn * ny * h - ty * 18)
         fins.append(f'<polygon points="{poly([p1, tip, p2])}" fill="url(#fin)" stroke="#3a0a14" stroke-width="4" stroke-linejoin="round"/>')
+    out += rays
     out += fins
     out += tail_fl
     # 몸통
@@ -134,26 +148,27 @@ def build(with_bg=True, scale=1.0, prefix="dg", bg_only=False, size=None):
     # 몸 외곽선 한 번 더
     out.append(f'<polygon points="{poly(body)}" fill="none" stroke="#2a1200" stroke-width="7" stroke-linejoin="round"/>')
     # 여의주
-    out.append(f'<circle cx="{P[0]}" cy="{P[1]}" r="96" fill="url(#pearl)" stroke="#5a0614" stroke-width="7"/>')
+    out.append(f'<circle cx="{P[0]}" cy="{P[1]}" r="78" fill="url(#pearl)" stroke="#5a0614" stroke-width="7"/>')
     # 여의주 안 구궁 점 3x3
     for i in range(3):
         for j in range(3):
             out.append(f'<circle cx="{P[0] - 30 + j * 30}" cy="{P[1] - 22 + i * 30}" r="{9 if (i, j) == (1, 1) else 6}" fill="#7a0a20" opacity="{.75 if (i, j) == (1, 1) else .45}"/>')
     out.append(f'<ellipse cx="{P[0] - 34}" cy="{P[1] - 44}" rx="22" ry="12" fill="#fff" opacity=".7" transform="rotate(-30 {P[0] - 34} {P[1] - 44})"/>')
 
+    out += clouds
     # 머리: 목 끝에서 여의주를 내려다보게
     hx, hy = pts[N]
     _, _, tx, ty = normals[N]
     # 머리 방향: 목 방향과 여의주 방향 사이
     px_, py_ = unit(P[0] - hx, P[1] - hy)
-    fx, fy = unit(tx * 0.25 + px_ * 0.75, ty * 0.25 + py_ * 0.75)
+    fx, fy = unit(tx * 0.3 + px_ * 0.7, ty * 0.3 + py_ * 0.7)
     ang = math.degrees(math.atan2(fy, fx))
     # 머리 모양(옆모습, +x가 주둥이 쪽). 머리 위쪽이 여의주 반대편이 되게 뒤집어요
     flip = 1
     cross = tx * py_ - ty * px_
     if cross < 0:
         flip = -1
-    sc = 2.25
+    sc = 1.75
     head = []
     head.append(f'<g transform="translate({hx:.1f},{hy:.1f}) rotate({ang:.1f}) scale({sc},{sc * flip})">')
     # 뿔 두 개
