@@ -6,6 +6,7 @@ on:
     paths-ignore:
       - "promo/**"
       - ".github/workflows/shorts.yml"
+      - "store/**"
   workflow_dispatch:
 
 permissions:
@@ -14,6 +15,8 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      HAS_UPLOAD_KEY: ${{ secrets.UPLOAD_KEYSTORE_BASE64 != '' }}
     steps:
       - name: 파일 가져오기
         uses: actions/checkout@v4
@@ -35,7 +38,14 @@ jobs:
       - name: 안드로이드 프로젝트 만들기
         run: |
           npx cap add android
+          npx @capacitor/assets generate --android
+          mkdir -p android/app/src/main/res/drawable
+          cp assets/ic_stat_star.png android/app/src/main/res/drawable/ic_stat_star.png
           npx cap sync android
+          # 버전 번호를 빌드 번호로 올려서 업데이트가 되게 해요
+          sed -i "s/versionCode 1$/versionCode ${{ github.run_number }}/" android/app/build.gradle
+          sed -i "s/versionName \"1.0\"/versionName \"1.0.${{ github.run_number }}\"/" android/app/build.gradle
+          grep -n "versionCode\|versionName" android/app/build.gradle
 
       - name: 고정 서명 키 넣기 (업데이트할 때 앱을 안 지워도 되게)
         run: |
@@ -62,3 +72,25 @@ jobs:
           name: 귀문 명국 ${{ github.run_number }}번째 버전
           files: hongmyeongguk.apk
           make_latest: true
+
+      - name: 구글 플레이용 AAB 만들기 (업로드 키가 있을 때만)
+        if: env.HAS_UPLOAD_KEY == 'true'
+        env:
+          UPLOAD_KEYSTORE_BASE64: ${{ secrets.UPLOAD_KEYSTORE_BASE64 }}
+          UPLOAD_KEYSTORE_PASSWORD: ${{ secrets.UPLOAD_KEYSTORE_PASSWORD }}
+        working-directory: android
+        run: |
+          echo "$UPLOAD_KEYSTORE_BASE64" | base64 -d > "$RUNNER_TEMP/upload.jks"
+          ./gradlew bundleRelease --no-daemon \
+            -Pandroid.injected.signing.store.file="$RUNNER_TEMP/upload.jks" \
+            -Pandroid.injected.signing.store.password="$UPLOAD_KEYSTORE_PASSWORD" \
+            -Pandroid.injected.signing.key.alias=upload \
+            -Pandroid.injected.signing.key.password="$UPLOAD_KEYSTORE_PASSWORD"
+          cp app/build/outputs/bundle/release/app-release.aab ../gwimun-${{ github.run_number }}.aab
+
+      - name: AAB 내려받기 준비
+        if: env.HAS_UPLOAD_KEY == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: google-play-aab
+          path: gwimun-*.aab

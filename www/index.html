@@ -44,6 +44,19 @@ button.sec{background:var(--lav2);color:var(--ink);box-shadow:none}
 .thint{font-size:12px;color:var(--mute);margin:6px 4px 0}
 #mode button{line-height:1.25}#mode button small{display:block;white-space:nowrap;font-size:11px;font-weight:400;opacity:.85;margin-top:1px}
 .modeExp{display:flex;gap:8px;align-items:flex-start;margin:2px 0 12px;padding:10px 12px;border-radius:14px;background:var(--yel2);font-size:13.5px;line-height:1.55}.modeExp b{color:var(--pink)}
+.today{background:linear-gradient(135deg,#fff3f8,#f3efff);border:2px solid var(--pink2);position:relative;overflow:hidden}
+@media(prefers-color-scheme:dark){.today{background:linear-gradient(135deg,#3a2433,#2c2545);border-color:#4a2b3c}}
+.tdHead{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+.tdDate{font-size:13px;color:var(--mute);font-weight:700}
+.tdBadge{font-family:"Jua",sans-serif;font-size:15px;padding:4px 12px;border-radius:999px;color:#fff;background:var(--mint)}
+.tdBadge.g3{background:linear-gradient(135deg,var(--pink),var(--lav))}.tdBadge.g2{background:var(--mint)}.tdBadge.g1{background:var(--sky)}.tdBadge.g0{background:var(--brown)}
+.tdMain{display:flex;gap:12px;align-items:center;margin:10px 0 8px}
+.tdEmoji{font-size:46px;line-height:1;flex:0 0 auto}
+.tdTitle{font-family:"Jua",sans-serif;font-size:21px;margin:0 0 2px}
+.tdSum{margin:0;font-size:15.5px;line-height:1.6}
+.tdMeter{height:10px;border-radius:999px;background:var(--line);overflow:hidden;margin:6px 0 2px}.tdMeter i{display:block;height:100%;border-radius:999px;background:linear-gradient(90deg,var(--yel),var(--pink),var(--lav))}
+.tdBtns{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}.tdBtns button{flex:1;font-size:15px;padding:11px}
+.modeWrap{flex:2 1 230px!important}@media(max-width:420px){.modeWrap{flex:1 1 100%!important}}
 .chk{display:flex;gap:8px;align-items:center;font-size:13px;color:var(--mute);margin-left:4px}.chk input{width:18px;height:18px;accent-color:var(--pink)}
 .err{color:var(--red);font-size:14px;margin-top:8px;display:none;background:var(--pink2);padding:8px 12px;border-radius:12px}
 .head{font-family:"Jua",sans-serif;font-size:16px;font-weight:400;padding:9px 14px;margin-bottom:10px;background:linear-gradient(135deg,var(--pink2),var(--lav2));border-radius:16px}
@@ -122,6 +135,8 @@ button.sec{background:var(--lav2);color:var(--ink);box-shadow:none}
 <circle cx="18" cy="40" r="3" fill="#ffd66b"/><circle cx="104" cy="52" r="2.5" fill="#7fdcc0"/><circle cx="98" cy="22" r="2" fill="#ff8fb3"/>
 </svg><div><h1>귀문 <b>명국</b></h1><p class="sub">생일만 넣으면 내 운명 지도가 짠! ✨</p></div></div>
 
+<div class="card today" id="todayTop" style="display:none"></div>
+
 <div class="card" id="form">
   <div class="row">
     <div><label for="nm">🙋 이름 (선택)</label><input id="nm" placeholder="닉네임도 좋아요"></div>
@@ -150,8 +165,9 @@ button.sec{background:var(--lav2);color:var(--ink);box-shadow:none}
 </div>
 
 <div id="out" style="display:none">
+  <div class="card today" id="todayOut"></div>
   <div class="card">
-    <div class="row" style="align-items:flex-end"><div style="flex:2"><div class="seg" id="mode"><button data-v="won" class="on">🔮 명국<small>내 운명</small></button><button data-v="sin">🎊 신수<small>1년 운세</small></button><button data-v="il">☀️ 일진<small>하루 운세</small></button></div></div>
+    <div class="row" style="align-items:flex-end"><div class="modeWrap"><div class="seg" id="mode"><button data-v="won" class="on">🔮 명국<small>내 운명</small></button><button data-v="sin">🎊 신수<small>1년 운세</small></button><button data-v="il">☀️ 일진<small>하루 운세</small></button></div></div>
     <div id="ilWrap" style="display:none"><label for="ild">📅 날짜</label><input id="ild" type="date"></div>
     <div id="yrWrap" style="display:none"><label for="yr">🎊 연도</label><input id="yr" type="number" min="1900" max="2100"></div></div>
     <p class="modeExp" id="modeExp"></p>
@@ -9643,6 +9659,56 @@ alDraw();
   const _show=show;show=function(){const r=_show.apply(this,arguments);upd();return r;};
   $('mode').addEventListener('click',()=>setTimeout(upd,0));
   upd();
+})();
+// ── 오늘 나의 운세 한 줄 요약 ──
+(function(){
+  const LAST='hongmyeongguk.last';
+  const P=v=>String(v).padStart(2,'0');
+  const loadLast=()=>{try{return JSON.parse(localStorage.getItem(LAST)||'null');}catch(e){return null;}};
+  function todayInfo(b){
+    const keep=base;base=b;
+    try{const n=new Date();const x=dayInfo(n.getFullYear(),n.getMonth()+1,n.getDate(),{});return {n,x};}
+    finally{base=keep;}
+  }
+  function grade(g){
+    if(g>=1.5)return {t:'좋음',c:'g3',e:'😆',w:'기분 좋은 일이 생기는 날'};
+    if(g>=0.5)return {t:'무난·좋음',c:'g2',e:'🙂',w:'술술 풀리는 편안한 날'};
+    if(g<=-1)return {t:'주의',c:'g0',e:'🧐',w:'한 번 더 조심하면 괜찮은 날'};
+    return {t:'보통',c:'g1',e:'😌',w:'평소처럼 지내면 좋은 날'};
+  }
+  function html(b,who,top){
+    const {n,x}=todayInfo(b);const G=grade(x.d.g);
+    const pct=Math.max(8,Math.min(100,Math.round((x.d.g+2.5)/5*100)));
+    const nm=who?who+'님의 ':'나의 ';
+    return '<div class="tdHead"><span class="tdDate">'+(n.getMonth()+1)+'월 '+n.getDate()+'일 ('+'일월화수목금토'[n.getDay()]+') · '+x.d.gz+'일</span><span class="tdBadge '+G.c+'">오늘 '+G.t+'</span></div>'+
+      '<div class="tdMain"><div class="tdEmoji">'+G.e+'</div><div><p class="tdTitle">'+nm+'오늘: '+G.w+'</p><p class="tdSum">'+x.d.summary+'</p></div></div>'+
+      '<div class="tdMeter"><i style="width:'+pct+'%"></i></div>'+
+      '<div class="tdBtns">'+(top?'<button type="button" data-a="open">🔮 내 명국 열기</button><button type="button" class="sec" data-a="new">✏️ 다른 생일 보기</button>':'<button type="button" data-a="il">☀️ 오늘 일진 자세히 보기</button>')+'</div>';
+  }
+  function drawOut(){
+    const el=$('todayOut');if(!el)return;
+    if(!base||mode==='il'){el.style.display='none';return;}
+    try{el.innerHTML=html(base,base.input.name,false);el.style.display='block';}catch(e){el.style.display='none';}
+  }
+  function drawTop(){
+    const el=$('todayTop');const pr=loadLast()||(typeof alLoad==='function'&&alLoad()&&alLoad().profile);
+    if(!pr){el.style.display='none';return;}
+    try{el.innerHTML=html(baseFromProfile(pr),pr.name,true);el.style.display='block';el._pr=pr;}catch(e){el.style.display='none';}
+  }
+  function openDayToday(){
+    const n=new Date();$('ild').value=n.getFullYear()+'-'+P(n.getMonth()+1)+'-'+P(n.getDate());
+    const b=$('mode').querySelector('button[data-v="il"]');if(b)b.click();
+    $('out').scrollIntoView({behavior:'smooth'});
+  }
+  $('todayOut').addEventListener('click',e=>{const b=e.target.closest('button');if(b&&b.dataset.a==='il')openDayToday();});
+  $('todayTop').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const pr=$('todayTop')._pr;
+    if(b.dataset.a==='new'){$('nm').value='';$('form').scrollIntoView({behavior:'smooth'});return;}
+    if(b.dataset.a==='open'&&pr){$('nm').value=pr.name||'';$('d').value=pr.d;$('t').value=pr.t;sex=pr.sex;cal='S';$('adj').checked=pr.adj!==false;
+      [...$('sex').children].forEach(x=>x.classList.toggle('on',x.dataset.v===sex));[...$('cal').children].forEach((x,i)=>x.classList.toggle('on',i===0));go();}});
+  // 명국을 세우면 다음에 앱을 열 때 바로 보이게 기억해 둬요
+  $('go').addEventListener('click',()=>{if(base&&$('err').style.display==='none'){try{localStorage.setItem(LAST,JSON.stringify(profileOf(base.input)));}catch(e){}drawTop();}});
+  const _show=show;show=function(){const r=_show.apply(this,arguments);drawOut();return r;};
+  drawTop();
 })();
 drawSaved();
 LEG0=$('legend').textContent;
