@@ -73,7 +73,7 @@ button.sec{background:var(--lav2);color:var(--ink);box-shadow:none}
 .sc .st{position:absolute;top:5px;right:7px;font-size:13px}
 .sc.now{padding-top:15px}.sc .bd{position:absolute;top:-9px;left:50%;transform:translateX(-50%);white-space:nowrap;font-size:11px;font-weight:700;color:#fff;background:linear-gradient(135deg,var(--pink),var(--lav));padding:2px 8px;border-radius:999px}
 .sleg{font-size:12px;color:var(--mute);margin:10px 2px 8px;line-height:1.6}
-.expBtn{width:100%;margin:4px 0 6px;font-size:14px}
+.viewSeg{margin:6px 0 4px}.viewSeg button{font-size:14px;padding:9px 4px}
 #expert{margin-top:8px}
 .sheet{position:fixed;inset:0;z-index:50;pointer-events:none}
 .sheet .sheetBg{position:absolute;inset:0;background:rgba(40,25,55,.35);opacity:0;transition:opacity .2s}
@@ -85,6 +85,25 @@ button.sec{background:var(--lav2);color:var(--ink);box-shadow:none}
 .sheet .detail p{font-size:15px;line-height:1.7}
 .sheet:not(.pro) .detail h3,.sheet:not(.pro) .detail .tagline{display:none}
 .rd .badge+h4{display:table}
+.pickQ{margin:0 2px 8px;font-family:"Jua",sans-serif;font-size:17px}.pickQ span{font-family:inherit;font-size:12.5px;color:var(--mute);margin-left:4px}
+#mode{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;background:none;border:0;padding:0;border-radius:0}
+#mode button{position:relative;display:flex;flex-direction:column;align-items:center;gap:1px;padding:12px 4px 11px;border-radius:20px;background:var(--card);border:2px solid var(--line);color:var(--ink);box-shadow:0 2px 6px rgba(186,140,190,.12);line-height:1.2;transition:transform .12s}
+#mode button:active{transform:scale(.96)}
+#mode button .ic{font-size:30px;line-height:1.15}
+#mode button .tt{font-family:"Jua",sans-serif;font-size:19px;font-weight:400}
+#mode button small{display:block;font-size:11.5px;font-weight:400;color:var(--mute);white-space:nowrap;margin-top:1px;opacity:1}
+#mode button.on{background:linear-gradient(135deg,var(--pink),var(--lav));border-color:transparent;color:#fff;box-shadow:0 6px 16px rgba(255,143,179,.45);transform:translateY(-2px)}
+#mode button.on small{color:#fff}
+#mode button.on::after{content:"보는 중";position:absolute;top:-9px;right:-4px;font-size:10.5px;font-weight:700;color:var(--pink);background:#fff;border:2px solid var(--pink);border-radius:999px;padding:1px 7px}
+.step{display:flex;gap:6px;align-items:stretch}.step input{flex:1;min-width:0;text-align:center;font-size:18px;font-weight:700}
+.step button{flex:0 0 auto;min-width:46px;padding:0 10px;border-radius:14px;background:var(--lav2);color:var(--ink);box-shadow:none;font-size:20px;font-weight:700}
+.step button.tx{font-size:13px;min-width:auto}
+.bnav{position:fixed;left:0;right:0;bottom:0;z-index:40;display:none;justify-content:center;padding:8px 10px calc(8px + env(safe-area-inset-bottom));background:linear-gradient(to top,var(--bg) 70%,transparent)}
+.bnav.show{display:flex}
+.bnav .in{display:flex;gap:6px;width:100%;max-width:520px;background:var(--card);border-radius:999px;padding:5px;box-shadow:0 6px 20px rgba(120,80,150,.25);border:2px solid var(--line)}
+.bnav button{flex:1;border-radius:999px;background:transparent;color:var(--mute);box-shadow:none;padding:9px 4px;font-family:"Jua",sans-serif;font-size:16px;font-weight:400}
+.bnav button.on{background:linear-gradient(135deg,var(--pink),var(--lav));color:#fff}
+body.hasnav main{padding-bottom:86px}
 .chk{display:flex;gap:8px;align-items:center;font-size:13px;color:var(--mute);margin-left:4px}.chk input{width:18px;height:18px;accent-color:var(--pink)}
 .err{color:var(--red);font-size:14px;margin-top:8px;display:none;background:var(--pink2);padding:8px 12px;border-radius:12px}
 .head{font-family:"Jua",sans-serif;font-size:16px;font-weight:400;padding:9px 14px;margin-bottom:10px;background:linear-gradient(135deg,var(--pink2),var(--lav2));border-radius:16px}
@@ -195,7 +214,7 @@ button.sec{background:var(--lav2);color:var(--ink);box-shadow:none}
 <div id="out" style="display:none">
   <div class="card today" id="todayOut"></div>
   <div class="card" id="ctl">
-    <div class="row" style="align-items:flex-end"><div class="modeWrap"><div class="seg" id="mode"><button data-v="won" class="on">🔮 명국<small>내 운명</small></button><button data-v="sin">🎊 신수<small>1년 운세</small></button><button data-v="il">☀️ 일진<small>하루 운세</small></button></div></div>
+    <div class="row" style="align-items:flex-end"><div class="modeWrap"><p class="pickQ">무엇을 볼까요? <span>눌러서 바꿔요</span></p><div class="seg" id="mode"><button data-v="won" class="on" aria-pressed="true"><span class="ic">🔮</span><span class="tt">명국</span><small>타고난 내 운명</small></button><button data-v="sin" aria-pressed="false"><span class="ic">🎊</span><span class="tt">신수</span><small>올해 1년 운세</small></button><button data-v="il" aria-pressed="false"><span class="ic">☀️</span><span class="tt">일진</span><small>오늘 하루 운세</small></button></div></div>
     <div id="ilWrap" style="display:none"><label for="ild">📅 날짜</label><input id="ild" type="date"></div>
     <div id="yrWrap" style="display:none"><label for="yr">🎊 연도</label><input id="yr" type="number" min="1900" max="2100"></div></div>
     <p class="modeExp" id="modeExp"></p>
@@ -203,13 +222,15 @@ button.sec{background:var(--lav2);color:var(--ink);box-shadow:none}
   <div class="card rd" id="typecard"></div>
   <div class="card rd" id="reading"></div>
   <div class="card" id="mapCard">
-    <h2 class="mapH">🗺️ 9칸 운명 지도</h2>
-    <p class="mapInfo" id="mapInfo"></p>
+    <h2 class="mapH">🔮 구궁도</h2>
+    <div class="seg viewSeg" id="viewSeg"><button type="button" data-v="gg" class="on">📜 구궁도</button><button type="button" data-v="easy">🗺️ 쉬운 그림으로 보기</button></div>
     <p class="mapTip">👆 칸을 누르면 그 칸의 풀이가 바로 떠요</p>
-    <div class="sboard" id="sboard"></div>
-    <p class="sleg" id="sleg"></p>
-    <button type="button" class="sec expBtn" id="expBtn">📜 한자 명국표 보기 (전문가용)</button>
-    <div id="expert" style="display:none">
+    <div id="easyView" style="display:none">
+      <p class="mapInfo" id="mapInfo"></p>
+      <div class="sboard" id="sboard"></div>
+      <p class="sleg" id="sleg"></p>
+    </div>
+    <div id="expert">
       <div class="head" id="head"></div>
       <div class="saju" id="saju"></div>
       <p class="meta" id="meta"></p>
@@ -9812,8 +9833,10 @@ alDraw();
   $('board').addEventListener('click',e=>{const c=e.target.closest('.cell');if(c)openCell(+c.dataset.p);});
   $('sheetBg').addEventListener('click',closeSheet);$('sheetX').addEventListener('click',closeSheet);
   document.addEventListener('keydown',e=>{if(e.key==='Escape')closeSheet();});
-  $('expBtn').addEventListener('click',()=>{const ex=$('expert'),on=ex.style.display==='none';ex.style.display=on?'block':'none';
-    sheet.classList.toggle('pro',on);$('expBtn').textContent=on?'🙈 한자 명국표 접기':'📜 한자 명국표 보기 (전문가용)';});
+  $('viewSeg').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const easy=b.dataset.v==='easy';
+    [...$('viewSeg').children].forEach(x=>x.classList.toggle('on',x===b));
+    $('easyView').style.display=easy?'block':'none';$('expert').style.display=easy?'none':'block';
+    $('mapCard').querySelector('.mapH').textContent=easy?'🗺️ 9칸 운명 지도':'🔮 구궁도';});
   const _render=render;render=function(){const out=_render.apply(this,arguments);
     try{drawSimple();['todayOut','reading','typecard','fourcard'].forEach(id=>hangulize($(id)));}catch(e){console.error(e);}return out;};
   // 탭을 누르면 풀이가 바로 보이게
@@ -9822,6 +9845,34 @@ alDraw();
   $('go').addEventListener('click',()=>setTimeout(()=>hangulize($('todayTop')),0));
   hangulize($('todayTop'));
   window.__hangulize=hangulize;
+})();
+// ── 명국·신수·일진을 더 쉽게 고르기: 큰 버튼, 앞뒤 넘기기, 아래 고정 메뉴 ──
+(function(){
+  const P=v=>String(v).padStart(2,'0');
+  const fire=el=>el.dispatchEvent(new Event('change',{bubbles:true}));
+  function stepper(input,btns){
+    const w=document.createElement('div');w.className='step';input.parentNode.insertBefore(w,input);
+    const mk=(t,cls,fn)=>{const b=document.createElement('button');b.type='button';b.textContent=t;if(cls)b.className=cls;b.addEventListener('click',fn);return b;};
+    w.appendChild(mk(btns[0].t,'',btns[0].f));w.appendChild(input);btns.slice(1).forEach(x=>w.appendChild(mk(x.t,x.c||'',x.f)));
+  }
+  const yr=$('yr'),ild=$('ild');
+  stepper(yr,[{t:'‹',f:()=>{yr.value=(+yr.value||new Date().getFullYear())-1;fire(yr);}},{t:'›',f:()=>{yr.value=(+yr.value||new Date().getFullYear())+1;fire(yr);}},{t:'올해',c:'tx',f:()=>{yr.value=new Date().getFullYear();fire(yr);}}]);
+  const shift=n=>{const v=ild.value?new Date(ild.value+'T12:00:00'):new Date();v.setDate(v.getDate()+n);ild.value=v.getFullYear()+'-'+P(v.getMonth()+1)+'-'+P(v.getDate());fire(ild);};
+  stepper(ild,[{t:'‹',f:()=>shift(-1)},{t:'›',f:()=>shift(1)},{t:'오늘',c:'tx',f:()=>{const n=new Date();ild.value=n.getFullYear()+'-'+P(n.getMonth()+1)+'-'+P(n.getDate());fire(ild);}}]);
+  $('yrWrap').querySelector('label').textContent='🎊 몇 년 운세를 볼까요?';
+  $('ilWrap').querySelector('label').textContent='📅 어느 날 운세를 볼까요?';
+  // 아래 고정 메뉴
+  const nav=document.createElement('nav');nav.className='bnav';nav.setAttribute('aria-label','운세 종류');
+  nav.innerHTML='<div class="in"><button type="button" data-v="won">🔮 명국</button><button type="button" data-v="sin">🎊 신수</button><button type="button" data-v="il">☀️ 일진</button></div>';
+  document.body.appendChild(nav);
+  const sync=()=>{[...nav.querySelectorAll('button')].forEach(b=>b.classList.toggle('on',b.dataset.v===mode));[...$('mode').children].forEach(b=>b.setAttribute('aria-pressed',b.dataset.v===mode?'true':'false'));};
+  nav.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const t=$('mode').querySelector('button[data-v="'+b.dataset.v+'"]');if(t)t.click();});
+  $('mode').addEventListener('click',()=>setTimeout(sync,0));
+  let ctlVisible=true;
+  const upd=()=>{const on=$('out').style.display!=='none'&&!ctlVisible;nav.classList.toggle('show',on);document.body.classList.toggle('hasnav',$('out').style.display!=='none');};
+  if('IntersectionObserver' in window){new IntersectionObserver(es=>{ctlVisible=es[0].isIntersecting;upd();},{threshold:0}).observe($('ctl'));}
+  const _show3=show;show=function(){const r=_show3.apply(this,arguments);sync();upd();return r;};
+  sync();
 })();
 drawSaved();
 LEG0=$('legend').textContent;
