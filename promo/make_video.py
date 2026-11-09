@@ -405,8 +405,9 @@ class Video:
             d.text((300, yy + 222), "오늘의 천기누설 · 매일 아침 일진 알림", font=gowun(34), fill=MUTE, anchor="lm")
             btn_w = 700
             d.rounded_rectangle([W // 2 - btn_w // 2, yy + 280, W // 2 + btn_w // 2, yy + 365], 42, fill=PINK)
-            d.text((W // 2 + 20, yy + 323), "프로필 링크에서 받기", font=jua(48), fill=WHITE, anchor="mm")
-            paste(im, self.sparkle, W // 2 - 250, yy + 295, a2)
+            btn = "프로필 링크에서 받기" if CFG.get("app_link") else "곧 출시! 팔로우하고 기다리기"
+            d.text((W // 2 + (20 if CFG.get("app_link") else 35), yy + 323), btn, font=jua(48 if CFG.get("app_link") else 40), fill=WHITE, anchor="mm")
+            paste(im, self.sparkle, W // 2 - (250 if CFG.get("app_link") else 300), yy + 295, a2)
 
 
 # ── 배경 음악 (직접 합성, 저작권 걱정 없음) ──
@@ -480,7 +481,7 @@ def texts(data):
     if CFG.get("app_link"):
         lines.append(f'👉 {CFG["app_link"]}')
     else:
-        lines.append("👉 프로필 링크에서 받아 보세요")
+        lines.append("👉 곧 출시! 팔로우하고 출시 소식 받아 보세요")
     lines += ["※ 재미로 보는 운세예요", "",
               "#오늘의운세 #띠별운세 #운세 #사주 #일진 #" + best["name"] + " #천기 #천기누설 #shorts"]
     return title, "\n".join(lines)

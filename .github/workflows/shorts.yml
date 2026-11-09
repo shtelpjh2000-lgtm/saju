@@ -69,3 +69,22 @@ jobs:
           IG_USER_ID: ${{ secrets.IG_USER_ID }}
           IG_API_HOST: ${{ secrets.IG_API_HOST }}
         run: python upload_instagram.py out
+
+      - name: 인스타그램 토큰 연장 (60일 만료 방지)
+        if: always()
+        working-directory: promo
+        env:
+          IG_ACCESS_TOKEN: ${{ secrets.IG_ACCESS_TOKEN }}
+          IG_API_HOST: ${{ secrets.IG_API_HOST }}
+          GH_TOKEN: ${{ secrets.GH_PAT }}
+        run: |
+          python refresh_instagram_token.py new_token.txt
+          if [ -s new_token.txt ]; then
+            if [ -n "$GH_TOKEN" ]; then
+              gh secret set IG_ACCESS_TOKEN --repo "$GITHUB_REPOSITORY" < new_token.txt
+              echo "IG_ACCESS_TOKEN Secret을 새 토큰으로 바꿨어요"
+            else
+              echo "새 토큰이 나왔지만 GH_PAT가 없어서 Secret을 못 바꿨어요"
+            fi
+            rm -f new_token.txt
+          fi
