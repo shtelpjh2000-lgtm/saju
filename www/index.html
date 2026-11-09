@@ -107,6 +107,17 @@ body.hasnav main{padding-bottom:86px}
 .hero .logo{flex:0 0 auto;border-radius:22px;box-shadow:0 6px 16px rgba(59,20,80,.35)}
 .tp2{display:flex;align-items:center;gap:14px;padding:14px 16px}.tp2 .tyEm{font-size:46px;line-height:1}
 .tp2 .tyName{font-family:"Jua",sans-serif;font-size:26px;line-height:1.2;color:var(--pink)}.tp2 .tyName small{display:block;font-size:16px;color:var(--ink)}
+#mode{grid-template-columns:repeat(4,1fr)!important;gap:6px!important}#mode button .tt{font-size:17px}#mode button .ic{font-size:26px}#mode button small{font-size:10.5px}
+@media(max-width:370px){#mode button small{font-size:9.5px;letter-spacing:-.03em}}
+.bnav button{font-size:15px}
+.ghScore{display:flex;align-items:center;gap:14px;padding:14px 16px;border-radius:20px;background:linear-gradient(135deg,#fff0f5,#f1ecff);margin:6px 0 4px}
+@media(prefers-color-scheme:dark){.ghScore{background:linear-gradient(135deg,#3a2433,#2c2545)}}
+.ghScore .num{font-family:"Jua",sans-serif;font-size:44px;color:var(--pink);line-height:1}.ghScore .num small{font-size:18px}
+.ghScore .gr{font-family:"Jua",sans-serif;font-size:21px}.ghScore .who{font-size:13px;color:var(--mute)}
+.ghBar{height:12px;border-radius:999px;background:var(--line);overflow:hidden;margin:8px 0 2px}.ghBar i{display:block;height:100%;border-radius:999px;background:linear-gradient(90deg,var(--yel),var(--pink),var(--lav))}
+.ghRow{display:flex;justify-content:space-between;align-items:center;gap:8px;margin:14px 0 4px}.ghRow h4{margin:0!important}
+.ghPill{font-size:12px;font-weight:700;padding:3px 10px;border-radius:999px;color:#fff;white-space:nowrap}.ghPill.g3{background:linear-gradient(135deg,var(--pink),var(--lav))}.ghPill.g2{background:var(--mint)}.ghPill.g1{background:var(--sky)}.ghPill.g0{background:var(--brown)}
+.ghPair{display:grid;grid-template-columns:1fr auto 1fr;gap:8px;align-items:center;text-align:center;margin:8px 0}.ghPair .p{background:var(--bg);border-radius:16px;padding:10px 6px}.ghPair .p b{display:block;font-family:"Jua",sans-serif;font-size:16px}.ghPair .p span{font-size:12px;color:var(--mute)}.ghPair .h{font-size:26px}
 .chk{display:flex;gap:8px;align-items:center;font-size:13px;color:var(--mute);margin-left:4px}.chk input{width:18px;height:18px;accent-color:var(--pink)}
 .err{color:var(--red);font-size:14px;margin-top:8px;display:none;background:var(--pink2);padding:8px 12px;border-radius:12px}
 .head{font-family:"Jua",sans-serif;font-size:16px;font-weight:400;padding:9px 14px;margin-bottom:10px;background:linear-gradient(135deg,var(--pink2),var(--lav2));border-radius:16px}
@@ -436,9 +447,18 @@ body.hasnav main{padding-bottom:86px}
 <div id="out" style="display:none">
   <div class="card today" id="todayOut"></div>
   <div class="card" id="ctl">
-    <div class="row" style="align-items:flex-end"><div class="modeWrap"><p class="pickQ">무엇을 볼까요? <span>눌러서 바꿔요</span></p><div class="seg" id="mode"><button data-v="won" class="on" aria-pressed="true"><span class="ic">🔮</span><span class="tt">명국</span><small>타고난 내 운명</small></button><button data-v="sin" aria-pressed="false"><span class="ic">🎊</span><span class="tt">신수</span><small>올해 1년 운세</small></button><button data-v="il" aria-pressed="false"><span class="ic">☀️</span><span class="tt">일진</span><small>오늘 하루 운세</small></button></div></div>
+    <div class="row" style="align-items:flex-end"><div class="modeWrap"><p class="pickQ">무엇을 볼까요? <span>눌러서 바꿔요</span></p><div class="seg" id="mode"><button data-v="won" class="on" aria-pressed="true"><span class="ic">🔮</span><span class="tt">명국</span><small>타고난 내 운명</small></button><button data-v="sin" aria-pressed="false"><span class="ic">🎊</span><span class="tt">신수</span><small>올해 1년 운세</small></button><button data-v="il" aria-pressed="false"><span class="ic">☀️</span><span class="tt">일진</span><small>오늘 하루 운세</small></button><button data-v="gh" aria-pressed="false"><span class="ic">💞</span><span class="tt">궁합</span><small>둘의 인연</small></button></div></div>
     <div id="ilWrap" style="display:none"><label for="ild">📅 날짜</label><input id="ild" type="date"></div>
     <div id="yrWrap" style="display:none"><label for="yr">🎊 연도</label><input id="yr" type="number" min="1900" max="2100"></div></div>
+<div id="ghWrap" style="display:none">
+      <p class="pickQ" style="margin-top:6px">💞 상대방 정보 <span>생일만 알아도 돼요</span></p>
+      <div class="row"><div><input id="ghName" placeholder="상대 이름 (선택)"></div><div><div class="seg" id="ghSex"><button type="button" data-v="M">🙋‍♂️ 남</button><button type="button" data-v="F" class="on">🙋‍♀️ 여</button></div></div></div>
+      <div class="seg" id="ghCal" style="margin:8px 0"><button type="button" data-v="S" class="on">양력</button><button type="button" data-v="L">음력</button><button type="button" data-v="LL">음력 윤달</button></div>
+      <div class="ymd"><select id="ghY" class="y" aria-label="상대 태어난 해"></select><select id="ghM" aria-label="상대 태어난 달"></select><select id="ghD" aria-label="상대 태어난 날"></select></div>
+      <select id="ghT" style="margin-top:8px" aria-label="상대 태어난 시"><option value="">⏰ 태어난 시 모름</option><option value="01:00">🐭 자시 (23:30~01:30)</option><option value="02:30">🐮 축시 (01:30~03:30)</option><option value="04:30">🐯 인시 (03:30~05:30)</option><option value="06:30">🐰 묘시 (05:30~07:30)</option><option value="08:30">🐲 진시 (07:30~09:30)</option><option value="10:30">🐍 사시 (09:30~11:30)</option><option value="12:30">🐴 오시 (11:30~13:30)</option><option value="14:30">🐑 미시 (13:30~15:30)</option><option value="16:30">🐵 신시 (15:30~17:30)</option><option value="18:30">🐔 유시 (17:30~19:30)</option><option value="20:30">🐶 술시 (19:30~21:30)</option><option value="22:30">🐷 해시 (21:30~23:30)</option></select>
+      <button type="button" id="ghGo" style="width:100%;margin-top:10px">💞 궁합 보기</button>
+      <p class="err" id="ghErr" style="display:none"></p>
+    </div>
     <p class="modeExp" id="modeExp"></p>
   </div>
   <div class="card rd" id="typecard"></div>
@@ -9636,6 +9656,7 @@ function dayInfo(y,m,d,cache){const l=Solar.fromYmd(y,m,d).getLunar();const gzY=
   const c=cache[gzY];return {rs:c.rs,yi:c.yi,d:Haeseok.daily(c.rs,base,l.getDayInGanZhi(),base.input.sex,c.yi.base.strong),lunar:l};}
 function ageAt(gzY){/* 그 태세 해의 세는나이 */const by=base.input.y;for(let y=by;y<by+130;y++){if(Lunar.fromYmd(y,6,1).getYearInGanZhi()===gzY&&y>=by)return y-by+1;}return 1;}
 function show(){
+  if(mode==='gh'){yInfo=null;dInfo=null;render(base);renderGung();return;}
   if(mode==='won'){yInfo=null;dInfo=null;render(base);return;}
   if(mode==='il'){
     if(!$('ild').value){const n=new Date(),p=v=>String(v).padStart(2,'0');$('ild').value=n.getFullYear()+'-'+p(n.getMonth()+1)+'-'+p(n.getDate());}
@@ -9940,6 +9961,7 @@ alDraw();
   const EXP={
     won:'🔮 <span><b>명국</b>은 태어난 날과 시로 그린 <b>나만의 운명 지도</b>예요. 타고난 성격, 잘 맞는 일, 평생의 큰 흐름을 보여 줘요. 9칸 중 한 칸을 누르면 그 칸의 뜻이 나와요.</span>',
     sin:'🎊 <span><b>신수</b>는 고른 해 <b>1년 동안의 운세</b>예요. 그해에 잘 풀리는 일, 조심할 일, 좋은 기회를 알려 줘요. 위 연도 칸에서 다른 해도 볼 수 있어요.</span>',
+    gh:'💞 <span><b>궁합</b>은 두 사람의 사주를 나란히 놓고 <b>마음·생활·띠·오행</b>이 얼마나 잘 맞는지 보는 거예요. 위 칸에 상대방 생일을 넣고 궁합 보기를 눌러 주세요.</span>',
     il:'☀️ <span><b>일진</b>은 고른 날 <b>하루의 운세</b>예요. 그날 기분, 일, 사람 관계, 돈 흐름이 어떨지 가볍게 볼 수 있어요. 위 날짜 칸에서 다른 날도 볼 수 있어요.</span>'
   };
   const upd=()=>{const e=$('modeExp');if(e)e.innerHTML=EXP[mode]||'';};
@@ -9974,7 +9996,7 @@ alDraw();
   }
   function drawOut(){
     const el=$('todayOut');if(!el)return;
-    if(!base||mode==='il'){el.style.display='none';return;}
+    if(!base||mode==='il'||mode==='gh'){el.style.display='none';return;}
     try{el.innerHTML=html(base,base.input.name,false);el.style.display='block';}catch(e){el.style.display='none';}
   }
   function drawTop(){
@@ -10091,7 +10113,7 @@ alDraw();
   $('ilWrap').querySelector('label').textContent='📅 어느 날 운세를 볼까요?';
   // 아래 고정 메뉴
   const nav=document.createElement('nav');nav.className='bnav';nav.setAttribute('aria-label','운세 종류');
-  nav.innerHTML='<div class="in"><button type="button" data-v="won">🔮 명국</button><button type="button" data-v="sin">🎊 신수</button><button type="button" data-v="il">☀️ 일진</button></div>';
+  nav.innerHTML='<div class="in"><button type="button" data-v="won">🔮 명국</button><button type="button" data-v="sin">🎊 신수</button><button type="button" data-v="il">☀️ 일진</button><button type="button" data-v="gh">💞 궁합</button></div>';
   document.body.appendChild(nav);
   const sync=()=>{[...nav.querySelectorAll('button')].forEach(b=>b.classList.toggle('on',b.dataset.v===mode));[...$('mode').children].forEach(b=>b.setAttribute('aria-pressed',b.dataset.v===mode?'true':'false'));};
   nav.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const t=$('mode').querySelector('button[data-v="'+b.dataset.v+'"]');if(t)t.click();});
@@ -10101,6 +10123,121 @@ alDraw();
   if('IntersectionObserver' in window){new IntersectionObserver(es=>{ctlVisible=es[0].isIntersecting;upd();},{threshold:0}).observe($('ctl'));}
   const _show3=show;show=function(){const r=_show3.apply(this,arguments);sync();upd();return r;};
   sync();
+})();
+// ── 궁합 ──
+(function(){
+  const ST='甲乙丙丁戊己庚辛壬癸',BR='子丑寅卯辰巳午未申酉戌亥';
+  const ELN=['목','화','토','금','수'];
+  const sEl=g=>Math.floor(ST.indexOf(g)/2);const bEl=z=>[4,2,0,0,2,1,1,2,3,3,2,4][BR.indexOf(z)];
+  const pairIn=(L,a,b)=>L.some(([x,y])=>(x===a&&y===b)||(x===b&&y===a));
+  const GANHAP=[[0,5],[1,6],[2,7],[3,8],[4,9]];
+  const LIUHE=[[0,1],[2,11],[3,10],[4,9],[5,8],[6,7]];
+  const SANHE=[[8,0,4],[2,6,10],[5,9,1],[11,3,7]];
+  const WONJIN=[[0,7],[1,6],[2,9],[3,8],[4,11],[5,10]];
+  const HYEONG=[[2,5],[5,8],[2,8],[1,10],[10,7],[1,7],[0,3]];
+  const HAE=[[1,6],[2,5],[3,4],[8,11],[9,10]];
+  const ANI=['쥐','소','호랑이','토끼','용','뱀','말','양','원숭이','닭','개','돼지'];
+  function brRel(a,b){const i=BR.indexOf(a),j=BR.indexOf(b);
+    if(i===j)return 'same';if((i+6)%12===j)return 'chong';if(pairIn(LIUHE,i,j))return 'liuhe';
+    if(SANHE.some(g=>g.includes(i)&&g.includes(j)))return 'sanhe';if(pairIn(WONJIN,i,j))return 'wonjin';
+    if(pairIn(HYEONG,i,j))return 'hyeong';if(pairIn(HAE,i,j))return 'hae';return 'normal';}
+  function elCount(r,hasTime){const c=[0,0,0,0,0];r.pillars.forEach((p,k)=>{if(k===3&&!hasTime)return;c[sEl(p[0])]++;c[bEl(p[1])]++;});return c;}
+  const P=v=>String(v).padStart(2,'0');
+  // 상대방 입력칸 채우기
+  const gy=$('ghY'),gm=$('ghM'),gd=$('ghD');let gcal='S',gsex='F';
+  let h='<option value="">년</option>';for(let y=2100;y>=1900;y--)h+='<option value="'+y+'">'+y+'년</option>';gy.innerHTML=h;
+  h='<option value="">월</option>';for(let m=1;m<=12;m++)h+='<option value="'+m+'">'+m+'월</option>';gm.innerHTML=h;
+  function days(){const y=+gy.value,m=+gm.value,k=+gd.value;let n=31;if(m)n=gcal!=='S'?30:new Date(y||2000,m,0).getDate();
+    let o='<option value="">일</option>';for(let d=1;d<=n;d++)o+='<option value="'+d+'">'+d+'일</option>';gd.innerHTML=o;if(k&&k<=n)gd.value=String(k);}
+  days();[gy,gm].forEach(e=>e.addEventListener('change',days));
+  gy.addEventListener('focus',()=>{if(!gy.value)gy.value='1990';});
+  const segSel=(id,fn)=>$(id).addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;[...$(id).children].forEach(x=>x.classList.toggle('on',x===b));fn(b.dataset.v);});
+  segSel('ghSex',v=>gsex=v);segSel('ghCal',v=>{gcal=v;days();});
+  const KEY='hongmyeongguk.partner';
+  function loadP(){try{return JSON.parse(localStorage.getItem(KEY)||'null');}catch(e){return null;}}
+  function setForm(p){if(!p)return;$('ghName').value=p.name||'';gcal=p.cal||'S';[...$('ghCal').children].forEach(x=>x.classList.toggle('on',x.dataset.v===gcal));
+    gy.value=String(p.y);gm.value=String(p.m);days();gd.value=String(p.d);$('ghT').value=p.t||'';gsex=p.sex||'F';[...$('ghSex').children].forEach(x=>x.classList.toggle('on',x.dataset.v===gsex));}
+  function partnerFromForm(){
+    const y=+gy.value,m=+gm.value,d=+gd.value;if(!(y&&m&&d))throw new Error('상대방 생년월일을 골라 주세요.');
+    return {name:$('ghName').value.trim(),y,m,d,cal:gcal,t:$('ghT').value,sex:gsex};
+  }
+  function calcPartner(p){
+    let y=p.y,m=p.m,d=p.d;
+    if(p.cal!=='S'){try{const s=Lunar.fromYmd(y,p.cal==='LL'?-m:m,d).getSolar();y=s.getYear();m=s.getMonth();d=s.getDay();}catch(e){throw new Error('상대방 음력 날짜를 찾지 못했어요. 윤달 여부를 확인해 주세요.');}}
+    const [hh,mi]=(p.t||'12:00').split(':').map(Number);const ad=autoAdjust(y,m,d);
+    const r=Gimun.calc(Solar,y,m,d,hh,mi,{adjust:ad.a});r.input={y,m,d,h:hh,mi,name:p.name,sex:p.sex,adj:ad};r.hasTime=!!p.t;return r;
+  }
+  let partner=null;
+  $('ghGo').addEventListener('click',()=>{const e=$('ghErr');e.style.display='none';
+    try{const p=partnerFromForm();partner=calcPartner(p);try{localStorage.setItem(KEY,JSON.stringify(p));}catch(_){ }show();$('reading').scrollIntoView({behavior:'smooth'});}
+    catch(err){e.textContent=err.message;e.style.display='block';}});
+  // 탭 바뀔 때 입력칸 보이기
+  $('mode').addEventListener('click',()=>setTimeout(()=>{$('ghWrap').style.display=mode==='gh'?'block':'none';
+    if(mode==='gh'&&base){if(!gsex||!$('ghWrap').dataset.init){gsex=base.input.sex==='M'?'F':'M';[...$('ghSex').children].forEach(x=>x.classList.toggle('on',x.dataset.v===gsex));const p=loadP();if(p){setForm(p);try{partner=calcPartner(p);show();}catch(_){}}$('ghWrap').dataset.init='1';}}},0));
+  const pill=g=>g>=2?['g3','아주 좋아요']:g>=1?['g2','좋아요']:g<=-1?['g0','노력이 필요해요']:['g1','무난해요'];
+  window.renderGung=function(){
+    $('typecard').style.display='none';$('fourcard').style.display='none';
+    const R=$('reading');
+    if(!partner){R.innerHTML='<h2>💞 궁합</h2><p>위에 <b>상대방 생년월일</b>을 고르고 <b>궁합 보기</b>를 눌러 주세요. 태어난 시를 몰라도 볼 수 있어요.</p>';return;}
+    const A=base,B=partner;const hon=(n,d)=>n?(n.endsWith('님')?n:n+'님'):d;const an=hon(A.input.name,'나'),bn=hon(B.input.name,'상대방');const anS=A.input.name||'나',bnS=B.input.name||'상대방';
+    const aSt=A.pillars[2][0],bSt=B.pillars[2][0],aBr=A.pillars[2][1],bBr=B.pillars[2][1],aY=A.pillars[0][1],bY=B.pillars[0][1];
+    const ea=sEl(aSt),eb=sEl(bSt);let score=52;const parts=[];
+    // 1. 마음(일간)
+    let g1,t1;const ia=ST.indexOf(aSt),ib=ST.indexOf(bSt);
+    if(pairIn(GANHAP,ia,ib)){g1=2;score+=22;t1='두 사람의 일간이 서로 <b>합</b>을 이뤄요. 처음 만나도 오래 알던 사람처럼 마음이 끌리고, 서로에게 자연스럽게 기대게 되는 인연이에요.';}
+    else if((ea+1)%5===eb){g1=1;score+=14;t1=an+'의 '+ELN[ea]+' 기운이 '+bn+'의 '+ELN[eb]+' 기운을 북돋아 줘요. '+an+'이 먼저 챙기고 베푸는 사이가 되기 쉬워요. 고마움을 말로 표현해 주면 더 오래가요.';}
+    else if((eb+1)%5===ea){g1=1;score+=14;t1=bn+'의 '+ELN[eb]+' 기운이 '+an+'의 '+ELN[ea]+' 기운을 북돋아 줘요. '+bn+' 곁에 있으면 힘이 나고 든든해요. 받은 만큼 마음을 표현해 주세요.';}
+    else if(ea===eb){g1=aSt===bSt?0:1;score+=aSt===bSt?6:8;t1='두 사람 모두 '+ELN[ea]+' 기운의 일간이라 생각하는 방식과 속도가 비슷해요. 친구처럼 편하지만, 둘 다 고집을 부리면 부딪힐 수 있어요.';}
+    else if((ea+2)%5===eb){g1=-1;score-=6;t1=an+'의 기운이 '+bn+'의 기운을 누르는 관계예요. 이끌어 주는 힘이 되기도 하지만, 상대가 답답하지 않게 의견을 먼저 물어봐 주세요.';}
+    else{g1=-1;score-=6;t1=bn+'의 기운이 '+an+'의 기운을 누르는 관계예요. 배울 점이 많은 사이지만, 서운한 마음이 들면 참지 말고 부드럽게 말해 주세요.';}
+    parts.push(['💗 마음 궁합','두 사람의 타고난 성품(일간)',g1,t1]);
+    // 2. 생활(일지)
+    const r2=brRel(aBr,bBr);const T2={liuhe:[2,14,'생활 궁합이 아주 좋아요. 집에서의 습관과 하루 리듬이 잘 맞아 함께 있을수록 편안해요.'],
+      sanhe:[2,10,'생활 속에서 같은 방향을 바라보는 사이예요. 함께 목표를 세우면 힘이 크게 붙어요.'],
+      same:[1,4,'생활 방식이 비슷해서 편해요. 서로의 혼자 있는 시간도 존중해 주면 더 좋아요.'],
+      normal:[0,0,'생활 궁합은 무난해요. 서로 맞춰 가는 만큼 좋아지는 사이예요.'],
+      hae:[0,-4,'작은 오해가 생기기 쉬운 사이예요. 말투에 조금만 신경 쓰면 금방 좋아져요.'],
+      hyeong:[-1,-6,'서로 바로잡으려다 부딪히기 쉬워요. 잔소리보다 칭찬을 먼저 해 보세요.'],
+      wonjin:[-1,-10,'가까울수록 사소한 일로 서운해지기 쉬운 원진 관계예요. 섭섭한 마음은 쌓아 두지 말고 그때그때 부드럽게 말해 주세요.'],
+      chong:[-1,-12,'생활 리듬이 정반대예요. 다른 점이 끌림이 되기도 하지만, 다투면 그날 안에 풀고 넘어가는 약속을 해 두세요.']}[r2];
+    score+=T2[1];parts.push(['🏠 생활 궁합','함께 지낼 때의 습관과 리듬(일지)',T2[0],T2[2]]);
+    // 3. 띠
+    const r3=brRel(aY,bY);const ay=ANI[BR.indexOf(aY)],by=ANI[BR.indexOf(bY)];
+    const T3={liuhe:[2,6,ay+'띠와 '+by+'띠는 서로 끌어당기는 육합이에요. 첫인상부터 호감이 가는 사이예요.'],sanhe:[2,6,ay+'띠와 '+by+'띠는 삼합으로 한 팀처럼 잘 맞아요.'],
+      same:[1,2,'같은 '+ay+'띠라 공감대가 커요.'],normal:[0,0,ay+'띠와 '+by+'띠는 무난한 사이예요.'],hae:[0,-2,ay+'띠와 '+by+'띠는 가끔 엇갈리기 쉬워요. 약속을 분명히 해 두세요.'],
+      hyeong:[0,-3,ay+'띠와 '+by+'띠는 서로 고치려 들기 쉬워요. 있는 그대로 봐 주세요.'],wonjin:[-1,-4,ay+'띠와 '+by+'띠는 원진이라 서운함이 쌓이기 쉬워요. 작은 표현이 큰 힘이 돼요.'],
+      chong:[-1,-5,ay+'띠와 '+by+'띠는 충이라 부딪힐 때가 있어요. 대신 서로를 크게 바꿔 주는 인연이기도 해요.']}[r3];
+    score+=T3[1];parts.push(['🐾 띠 궁합',ay+'띠 · '+by+'띠',T3[0],T3[2]]);
+    // 4. 오행 보완
+    const ca=elCount(A,true),cb=elCount(B,!!B.hasTime);const fill=[];let g4=0;
+    ca.forEach((v,i)=>{if(v===0&&cb[i]>=2){fill.push(an+'에게 없는 <b>'+ELN[i]+'</b> 기운을 '+bn+'이 채워 줘요.');score+=4;}});
+    cb.forEach((v,i)=>{if(v===0&&ca[i]>=2){fill.push(bn+'에게 없는 <b>'+ELN[i]+'</b> 기운을 '+an+'이 채워 줘요.');score+=4;}});
+    if(fill.length>=2)g4=2;else if(fill.length===1)g4=1;
+    const t4=fill.length?fill.join(' ')+' 서로에게 꼭 필요한 사람이 되어 주는 사이예요.':'두 사람 모두 비슷한 기운을 많이 가지고 있어요. 서로 채워 주기보다는 같은 마음으로 공감하는 사이예요.';
+    parts.push(['☯️ 오행 보완','서로 부족한 기운을 채워 주는지',g4,t4]);
+    // 5. 기질
+    const ta=Saju4.personality(A.pillars,A),tb=Saju4.personality(B.pillars,B);const TY=typeof GM_TYPES!=='undefined'?GM_TYPES:{};
+    const nm=t=>(TY[t.code]?TY[t.code][0]+' '+TY[t.code][1]+' '+TY[t.code][2]:t.nick);
+    let g5=0,t5;if(ta.code===tb.code){g5=1;score+=3;t5='두 사람의 기질이 같아요. 말하지 않아도 통하는 게 많지만, 둘 다 약한 부분도 같으니 서로 챙겨 주세요.';}
+    else if(ta.match.includes(tb.code)||tb.match.includes(ta.code)){g5=2;score+=6;t5='서로 부족한 점을 채워 주는 기질 조합이에요. 함께 있으면 서로 성장하는 사이예요.';}
+    else{t5='기질이 달라서 서로에게 새로운 면을 보여 줄 수 있어요. 다른 점을 재미있게 받아들이면 좋은 짝이 돼요.';}
+    score=Math.max(28,Math.min(98,Math.round(score)));
+    const grade=score>=88?['천생연분','💘']:score>=75?['찰떡궁합','💞']:score>=62?['좋은 인연','💗']:score>=48?['노력하면 좋은 사이','🤝']:['서로 배려가 필요한 사이','🌱'];
+    let html='<h2>💞 '+anS+' · '+bnS+' 궁합</h2>';
+    html+='<div class="ghScore"><span class="num">'+score+'<small>점</small></span><div><div class="gr">'+grade[1]+' '+grade[0]+'</div><div class="who">'+an+'('+aSt+aBr+'일) · '+bn+'('+bSt+bBr+'일)</div></div></div>';
+    html+='<div class="ghBar"><i style="width:'+score+'%"></i></div>';
+    parts.forEach(([t,sub,g,txt])=>{const pl=pill(g);html+='<div class="ghRow"><h4>'+t+'</h4><span class="ghPill '+pl[0]+'">'+pl[1]+'</span></div><p class="note" style="margin:0 0 2px">'+sub+'</p><p>'+txt+'</p>';});
+    html+='<div class="ghRow"><h4>💖 두 사람의 기질</h4><span class="ghPill '+pill(g5)[0]+'">'+pill(g5)[1]+'</span></div>';
+    html+='<div class="ghPair"><div class="p"><b>'+an+'</b><span>'+nm(ta)+'</span></div><div class="h">💞</div><div class="p"><b>'+bn+'</b><span>'+nm(tb)+'</span></div></div><p>'+t5+'</p>';
+    const tips=[];const low=parts.map((p,i)=>[p[2],i]).sort((a,b)=>a[0]-b[0]);
+    const TIP=['서로의 다른 성격을 탓하기보다 "그럴 수 있지"라고 먼저 말해 보세요.','생활 습관은 대화로 규칙을 정해 두면 다툼이 크게 줄어요.','처음의 설렘을 기억할 수 있게 작은 기념일을 챙겨 보세요.','서로에게 없는 기운을 가진 만큼, 상대의 강점을 칭찬해 주세요.'];
+    low.slice(0,2).forEach(([g,i])=>tips.push(TIP[Math.min(i,3)]));tips.push('고마운 일은 그날 바로 말로 표현하는 게 가장 좋은 궁합 비결이에요.');
+    html+='<h4>💌 잘 지내는 팁</h4>'+[...new Set(tips)].map(t=>'<p>· '+t+'</p>').join('');
+    if(!B.hasTime)html+='<p class="note">상대방 태어난 시를 몰라서 시주를 빼고 봤어요. 시를 알면 더 정확해져요.</p>';
+    html+='<p class="note">궁합은 두 사람의 일간·일지·띠·오행·기질을 전통 역학 원리로 비교한 참고용 풀이예요. 좋은 관계는 결국 두 사람의 마음과 노력으로 만들어져요.</p>';
+    R.innerHTML=html;
+    if(window.__hangulize)window.__hangulize(R);
+  };
 })();
 drawSaved();
 LEG0=$('legend').textContent;
