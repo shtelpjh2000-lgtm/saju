@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#ff8fb3">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Jua&family=Gowun+Dodum&family=Noto+Serif+KR:wght@400;700&display=swap" rel="stylesheet">
-<title>홍기문 명국</title>
+<title>귀문 명국</title>
 <style>
 :root{--bg:#fff7f1;--bg2:#fdeef4;--card:#ffffff;--ink:#3a2e4d;--mute:#9a8fae;--line:#f0e3ee;--pink:#ff8fb3;--pink2:#ffd3e2;--lav:#b9a8ff;--lav2:#ece6ff;--mint:#7fdcc0;--mint2:#dcf7ee;--sky:#8cc8ff;--sky2:#e2f1ff;--yel:#ffd66b;--yel2:#fff3cc;--red:#ff6b9a;--blue:#6a6cf6;--green:#e6f9ef;--greenS:#b7efd2;--yellow:#fff0a8;--purple:#9b7bff;--brown:#e0884f;--shadow:0 6px 18px rgba(186,140,190,.18)}
 @media(prefers-color-scheme:dark){:root{--bg:#1d1726;--bg2:#251d31;--card:#2a2236;--ink:#f3ecff;--mute:#a99cc0;--line:#3b3150;--pink:#ff8fb3;--pink2:#4a2b3c;--lav:#b9a8ff;--lav2:#352c52;--mint:#7fdcc0;--mint2:#1f3b35;--sky:#8cc8ff;--sky2:#1f3049;--yel:#ffd66b;--yel2:#40371c;--red:#ff8fb3;--blue:#a9a6ff;--green:#203a30;--greenS:#2f5c47;--yellow:#5a4d18;--purple:#c4b0ff;--brown:#f0a571;--shadow:0 6px 18px rgba(0,0,0,.35)}}
@@ -30,6 +30,18 @@ button{padding:13px;border:0;border-radius:18px;background:linear-gradient(135de
 button:active{transform:scale(.97)}
 button.sec{background:var(--lav2);color:var(--ink);box-shadow:none}
 #go{background:linear-gradient(135deg,#ff8fb3,#b9a8ff);font-family:"Jua",sans-serif;font-size:19px;font-weight:400}
+.ymd{display:flex;gap:6px}.ymd select{flex:1;min-width:0;padding:12px 6px;text-align:center;text-align-last:center;font-family:"Jua","Gowun Dodum",sans-serif;font-size:18px;appearance:none;-webkit-appearance:none;background:var(--bg)}
+.ymd select:focus{border-color:var(--pink)}.ymd select.y{flex:1.4}
+.zhi{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.zhi button{display:flex;flex-direction:column;align-items:center;gap:1px;padding:8px 2px 7px;border-radius:16px;background:var(--bg);color:var(--ink);border:2px solid var(--line);box-shadow:none;font-weight:400}
+.zhi button .e{font-size:22px;line-height:1.1}.zhi button .n{font-family:"Jua","Gowun Dodum",sans-serif;font-size:15px}.zhi button .n b{font-family:"Noto Serif KR",serif;font-weight:700;margin-right:2px}
+.zhi button .r{font-size:11px;color:var(--mute);letter-spacing:-.02em}
+.zhi button.on{background:linear-gradient(135deg,var(--pink),var(--lav));border-color:transparent;color:#fff;box-shadow:0 3px 10px rgba(255,143,179,.4)}.zhi button.on .r{color:#fff}
+.tline{display:flex;justify-content:space-between;align-items:center;gap:8px;margin:8px 4px 0;font-size:13px;color:var(--mute);flex-wrap:wrap}
+.tline b{color:var(--pink)}
+.tline button{padding:6px 12px;font-size:13px;border-radius:999px;background:var(--lav2);color:var(--ink);box-shadow:none}
+#tx{margin-top:8px}
+.thint{font-size:12px;color:var(--mute);margin:6px 4px 0}
 .chk{display:flex;gap:8px;align-items:center;font-size:13px;color:var(--mute);margin-left:4px}.chk input{width:18px;height:18px;accent-color:var(--pink)}
 .err{color:var(--red);font-size:14px;margin-top:8px;display:none;background:var(--pink2);padding:8px 12px;border-radius:12px}
 .head{font-family:"Jua",sans-serif;font-size:16px;font-weight:400;padding:9px 14px;margin-bottom:10px;background:linear-gradient(135deg,var(--pink2),var(--lav2));border-radius:16px}
@@ -106,7 +118,7 @@ button.sec{background:var(--lav2);color:var(--ink);box-shadow:none}
 <ellipse cx="38" cy="80" rx="7" ry="4" fill="#ff8fb3" opacity=".6"/><ellipse cx="82" cy="80" rx="7" ry="4" fill="#ff8fb3" opacity=".6"/>
 <path d="M53 80 q7 7 14 0" stroke="#3a2e4d" stroke-width="3" fill="none" stroke-linecap="round"/>
 <circle cx="18" cy="40" r="3" fill="#ffd66b"/><circle cx="104" cy="52" r="2.5" fill="#7fdcc0"/><circle cx="98" cy="22" r="2" fill="#ff8fb3"/>
-</svg><div><h1>홍기문 <b>명국</b></h1><p class="sub">생일만 넣으면 내 운명 지도가 짠! ✨</p></div></div>
+</svg><div><h1>귀문 <b>명국</b></h1><p class="sub">생일만 넣으면 내 운명 지도가 짠! ✨</p></div></div>
 
 <div class="card" id="form">
   <div class="row">
@@ -116,9 +128,18 @@ button.sec{background:var(--lav2);color:var(--ink);box-shadow:none}
   <div class="row">
     <div><label>🗓️ 달력</label><div class="seg" id="cal"><button data-v="S" class="on">양력</button><button data-v="L">음력</button><button data-v="LL">음력 윤달</button></div></div>
   </div>
-  <div class="row">
-    <div><label for="d">🎂 생년월일</label><input id="d" type="date" min="1900-01-01" max="2100-12-31"></div>
-    <div><label for="t">⏰ 태어난 시각</label><input id="t" type="time"></div>
+  <div style="margin-bottom:12px">
+    <label>🎂 생년월일 <span style="font-weight:400">· 눌러서 골라요</span></label>
+    <div class="ymd"><select id="dy" class="y" aria-label="태어난 해"></select><select id="dm" aria-label="태어난 달"></select><select id="dd" aria-label="태어난 날"></select></div>
+    <input id="d" type="hidden">
+  </div>
+  <div style="margin-bottom:12px">
+    <label>⏰ 태어난 시 <span style="font-weight:400">· 12지 중에서 골라요</span></label>
+    <div class="zhi" id="zhi"></div>
+    <div class="tline"><span id="tSel">태어난 시를 골라 주세요</span><button type="button" id="tExact">⌚ 정확한 시각 입력</button></div>
+    <input id="tx" type="time" style="display:none" aria-label="정확한 태어난 시각">
+    <p class="thint" id="tHint"></p>
+    <input id="t" type="hidden">
   </div>
   <label class="chk"><input type="checkbox" id="adj" checked> 한국 표준시·서머타임 자동 보정</label>
   <div class="row" style="margin-top:10px"><button id="now" class="sec">🕒 지금 시각</button><button id="go" style="flex:2">✨ 내 명국 보기</button></div>
@@ -8785,7 +8806,7 @@ button.sec{background:var(--lav2);color:var(--ink);box-shadow:none}
 
 </script>
 <script>
-/* 홍기문 명국 종합 풀이 (규칙 기반, 문장은 자체 작성)
+/* 귀문 명국 종합 풀이 (규칙 기반, 문장은 자체 작성)
  * 입력: engine.calc() 결과 r, sex('M'|'F'), age(세는나이)
  * 홍국수는 지지로 읽어요: 1子 2巳 3寅 4酉 5辰戌 6亥 7午 8卯 9申 10丑未
  */
@@ -9508,7 +9529,7 @@ function buildNotifications(al,days){
 async function alSchedule(al){
   if(!LN){return '휴대폰에 앱으로 설치하면 이 설정대로 매일 알림이 와요. (지금 화면은 웹 미리보기라 알림이 오지 않아요.)';}
   let perm=await LN.checkPermissions();if(perm.display!=='granted')perm=await LN.requestPermissions();
-  if(perm.display!=='granted')return '알림 권한이 꺼져 있어요. 휴대폰 설정 → 앱 → 홍기문 명국 → 알림을 켜 주세요.';
+  if(perm.display!=='granted')return '알림 권한이 꺼져 있어요. 휴대폰 설정 → 앱 → 귀문 명국 → 알림을 켜 주세요.';
   const pend=await LN.getPending();if(pend.notifications&&pend.notifications.length)await LN.cancel({notifications:pend.notifications.map(n=>({id:n.id}))});
   if(!al||!al.on)return '알림을 껐어요.';
   const list=buildNotifications(al,60);await LN.schedule({notifications:list});
@@ -9537,6 +9558,77 @@ if(LN){
 }
 alDraw();
 
+// ── 생년월일 고르기 + 12지 시 고르기 ──
+(function(){
+  const ZHI=[['子','자','🐭'],['丑','축','🐮'],['寅','인','🐯'],['卯','묘','🐰'],['辰','진','🐲'],['巳','사','🐍'],['午','오','🐴'],['未','미','🐑'],['申','신','🐵'],['酉','유','🐔'],['戌','술','🐶'],['亥','해','🐷']];
+  const P=v=>String(v).padStart(2,'0');
+  const dy=$('dy'),dm=$('dm'),dd=$('dd'),tx=$('tx');
+  const thisY=new Date().getFullYear();
+  let h='<option value="">년</option>';
+  for(let y=2100;y>=1900;y--)h+='<option value="'+y+'"'+(y===1990?' data-def="1"':'')+'>'+y+'년</option>';
+  dy.innerHTML=h;
+  h='<option value="">월</option>';for(let m=1;m<=12;m++)h+='<option value="'+m+'">'+m+'월</option>';dm.innerHTML=h;
+  function fillDays(){
+    const y=+dy.value,m=+dm.value,keep=+dd.value;
+    let n=31;
+    if(m){n=(typeof cal!=='undefined'&&cal!=='S')?30:new Date(y||2000,m,0).getDate();}
+    let o='<option value="">일</option>';for(let d=1;d<=n;d++)o+='<option value="'+d+'">'+d+'일</option>';
+    dd.innerHTML=o;if(keep&&keep<=n)dd.value=String(keep);
+  }
+  fillDays();
+  // 년도를 처음 열 때 1990년 근처가 보이게
+  dy.addEventListener('focus',()=>{if(!dy.value){dy.value='1990';dy.dataset.tmp='1';}});
+  dy.addEventListener('blur',()=>{if(dy.dataset.tmp){delete dy.dataset.tmp;}});
+  const dEl=$('d');
+  Object.defineProperty(dEl,'value',{configurable:true,
+    get(){return (dy.value&&dm.value&&dd.value)?dy.value+'-'+P(dm.value)+'-'+P(dd.value):'';},
+    set(v){const m=/^(\d{4})-(\d{1,2})-(\d{1,2})$/.exec(v||'');if(!m){dy.value='';dm.value='';dd.value='';fillDays();refresh();return;}
+      dy.value=String(+m[1]);dm.value=String(+m[2]);fillDays();dd.value=String(+m[3]);refresh();}});
+  [dy,dm].forEach(e=>e.addEventListener('change',()=>{delete dy.dataset.tmp;fillDays();refresh();}));
+  dd.addEventListener('change',refresh);
+
+  // 보정값(분): 앱의 '한국 표준시·서머타임 자동 보정'과 똑같이 계산
+  function adjMin(){
+    if(!$('adj').checked)return 0;
+    let y=+dy.value,m=+dm.value,d=+dd.value;
+    if(!(y&&m&&d))return -30;
+    try{
+      if(typeof cal!=='undefined'&&cal!=='S'){const s=Lunar.fromYmd(y,cal==='LL'?-m:m,d).getSolar();y=s.getYear();m=s.getMonth();d=s.getDay();}
+      return autoAdjust(y,m,d).a;
+    }catch(e){return -30;}
+  }
+  const fmt=mins=>{mins=((mins%1440)+1440)%1440;return P(Math.floor(mins/60))+':'+P(mins%60);};
+  function range(i,a){const st=(i*120-60)-a,en=(i*120+60)-a;return [fmt(st),fmt(en)];}
+  function zhiOf(tv,a){if(!/^\d{1,2}:\d{2}$/.test(tv||''))return -1;const [hh,mm]=tv.split(':').map(Number);const adj=hh*60+mm+a;return Math.floor((((adj+60)%1440)+1440)%1440/120);}
+  let tVal='',exact=false;
+  const zw=$('zhi');
+  zw.innerHTML=ZHI.map((z,i)=>'<button type="button" data-i="'+i+'"><span class="e">'+z[2]+'</span><span class="n"><b>'+z[0]+'</b>'+z[1]+'시</span><span class="r"></span></button>').join('');
+  function refresh(){
+    const a=adjMin();
+    [...zw.children].forEach((b,i)=>{const r=range(i,a);b.querySelector('.r').textContent=r[0]+'~'+r[1];});
+    const k=zhiOf(tVal,a);
+    [...zw.children].forEach((b,i)=>b.classList.toggle('on',i===k));
+    if(k<0){$('tSel').textContent='태어난 시를 골라 주세요';}
+    else{const r=range(k,a);$('tSel').innerHTML='<b>'+ZHI[k][2]+' '+ZHI[k][0]+ZHI[k][1]+'시</b> '+r[0]+'~'+r[1]+(exact?' · 입력 '+tVal:'');}
+    const z=range(0,a);
+    $('tHint').textContent=a===0?'시간대는 입력한 시각 그대로 나눠요. (보정 꺼짐)':
+      ((a<=-90?'그해는 서머타임 기간이라 시간대가 1시간 늦춰져 있어요. ':'')+'밤 '+z[0]+'~자정 사이에 태어났다면 \'정확한 시각 입력\'으로 넣어 주세요.');
+  }
+  const tEl=$('t');
+  Object.defineProperty(tEl,'value',{configurable:true,
+    get(){return tVal;},
+    set(v){tVal=/^\d{1,2}:\d{2}$/.test(v||'')?P(+v.split(':')[0])+':'+v.split(':')[1]:'';tx.value=tVal;refresh();}});
+  zw.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const i=+b.dataset.i,a=adjMin();
+    // 그 시의 가운데 시각으로 넣어요 (자시는 자정 이후 쪽)
+    const mid=(i===0?30:i*120)-a;exact=false;tx.style.display='none';$('tExact').textContent='⌚ 정확한 시각 입력';
+    tEl.value=fmt(mid);});
+  $('tExact').addEventListener('click',()=>{exact=tx.style.display==='none';tx.style.display=exact?'block':'none';$('tExact').textContent=exact?'12지로 고르기':'⌚ 정확한 시각 입력';if(exact){tx.value=tVal;try{tx.focus();tx.showPicker&&tx.showPicker();}catch(e){}}refresh();});
+  tx.addEventListener('change',()=>{if(tx.value){exact=true;tEl.value=tx.value;}});
+  tx.addEventListener('input',()=>{if(tx.value){exact=true;tEl.value=tx.value;}});
+  $('adj').addEventListener('change',refresh);
+  $('cal').addEventListener('click',()=>setTimeout(()=>{fillDays();refresh();},0));
+  refresh();
+})();
 drawSaved();
 LEG0=$('legend').textContent;
 // 예시: 처음 열면 1984-05-22 20:00
