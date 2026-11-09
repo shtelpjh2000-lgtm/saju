@@ -42,6 +42,9 @@ jobs:
           mkdir -p android/app/src/main/res/drawable
           cp assets/ic_stat_star.png android/app/src/main/res/drawable/ic_stat_star.png
           npx cap sync android
+          # 정확한 알람 권한은 빼요 (구글 플레이 심사 대상, 일진 알림은 몇 분 오차면 충분)
+          sed -i 's|<manifest xmlns:android="http://schemas.android.com/apk/res/android">|<manifest xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools">\n    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" tools:node="remove" />|' android/app/src/main/AndroidManifest.xml
+          head -4 android/app/src/main/AndroidManifest.xml
           # 버전 번호를 빌드 번호로 올려서 업데이트가 되게 해요
           sed -i "s/versionCode 1$/versionCode ${{ github.run_number }}/" android/app/build.gradle
           sed -i "s/versionName \"1.0\"/versionName \"1.0.${{ github.run_number }}\"/" android/app/build.gradle

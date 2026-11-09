@@ -9540,7 +9540,7 @@ function buildNotifications(al,days){
       const y=at.getFullYear(),m=at.getMonth()+1,d=at.getDate(),x=dayInfo(y,m,d,cache);
       const g=x.d.g,grade=g>=1.5?'좋음':g>=0.5?'무난·좋음':g<=-1?'주의':'보통';
       const p=v=>String(v).padStart(2,'0');
-      out.push({id:1000+i,title:(al.profile.name?al.profile.name+'님 ':'')+'오늘의 일진 · '+m+'월 '+d+'일 '+x.d.gz+'일 ('+grade+')',body:x.d.summary,largeBody:x.d.summary,schedule:{at,allowWhileIdle:true},extra:{date:y+'-'+p(m)+'-'+p(d)}});
+      out.push({id:1000+i,title:(al.profile.name?al.profile.name+'님 ':'')+'오늘의 일진 · '+m+'월 '+d+'일 '+x.d.gz+'일 ('+grade+')',body:x.d.summary,largeBody:x.d.summary,schedule:{at,allowWhileIdle:true},isExactNotification:false,extra:{date:y+'-'+p(m)+'-'+p(d)}});
     }
   }finally{base=keep;}
   return out;
