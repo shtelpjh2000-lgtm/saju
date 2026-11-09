@@ -118,6 +118,17 @@ body.hasnav main{padding-bottom:86px}
 .ghRow{display:flex;justify-content:space-between;align-items:center;gap:8px;margin:14px 0 4px}.ghRow h4{margin:0!important}
 .ghPill{font-size:12px;font-weight:700;padding:3px 10px;border-radius:999px;color:#fff;white-space:nowrap}.ghPill.g3{background:linear-gradient(135deg,var(--pink),var(--lav))}.ghPill.g2{background:var(--mint)}.ghPill.g1{background:var(--sky)}.ghPill.g0{background:var(--brown)}
 .ghPair{display:grid;grid-template-columns:1fr auto 1fr;gap:8px;align-items:center;text-align:center;margin:8px 0}.ghPair .p{background:var(--bg);border-radius:16px;padding:10px 6px}.ghPair .p b{display:block;font-family:"Jua",sans-serif;font-size:16px}.ghPair .p span{font-size:12px;color:var(--mute)}.ghPair .h{font-size:26px}
+.askH{margin:0 0 4px;font-size:20px}.askSub{margin:0 0 10px;font-size:13.5px;color:var(--mute)}
+.askChips{display:grid;grid-template-columns:repeat(2,1fr);gap:7px}
+.askChips button{padding:11px 6px;border-radius:16px;background:var(--bg);color:var(--ink);border:2px solid var(--line);box-shadow:none;font-family:"Jua",sans-serif;font-size:15.5px;font-weight:400}
+.askChips button.on{background:linear-gradient(135deg,var(--pink),var(--lav));color:#fff;border-color:transparent}
+.askFree{display:flex;gap:6px;margin:10px 0 8px}.askFree input{flex:1;min-width:0;font-size:14.5px}.askFree button{flex:0 0 auto;padding:0 14px;font-size:14.5px}
+.askYrRow{display:flex;align-items:center;gap:8px;font-size:13.5px;font-weight:700;margin-bottom:6px}.askYrRow .seg{flex:1}.askYrRow .seg button{padding:7px 4px;font-size:13.5px}
+#askOut .askEcho{margin:12px 0 4px;padding:8px 12px;border-radius:14px;background:var(--lav2);font-size:14px}
+.askHead{display:flex;align-items:center;gap:12px;margin:14px 0 2px}.askHead .em{font-size:40px}.askHead b{display:block;font-family:"Jua",sans-serif;font-size:21px;margin-bottom:3px}
+.askV{font-size:16px;line-height:1.7;font-weight:700;margin:8px 0}
+#askOut h4{font-family:"Jua",sans-serif;font-weight:400;font-size:16.5px;margin:16px 0 6px;display:table;background:linear-gradient(transparent 55%,var(--yel2) 55%);padding:0 2px}
+#askOut p{font-size:15px;line-height:1.7;margin:5px 0}
 .chk{display:flex;gap:8px;align-items:center;font-size:13px;color:var(--mute);margin-left:4px}.chk input{width:18px;height:18px;accent-color:var(--pink)}
 .err{color:var(--red);font-size:14px;margin-top:8px;display:none;background:var(--pink2);padding:8px 12px;border-radius:12px}
 .head{font-family:"Jua",sans-serif;font-size:16px;font-weight:400;padding:9px 14px;margin-bottom:10px;background:linear-gradient(135deg,var(--pink2),var(--lav2));border-radius:16px}
@@ -460,6 +471,14 @@ body.hasnav main{padding-bottom:86px}
       <p class="err" id="ghErr" style="display:none"></p>
     </div>
     <p class="modeExp" id="modeExp"></p>
+  </div>
+  <div class="card" id="askCard">
+    <h2 class="askH">🙋 궁금한 것 물어보기</h2>
+    <p class="askSub">시험, 승진, 이직, 이사 방위처럼 궁금한 것을 누르면 내 사주로 자세히 풀어 드려요.</p>
+    <div class="askChips" id="askChips"></div>
+    <div class="askFree"><input id="askQ" placeholder="직접 물어보기 · 예: 내년에 이사 가도 될까요?" aria-label="질문 입력"><button type="button" id="askGo">물어보기</button></div>
+    <div class="askYrRow"><span>📅 언제를 볼까요?</span><div class="seg" id="askYr"><button type="button" data-v="0" class="on">올해</button><button type="button" data-v="1">내년</button></div></div>
+    <div id="askOut"></div>
   </div>
   <div class="card rd" id="typecard"></div>
   <div class="card rd" id="reading"></div>
@@ -10238,6 +10257,164 @@ alDraw();
     R.innerHTML=html;
     if(window.__hangulize)window.__hangulize(R);
   };
+})();
+// ── 궁금한 것 물어보기 (시험·승진·이직·이사 방위 등) ──
+(function(){
+  const LQK={父:'문서·도움(부모)',官:'직장·명예(관)',財:'재물(재)',孫:'자녀·재능(손)',兄:'친구·경쟁(형)',鬼:'압박·시련(귀)',世:'나 자신(세)'};
+  const DK={休門:'휴문',生門:'생문',傷門:'상문',杜門:'두문',景門:'경문',死門:'사문',驚門:'경문(놀람)',開門:'개문'};
+  const GK={生氣:'생기',天宜:'천의',絶體:'절체',遊魂:'유혼',禍害:'화해',福德:'복덕',絶命:'절명',歸魂:'귀혼'};
+  const DOOR0={休門:0.5,生門:0.6,開門:0.6,景門:0,杜門:-0.5,傷門:-1,驚門:-1,死門:-1.2};
+  const GUA0={生氣:1,天宜:0.7,福德:1,歸魂:0.3,遊魂:0,禍害:-0.8,絶體:-0.8,絶命:-1.3};
+  const T={
+    exam:{n:'시험·합격',e:'📚',lq:['父','官'],bad:['財'],door:{景門:1.5,開門:1,休門:0.6},dir:true,
+      kw:['시험','합격','수능','공무원','자격증','면접','입시','고시','토익','공부','성적','대학'],
+      why:'시험은 문서·학업을 뜻하는 <b>부(父, 인성)</b>와 합격·명예를 뜻하는 <b>관(官)</b>으로 보고, 시험과 문서의 문인 <b>경문(景門)</b>이 어디 있는지 함께 봐요. 재물(財)이 강하면 공부보다 다른 일에 마음이 가기 쉬워요.',
+      v:['시험운이 아주 강해요. 준비한 만큼, 아니 그 이상으로 결과가 나오는 때예요. 원하는 곳에 과감하게 도전해 보세요.','합격 가능성이 좋은 편이에요. 마지막까지 꾸준히 하면 좋은 소식을 들을 수 있어요.','실력만큼 나오는 때예요. 약한 과목이나 면접 준비를 한 번 더 다지면 충분히 해볼 만해요.','변수가 많은 때예요. 한 번에 모든 걸 걸기보다, 다음 기회까지 넉넉히 준비하는 전략이 좋아요.'],
+      tips:['시험 날짜와 접수 마감, 서류는 두 번씩 확인하세요. 문서운이 결과를 좌우해요.','공부 책상은 위의 <b>좋은 방위</b> 쪽을 향하게 두면 집중이 잘돼요.','시험 전날은 무리하지 말고 일찍 쉬세요. 휴문(쉼)의 기운이 실력을 지켜 줘요.']},
+    promo:{n:'승진',e:'🏢',lq:['官','父'],bad:['孫'],door:{開門:1.5,生門:1,休門:0.6},
+      kw:['승진','진급','발령','인사','평가','직급','부장','과장','팀장'],
+      why:'승진은 직장·지위를 뜻하는 <b>관(官)</b>과 인사 서류·윗사람의 도움을 뜻하는 <b>부(父)</b>로 보고, 직장과 출세의 문인 <b>개문(開門)</b>을 함께 봐요. 손(孫)이 강하면 윗사람과 부딪히기 쉬워요.',
+      v:['승진운이 아주 좋아요. 그동안 해 온 일이 인정받고 자리가 올라가는 때예요.','윗사람 눈에 띄기 좋은 때예요. 성과를 숫자로 정리해 보여 주면 승진에 가까워져요.','무난한 흐름이에요. 이번엔 평가를 다지고, 다음 기회를 노리는 것도 좋은 전략이에요.','지금은 자리를 지키는 게 먼저예요. 윗사람과의 마찰을 피하고 실수를 줄이면 다음 기회가 와요.'],
+      tips:['보고는 짧고 분명하게, 성과는 숫자로 남겨 두세요.','윗사람에게 대드는 말은 아끼세요. 손(孫)의 기운이 관(官)을 다치게 할 수 있어요.','인사 시즌 전, 위의 <b>좋은 달</b>에 면담이나 지원을 해 보세요.']},
+    job:{n:'이직·취업',e:'💼',lq:['官','財'],bad:['兄'],door:{開門:1.5,生門:1,休門:0.6},gua:{遊魂:0.6},dir:true,
+      kw:['이직','취업','퇴사','직장','회사','구직','입사','전직','알바','일자리','옮길'],
+      why:'이직과 취업은 새 직장을 뜻하는 <b>관(官)</b>과 그곳에서 받을 대가를 뜻하는 <b>재(財)</b>로 보고, 새 출발의 문인 <b>개문(開門)</b>과 움직임의 자리인 <b>유혼</b>을 함께 봐요.',
+      v:['새 자리로 옮기기 아주 좋은 때예요. 조건이 좋은 제안이 들어오거나, 원하는 곳에 붙을 가능성이 커요.','움직여 볼 만한 때예요. 여러 곳에 지원해 보면 좋은 기회를 잡을 수 있어요.','서두르지 않는 게 좋아요. 지금 자리에서 경력을 쌓으며 좋은 조건이 올 때 옮기세요.','지금 그만두는 건 조심하세요. 새 자리를 확실히 정한 뒤에 움직이는 게 안전해요.'],
+      tips:['퇴사는 새 직장 합격 통보와 계약서를 받은 뒤에 하세요.','면접은 위의 <b>좋은 날</b>로 잡으면 마음이 편하고 말이 잘 나와요.','출퇴근 방향이 <b>좋은 방위</b>인 회사라면 더 좋아요.']},
+    move:{n:'이사·방위',e:'🏠',lq:['父'],bad:['鬼'],door:{生門:1.5,休門:1,開門:1},gua:{遊魂:0.5,生氣:0.5},dir:true,
+      kw:['이사','집','방위','방향','이전','매매','부동산','전세','월세','청약','아파트','입주'],
+      why:'이사는 집·문서·계약을 뜻하는 <b>부(父)</b>로 보고, 그해 각 방향의 문과 괘를 비교해 <b>좋은 방위</b>를 골라요. 생문·휴문·개문에 생기·천의·복덕이 겹치는 방향이 가장 좋아요.',
+      v:['이사하기 아주 좋은 때예요. 새집에서 일이 잘 풀리고 집안에 좋은 기운이 들어와요.','이사해도 좋은 때예요. 아래 좋은 방위와 좋은 날을 고르면 더 좋아요.','큰 문제는 없지만 서두를 필요는 없어요. 방위와 날짜를 잘 고르면 무난해요.','올해는 큰 이사보다 집 안 정리나 수리로 기운을 바꾸는 게 좋아요. 꼭 옮겨야 하면 좋은 방위를 꼭 지키세요.'],
+      tips:['계약서는 도장 찍기 전에 등기와 특약을 꼭 확인하세요. 문서(父)가 이사운의 중심이에요.','이삿날은 위의 <b>좋은 날</b> 중에서 고르세요.','새집에 들어가면 창문을 열어 환기부터 하고, 현관을 밝게 해 두세요.']},
+    money:{n:'재물·투자',e:'💰',lq:['財','孫'],bad:['兄'],door:{生門:1.5,開門:0.6,休門:0.5},
+      kw:['돈','재물','투자','주식','코인','부자','로또','재테크','대출','월급','수입','빚'],
+      why:'재물은 돈 그 자체인 <b>재(財)</b>와 돈을 만들어 내는 재능·활동인 <b>손(孫)</b>으로 보고, 재물이 자라는 문인 <b>생문(生門)</b>을 함께 봐요. 형(兄)이 강하면 돈이 나뉘거나 새기 쉬워요.',
+      v:['재물운이 아주 좋아요. 들어오는 돈이 늘고, 그동안 해 둔 투자나 노력이 결실을 맺어요.','돈이 들어오는 흐름이 좋아요. 다만 크게 걸기보다 나눠서 하는 게 안전해요.','들어오는 만큼 나가는 흐름이에요. 새 투자보다 지출 관리가 먼저예요.','돈이 새기 쉬운 때예요. 보증, 빌려주기, 큰 투자는 피하고 지키는 데 집중하세요.'],
+      tips:['보증이나 돈 빌려주기는 피하세요. 형(兄)의 기운이 재물을 나눠 가져가요.','큰돈이 드는 결정은 위의 <b>좋은 달</b>에 하세요.','수입의 일부를 먼저 떼어 저축하는 습관이 올해 재물운을 지켜 줘요.']},
+    love:{n:'연애·결혼',e:'💕',lq:null,bad:null,door:{休門:1,景門:0.8,開門:0.5,生門:0.5},gua:{天宜:0.5,福德:0.5},
+      kw:['연애','결혼','남자친구','여자친구','애인','만남','소개팅','배우자','재회','썸','짝','인연','남편','아내','이혼'],
+      why:'연애와 결혼은 남자는 <b>재(財)</b>, 여자는 <b>관(官)</b>을 배우자의 자리로 보고, 만남과 설렘을 뜻하는 <b>손(孫)</b>, 마음이 편해지는 <b>휴문</b>과 드러나는 <b>경문</b>을 함께 봐요.',
+      v:['인연운이 아주 좋아요. 좋은 사람을 만나거나, 지금 관계가 한 단계 깊어지는 때예요.','만남의 기회가 많아요. 소개나 모임에 적극적으로 나가 보세요.','잔잔한 흐름이에요. 서두르기보다 지금 사람을 더 알아 가는 시간이 좋아요.','서운한 일이나 오해가 생기기 쉬워요. 큰 결정보다 대화를 먼저 하세요.'],
+      tips:['마음이 있다면 위의 <b>좋은 날</b>에 먼저 연락해 보세요.','상대의 말을 끝까지 들어 주는 것만으로도 인연운이 올라가요.','결혼 같은 큰 결정은 <b>좋은 달</b>에 가족과 함께 이야기하세요.']},
+    health:{n:'건강',e:'🏥',lq:['孫','父'],bad:['鬼'],door:{休門:1.5,生門:1},gua:{天宜:1.5,生氣:0.5},
+      kw:['건강','병','수술','몸','아파','병원','다이어트','치료','허리','스트레스'],
+      why:'건강은 나를 누르는 힘인 <b>귀(鬼)</b>가 어디서 강해지는지, 그것을 막아 주는 <b>손(孫)</b>과 회복을 돕는 <b>부(父)</b>가 힘이 있는지로 보고, 치유의 자리인 <b>천의</b>와 쉼의 문인 <b>휴문</b>을 함께 봐요.',
+      v:['건강 흐름이 좋아요. 몸이 가볍고 회복도 빨라요. 운동을 시작하기 좋은 때예요.','대체로 괜찮아요. 무리만 하지 않으면 건강하게 지낼 수 있어요.','피로가 쌓이기 쉬워요. 잠과 식사를 규칙적으로 챙기세요.','몸이 보내는 신호를 잘 들어야 하는 때예요. 미루던 검진을 받아 보세요.'],
+      tips:['이 앱은 건강 상태를 진단하지 않아요. 아픈 곳이 있으면 꼭 병원에서 확인하세요.','잠은 충분히, 휴문(쉼)의 기운을 챙기는 게 가장 좋은 보약이에요.','검진이나 치료 시작은 위의 <b>좋은 날</b>로 잡아 보세요.']},
+    law:{n:'다툼·소송',e:'⚖️',lq:['官','父'],bad:['鬼','兄'],door:{開門:1,休門:1},doorX:{驚門:-1.5,傷門:-1},
+      kw:['소송','재판','다툼','분쟁','고소','합의','법','변호사','싸움'],
+      why:'다툼과 소송은 판단하는 쪽인 <b>관(官)</b>과 서류·증거인 <b>부(父)</b>가 내 편인지, 나를 누르는 <b>귀(鬼)</b>와 경쟁자인 <b>형(兄)</b>이 강한지로 보고, 송사의 문인 <b>경문(驚門)</b>을 조심해서 봐요.',
+      v:['유리한 흐름이에요. 증거와 서류를 잘 갖추면 원하는 결과를 얻기 쉬워요.','해볼 만해요. 다만 감정보다 서류와 사실로 대응하세요.','결과가 반반이에요. 끝까지 가기보다 합의를 함께 생각해 보세요.','불리할 수 있는 흐름이에요. 맞서기보다 합의나 조정으로 피해를 줄이는 게 좋아요.'],
+      tips:['말보다 기록이 힘이에요. 문자, 계약서, 영수증을 모아 두세요.','중요한 판단은 꼭 변호사 같은 전문가와 상의하세요.','감정이 올라올 때는 바로 답하지 말고 하루 뒤에 답하세요.']},
+    biz:{n:'사업·개업',e:'🏪',lq:['財','孫'],bad:['兄','鬼'],door:{生門:1.5,開門:1.5},dir:true,
+      kw:['사업','개업','창업','가게','장사','동업','계약','매장','쇼핑몰','오픈'],
+      why:'사업과 개업은 돈을 뜻하는 <b>재(財)</b>와 상품·아이디어를 뜻하는 <b>손(孫)</b>으로 보고, 재물의 문인 <b>생문</b>과 개업의 문인 <b>개문</b>이 어디 있는지 함께 봐요. 형(兄)과 귀(鬼)가 강하면 경쟁과 손실을 조심해요.',
+      v:['사업운이 아주 좋아요. 시작하거나 넓히기에 좋은 때예요.','해볼 만한 때예요. 작게 시작해서 반응을 보며 키우세요.','준비가 더 필요해요. 시장 조사와 자금 계획을 한 번 더 점검하세요.','지금은 크게 벌이기보다 지키는 때예요. 동업과 큰 대출은 특히 조심하세요.'],
+      tips:['동업은 역할과 돈 나누는 방법을 꼭 글로 남기세요.','개업일과 계약일은 위의 <b>좋은 날</b>에서 고르세요.','가게 입구나 사무실 책상은 <b>좋은 방위</b> 쪽으로 두면 좋아요.']},
+    travel:{n:'여행·이동',e:'✈️',lq:['孫','財'],bad:['鬼'],door:{開門:1,休門:1,生門:0.6},gua:{遊魂:1},dir:true,
+      kw:['여행','출장','이동','해외','유학','이민','휴가','비행기'],
+      why:'여행과 이동은 즐거움과 바깥 활동을 뜻하는 <b>손(孫)</b>으로 보고, 움직임의 자리인 <b>유혼</b>과 길이 열리는 <b>개문</b>이 있는 방향을 좋은 방위로 봐요.',
+      v:['떠나기 아주 좋은 때예요. 여행이나 출장에서 좋은 인연과 기회를 만나요.','즐겁게 다녀올 수 있어요. 아래 좋은 방위로 가면 더 좋아요.','무난해요. 일정은 넉넉하게 잡으세요.','이동 중 변수가 생기기 쉬워요. 일정과 서류, 보험을 꼼꼼히 챙기세요.'],
+      tips:['여권, 예약, 보험은 출발 전에 두 번 확인하세요.','위의 <b>좋은 방위</b> 쪽 여행지를 고르면 더 즐거워요.','출발은 <b>좋은 날</b>로 잡아 보세요.']}
+  };
+  const jo=(w,a,c)=>{const ch=String(w).replace(/[^가-힣]/g,'').slice(-1);if(!ch)return c;return ((ch.charCodeAt(0)-0xAC00)%28)?a:c;};
+  const ORDER=['exam','promo','job','move','money','love','health','law','biz','travel'];
+  const dirOf=p=>{const m=/\((.+)\)/.exec(PK[p]);return m?m[1]+'쪽':'가운데';};
+  const P2=v=>String(v).padStart(2,'0');
+  function topicLq(t){if(t!=='love')return [T[t].lq,T[t].bad];return base.input.sex==='M'?[['財','孫'],['兄']]:[['官','孫'],['孫']];}
+  function pScore(r,p,t){
+    if(p===5)return 0;const D=T[t];let s=0;const d=r.door[p],g=r.gua[p];
+    s+=(D.door&&D.door[d]!=null)?D.door[d]:(D.doorX&&D.doorX[d]!=null?D.doorX[d]:(DOOR0[d]||0));
+    s+=(D.gua&&D.gua[g]!=null)?D.gua[g]+(GUA0[g]||0)*0.5:(GUA0[g]||0);
+    if(r.kong.has(p))s-=1.2;
+    return s;
+  }
+  function chartScore(r,t){
+    const [lq,bad]=topicLq(t);let S=0,W=0;const hits=[];
+    for(let p=1;p<=9;p++){
+      lq.forEach((q,i)=>{const w=i===0?1:0.7;
+        if(r.lqH[p]===q){S+=w*(1+pScore(r,p,t));W+=w;hits.push({p,q,layer:'겉',w,ps:pScore(r,p,t)});}
+        if(r.lqE[p]===q){S+=0.6*w*(1+pScore(r,p,t));W+=0.6*w;hits.push({p,q,layer:'속',w:0.6*w,ps:pScore(r,p,t)});}
+      });
+      if(bad.includes(r.lqH[p])){const ps=pScore(r,p,t);if(ps>0)S-=0.35*ps;}
+    }
+    const se=[r.sePal,r.seHeavPal];hits.forEach(h=>{if(se.includes(h.p))S+=0.3;});
+    return {s:W?S/W:0,hits:hits.sort((a,b)=>(b.w*(1+b.ps))-(a.w*(1+a.ps)))};
+  }
+  const grade=s=>s>=1.9?0:s>=1.1?1:s>=0.35?2:3;
+  const GR=[['아주 좋아요','g3'],['좋아요','g2'],['보통이에요','g1'],['조심할 때예요','g0']];
+  function palaceLine(r,h,t){
+    const p=h.p,d=r.door[p],g=r.gua[p];
+    let s='<b>'+LQK[h.q]+'</b>의 기운이 <b>'+dirOf(p)+' 칸</b>에 '+(h.layer==='겉'?'겉으로 드러나':'바탕에 깔려')+' 있어요.';
+    if(p!==5){s+=' 이 칸의 문은 <b>'+DK[d]+'</b>('+DM[d].replace(/\.$/,'')+'), 자리는 <b>'+GK[g]+'</b>('+GU[g].replace(/\.$/,'')+')'+jo(GK[g],'이에요','예요')+'.';}
+    if(r.kong.has(p))s+=' 다만 공망이라 힘이 덜 실려요. 기대를 조금 낮추고 차근차근 가세요.';
+    return s;
+  }
+  let curT=null,yrOff=0,lastQ='';
+  function render(){
+    const out=$('askOut');if(!curT||!base){out.innerHTML='';return;}
+    const t=curT,D=T[t],r=base;const Y=new Date().getFullYear()+yrOff;
+    const rs=sinsu(yearGZ(Y));const yi=Haeseok.yearly(rs,r.input.sex,Y-r.input.y+1);
+    const nat=chartScore(r,t),yr=chartScore(rs,t);
+    const [lq]=topicLq(t);
+    let ys=yr.s;if(yi.out.hangPal&&(lq.includes(rs.lqH[yi.out.hangPal])))ys+=0.6;
+    const total=nat.s*0.35+ys*0.65;const gi=grade(total);
+    const pct=Math.max(8,Math.min(100,Math.round((total+1.5)/4.2*100)));
+    let h=(lastQ?'<p class="askEcho">🙋 "'+lastQ.replace(/[<>]/g,'')+'"</p>':'');
+    h+='<div class="askHead"><span class="em">'+D.e+'</span><div><b>'+Y+'년 '+D.n+' 운</b><span class="ghPill '+GR[gi][1]+'">'+GR[gi][0]+'</span></div></div>';
+    h+='<div class="ghBar"><i style="width:'+pct+'%"></i></div>';
+    h+='<p class="askV">'+D.v[gi]+'</p>';
+    h+='<h4>🔍 이렇게 봤어요</h4><p>'+D.why+'</p>';
+    // 타고난 운
+    h+='<h4>🌱 타고난 '+D.n+' 운</h4>';
+    const nh=nat.hits.slice(0,2);
+    if(!nh.length)h+='<p>원명국에서 이 주제의 기운이 뚜렷하게 드러나지 않아요. 타고난 힘보다 그해의 운과 노력이 더 크게 작용하는 편이에요.</p>';
+    nh.forEach(x=>{h+='<p>'+palaceLine(r,x,t)+'</p>';});
+    if(nh[0]){const p=nh[0].p,[e0,e1]=r.ageE[p],[h0,h1]=r.ageH[p],age=Y-r.input.y+1;
+      const rg=(a,c)=>a===c?a+'세':a+'~'+c+'세';h+='<p>이 칸의 운이 힘을 받는 나이는 <b>'+rg(e0,e1)+'</b>, <b>'+rg(h0,h1)+'</b>예요.'+((age>=e0&&age<=e1)||(age>=h0&&age<=h1)?' <b>바로 지금이 그 시기예요.</b>':'')+'</p>';}
+    // 그해 흐름
+    h+='<h4>📅 '+Y+'년 흐름</h4>';
+    const yh=yr.hits.slice(0,2);
+    if(!yh.length)h+='<p>'+Y+'년 신수에서는 이 주제의 기운이 약하게 들어와요. 큰 변화보다 준비하는 해로 쓰면 좋아요.</p>';
+    yh.forEach(x=>{h+='<p>'+palaceLine(rs,x,t)+'</p>';});
+    if(yi.out.hangPal){const hp=yi.out.hangPal;h+='<p>'+Y+'년의 큰일은 <b>'+dirOf(hp)+' 칸</b>에서 드러나요'+(lq.includes(rs.lqH[hp])?'. 바로 <b>'+D.n+'</b>'+jo(D.n,'과','와')+' 관련된 자리라, 올해 이 일이 한 해의 중심이 돼요.':'. '+D.n+jo(D.n,'은','는')+' 한 해의 중심 사건보다는 곁가지로 흘러가요.')+'</p>';}
+    // 좋은 달
+    const ms=[];for(let m=1;m<=12;m++){const p=MPAL[m];let v=(lq.includes(rs.lqH[p])?1.2:lq.includes(rs.lqE[p])?0.6:0)+pScore(rs,p,t)*0.6;if(topicLq(t)[1].includes(rs.lqH[p]))v-=0.8;ms.push([m,v]);}
+    const good=ms.filter(x=>x[1]>=0.8).sort((a,b)=>b[1]-a[1]).slice(0,3).map(x=>x[0]).sort((a,b)=>a-b);
+    const badm=ms.filter(x=>x[1]<=-0.4).sort((a,b)=>a[1]-b[1]).slice(0,2).map(x=>x[0]).sort((a,b)=>a-b);
+    h+='<h4>🗓️ 좋은 달 · 조심할 달 (음력)</h4><p>'+(good.length?'<b>좋은 달: 음력 '+good.join('·')+'월</b>. 중요한 일을 이때 시작하거나 결정하세요.':'특별히 강한 달은 없어요. 아래 좋은 날을 활용하세요.')+(badm.length?' 조심할 달: 음력 '+badm.join('·')+'월. 이때는 큰 결정을 미루는 게 좋아요.':'')+'</p>';
+    // 좋은 날 (올해일 때만, 앞으로 60일)
+    if(yrOff===0){
+      const now=new Date();const cache={};const days=[];
+      for(let i=1;i<=60;i++){const dt=new Date(now.getFullYear(),now.getMonth(),now.getDate()+i);
+        try{const x=dayInfo(dt.getFullYear(),dt.getMonth()+1,dt.getDate(),cache);const dp=x.d.p;let v=x.d.g+(lq.includes(x.rs.lqH[dp])?1:0)+pScore(x.rs,dp,t)*0.3;days.push([dt,v,x.d.gz]);}catch(e){}}
+      const top=days.sort((a,b)=>b[1]-a[1]).slice(0,5).sort((a,b)=>a[0]-b[0]);
+      h+='<h4>✨ 앞으로 60일 중 좋은 날</h4><p>'+top.map(([dt,v,gz])=>'<b>'+(dt.getMonth()+1)+'월 '+dt.getDate()+'일('+'일월화수목금토'[dt.getDay()]+')</b>').join(', ')+'</p><p class="note">일진과 그날 운이 드러나는 칸에 '+D.n+' 기운이 있는지를 함께 따져 고른 날이에요.</p>';
+    }
+    // 방위
+    if(D.dir||t==='move'){
+      const ps=[1,2,3,4,6,7,8,9].map(p=>[p,pScore(rs,p,t)+(lq.includes(rs.lqH[p])?0.5:0)]).sort((a,b)=>b[1]-a[1]);
+      const gd=ps.filter(x=>x[1]>0.5).slice(0,2),bd=ps.slice().reverse().filter(x=>x[1]<0).slice(0,2);
+      h+='<h4>🧭 '+Y+'년 좋은 방위</h4>';
+      h+=gd.length?gd.map(([p])=>'<p><b>'+dirOf(p)+'</b> · '+DK[rs.door[p]]+'('+DM[rs.door[p]].replace(/\.$/,'')+')과 '+GK[rs.gua[p]]+'('+GU[rs.gua[p]].replace(/\.$/,'')+')'+jo(GK[rs.gua[p]],'이','가')+' 함께 있는 방향이에요.</p>').join(''):'<p>올해는 특별히 좋은 방향이 두드러지지 않아요. 피할 방위만 조심하세요.</p>';
+      if(bd.length)h+='<p>피할 방위: '+bd.map(([p])=>'<b>'+dirOf(p)+'</b>('+DK[rs.door[p]]+'·'+GK[rs.gua[p]]+(rs.kong.has(p)?'·공망':'')+')').join(', ')+'</p>';
+      h+='<p class="note">방위는 지금 사는 곳(또는 집·회사)을 가운데로 놓고 본 방향이에요.</p>';
+    }
+    h+='<h4>💡 이렇게 해 보세요</h4>'+D.tips.map(x=>'<p>· '+x+'</p>').join('');
+    h+='<p class="note">기문둔갑 원명국과 '+Y+'년 신수국을 바탕으로 한 참고용 풀이예요. 중요한 결정은 상황을 함께 살펴서 하세요.</p>';
+    out.innerHTML=h;if(window.__hangulize)window.__hangulize(out);
+  }
+  // 화면
+  const chips=$('askChips');chips.innerHTML=ORDER.map(k=>'<button type="button" data-t="'+k+'">'+T[k].e+' '+T[k].n+'</button>').join('');
+  function pick(t,q){curT=t;lastQ=q||'';[...chips.children].forEach(b=>b.classList.toggle('on',b.dataset.t===t));render();setTimeout(()=>$('askOut').scrollIntoView({behavior:'smooth',block:'start'}),60);}
+  chips.addEventListener('click',e=>{const b=e.target.closest('button');if(b)pick(b.dataset.t,'');});
+  function ask(){const q=$('askQ').value.trim();if(!q)return;const hit=ORDER.find(k=>T[k].kw.some(w=>q.includes(w)));
+    if(hit){if(/내년|다음 ?해/.test(q)){yrOff=1;}else if(/올해|이번/.test(q)){yrOff=0;}[...$('askYr').children].forEach(b=>b.classList.toggle('on',+b.dataset.v===yrOff));pick(hit,q);}
+    else{curT=null;[...chips.children].forEach(b=>b.classList.remove('on'));$('askOut').innerHTML='<p class="askEcho">🙋 "'+q.replace(/[<>]/g,'')+'"</p><p>아직 이 질문은 정확히 답하기 어려워요. 위의 주제 중에서 가장 가까운 것을 눌러 주세요. 예: 시험, 승진, 이직, 이사, 돈, 연애, 건강, 소송, 개업, 여행</p>';}}
+  $('askGo').addEventListener('click',ask);$('askQ').addEventListener('keydown',e=>{if(e.key==='Enter')ask();});
+  $('askYr').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;yrOff=+b.dataset.v;[...$('askYr').children].forEach(x=>x.classList.toggle('on',x===b));render();});
+  const yb=$('askYr').children;yb[0].textContent='올해 ('+new Date().getFullYear()+')';yb[1].textContent='내년 ('+(new Date().getFullYear()+1)+')';
+  const _show4=show;show=function(){const res=_show4.apply(this,arguments);$('askCard').style.display=mode==='gh'?'none':'';try{render();}catch(e){console.error(e);}return res;};
 })();
 drawSaved();
 LEG0=$('legend').textContent;
