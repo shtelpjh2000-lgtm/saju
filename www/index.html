@@ -42,6 +42,8 @@ button.sec{background:var(--lav2);color:var(--ink);box-shadow:none}
 .tline button{padding:6px 12px;font-size:13px;border-radius:999px;background:var(--lav2);color:var(--ink);box-shadow:none}
 #tx{margin-top:8px}
 .thint{font-size:12px;color:var(--mute);margin:6px 4px 0}
+#mode button{line-height:1.25}#mode button small{display:block;white-space:nowrap;font-size:11px;font-weight:400;opacity:.85;margin-top:1px}
+.modeExp{display:flex;gap:8px;align-items:flex-start;margin:2px 0 12px;padding:10px 12px;border-radius:14px;background:var(--yel2);font-size:13.5px;line-height:1.55}.modeExp b{color:var(--pink)}
 .chk{display:flex;gap:8px;align-items:center;font-size:13px;color:var(--mute);margin-left:4px}.chk input{width:18px;height:18px;accent-color:var(--pink)}
 .err{color:var(--red);font-size:14px;margin-top:8px;display:none;background:var(--pink2);padding:8px 12px;border-radius:12px}
 .head{font-family:"Jua",sans-serif;font-size:16px;font-weight:400;padding:9px 14px;margin-bottom:10px;background:linear-gradient(135deg,var(--pink2),var(--lav2));border-radius:16px}
@@ -149,9 +151,10 @@ button.sec{background:var(--lav2);color:var(--ink);box-shadow:none}
 
 <div id="out" style="display:none">
   <div class="card">
-    <div class="row" style="align-items:flex-end"><div style="flex:2"><div class="seg" id="mode"><button data-v="won" class="on">🔮 명국</button><button data-v="sin">🎊 신수</button><button data-v="il">☀️ 일진</button></div></div>
+    <div class="row" style="align-items:flex-end"><div style="flex:2"><div class="seg" id="mode"><button data-v="won" class="on">🔮 명국<small>내 운명</small></button><button data-v="sin">🎊 신수<small>1년 운세</small></button><button data-v="il">☀️ 일진<small>하루 운세</small></button></div></div>
     <div id="ilWrap" style="display:none"><label for="ild">📅 날짜</label><input id="ild" type="date"></div>
     <div id="yrWrap" style="display:none"><label for="yr">🎊 연도</label><input id="yr" type="number" min="1900" max="2100"></div></div>
+    <p class="modeExp" id="modeExp"></p>
     <div class="head" id="head"></div>
     <div class="saju" id="saju"></div>
     <p class="meta" id="meta"></p>
@@ -9628,6 +9631,18 @@ alDraw();
   $('adj').addEventListener('change',refresh);
   $('cal').addEventListener('click',()=>setTimeout(()=>{fillDays();refresh();},0));
   refresh();
+})();
+// ── 명국·신수·일진 쉬운 설명 ──
+(function(){
+  const EXP={
+    won:'🔮 <span><b>명국</b>은 태어난 날과 시로 그린 <b>나만의 운명 지도</b>예요. 타고난 성격, 잘 맞는 일, 평생의 큰 흐름을 보여 줘요. 9칸 중 한 칸을 누르면 그 칸의 뜻이 나와요.</span>',
+    sin:'🎊 <span><b>신수</b>는 고른 해 <b>1년 동안의 운세</b>예요. 그해에 잘 풀리는 일, 조심할 일, 좋은 기회를 알려 줘요. 위 연도 칸에서 다른 해도 볼 수 있어요.</span>',
+    il:'☀️ <span><b>일진</b>은 고른 날 <b>하루의 운세</b>예요. 그날 기분, 일, 사람 관계, 돈 흐름이 어떨지 가볍게 볼 수 있어요. 위 날짜 칸에서 다른 날도 볼 수 있어요.</span>'
+  };
+  const upd=()=>{const e=$('modeExp');if(e)e.innerHTML=EXP[mode]||'';};
+  const _show=show;show=function(){const r=_show.apply(this,arguments);upd();return r;};
+  $('mode').addEventListener('click',()=>setTimeout(upd,0));
+  upd();
 })();
 drawSaved();
 LEG0=$('legend').textContent;
