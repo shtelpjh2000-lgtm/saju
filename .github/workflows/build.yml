@@ -1,10 +1,12 @@
-
 name: 앱 만들기 (APK)
 
 on:
   push:
     branches: [main]
   workflow_dispatch:
+
+permissions:
+  contents: write
 
 jobs:
   build:
@@ -24,7 +26,6 @@ jobs:
           distribution: temurin
           java-version: 21
 
-     
       - name: 앱 재료 설치
         run: npm install --no-audit --no-fund
 
@@ -38,9 +39,18 @@ jobs:
         run: |
           chmod +x gradlew
           ./gradlew assembleDebug --no-daemon
+          cp app/build/outputs/apk/debug/app-debug.apk ../hongmyeongguk.apk
 
       - name: APK 내려받기 준비
         uses: actions/upload-artifact@v4
         with:
           name: hongmyeongguk-apk
-          path: android/app/build/outputs/apk/debug/app-debug.apk
+          path: hongmyeongguk.apk
+
+      - name: 휴대폰 다운로드 링크에 올리기
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ github.run_number }}
+          name: 귀문 명국 ${{ github.run_number }}번째 버전
+          files: hongmyeongguk.apk
+          make_latest: true
