@@ -105,6 +105,8 @@ button.sec{background:var(--lav2);color:var(--ink);box-shadow:none}
 .bnav button.on{background:linear-gradient(135deg,var(--pink),var(--lav));color:#fff}
 body.hasnav main{padding-bottom:86px}
 .hero .logo{flex:0 0 auto;border-radius:22px;box-shadow:0 6px 16px rgba(59,20,80,.35)}
+.tp2{display:flex;align-items:center;gap:14px;padding:14px 16px}.tp2 .tyEm{font-size:46px;line-height:1}
+.tp2 .tyName{font-family:"Jua",sans-serif;font-size:26px;line-height:1.2;color:var(--pink)}.tp2 .tyName small{display:block;font-size:16px;color:var(--ink)}
 .chk{display:flex;gap:8px;align-items:center;font-size:13px;color:var(--mute);margin-left:4px}.chk input{width:18px;height:18px;accent-color:var(--pink)}
 .err{color:var(--red);font-size:14px;margin-top:8px;display:none;background:var(--pink2);padding:8px 12px;border-radius:12px}
 .head{font-family:"Jua",sans-serif;font-size:16px;font-weight:400;padding:9px 14px;margin-bottom:10px;background:linear-gradient(135deg,var(--pink2),var(--lav2));border-radius:16px}
@@ -9418,8 +9420,8 @@ body.hasnav main{padding-bottom:86px}
 
 </script>
 <script>
-/* 사주 4주 풀이 + 사주로 보는 성격 유형(MBTI 스타일)
- * 실제 MBTI 검사가 아니라, 사주 여덟 글자의 오행·십신 분포를 네 가지 축으로 바꿔 쉽게 설명하는 방식이에요.
+/* 사주 4주 풀이 + 사주로 보는 기질 유형
+ * 심리 검사가 아니라, 사주 여덟 글자의 오행·십신 분포를 네 가지 축으로 바꿔 쉽게 설명하는 방식이에요.
  * 문장은 모두 자체 작성.
  */
 (function (root) {
@@ -9729,19 +9731,25 @@ function renderDay(){
   $('reading').querySelectorAll('.cal button').forEach(b=>b.addEventListener('click',()=>{const p=v=>String(v).padStart(2,'0');$('ild').value=y+'-'+p(m)+'-'+p(+b.dataset.d);show();}));
 }
 
+const GM_TYPES={
+  ESTJ:['⛰️','큰 산 같은','지휘관형'],ESTP:['⚡','번개 같은','도전가형'],ESFJ:['🌞','햇살 같은','살림꾼형'],ESFP:['🎆','불꽃놀이 같은','분위기 메이커형'],
+  ENTJ:['🔥','횃불 같은','리더형'],ENTP:['🌪️','회오리 같은','아이디어형'],ENFJ:['🌈','무지개 같은','이끄미형'],ENFP:['🌸','봄꽃 같은','자유영혼형'],
+  ISTJ:['🪨','바위 같은','원칙주의형'],ISTP:['⚔️','칼날 같은','해결사형'],ISFJ:['🌾','논밭 같은','수호자형'],ISFP:['🍃','잎새 같은','예술가형'],
+  INTJ:['🌙','달빛 같은','전략가형'],INTP:['💧','깊은 물 같은','탐구자형'],INFJ:['⭐','별빛 같은','선견자형'],INFP:['🫧','맑은 샘물 같은','이상가형']};
 function renderType(r){
   if(yInfo||dInfo){$('typecard').style.display='none';$('fourcard').style.display='none';return;}
   $('typecard').style.display='';$('fourcard').style.display='';
   const t=Saju4.personality(r.pillars,r);
-  let h='<h2>💖 사주로 본 성격 유형</h2><span class="badge">MBTI 스타일 · 사주 여덟 글자로 판단</span>';
-  h+='<div class="tp"><span class="code">'+t.code+'</span><span class="nick">'+t.nick+'</span></div>';
-  h+=t.axes.map(a=>{const l=a.side==='a';const w=a.pct;return '<div class="ax"><span class="'+(l?'on':'')+'">'+a.a+'</span><span class="bar"><i style="'+(l?'left:0;width:'+w+'%':'right:0;width:'+w+'%')+'"></i></span><span class="'+(!l?'on':'')+'">'+a.b+'</span></div>';}).join('');
+  const TY=GM_TYPES[t.code]||['🔮','나만의','유형'];
+  let h='<h2>💖 사주로 본 나의 기질</h2><span class="badge">사주 여덟 글자로 본 타고난 기질</span>';
+  h+='<div class="tp tp2"><span class="tyEm">'+TY[0]+'</span><span class="tyName"><small>'+TY[1]+'</small>'+TY[2]+'</span></div>';
+  h+=t.axes.map(a=>{const l=a.side==='a';const w=a.pct;const A=a.a.replace(/^[A-Z] /,''),B=a.b.replace(/^[A-Z] /,'');return '<div class="ax"><span class="'+(l?'on':'')+'">'+A+'</span><span class="bar"><i style="'+(l?'left:0;width:'+w+'%':'right:0;width:'+w+'%')+'"></i></span><span class="'+(!l?'on':'')+'">'+B+'</span></div>';}).join('');
   h+='<h4>성격</h4><p>'+t.core+'</p>';
   h+='<h4>연애 스타일</h4><p>'+t.love+'</p>';
   h+='<h4>일하는 스타일</h4><p>'+t.work+'</p>';
-  h+='<h4>잘 맞는 사람</h4><p>유형으로는 '+t.match.join(', ')+'와 서로 부족한 점을 채워 줘요. '+t.matchEl+'</p>';
+  h+='<h4>잘 맞는 사람</h4><p>'+t.match.map(c=>GM_TYPES[c]?GM_TYPES[c][0]+' '+GM_TYPES[c][1]+' '+GM_TYPES[c][2]:c).join(', ')+'과 서로 부족한 점을 채워 줘요. '+t.matchEl+'</p>';
   h+='<h4>한마디 조언</h4><p>'+t.advice+'</p>';
-  h+='<p class="note">실제 MBTI 검사 결과가 아니라, '+t.whyEl+'의 분포와 십신(비겁·식상·재성·관성·인성)을 네 가지 축으로 바꿔 재미있게 풀어 본 유형이에요.</p>';
+  h+='<p class="note">심리 검사 결과가 아니라, '+t.whyEl+'의 분포와 십신(비겁·식상·재성·관성·인성)을 네 가지 성향으로 바꿔 풀어 본 귀문 명국만의 기질 유형이에요. 참고로 비슷한 성격 유형 코드는 '+t.code+'예요.</p>';
   $('typecard').innerHTML=h;
   const F=Saju4.fourPillars(r.pillars);
   let f='<h2>🏛️ 4주 풀이</h2><span class="badge">년주 · 월주 · 일주 · 시주</span>';
