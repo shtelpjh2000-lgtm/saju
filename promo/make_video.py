@@ -295,8 +295,14 @@ class Video:
         self.data = data
         self.bg = gradient_bg().convert("RGBA")
         self.cards = [make_card(it) for it in data["items"]]
-        self.mascot = mascot(300)
-        self.mascot_s = mascot(150)
+        badge = os.path.join(HERE, "dragon_badge.png")
+        if os.path.exists(badge):
+            bimg = Image.open(badge).convert("RGBA")
+            self.mascot = bimg.resize((300, 300), Image.LANCZOS)
+            self.mascot_s = bimg.resize((150, 150), Image.LANCZOS)
+        else:
+            self.mascot = mascot(300)
+            self.mascot_s = mascot(150)
         best = data["best"]
         self.best_emoji = emoji_img(best["emoji"], 300)
         self.trophy = emoji_img("🏆", 90)
