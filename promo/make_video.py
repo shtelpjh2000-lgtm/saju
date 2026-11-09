@@ -34,7 +34,7 @@ cfg_path = os.path.join(HERE, "config.json")
 if os.path.exists(cfg_path):
     with open(cfg_path, encoding="utf-8") as f:
         CFG = json.load(f)
-APP_NAME = CFG.get("app_name", "귀문 명국")
+APP_NAME = CFG.get("app_name", "천기")
 
 
 # ── 글꼴 ──
@@ -402,7 +402,7 @@ class Video:
             paste(im, self.mascot_s, 110, yy + 30, a2)
             d.text((300, yy + 70), "내 생일로 보는 진짜 일진은?", font=jua(48), fill=INK, anchor="lm")
             d.text((300, yy + 150), f"{APP_NAME} 앱에서", font=jua(64), fill=PINK, anchor="lm")
-            d.text((300, yy + 222), "명국 · 신수 · 매일 아침 일진 알림", font=gowun(34), fill=MUTE, anchor="lm")
+            d.text((300, yy + 222), "오늘의 천기누설 · 매일 아침 일진 알림", font=gowun(34), fill=MUTE, anchor="lm")
             btn_w = 700
             d.rounded_rectangle([W // 2 - btn_w // 2, yy + 280, W // 2 + btn_w // 2, yy + 365], 42, fill=PINK)
             d.text((W // 2 + 20, yy + 323), "프로필 링크에서 받기", font=jua(48), fill=WHITE, anchor="mm")
@@ -482,7 +482,7 @@ def texts(data):
     else:
         lines.append("👉 프로필 링크에서 받아 보세요")
     lines += ["※ 재미로 보는 운세예요", "",
-              "#오늘의운세 #띠별운세 #운세 #사주 #일진 #" + best["name"] + " #귀문명국 #shorts"]
+              "#오늘의운세 #띠별운세 #운세 #사주 #일진 #" + best["name"] + " #천기 #천기누설 #shorts"]
     return title, "\n".join(lines)
 
 

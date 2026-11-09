@@ -1,6 +1,6 @@
 {
   "appId": "com.hongmyeongguk.app",
-  "appName": "귀문 명국",
+  "appName": "천기",
   "webDir": "www",
   "plugins": {
     "LocalNotifications": {

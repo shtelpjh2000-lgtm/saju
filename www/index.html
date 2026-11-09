@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#ff8fb3">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Jua&family=Gowun+Dodum&family=Noto+Serif+KR:wght@400;700&display=swap" rel="stylesheet">
-<title>귀문 명국</title>
+<title>천기 – 오늘의 천기누설</title>
 <style>
 :root{--bg:#fff7f1;--bg2:#fdeef4;--card:#ffffff;--ink:#3a2e4d;--mute:#9a8fae;--line:#f0e3ee;--pink:#ff8fb3;--pink2:#ffd3e2;--lav:#b9a8ff;--lav2:#ece6ff;--mint:#7fdcc0;--mint2:#dcf7ee;--sky:#8cc8ff;--sky2:#e2f1ff;--yel:#ffd66b;--yel2:#fff3cc;--red:#ff6b9a;--blue:#6a6cf6;--green:#e6f9ef;--greenS:#b7efd2;--yellow:#fff0a8;--purple:#9b7bff;--brown:#e0884f;--shadow:0 6px 18px rgba(186,140,190,.18)}
 @media(prefers-color-scheme:dark){:root{--bg:#1d1726;--bg2:#251d31;--card:#2a2236;--ink:#f3ecff;--mute:#a99cc0;--line:#3b3150;--pink:#ff8fb3;--pink2:#4a2b3c;--lav:#b9a8ff;--lav2:#352c52;--mint:#7fdcc0;--mint2:#1f3b35;--sky:#8cc8ff;--sky2:#1f3049;--yel:#ffd66b;--yel2:#40371c;--red:#ff8fb3;--blue:#a9a6ff;--green:#203a30;--greenS:#2f5c47;--yellow:#5a4d18;--purple:#c4b0ff;--brown:#f0a571;--shadow:0 6px 18px rgba(0,0,0,.35)}}
@@ -424,7 +424,7 @@ body.hasnav main{padding-bottom:86px}
 <path d="M20,4 q10,-8 20,0 M34,14 q10,-8 20,0 M48,2 q10,-8 20,0" fill="none" stroke="#8f4a00" stroke-width="3" opacity=".7"/>
 </g>
 </g>
-</svg><div><h1>귀문 <b>명국</b></h1><p class="sub">생일만 넣으면 내 운명 지도가 짠! ✨</p></div></div>
+</svg><div><h1>천<b>기</b></h1><p class="sub">생일만 넣으면 오늘의 천기누설 🐉</p></div></div>
 
 <div class="card today" id="todayTop" style="display:none"></div>
 
@@ -9145,7 +9145,7 @@ body.hasnav main{padding-bottom:86px}
 
 </script>
 <script>
-/* 귀문 명국 종합 풀이 (규칙 기반, 문장은 자체 작성)
+/* 천기 종합 풀이 (규칙 기반, 문장은 자체 작성)
  * 입력: engine.calc() 결과 r, sex('M'|'F'), age(세는나이)
  * 홍국수는 지지로 읽어요: 1子 2巳 3寅 4酉 5辰戌 6亥 7午 8卯 9申 10丑未
  */
@@ -9789,7 +9789,7 @@ function renderType(r){
   h+='<h4>일하는 스타일</h4><p>'+t.work+'</p>';
   h+='<h4>잘 맞는 사람</h4><p>'+t.match.map(c=>GM_TYPES[c]?GM_TYPES[c][0]+' '+GM_TYPES[c][1]+' '+GM_TYPES[c][2]:c).join(', ')+'과 서로 부족한 점을 채워 줘요. '+t.matchEl+'</p>';
   h+='<h4>한마디 조언</h4><p>'+t.advice+'</p>';
-  h+='<p class="note">심리 검사 결과가 아니라, '+t.whyEl+'의 분포와 십신(비겁·식상·재성·관성·인성)을 네 가지 성향으로 바꿔 풀어 본 귀문 명국만의 기질 유형이에요. 참고로 비슷한 성격 유형 코드는 '+t.code+'예요.</p>';
+  h+='<p class="note">심리 검사 결과가 아니라, '+t.whyEl+'의 분포와 십신(비겁·식상·재성·관성·인성)을 네 가지 성향으로 바꿔 풀어 본 천기만의 기질 유형이에요. 참고로 비슷한 성격 유형 코드는 '+t.code+'예요.</p>';
   $('typecard').innerHTML=h;
   const F=Saju4.fourPillars(r.pillars);
   let f='<h2>🏛️ 4주 풀이</h2><span class="badge">년주 · 월주 · 일주 · 시주</span>';
@@ -9875,7 +9875,7 @@ function buildNotifications(al,days){
 async function alSchedule(al){
   if(!LN){return '휴대폰에 앱으로 설치하면 이 설정대로 매일 알림이 와요. (지금 화면은 웹 미리보기라 알림이 오지 않아요.)';}
   let perm=await LN.checkPermissions();if(perm.display!=='granted')perm=await LN.requestPermissions();
-  if(perm.display!=='granted')return '알림 권한이 꺼져 있어요. 휴대폰 설정 → 앱 → 귀문 명국 → 알림을 켜 주세요.';
+  if(perm.display!=='granted')return '알림 권한이 꺼져 있어요. 휴대폰 설정 → 앱 → 천기 → 알림을 켜 주세요.';
   const pend=await LN.getPending();if(pend.notifications&&pend.notifications.length)await LN.cancel({notifications:pend.notifications.map(n=>({id:n.id}))});
   if(!al||!al.on)return '알림을 껐어요.';
   const list=buildNotifications(al,60);await LN.schedule({notifications:list});
