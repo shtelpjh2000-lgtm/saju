@@ -59,6 +59,8 @@ jobs:
         working-directory: android
         run: |
           chmod +x gradlew
+          # 빌드 도구 내려받기가 끊기면 최대 3번 다시 시도해요
+          for i in 1 2 3; do ./gradlew --version --no-daemon && break; echo "다시 시도 $i"; sleep 20; done
           # 고정 서명 키로 직접 서명해요 (업데이트할 때 앱을 지우지 않아도 되게)
           ./gradlew assembleDebug --no-daemon \
             -Pandroid.injected.signing.store.file="$GITHUB_WORKSPACE/signing/debug.keystore" \
