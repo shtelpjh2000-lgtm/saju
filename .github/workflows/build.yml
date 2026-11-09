@@ -59,7 +59,16 @@ jobs:
         working-directory: android
         run: |
           chmod +x gradlew
-          ./gradlew assembleDebug --no-daemon
+          # 고정 서명 키로 직접 서명해요 (업데이트할 때 앱을 지우지 않아도 되게)
+          ./gradlew assembleDebug --no-daemon \
+            -Pandroid.injected.signing.store.file="$GITHUB_WORKSPACE/signing/debug.keystore" \
+            -Pandroid.injected.signing.store.password=android \
+            -Pandroid.injected.signing.key.alias=androiddebugkey \
+            -Pandroid.injected.signing.key.password=android
+          # 서명이 고정 키와 같은지 확인하고, 다르면 빌드를 멈춰요
+          APKSIGNER=$(ls -d "$ANDROID_HOME"/build-tools/*/ | sort -V | tail -1)apksigner
+          "$APKSIGNER" verify --print-certs app/build/outputs/apk/debug/app-debug.apk | tee /tmp/certs.txt
+          grep -qi "SHA-256 digest: f93ac10d554c1310" /tmp/certs.txt || { echo "서명이 고정 키와 달라요"; exit 1; }
           cp app/build/outputs/apk/debug/app-debug.apk ../hongmyeongguk.apk
 
       - name: APK 내려받기 준비
