@@ -92,7 +92,7 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           tag_name: v${{ github.run_number }}
-          name: 천기 ${{ github.run_number }}번째 버전
+          name: 도깨비 사주 ${{ github.run_number }}번째 버전
           files: hongmyeongguk.apk
           make_latest: true
 

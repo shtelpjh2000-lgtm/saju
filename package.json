@@ -2,7 +2,7 @@
   "name": "hongmyeongguk",
   "version": "1.0.0",
   "private": true,
-  "description": "천기 – 기문둔갑 운세 안드로이드 앱",
+  "description": "도깨비 사주 – 기문둔갑 운세 안드로이드 앱",
   "dependencies": {
     "@capacitor/android": "^8.0.0",
     "@capacitor/core": "^8.0.0",

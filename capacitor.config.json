@@ -1,6 +1,6 @@
 {
   "appId": "com.hongmyeongguk.app",
-  "appName": "천기",
+  "appName": "도깨비 사주",
   "webDir": "www",
   "plugins": {
     "LocalNotifications": {

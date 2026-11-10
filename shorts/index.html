@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="robots" content="noindex">
-<title>천기 · 오늘의 쇼츠</title>
+<title>도깨비 사주 · 오늘의 쇼츠</title>
 <link rel="icon" href="../store/icon_512.png">
 <style>
   @font-face { font-family: Jua; src: url("../promo/fonts/Jua-Regular.ttf"); font-display: swap; }
@@ -111,7 +111,7 @@ function show(it, isToday) {
     <div class="date">${esc(it.date)} 영상 <span class="badge">${isToday ? "오늘" : "지난 영상"}</span></div>
     <video src="${it.video}" poster="${it.thumb || ""}" controls playsinline preload="metadata"></video>
     <div class="btns">
-      <a class="btn primary" href="${it.video}" download="천기-쇼츠-${it.key}.mp4">⬇️ 영상 저장</a>
+      <a class="btn primary" href="${it.video}" download="도깨비사주-쇼츠-${it.key}.mp4">⬇️ 영상 저장</a>
       <button class="btn soft" id="cpT">📋 제목 복사 (유튜브)</button>
       <button class="btn soft" id="cpB">📋 설명 복사 (유튜브 설명 · 인스타 캡션)</button>
     </div>

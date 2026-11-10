@@ -34,7 +34,7 @@ cfg_path = os.path.join(HERE, "config.json")
 if os.path.exists(cfg_path):
     with open(cfg_path, encoding="utf-8") as f:
         CFG = json.load(f)
-APP_NAME = CFG.get("app_name", "천기")
+APP_NAME = CFG.get("app_name", "도깨비 사주")
 
 
 # ── 글꼴 ──
@@ -295,7 +295,7 @@ class Video:
         self.data = data
         self.bg = gradient_bg().convert("RGBA")
         self.cards = [make_card(it) for it in data["items"]]
-        badge = os.path.join(HERE, "dragon_badge.png")
+        badge = os.path.join(HERE, "dokkaebi_badge.png")
         if os.path.exists(badge):
             bimg = Image.open(badge).convert("RGBA")
             self.mascot = bimg.resize((300, 300), Image.LANCZOS)
@@ -402,7 +402,7 @@ class Video:
             paste(im, self.mascot_s, 110, yy + 30, a2)
             d.text((300, yy + 70), "내 생일로 보는 진짜 일진은?", font=jua(48), fill=INK, anchor="lm")
             d.text((300, yy + 150), f"{APP_NAME} 앱에서", font=jua(64), fill=PINK, anchor="lm")
-            d.text((300, yy + 222), "오늘의 천기누설 · 매일 아침 일진 알림", font=gowun(34), fill=MUTE, anchor="lm")
+            d.text((300, yy + 222), "도깨비가 알려 주는 오늘의 운세 · 매일 아침 일진 알림", font=gowun(34), fill=MUTE, anchor="lm")
             btn_w = 700
             d.rounded_rectangle([W // 2 - btn_w // 2, yy + 280, W // 2 + btn_w // 2, yy + 365], 42, fill=PINK)
             btn = "프로필 링크에서 받기" if CFG.get("app_link") else "곧 출시! 팔로우하고 기다리기"
@@ -483,7 +483,7 @@ def texts(data):
     else:
         lines.append("👉 곧 출시! 팔로우하고 출시 소식 받아 보세요")
     lines += ["※ 재미로 보는 운세예요", "",
-              "#오늘의운세 #띠별운세 #운세 #사주 #일진 #" + best["name"] + " #천기 #천기누설 #shorts"]
+              "#오늘의운세 #띠별운세 #운세 #사주 #일진 #" + best["name"] + " #도깨비사주 #도깨비 #shorts"]
     return title, "\n".join(lines)
 
 
