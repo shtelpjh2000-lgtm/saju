@@ -238,6 +238,11 @@ body.hasnav main{padding-bottom:86px}
 .rdStar{margin-left:8px;color:#ff8fb3;font-size:15px;letter-spacing:1px}.rdStar i{font-style:normal;color:#e6dbe8}
 .rdHL{font-family:"Jua",sans-serif;font-size:18.5px!important;line-height:1.45;margin:4px 0 8px!important;color:#c2185b}
 .rdSec b{color:#7b3fa0}
+.rdSec.lucky{background:linear-gradient(135deg,#f0fff4,#fffbe6);border:0;border-radius:18px;padding:4px 14px 12px;margin:10px 0}
+.lkG{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin:8px 0}
+.lkT{background:#fff;border:2px solid var(--line);border-radius:16px;padding:10px 8px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:2px}
+.lkI{font-size:26px;line-height:1.2}.lkT b{font-size:12.5px;color:var(--mute);font-weight:700}.lkT em{font-style:normal;font-family:"Jua",sans-serif;font-size:17px;color:var(--ink);line-height:1.3}.lkT small{font-size:11.5px;color:var(--mute)}
+.lkSw{display:flex;gap:4px;justify-content:center;padding:4px 0}.lkSw i{width:22px;height:22px;border-radius:50%;border:2px solid #fff;box-shadow:0 0 0 1px #ddd}
 </style>
 </head>
 <body>
@@ -9461,6 +9466,36 @@ body.hasnav main{padding-bottom:86px}
     if (bestNext && bestNext !== curRun) D.push('🌟 앞으로 남은 인생의 황금기: <b>' + ageTxt(bestNext) + '</b> (' + bestNext.theme + ')');
     S.luck = D;
 
+    // ── 행운 처방 (용신 오행 + 용신이 앉은 궁) ──
+    const LK = {
+      木: { c: ['초록', '청록', '연두'], hex: ['#3fae5b', '#1f9e8f', '#9bd36a'], a: ['호랑이', '토끼'], ae: '🐯🐰', n: '3 · 8', it: '초록 화분, 나무 소품, 원목 가구', sea: '봄', d: '동쪽' },
+      火: { c: ['빨강', '분홍', '보라'], hex: ['#e53935', '#ff7fa8', '#9c5fd6'], a: ['말', '뱀'], ae: '🐴🐍', n: '2 · 7', it: '캔들·조명, 빨간 지갑, 햇빛 드는 자리', sea: '여름', d: '남쪽' },
+      土: { c: ['노랑', '베이지', '황토'], hex: ['#f2c14e', '#e8d5b0', '#c58b4c'], a: ['소', '용'], ae: '🐮🐲', n: '5 · 10', it: '도자기, 황토·돌 소품, 네모난 물건', sea: '환절기', d: '가운데(남서·북동)' },
+      金: { c: ['흰색', '금색', '은색'], hex: ['#ffffff', '#d4af37', '#b8c0c8'], a: ['원숭이', '닭'], ae: '🐵🐔', n: '4 · 9', it: '금속 시계, 금·은 액세서리, 동그란 물건', sea: '가을', d: '서쪽' },
+      水: { c: ['검정', '남색', '파랑'], hex: ['#2b2b2b', '#283f8f', '#3b82f6'], a: ['쥐', '돼지'], ae: '🐭🐷', n: '1 · 6', it: '수족관·물병, 유리 소품, 물결무늬 물건', sea: '겨울', d: '북쪽' }
+    };
+    const L0 = LK[yongE];
+    const yPal = (where[yong] || []).find(p => p !== 5) || 0;
+    const pDir = yPal ? /\((.+)\)/.exec(PK[yPal])[1] + '쪽' : L0.d;
+    const badE = KE[KE[KE[KE[seE]]]] === undefined ? null : Object.keys(KE).find(k => KE[k] === seE);
+    const L1 = badE && badE !== yongE ? LK[badE] : null;
+    const tile = (ic, t, v, sub) => '<div class="lkT"><span class="lkI">' + ic + '</span><b>' + t + '</b><em>' + v + '</em>' + (sub ? '<small>' + sub + '</small>' : '') + '</div>';
+    const sw = L0.hex.map(h => '<i style="background:' + h + '"></i>').join('');
+    HL.lucky = '당신을 살리는 기운은 「' + ELKO[yongE] + '(' + yongE + ')」 — 곁에 둘수록 운이 붙어요';
+    SC.lucky = 0;
+    S.lucky = [
+      '<div class="lkG">' +
+        tile('<span class="lkSw">' + sw + '</span>', '행운 색깔', L0.c.join(' · '), '지갑·폰 케이스·옷에') +
+        tile(L0.ae, '귀인 동물', L0.a.join(' · ') + '띠', '이 띠를 가진 사람이 귀인') +
+        tile('🧭', '행운 방위', pDir, '책상·침대 머리·이사 방향') +
+        tile('🔢', '행운 숫자', L0.n, '비밀번호·날짜·번호 고를 때') +
+        tile('🎁', '행운 아이템', L0.it, '') +
+        tile('🗓️', '힘이 나는 계절', L0.sea, '중요한 일은 이때 시작') +
+      '</div>',
+      '🔑 <b>쓰는 법:</b> 중요한 날(면접·계약·고백·시험)에는 <b>' + L0.c[0] + '</b> 계열 옷이나 소품을 하나 걸치고, 자리는 <b>' + pDir + '</b>을 향해 앉으세요. ' + L0.a[0] + '띠·' + L0.a[1] + '띠인 사람이 도움을 주면 그 손을 꼭 잡으세요.',
+      L1 ? '🚫 <b>피해야 할 색:</b> ' + L1.c.slice(0, 2).join('·') + ' — 世(' + ELKO[seE] + ')를 누르는 ' + ELKO[badE] + ' 기운이라, 큰일을 앞두고는 이 색을 몸에 지니지 마세요.' : ''
+    ].filter(Boolean);
+
     return { strong, strongKo, score: Math.round(score * 10) / 10, yong, cnt, where, S, HL, SC, runs, curRun };
   }
 
@@ -9837,14 +9872,15 @@ function render(r){
 
 function renderReading(r){
   const x=Haeseok.interpret(r,r.input.sex,ageNow(r));
-  const T={total:'총평',char:'성격',money:'재물',job:'직업·적성',spouse:'배우자',child:'자녀',health:'건강',luck:'대운 흐름'};
+  const T={total:'총평',char:'성격',money:'재물',job:'직업·적성',spouse:'배우자',child:'자녀',health:'건강',luck:'대운 흐름',lucky:'🍀 행운 처방'};
   const star=n=>n?'<span class="rdStar">'+'★'.repeat(n)+'<i>'+'★'.repeat(5-n)+'</i></span>':'';
   let h='<h2>📜 종합 풀이</h2><span class="badge">'+x.strongKo+' · 용신 '+x.yong+'</span>';
-  for(const k of Object.keys(T)){if(!x.S[k]||!x.S[k].length)continue;h+='<div class="rdSec'+(k==='total'?' top':'')+'"><h4>'+T[k]+'</h4>'+star(x.SC&&x.SC[k])+(x.HL&&x.HL[k]?'<p class="rdHL">'+x.HL[k]+'</p>':'')+x.S[k].map(t=>'<p'+(/^📌/.test(t)?' class="note"':'')+'>'+t+'</p>').join('')+'</div>';}
+  const sec=k=>'<div class="rdSec'+(k==='total'?' top':k==='lucky'?' lucky':'')+'"><h4>'+T[k]+'</h4>'+star(x.SC&&x.SC[k])+(x.HL&&x.HL[k]?'<p class="rdHL">'+x.HL[k]+'</p>':'')+x.S[k].map(t=>'<p'+(/^📌/.test(t)?' class="note"':'')+'>'+t+'</p>').join('')+'</div>';
+  for(const k of Object.keys(T)){if(k==='lucky'||!x.S[k]||!x.S[k].length)continue;h+=sec(k);}
   const gc=g=>g>=2?['g2','좋음']:g>=1?['g1','무난·좋음']:g<=-1?['gm1','주의']:['g0','보통'];
   h+='<h4>대운표</h4><table class="runs"><tr><th>나이</th><th>궁</th><th>수·육친</th><th>중심 주제</th><th>흐름</th></tr>';
   for(const u of x.runs){const c=gc(u.g);h+='<tr'+(u===x.curRun?' class="now"':'')+'><td>'+u.from+(u.to>u.from?'~'+u.to:'')+'</td><td>'+PN[u.p]+(u.lv==='천반'?'(天)':'')+'</td><td>'+NUM[u.n]+' '+u.k+'</td><td>'+u.theme+'</td><td class="'+c[0]+'">'+c[1]+'</td></tr>';}
-  h+='</table><p class="note">이 풀이는 홍국수의 생극·합충과 世의 강약을 규칙으로 판단해 자동으로 만든 참고용이에요. 실제 감정은 삼합·삼형·신살·동처 관계를 함께 봐야 해서 전문가 풀이와 다를 수 있어요.</p>';
+  h+='</table>'+(x.S.lucky&&x.S.lucky.length?sec('lucky'):'')+'<p class="note">이 풀이는 홍국수의 생극·합충과 世의 강약을 규칙으로 판단해 자동으로 만든 참고용이에요. 실제 감정은 삼합·삼형·신살·동처 관계를 함께 봐야 해서 전문가 풀이와 다를 수 있어요.</p>';
   $('reading').innerHTML=h;
 }
 
