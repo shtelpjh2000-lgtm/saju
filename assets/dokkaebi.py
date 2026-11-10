@@ -1,20 +1,35 @@
-"""도깨비 사주 엠블럼 SVG 만들기
+"""도깨비 사주 엠블럼 SVG 만들기 — 귀면와(鬼面瓦) 스타일
 
-금 방망이를 든 귀여운 도깨비. 동그란 얼굴, 금빛 뿔 두 개, 곱슬머리, 큰 눈과 송곳니 미소.
+옛 기와에 새긴 도깨비 얼굴처럼: 연주문(구슬 테두리)을 두른 아치형 기와 판,
+부릅뜬 눈, 불꽃 눈썹, 넓적한 코, 송곳니를 드러낸 입, 소용돌이 갈기와 작은 뿔.
 사용: python dokkaebi.py  → dokkaebi.svg (배경 포함), dokkaebi_fg.svg (배경 없음)
 """
+import math
+
 S = 1024
+
+
+def _curl(cx, cy, r, ang, flip=1):
+    """작은 소용돌이(구름·갈기 무늬) 하나"""
+    pts = []
+    for k in range(0, 46):
+        t = k / 45
+        a = ang + flip * t * math.pi * 2.2
+        rr = r * (1 - t * 0.78)
+        pts.append((cx + rr * math.cos(a), cy + rr * math.sin(a)))
+    return 'M' + ' L'.join(f'{x:.1f},{y:.1f}' for x, y in pts)
 
 
 def build(with_bg=True, scale=1.0, prefix="dk", bg_only=False, size=None):
     W_ = size or S
+    L = '#2b120c'
     o = [f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {S} {S}" width="{W_}" height="{W_}">']
     o.append("""<defs>
 <radialGradient id="bg" cx="50%" cy="46%" r="70%"><stop offset="0" stop-color="#3b1450"/><stop offset=".55" stop-color="#1c0b2e"/><stop offset="1" stop-color="#0b0614"/></radialGradient>
-<radialGradient id="skin" cx="42%" cy="36%" r="70%"><stop offset="0" stop-color="#ffb08a"/><stop offset=".55" stop-color="#ff6f5a"/><stop offset="1" stop-color="#d9364a"/></radialGradient>
+<linearGradient id="tile" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7a3a2a"/><stop offset="1" stop-color="#4a2018"/></linearGradient>
+<radialGradient id="clay" cx="45%" cy="38%" r="70%"><stop offset="0" stop-color="#f3a06e"/><stop offset=".55" stop-color="#d4673f"/><stop offset="1" stop-color="#9c3a22"/></radialGradient>
 <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff1a8"/><stop offset=".4" stop-color="#ffc93c"/><stop offset=".8" stop-color="#e08a00"/><stop offset="1" stop-color="#9a5200"/></linearGradient>
-<linearGradient id="wood" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#b8743a"/><stop offset=".5" stop-color="#e3a660"/><stop offset="1" stop-color="#8a4f22"/></linearGradient>
-<radialGradient id="glow" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#ffd36b" stop-opacity=".75"/><stop offset=".6" stop-color="#ff8fb3" stop-opacity=".18"/><stop offset="1" stop-color="#ff8fb3" stop-opacity="0"/></radialGradient>
+<radialGradient id="eye" cx="40%" cy="35%" r="70%"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#ffe9b8"/></radialGradient>
 </defs>""")
     if with_bg:
         o.append(f'<rect width="{S}" height="{S}" fill="url(#bg)"/>')
@@ -26,68 +41,81 @@ def build(with_bg=True, scale=1.0, prefix="dk", bg_only=False, size=None):
     if bg_only:
         o.append('</svg>')
         return _ids('\n'.join(o), prefix)
-    L = '#2a1020'
     o.append(f'<g transform="translate(512 512) scale({scale}) translate(-512 -512)">')
-    o.append('<circle cx="860" cy="260" r="240" fill="url(#glow)"/>')
-    # 반짝이(금 나와라 뚝딱)
-    for x, y, r in [(870, 140, 34), (640, 120, 22), (920, 330, 20), (130, 260, 18), (170, 720, 14)]:
-        o.append(f'<path d="M{x},{y - r} Q{x + r * .18},{y - r * .18} {x + r},{y} Q{x + r * .18},{y + r * .18} {x},{y + r} Q{x - r * .18},{y + r * .18} {x - r},{y} Q{x - r * .18},{y - r * .18} {x},{y - r}Z" fill="#ffe27a"/>')
-    # 엽전
-    for x, y, r in [(190, 470, 40), (150, 560, 30)]:
-        o.append(f'<circle cx="{x}" cy="{y}" r="{r}" fill="url(#gold)" stroke="{L}" stroke-width="7"/><rect x="{x - r * .3:.0f}" y="{y - r * .3:.0f}" width="{r * .6:.0f}" height="{r * .6:.0f}" fill="#7a3d00" stroke="{L}" stroke-width="4"/>')
-    # 몸통
-    o.append(f'<path d="M300,960 Q300,760 512,740 Q724,760 724,960 Z" fill="#3f7be0" stroke="{L}" stroke-width="10"/>')
-    o.append(f'<path d="M330,820 L694,820 L700,860 L324,860 Z" fill="#ffd36b" stroke="{L}" stroke-width="7"/>')
-    for x in range(352, 690, 56):
-        o.append(f'<path d="M{x},822 l18,0 l-9,36 z" fill="#2a2a2a" opacity=".55"/>')
-    # 뿔 두 개
-    for d in [f'M380,250 Q350,150 395,90 Q425,170 452,232 Z', f'M644,250 Q674,150 629,90 Q599,170 572,232 Z']:
-        o.append(f'<path d="{d}" fill="url(#gold)" stroke="{L}" stroke-width="10" stroke-linejoin="round"/>')
-    o.append(f'<path d="M392,120 Q410,170 430,215" fill="none" stroke="#fff4c2" stroke-width="8" stroke-linecap="round" opacity=".8"/>')
-    # 귀
-    for cx in (262, 762):
-        o.append(f'<ellipse cx="{cx}" cy="490" rx="52" ry="66" fill="url(#skin)" stroke="{L}" stroke-width="10"/>')
-    # 얼굴
-    o.append(f'<ellipse cx="512" cy="500" rx="262" ry="250" fill="url(#skin)" stroke="{L}" stroke-width="11"/>')
-    # 곱슬머리
-    hair = 'M300,380 Q290,250 380,240 Q400,180 470,200 Q512,150 556,200 Q624,180 644,240 Q734,250 724,380 Q690,320 640,330 Q610,290 560,312 Q512,270 464,312 Q414,290 384,330 Q334,320 300,380 Z'
-    o.append(f'<path d="{hair}" fill="#3a1638" stroke="{L}" stroke-width="10" stroke-linejoin="round"/>')
-    for x, y in [(400, 280), (512, 240), (622, 280)]:
-        o.append(f'<path d="M{x - 26},{y + 10} q26,-34 52,0" fill="none" stroke="#7a3b74" stroke-width="9" stroke-linecap="round"/>')
-    # 눈썹
-    o.append(f'<path d="M370,392 Q412,362 456,384" fill="none" stroke="{L}" stroke-width="16" stroke-linecap="round"/>')
-    o.append(f'<path d="M568,384 Q612,362 654,392" fill="none" stroke="{L}" stroke-width="16" stroke-linecap="round"/>')
-    # 눈
-    for cx in (414, 610):
-        o.append(f'<ellipse cx="{cx}" cy="470" rx="54" ry="60" fill="#fff" stroke="{L}" stroke-width="9"/>')
-        o.append(f'<circle cx="{cx + 6}" cy="478" r="32" fill="{L}"/>')
-        o.append(f'<circle cx="{cx + 18}" cy="462" r="12" fill="#fff"/><circle cx="{cx - 4}" cy="494" r="6" fill="#fff"/>')
-    # 볼터치
-    for cx in (350, 674):
-        o.append(f'<ellipse cx="{cx}" cy="566" rx="44" ry="26" fill="#ff3d6e" opacity=".45"/>')
-    # 코
-    o.append(f'<path d="M490,530 Q512,560 534,530" fill="none" stroke="{L}" stroke-width="9" stroke-linecap="round"/>')
-    # 입 (활짝 웃음 + 송곳니)
-    o.append(f'<path d="M398,590 Q512,700 626,590 Q512,640 398,590 Z" fill="#7a1530" stroke="{L}" stroke-width="10" stroke-linejoin="round"/>')
-    o.append('<path d="M450,640 Q512,676 574,640 Q512,660 450,640 Z" fill="#ff7a9a"/>')
-    o.append(f'<path d="M430,606 L452,606 L441,640 Z" fill="#fff" stroke="{L}" stroke-width="5" stroke-linejoin="round"/>')
-    o.append(f'<path d="M572,606 L594,606 L583,640 Z" fill="#fff" stroke="{L}" stroke-width="5" stroke-linejoin="round"/>')
-    # 방망이 (오른손에 쥐고 위로) — 얼굴 앞에 그려요
-    o.append(f'<g transform="rotate(24 760 660)"><rect x="738" y="440" width="44" height="250" rx="20" fill="url(#wood)" stroke="{L}" stroke-width="8"/>'
-             f'<path d="M700,250 Q760,170 820,250 L816,450 Q760,490 704,450 Z" fill="url(#gold)" stroke="{L}" stroke-width="9" stroke-linejoin="round"/>')
-    for x, y in [(730, 300), (790, 300), (760, 352), (730, 404), (790, 404)]:
-        o.append(f'<circle cx="{x}" cy="{y}" r="15" fill="#fff4c2" stroke="{L}" stroke-width="5"/>')
-    o.append('</g>')
-    o.append(f'<path d="M660,800 Q735,760 760,668" fill="none" stroke="{L}" stroke-width="64" stroke-linecap="round"/>')
-    o.append('<path d="M660,800 Q735,760 760,668" fill="none" stroke="#ff7a5f" stroke-width="46" stroke-linecap="round"/>')
-    o.append(f'<circle cx="762" cy="660" r="42" fill="url(#skin)" stroke="{L}" stroke-width="9"/>')
-    o.append(f'<path d="M738,650 q24,-10 48,0 M736,672 q26,-8 52,2" fill="none" stroke="{L}" stroke-width="6" stroke-linecap="round"/>')
+    # ── 기와 판(아치형) + 연주문 ──
+    tile = 'M170,930 L170,420 A342,330 0 0 1 854,420 L854,930 Z'
+    o.append(f'<path d="{tile}" fill="url(#tile)" stroke="{L}" stroke-width="12" stroke-linejoin="round"/>')
+    inner = 'M214,892 L214,428 A298,288 0 0 1 810,428 L810,892 Z'
+    o.append(f'<path d="{inner}" fill="none" stroke="#e8b25a" stroke-width="6" opacity=".9"/>')
+    beads = []
+    for k in range(27):
+        a = math.pi + k * math.pi / 26
+        beads.append((512 + 320 * math.cos(a), 424 + 309 * math.sin(a)))
+    for y in range(470, 900, 46):
+        beads += [(192, y), (832, y)]
+    for x in range(236, 800, 46):
+        beads.append((x, 911))
+    for x, y in beads:
+        o.append(f'<circle cx="{x:.0f}" cy="{y:.0f}" r="10" fill="url(#gold)" stroke="{L}" stroke-width="3"/>')
+    # ── 갈기(불꽃 소용돌이) ──
+    for k in range(16):
+        a = math.pi * (0.92 + k * 1.16 / 15)
+        cx, cy = 512 + 248 * math.cos(a), 560 + 235 * math.sin(a)
+        if cy > 800:
+            continue
+        o.append(f'<circle cx="{cx:.0f}" cy="{cy:.0f}" r="52" fill="#b5492b" stroke="{L}" stroke-width="7"/>')
+        o.append(f'<path d="{_curl(cx, cy, 34, a + 1.2, 1 if math.cos(a) < 0 else -1)}" fill="none" stroke="#f0a060" stroke-width="7" stroke-linecap="round"/>')
+    # ── 작은 뿔 ──
+    for d in ['M420,330 Q388,250 432,196 Q450,258 470,312 Z', 'M604,330 Q636,250 592,196 Q574,258 554,312 Z']:
+        o.append(f'<path d="{d}" fill="url(#gold)" stroke="{L}" stroke-width="9" stroke-linejoin="round"/>')
+    # ── 얼굴 ──
+    o.append(f'<path d="M300,470 Q300,320 512,316 Q724,320 724,470 L724,640 Q712,790 512,800 Q312,790 300,640 Z" fill="url(#clay)" stroke="{L}" stroke-width="11" stroke-linejoin="round"/>')
+    o.append(f'<path d="M420,372 Q512,344 604,372" fill="none" stroke="#8c3420" stroke-width="7" stroke-linecap="round"/>')
+    o.append(f'<circle cx="512" cy="392" r="18" fill="url(#gold)" stroke="{L}" stroke-width="5"/>')
+    # 불꽃 눈썹
+    for sx in (1, -1):
+        bx = 512 - sx * 106
+        d = (f'M{512 - sx * 34},{462} Q{bx},{388} {512 - sx * 196},{430} '
+             f'Q{512 - sx * 232},{396} {512 - sx * 214},{360} Q{512 - sx * 186},{404} {512 - sx * 150},{404} '
+             f'Q{512 - sx * 168},{372} {512 - sx * 140},{350} Q{512 - sx * 128},{392} {512 - sx * 96},{402} '
+             f'Q{bx},{430} {512 - sx * 34},{462} Z')
+        o.append(f'<path d="{d}" fill="#3b1a12" stroke="{L}" stroke-width="6" stroke-linejoin="round"/>')
+    # 부릅뜬 눈
+    for sx in (1, -1):
+        cx = 512 - sx * 110
+        o.append(f'<circle cx="{cx}" cy="500" r="64" fill="#c23a2c" stroke="{L}" stroke-width="9"/>')
+        o.append(f'<circle cx="{cx}" cy="500" r="50" fill="url(#eye)" stroke="{L}" stroke-width="6"/>')
+        o.append(f'<circle cx="{cx - sx * 6}" cy="504" r="27" fill="{L}"/>')
+        o.append(f'<circle cx="{cx - sx * 6 + 9}" cy="494" r="9" fill="#fff"/>')
+    # 볼 소용돌이
+    for sx in (1, -1):
+        cx = 512 - sx * 158
+        o.append(f'<path d="{_curl(cx, 610, 38, 0, sx)}" fill="none" stroke="#8c3420" stroke-width="8" stroke-linecap="round"/>')
+    # 넓적한 코
+    o.append(f'<path d="M470,516 Q512,500 554,516 L566,580 Q596,582 600,612 Q596,640 560,636 Q540,652 512,650 Q484,652 464,636 Q428,640 424,612 Q428,582 458,580 Z" fill="#c4552f" stroke="{L}" stroke-width="9" stroke-linejoin="round"/>')
+    for sx in (1, -1):
+        o.append(f'<ellipse cx="{512 - sx * 34}" cy="620" rx="15" ry="11" fill="{L}"/>')
+    o.append(f'<path d="M490,530 Q512,524 534,530" fill="none" stroke="#f5b07a" stroke-width="6" stroke-linecap="round"/>')
+    # 크게 벌린 입
+    o.append(f'<path d="M372,672 Q512,652 652,672 Q640,770 512,778 Q384,770 372,672 Z" fill="#5a0f14" stroke="{L}" stroke-width="10" stroke-linejoin="round"/>')
+    o.append('<path d="M440,742 Q512,712 584,742 Q560,770 512,772 Q464,770 440,742 Z" fill="#e0505a"/>')
+    for k in range(6):
+        x = 420 + k * 31
+        o.append(f'<rect x="{x}" y="666" width="29" height="24" rx="5" fill="#fff6e0" stroke="{L}" stroke-width="4"/>')
+    for sx in (1, -1):
+        x = 512 - sx * 118
+        o.append(f'<path d="M{x - 15},668 L{x + 15},668 L{x},{724} Z" fill="#fff6e0" stroke="{L}" stroke-width="5" stroke-linejoin="round"/>')
+        x2 = 512 - sx * 78
+        o.append(f'<path d="M{x2 - 13},770 L{x2 + 13},770 L{x2},{730} Z" fill="#fff6e0" stroke="{L}" stroke-width="5" stroke-linejoin="round"/>')
+    # 수염 소용돌이 (턱 아래)
+    for sx, cx in [(1, 400), (1, 470), (-1, 554), (-1, 624)]:
+        o.append(f'<path d="{_curl(cx, 836, 34, -math.pi / 2, sx)}" fill="none" stroke="#e8b25a" stroke-width="9" stroke-linecap="round"/>')
     o.append('</g></svg>')
     return _ids('\n'.join(o), prefix)
 
 
 def _ids(svg, prefix):
-    for name in ["bg", "skin", "gold", "wood", "glow"]:
+    for name in ["bg", "tile", "clay", "gold", "eye"]:
         svg = svg.replace(f'id="{name}"', f'id="{prefix}-{name}"').replace(f'url(#{name})', f'url(#{prefix}-{name})')
     return svg
 
