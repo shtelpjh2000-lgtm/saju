@@ -10422,7 +10422,7 @@ alDraw();
       if(!base)throw new Error('먼저 위에서 생년월일을 넣고 명국을 열어 주세요.');
       const sur=SURS[+sel.value];
       if(jtab==='chk'){const [a,b]=readPick();chkRes=evalName(sur,a,b,weakEls(base));}
-      else{lastList=candidates(sur,jsex,weakEls(base)).slice(0,3);showN=3;picked=lastList.slice();}
+      else{lastList=candidates(sur,jsex,weakEls(base)).slice(0,3);showN=3;picked=[];}
       show();$('reading').scrollIntoView({behavior:'smooth',block:'start'});
     }catch(err){e.textContent=err.message;e.style.display='block';}
   }
@@ -10450,7 +10450,7 @@ alDraw();
   }
   function elLine(){const c=elCount(base);const w=weakEls(base);
     return '<div class="jmEl">'+c.map((v,i)=>'<span class="'+(w.includes(i)?'lo':'')+'">'+ELH[i]+' '+ELN[i]+' <b>'+v+'</b></span>').join('')+'</div><p class="note">사주 여덟 글자의 오행이에요. 부족한 <b>'+w.map(i=>ELN[i]).join('·')+'</b> 기운을 이름 소리(발음오행)로 보하면 <b>🌿 사주 보완</b> 표시가 붙어요.</p>';}
-  function certBar(){return '<div class="jmCert"><button type="button" id="jmMake"'+(picked.length?'':' disabled')+'>📜 작명증서·해석 파일 만들기 (이름 '+picked.length+'개)</button><p class="note">위 이름이 천기작명연구소 작명증서 1장과 해석 1장에 들어가요. 빼고 싶은 이름은 <b>증서에 넣음</b>을 눌러 빼 주세요.</p></div>';}
+  function certBar(){return '<div class="jmCert"><button type="button" id="jmMake">📜 작명증서 출력</button><p class="note">위 이름 3개가 천기작명연구소 작명증서 1장과 해석 1장에 자동으로 들어가 PDF 파일로 나와요.</p></div>';}
   window.renderJm=function(){
     ['typecard','fourcard','mapCard'].forEach(id=>{const el=$(id);if(el)el.style.display='none';});
     const R=$('reading');const sur=SURS[+sel.value];
@@ -10462,14 +10462,14 @@ alDraw();
       h+='<div class="jmVerdict"><span>'+v[0]+'</span><div><b>'+v[1]+'</b><p>'+v[2]+'</p></div></div>';
       h+=card(e,0,false)+elLine();
       h+='<p class="note">'+(e.yy?'☯️ 획수의 음양(홀수·짝수)이 고루 섞여 조화로워요.':'☯️ 성과 이름 획수가 모두 '+(e.f[0].v%2?'홀수':'짝수')+'라 음양이 한쪽으로 치우쳐 있어요.')+'</p>';
-      h+='<div class="jmCert"><button type="button" id="jmMakeOne">📜 이 이름으로 작명증서·해석 파일 만들기</button></div>';
+      h+='<div class="jmCert"><button type="button" id="jmMakeOne">📜 작명증서 출력</button></div>';
       R.innerHTML=h;
       $('jmMakeOne').addEventListener('click',()=>makeCert([e]));
       return;
     }
     if(!lastList.length){R.innerHTML=h+'<p>위에서 <b>성씨</b>와 <b>아들·딸</b>을 고르고 <b>좋은 이름 찾기</b>를 눌러 주세요. 명국에 넣은 생년월일시로 사주 오행까지 함께 봐 드려요.</p>'+elLine();return;}
     h+='<p class="jmSub"><b>'+sur[0]+'('+sur[1]+', '+sur[2]+'획)</b> 씨 '+(jsex==='M'?'아들':'딸')+' 이름 · 원형이정 네 격에 흉한 수리가 없는 이름 중 <b>가장 좋은 3개</b>를 골랐어요. 다시 누르면 같은 결과가 나오고, 한자는 <b>같은 소리 다른 한자</b>에서 바꿀 수 있어요.</p>'+elLine();
-    h+=lastList.slice(0,showN).map((e,i)=>card(e,i,true)).join('');
+    h+=lastList.slice(0,showN).map((e,i)=>card(e,i,false)).join('');
     h+=certBar()+'<p class="note">수리 풀이는 81수리 길흉, 이름 자료와 획수는 천기작명연구소 작명 자료(원획법)를 따랐어요. 이름은 평생 쓰는 것이니 가족과 충분히 상의해 정해 주세요.</p>';
     R.innerHTML=h;
     R.querySelectorAll('.jmPkBtn').forEach(b=>b.addEventListener('click',()=>{const k=b.dataset.k;const i=picked.findIndex(p=>p.a+p.b===k);
@@ -10477,7 +10477,7 @@ alDraw();
       const y=window.scrollY;renderJm();window.scrollTo(0,y);}));
     R.querySelectorAll('.jmAltB').forEach(b=>b.addEventListener('click',()=>{const i=+b.dataset.i;const cur=lastList[i];const alt=cur.alts.find(x=>x.a+x.b===b.dataset.ab);if(!alt)return;
       alt.alts=cur.alts;lastList[i]=alt;const p=picked.findIndex(x=>x.a+x.b===cur.a+cur.b);if(p>=0)picked[p]=alt;const y=window.scrollY;renderJm();window.scrollTo(0,y);}));
-    R.querySelectorAll('#jmMake').forEach(b=>b.addEventListener('click',()=>makeCert(picked.slice())));
+    R.querySelectorAll('#jmMake').forEach(b=>b.addEventListener('click',()=>makeCert(lastList.slice(0,3))));
   };
   const _showJ=show;show=function(){const r=_showJ.apply(this,arguments);if(mode!=='jm'){const m=$('mapCard');if(m)m.style.display='';}return r;};
 
