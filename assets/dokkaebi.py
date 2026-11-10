@@ -47,16 +47,17 @@ def _mirror(d):
 
 def build(with_bg=True, scale=1.0, prefix="dk", bg_only=False, size=None):
     W_ = size or S
-    D = '#141a10'       # 깊은 홈
-    G = '#3e4b32'       # 유약 기본색
-    G2 = '#56663f'      # 도드라진 면
+    D = '#120d06'       # 깊은 홈
+    G = '#1d1914'       # 유약 기본색
+    G2 = '#2c2620'
+    GB = '#f1c040'     # 구슬      # 도드라진 면
     o = [f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {S} {S}" width="{W_}" height="{W_}">']
     o.append("""<defs>
 <radialGradient id="bg" cx="50%" cy="46%" r="70%"><stop offset="0" stop-color="#3b1450"/><stop offset=".55" stop-color="#1c0b2e"/><stop offset="1" stop-color="#0b0614"/></radialGradient>
-<linearGradient id="glaze" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#5f6f45"/><stop offset=".45" stop-color="#3a4630"/><stop offset="1" stop-color="#1f261a"/></linearGradient>
-<radialGradient id="face" cx="50%" cy="45%" r="60%"><stop offset="0" stop-color="#6a7a4c"/><stop offset=".6" stop-color="#435134"/><stop offset="1" stop-color="#28311f"/></radialGradient>
+<linearGradient id="glaze" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffe27a"/><stop offset=".45" stop-color="#e3a91c"/><stop offset="1" stop-color="#8f5a06"/></linearGradient>
+<radialGradient id="face" cx="50%" cy="45%" r="60%"><stop offset="0" stop-color="#ffe58a"/><stop offset=".6" stop-color="#e2a420"/><stop offset="1" stop-color="#a86a08"/></radialGradient>
 <radialGradient id="eye" cx="45%" cy="40%" r="60%"><stop offset="0" stop-color="#fff2a0"/><stop offset=".45" stop-color="#ffb21e"/><stop offset="1" stop-color="#b3400a"/></radialGradient>
-<radialGradient id="nose" cx="42%" cy="35%" r="65%"><stop offset="0" stop-color="#b9c28a"/><stop offset=".5" stop-color="#6f7f50"/><stop offset="1" stop-color="#36422a"/></radialGradient>
+<radialGradient id="nose" cx="42%" cy="35%" r="65%"><stop offset="0" stop-color="#6b6258"/><stop offset=".5" stop-color="#2a2520"/><stop offset="1" stop-color="#0c0a08"/></radialGradient>
 <filter id="relief" x="-10%" y="-10%" width="120%" height="120%">
  <feGaussianBlur in="SourceAlpha" stdDeviation="5" result="b"/>
  <feSpecularLighting in="b" surfaceScale="7" specularConstant="1.05" specularExponent="26" lighting-color="#fff0c0" result="s"><feDistantLight azimuth="230" elevation="42"/></feSpecularLighting>
@@ -88,12 +89,12 @@ def build(with_bg=True, scale=1.0, prefix="dk", bg_only=False, size=None):
     beads += [(206 - (y - 160) * 0.016, y) for y in range(196, 930, 46)]
     beads += [(818 + (y - 160) * 0.016, y) for y in range(196, 930, 46)]
     for x, y in beads:
-        o.append(f'<circle cx="{x:.0f}" cy="{y:.0f}" r="13" fill="{G2}" stroke="{D}" stroke-width="3"/>')
+        o.append(f'<circle cx="{x:.0f}" cy="{y:.0f}" r="13" fill="{GB}" stroke="{D}" stroke-width="3"/>')
     o.append('</g>')
     # 안쪽 판(움푹)
     field = ('M262,184 L762,184 L780,920 L668,920 A156,158 0 0 0 356,920 L244,920 Z')
-    o.append(f'<path d="{field}" fill="#2a3320" stroke="{D}" stroke-width="6"/>')
-    o.append('<circle cx="512" cy="470" r="250" fill="url(#glow)" opacity=".35"/>')
+    o.append(f'<path d="{field}" fill="#9a6a0c" stroke="{D}" stroke-width="6"/>')
+    o.append('<circle cx="512" cy="470" r="250" fill="url(#glow)" opacity=".2"/>')
 
     R = []  # 돋을새김 요소들
     # 위쪽 불꽃 갈기
@@ -105,29 +106,29 @@ def build(with_bg=True, scale=1.0, prefix="dk", bg_only=False, size=None):
         for j, (cx, cy, r) in enumerate([(300, 330, 40), (282, 420, 44), (290, 520, 42), (300, 620, 40), (318, 712, 36)]):
             X = cx if sx == 1 else 1024 - cx
             R.append(f'<circle cx="{X}" cy="{cy}" r="{r + 8}" fill="{G}" stroke="{D}" stroke-width="5"/>')
-            R.append(f'<path d="{_spiral(X, cy, r, 0.4 * j, 1.4, sx)}" fill="none" stroke="{D}" stroke-width="7" stroke-linecap="round"/>')
+            R.append(f'<path d="{_spiral(X, cy, r, 0.4 * j, 1.4, sx)}" fill="none" stroke="#d9a22a" stroke-width="7" stroke-linecap="round"/>')
     # 뿔 (위로 휘며 바깥으로)
     for sx in (1, -1):
         d = f'M{512 - sx * 70},300 Q{512 - sx * 120},236 {512 - sx * 120},170 Q{512 - sx * 160},220 {512 - sx * 150},300 Q{512 - sx * 120},322 {512 - sx * 70},300 Z'
         R.append(f'<path d="{d}" fill="{G2}" stroke="{D}" stroke-width="7" stroke-linejoin="round"/>')
         for t in (0.35, 0.6):
             yy = 300 - 120 * t
-            R.append(f'<path d="M{512 - sx * (86 + 40 * t)},{yy + 14:.0f} q{-sx * 24},-8 {-sx * 40},4" fill="none" stroke="{D}" stroke-width="4"/>')
+            R.append(f'<path d="M{512 - sx * (86 + 40 * t)},{yy + 14:.0f} q{-sx * 24},-8 {-sx * 40},4" fill="none" stroke="#d9a22a" stroke-width="4"/>')
     # 얼굴 판
     R.append(f'<path d="M352,330 Q512,286 672,330 Q722,420 708,560 Q690,690 512,760 Q334,690 316,560 Q302,420 352,330 Z" fill="url(#face)" stroke="{D}" stroke-width="8" stroke-linejoin="round"/>')
     # 이마 겹주름(보주 모양)
     for k, (w, y) in enumerate([(70, 300), (52, 324), (34, 346)]):
         R.append(f'<path d="M{512 - w},{y + 22} Q512,{y - 18} {512 + w},{y + 22}" fill="none" stroke="{D}" stroke-width="7" stroke-linecap="round"/>')
-    R.append(f'<ellipse cx="512" cy="372" rx="26" ry="18" fill="{G2}" stroke="{D}" stroke-width="5"/>')
+    R.append(f'<ellipse cx="512" cy="372" rx="26" ry="18" fill="{GB}" stroke="{D}" stroke-width="5"/>')
     # 찌푸린 눈썹 (가운데로 내리꽂히는 V)
     for sx in (1, -1):
         d = (f'M{512 - sx * 24},{430} Q{512 - sx * 90},{372} {512 - sx * 176},{378} '
              f'Q{512 - sx * 214},{360} {512 - sx * 220},{326} Q{512 - sx * 196},{350} {512 - sx * 168},{352} '
              f'Q{512 - sx * 100},{348} {512 - sx * 24},{430} Z')
-        R.append(f'<path d="{d}" fill="#6d7d4c" stroke="{D}" stroke-width="8" stroke-linejoin="round"/>')
+        R.append(f'<path d="{d}" fill="#2c2620" stroke="{D}" stroke-width="8" stroke-linejoin="round"/>')
         for t in (0.3, 0.55, 0.8):
             x0 = 512 - sx * (40 + 150 * t)
-            R.append(f'<path d="M{x0:.0f},{400 - 50 * t:.0f} q{-sx * 18},-14 {-sx * 30},-6" fill="none" stroke="{D}" stroke-width="4" stroke-linecap="round"/>')
+            R.append(f'<path d="M{x0:.0f},{400 - 50 * t:.0f} q{-sx * 18},-14 {-sx * 30},-6" fill="none" stroke="#d9a22a" stroke-width="4" stroke-linecap="round"/>')
     o.append('<g filter="url(#relief)">' + ''.join(R) + '</g>')
     # 눈 (깊은 눈두덩 + 노려보는 금빛 눈)
     E = []
@@ -173,7 +174,7 @@ def build(with_bg=True, scale=1.0, prefix="dk", bg_only=False, size=None):
              f'Q{512 - sx * 256},760 {512 - sx * 200},800 Q{512 - sx * 230},740 {512 - sx * 206},700 '
              f'Q{512 - sx * 170},630 {512 - sx * 60},612 Z')
         F.append(f'<path d="{d}" fill="{G2}" stroke="{D}" stroke-width="6" stroke-linejoin="round"/>')
-        F.append(f'<path d="{_spiral(512 - sx * 214, 800, 24, 0, 1.5, sx)}" fill="none" stroke="{D}" stroke-width="6" stroke-linecap="round"/>')
+        F.append(f'<path d="{_spiral(512 - sx * 214, 800, 24, 0, 1.5, sx)}" fill="none" stroke="#d9a22a" stroke-width="6" stroke-linecap="round"/>')
     # 턱 아래 불꽃 수염
     for k, x in enumerate([440, 476, 512, 548, 584]):
         h = 70 if k == 2 else 54
