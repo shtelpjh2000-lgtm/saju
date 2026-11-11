@@ -125,7 +125,7 @@ body.hasnav main{padding-bottom:86px}
 .askFree{display:flex;gap:6px;margin:10px 0 8px}.askFree input{flex:1;min-width:0;font-size:14.5px}.askFree button{flex:0 0 auto;padding:0 14px;font-size:14.5px}
 .askYrRow{display:flex;align-items:center;gap:8px;font-size:13.5px;font-weight:700;margin-bottom:6px}.askYrRow .seg{flex:1}.askYrRow .seg button{padding:7px 4px;font-size:13.5px}
 #askOut .askEcho{margin:12px 0 4px;padding:8px 12px;border-radius:14px;background:var(--lav2);font-size:14px}
-.askHead{display:flex;align-items:center;gap:12px;margin:14px 0 2px}.askHead .em{font-size:40px}.askHead b{display:block;font-family:"Jua",sans-serif;font-size:21px;margin-bottom:3px}
+.bub{margin:10px 0;font-size:15px;line-height:1.7}.bub.me{margin-left:auto;width:fit-content;max-width:85%;background:var(--pink);color:#fff;padding:8px 14px;border-radius:18px 18px 4px 18px;font-weight:700}.bub.dk{display:flex;gap:8px;align-items:flex-start}.bub.dk .av{font-size:30px;flex:0 0 auto;line-height:1.1}.bub.dk>div{flex:1;min-width:0;background:var(--bg);border:2px solid var(--line);border-radius:4px 18px 18px 18px;padding:8px 13px}#askOut .ansV,.ansV{font-size:16.5px;line-height:1.65;margin:4px 0 8px}.askMore summary{cursor:pointer;font-weight:700;color:var(--purple);margin:10px 0 4px}.askFollow{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}.askFollow button{padding:6px 11px;font-size:13px;border-radius:999px;background:var(--lav2);color:var(--ink);box-shadow:none;border:0;font-weight:700}#askOut .old{opacity:.55}.abOpt{border:2px solid var(--line);border-radius:14px;padding:6px 12px;margin:8px 0;background:var(--card)}.abOpt.win{border-color:var(--pink)}.abOpt .ghBar{margin:6px 0}.askHead{display:flex;align-items:center;gap:12px;margin:14px 0 2px}.askHead .em{font-size:40px}.askHead b{display:block;font-family:"Jua",sans-serif;font-size:21px;margin-bottom:3px}
 .askV{font-size:16px;line-height:1.7;font-weight:700;margin:8px 0}
 #askOut h4{font-family:"Jua",sans-serif;font-weight:400;font-size:16.5px;margin:16px 0 6px;display:table;background:linear-gradient(transparent 55%,var(--yel2) 55%);padding:0 2px}
 #askOut p{font-size:15px;line-height:1.7;margin:5px 0}
@@ -393,10 +393,10 @@ body.hasnav main{padding-bottom:86px}
     <p class="modeExp" id="modeExp"></p>
   </div>
   <div class="card" id="askCard">
-    <h2 class="askH">🙋 많이 묻는 질문 20</h2>
-    <p class="askSub">사주를 볼 때 사람들이 가장 많이 묻는 질문 20가지예요. 누르면 내 사주로 자세히 풀어 드려요.</p>
+    <h2 class="askH">👹 도깨비에게 물어보세요</h2>
+    <p class="askSub">말하듯이 물어보면 <b>결론부터</b> 바로 알려 드려요. “할까, 말까” 고민도 골라 드려요. 아래 주제를 눌러도 돼요.</p>
     <div class="askChips" id="askChips"></div>
-    <div class="askFree"><input id="askQ" placeholder="직접 물어보기 · 예: 내년에 이사 가도 될까요?" aria-label="질문 입력"><button type="button" id="askGo">물어보기</button></div>
+    <div class="askFree"><input id="askQ" placeholder="예: 올해 이직해도 될까요? · 이직할까 그냥 다닐까?" aria-label="질문 입력"><button type="button" id="askGo">물어보기</button></div>
     <div class="askYrRow"><span>📅 언제를 볼까요?</span><div class="seg" id="askYr"><button type="button" data-v="0" class="on">올해</button><button type="button" data-v="1">내년</button></div></div>
     <div id="askOut"></div>
   </div>
@@ -9735,6 +9735,13 @@ function renderReading(r){
   const T={total:'총평',char:'성격',money:'재물',job:'직업·적성',spouse:'배우자',child:'자녀',health:'건강',luck:'대운 흐름',lucky:'🍀 행운 처방'};
   const star=n=>n?'<span class="rdStar">'+'★'.repeat(n)+'<i>'+'★'.repeat(5-n)+'</i></span>':'';
   let h='<h2>📜 종합 풀이</h2><span class="badge">'+x.strongKo+' · 용신 '+x.yong+'</span>';
+  try{const HL=x.HL||{},cr=x.curRun,st=v=>String(v||'').replace(/^[^\s가-힣「]+\s*/,'');
+    const bat=w=>{const c=String(w).replace(/[^가-힣]/g,'').slice(-1);return c&&((c.charCodeAt(0)-0xAC00)%28)?'이에요':'예요';};
+    const L=[];if(HL.char)L.push('🙂 <b>나는</b> · '+st(HL.char)+bat(st(HL.char)));
+    if(HL.money)L.push('💰 <b>돈</b> · '+st(HL.money));if(HL.job)L.push('💼 <b>일</b> · '+st(HL.job));
+    if(cr)L.push('⏳ <b>지금('+cr.from+(cr.to>cr.from?'~'+cr.to:'')+'세)</b> · '+cr.theme+'의 시기, 흐름은 <b>'+(cr.g>=2?'좋아요':cr.g>=1?'무난·좋아요':cr.g<=-1?'조심할 때예요':'보통이에요')+'</b>');
+    if(HL.luck)L.push('🧭 <b>지금 할 일</b> · '+st(HL.luck));
+    if(L.length)h+='<div class="bub dk rdTalk"><span class="av">👹</span><div><p class="ansV"><b>한마디로 정리해 줄게요.</b></p>'+L.map(t=>'<p>'+t+'</p>').join('')+'<p class="note">궁금한 게 있으면 위의 <b>도깨비에게 물어보세요</b>에 그대로 물어보세요.</p></div></div>';}catch(e){console.error(e);}
   const sec=k=>'<div class="rdSec'+(k==='total'?' top':k==='lucky'?' lucky':'')+'"><h4>'+T[k]+'</h4>'+star(x.SC&&x.SC[k])+(x.HL&&x.HL[k]?'<p class="rdHL">'+x.HL[k]+'</p>':'')+x.S[k].map(t=>'<p'+(/^📌/.test(t)?' class="note"':'')+'>'+t+'</p>').join('')+'</div>';
   for(const k of Object.keys(T)){if(k==='lucky'||!x.S[k]||!x.S[k].length)continue;h+=sec(k);}
   const gc=g=>g>=2?['g2','좋음']:g>=1?['g1','무난·좋음']:g<=-1?['gm1','주의']:['g0','보통'];
@@ -10839,7 +10846,11 @@ alDraw();
       kw:['소송','재판','다툼','분쟁','고소','합의','법','변호사','싸움','관재','경찰'],
       why:'다툼과 소송은 판단하는 쪽인 <b>관(官)</b>과 서류·증거인 <b>부(父)</b>가 내 편인지, 나를 누르는 <b>귀(鬼)</b>와 경쟁자인 <b>형(兄)</b>이 강한지로 보고, 송사의 문인 <b>경문(驚門)</b>을 조심해서 봐요.',
       v:['유리한 흐름이에요. 증거와 서류를 잘 갖추면 원하는 결과를 얻기 쉬워요.','해볼 만해요. 다만 감정보다 서류와 사실로 대응하세요.','결과가 반반이에요. 끝까지 가기보다 합의를 함께 생각해 보세요.','불리할 수 있는 흐름이에요. 맞서기보다 합의나 조정으로 피해를 줄이는 게 좋아요.'],
-      tips:['말보다 기록이 힘이에요. 문자, 계약서, 영수증을 모아 두세요.','중요한 판단은 꼭 변호사 같은 전문가와 상의하세요.','감정이 올라올 때는 바로 답하지 말고 하루 뒤에 답하세요.']}
+      tips:['말보다 기록이 힘이에요. 문자, 계약서, 영수증을 모아 두세요.','중요한 판단은 꼭 변호사 같은 전문가와 상의하세요.','감정이 올라올 때는 바로 답하지 말고 하루 뒤에 답하세요.']},
+    gen:{g:'none',n:'그 일',e:'🔮',lq:['世'],bad:['鬼'],door:{生門:1,開門:1,休門:0.8,景門:0.5},gua:{生氣:0.5,福德:0.5,天宜:0.5},kw:[],
+      why:'딱 맞는 주제가 없는 질문은 <b>나 자신의 자리(세, 世)</b>가 그해 어떤 문과 자리에 있는지, 나를 누르는 <b>귀(鬼)</b>가 강한지로 큰 흐름을 봐요.',
+      v:['지금 내 기운이 아주 좋아요. 마음먹은 일을 밀고 나가도 되는 때예요.','내 기운이 좋은 편이에요. 준비한 만큼 결과가 따라와요.','내 기운이 반반이에요. 서두르지 말고 한 번 더 따져 보세요.','지금은 내 기운이 눌려 있어요. 큰 결정은 미루고 힘을 모으세요.'],
+      tips:['결정은 좋은 날 낮에, 마음이 편할 때 하세요.','믿을 만한 사람 한 명에게 먼저 의견을 물어보세요.','결정 전에 최악의 경우를 한 번 적어 보세요. 감당할 수 있으면 해도 돼요.']}
   };
   const GROUPS=[['work','📚 공부·일'],['money','💰 돈'],['love','💕 사랑·가족'],['life','🌿 생활'],['flow','🔮 한 해 운']];
 
@@ -10886,12 +10897,100 @@ alDraw();
     if(r.kong.has(p))s+=' 다만 공망이라 힘이 덜 실려요. 기대를 조금 낮추고 차근차근 가세요.';
     return s;
   }
-  let curT=null,yrOff=0,lastQ='';
+  let curT=null,yrOff=0,lastQ='',abQ=null,hist=[],curHtml='',histBase=null;
+  // ── 대화형 답변: 결론 먼저, 쉬운 말로 ──
+  const escH=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  const PLQ={父:'문서·도움',官:'직장·명예',財:'돈',孫:'재능·즐거움',兄:'경쟁·친구',鬼:'압박',世:'내'};
+  const PDOOR={休門:['쉬면서 도움을 받는 문',1],生門:['돈과 일이 자라는 문',1],開門:['새 길이 열리는 문',1],景門:['이름이 드러나는 문',0.5],杜門:['꽉 막힌 문',-1],傷門:['다툼이 생기는 문',-1],驚門:['놀랄 일이 생기는 문',-1],死門:['멈춰 서는 문',-1]};
+  const ACT={exam:'시험 도전',jobget:'지원',jobmove:'옮기는 것',promo:'승진 도전',invest:'투자',estate:'사고파는 것',biz:'시작하는 것',partner:'동업·계약',loan:'돈 빌려주는 것',love:'다가가는 것',marry:'결혼 이야기',reunion:'다시 연락하는 것',move:'이사',travel:'떠나는 것',law:'맞서는 것',gen:'그 일',child:'아이 계획',health:'치료·운동 시작'};
+  function qkind(q){q=q||'';
+    if(/vs|VS|아니면|또는|말까|중에 ?뭐|중 ?어느|어느 ?쪽이|뭐가 ?나을/.test(q)||(q.match(/까(?=[\s?？,.!~]|$)/g)||[]).length>=2)return 'ab';
+    if(/언제|몇 ?월|며칠|시기|때가|날짜/.test(q))return 'when';
+    if(/될까|할까|해도|괜찮|좋을까|맞을까|갈까|살까|팔까|붙을까|되나요|돼요\?|할 수 있|가능/.test(q))return 'yn';
+    return 'gen';}
+  const unOf=D=>/운$|시기$|것$|삼재$/.test(D.n)?D.n:D.n+'운';
+  const nmOf=D=>D.special==='caution'?'조심할 것':D.n;
+  const plainTip=s=>s.replace(/위의 /g,'').replace(/<b>좋은 (날|달|방위|해)<\/b>/g,'좋은 $1');
+  const md=([dt])=>(dt.getMonth()+1)+'월 '+dt.getDate()+'일('+'일월화수목금토'[dt.getDay()]+')';
+  function reasonOf(K,gi,D){const lqn=q=>D&&D.g==='love'&&(q==='財'||q==='官')?'인연·배우자':PLQ[q];
+    const n=K.nat.s;let s=n>=0.95?'타고나기를 이쪽 복이 있는 편이고, ':n<0.37?'타고난 복보다 노력으로 만드는 운이라, ':'';
+    const hs=K.yr.hits.filter(x=>x.p!==5);const dv=x=>(PDOOR[K.rs.door[x.p]]||['',0])[1]-(K.rs.kong.has(x.p)?1:0);
+    const h=gi<=1?hs.slice().sort((a,b)=>dv(b)-dv(a))[0]:hs.slice().sort((a,b)=>dv(a)-dv(b))[0];
+    if(h){const d=PDOOR[K.rs.door[h.p]]||['',0];
+      s+=K.Y+'년에는 <b>'+lqn(h.q)+' 기운</b>이 <b>‘'+d[0]+'’</b>에 들어와 있어서 '+(d[1]>0?'일이 잘 풀리는 쪽이에요.':d[1]<0?'애쓴 만큼 안 나올 수 있어요.':'드러나긴 하는데 힘은 보통이에요.');
+      if(K.rs.kong.has(h.p))s+=(d[1]<0?' 게다가':' 다만')+' 그 자리가 비어 있어서 기대보다 작게 올 수 있어요.';
+      if(gi>=2&&d[1]>0&&!K.rs.kong.has(h.p))s+=' 좋은 신호는 있지만, 전체로 보면 아직 힘이 모자라요.';
+      if(gi<=1&&d[1]<0)s+=' 그래도 다른 자리에서 받쳐 주는 힘이 더 커요.';}
+    else s+=K.Y+'년에는 이 일의 기운이 뚜렷하지 않아요. 운보다 내 준비가 결과를 정해요.';
+    return '🔍 <b>왜냐면</b> · '+s;}
+  function whenOf(K,D){
+    let s='';if(K.good&&K.good.length)s+='음력 <b>'+K.good.join('·')+'월</b>이 가장 좋아요.';else s+='특별히 강한 달은 없어요. 꾸준함이 답이에요.';
+    if(K.days&&K.days.length)s+=' 가까운 날로는 <b>'+K.days.slice(0,3).map(md).join(', ')+'</b>이 좋아요.';
+    if(K.badm&&K.badm.length)s+=' 음력 '+K.badm.join('·')+'월은 피하세요.';
+    if(K.best)s+=' 앞으로 10년 중에는 <b>'+K.best.join('·')+'년</b>이 가장 좋아요.';
+    return '📅 <b>언제?</b> · '+s;}
+  const SCEN=['지금 움직이면 1년 뒤 “그때 하길 잘했다” 싶을 가능성이 커요.','준비한 만큼 1년 뒤 손에 잡히는 결과가 남아요.','서두르면 반쯤 만족, 석 달만 더 준비하고 하면 훨씬 나아요.','지금 밀어붙이면 1년 뒤 후회가 남기 쉬워요. 대신 지금 준비해 두면 다음 좋은 때에 크게 쓰여요.'];
+  function talk(t,D,gi,K){
+    const kind=qkind(lastQ),act=ACT[t],sp=D.special==='caution'||D.special==='samjae';
+    let v;
+    if(sp)v=D.v[gi];
+    else if(kind==='yn'||(act&&kind!=='when')){const a=act||D.n;
+      v=[['👍','네, 해도 좋아요!',' 올해는 '+a+jo(a,'에','에')+' 힘이 실리는 때예요.'],['🙆','네, 해볼 만해요.',' 준비만 잘하면 결과가 따라와요.'],['🤔','반반이에요.',' 서두르지 말고 한 번 더 따져 보고 하세요.'],['✋','지금은 말리고 싶어요.',' '+a+jo(a,'은','는')+' 조금 미루는 게 좋아요.']][gi];
+      v=v[0]+' <b>'+v[1]+'</b>'+v[2];}
+    else v=D.e+' <b>'+K.Y+'년 '+(t==='gen'?'내 운':unOf(D))+jo(t==='gen'?'운':unOf(D),'은','는')+' '+GR[gi][0]+'.</b> '+D.v[gi];
+    let h='<p class="ansV">'+v+'</p>';
+    const W=whenOf(K,D);
+    if(kind==='when'&&!sp)h='<p class="ansV">'+D.e+' <b>'+D.n+', 이때가 좋아요.</b></p><p>'+W+'</p><p>'+v+'</p>';
+    if(!sp)h+='<p>'+reasonOf(K,gi,D)+'</p>';
+    if(kind!=='when'||sp)h+='<p>'+W+'</p>';
+    if(K.dir&&K.dir.length&&!sp)h+='<p>🧭 <b>어느 쪽?</b> · <b>'+K.dir.join(', ')+'</b>이 좋아요.'+(K.badDir&&K.badDir.length?' '+K.badDir.join(', ')+'은 피하세요.':'')+'</p>';
+    if(act&&!sp)h+='<p>🔮 <b>1년 뒤엔?</b> · '+SCEN[gi]+'</p>';
+    if(sp)h+='<p>🔎 조심할 것과 좋은 날은 아래 <b>자세한 풀이</b>에 정리했어요.</p>';
+    h+='<p>💡 <b>이렇게 해요</b> · '+plainTip(D.tips[0])+'</p>';
+    return h;}
+  function labelOf(p){p=p.replace(/[?？!.~]+$/,'').trim();if(/^(그냥 )?말까|^안 ?할까|^말기/.test(p)||!p)return '안 하기';return p;}
+  function decide(q,K){
+    let parts=q.split(/\s*(?:vs\.?|VS|아니면|또는|\/)\s*/).map(s=>s.trim()).filter(Boolean);
+    if(parts.length<2){const m=q.match(/^(.*?(?:까요|까))\s*(.+)$/);if(m&&m[2])parts=[m[1],m[2]];}
+    if(parts.length<2)parts=[q,'안 하기'];
+    parts=parts.slice(0,2);
+    const opts=parts.map(p=>{const tp=MATCH.find(k=>T[k].kw.some(w=>p.includes(w)));return {lab:labelOf(p),t:tp||null};});
+    if(!opts[0].t&&!opts[1].t)opts[0].t=curT;
+    const sc=o=>o.t?scoreOf(o.t,K.Y):null;
+    opts.forEach(o=>{o.s=sc(o);});
+    const a=opts.find(o=>o.t),other=opts.find(o=>o!==a);
+    if(!other.t||other.t===a.t){other.stay=true;other.t=null;other.s=0.95;}
+    const win=opts[0].s>=opts[1].s?0:1;
+    const actG=grade(a.s);
+    const card=(o,i)=>{const g=o.stay?null:grade(o.s);
+      const pct=Math.max(8,Math.min(100,Math.round((o.s+1.5)/4.2*100)));
+      let gain,loss,yr;
+      if(o.stay){if(actG<=1){gain='지금 가진 것을 안전하게 지켜요.';loss='좋은 때를 놓쳐 아쉬움이 남을 수 있어요.';yr='“그때 해 볼걸” 하는 마음이 남기 쉬워요.';}
+        else{gain='힘을 아끼고 실력을 쌓을 수 있어요.';loss='당장은 답답하게 느껴질 수 있어요.';yr='준비한 만큼 다음 좋은 때에 더 크게 움직일 수 있어요.';}}
+      else{gain=g<=1?'운이 받쳐 줘서 일이 빨리 풀리고, 새 기회와 사람이 따라와요.':'새로운 경험과 배움은 남아요.';
+        loss=g<=1?'처음 몇 달은 바쁘고 정신없을 수 있어요.':'준비 없이 하면 돈과 시간이 새기 쉬워요.';yr=SCEN[g];}
+      return '<div class="abOpt'+(i===win?' win':'')+'"><b>'+(i===win?'✅ ':'')+'「'+escH(o.lab)+'」</b><div class="ghBar"><i style="width:'+pct+'%"></i></div>'+
+        '<p>➕ <b>얻는 것</b> · '+gain+'</p><p>➖ <b>잃는 것</b> · '+loss+'</p><p>🔮 <b>1년 뒤</b> · '+yr+'</p></div>';};
+    const w=opts[win];
+    let h='<p class="ansV">⚖️ <b>저라면 「'+escH(w.lab)+'」 쪽이에요.</b> '+(Math.abs(opts[0].s-opts[1].s)<0.25?'두 길의 차이가 크지 않으니, 마음이 더 편한 쪽을 골라도 괜찮아요.':'두 길 중에 운이 더 받쳐 주는 쪽이에요.')+'</p>';
+    h+=opts.map(card).join('');
+    if(!w.stay)h+='<p>'+whenOf(K,T[w.t])+'</p>';
+    h+='<p>💡 <b>이렇게 해요</b> · 결정 전에 “최악의 경우”를 한 줄 적어 보세요. 감당할 수 있으면 해도 되고, 아니면 한 번 더 기다려요.</p>';
+    return h;}
+  function scoreOf(t,Y){const r=base;const rs=sinsu(yearGZ(Y));const yi=Haeseok.yearly(rs,r.input.sex,Y-r.input.y+1);
+    const [lq]=topicLq(t);let ys=chartScore(rs,t).s;if(yi.out.hangPal&&lq.includes(rs.lqH[yi.out.hangPal]))ys+=0.6;return chartScore(r,t).s*0.35+ys*0.65;}
+  function follow(t,D){const b=[];
+    if(!abQ&&D.special!=='caution'&&D.special!=='samjae')b.push(['when','📅 언제가 제일 좋아요?']);
+    b.push(yrOff===0?['next','⏭️ 내년은요?']:['now','⏮️ 올해는요?']);
+    if(t!=='caution')b.push(['caution','⚠️ 올해 조심할 건요?']);
+    if(!abQ&&ACT[t])b.push(['ab','⚖️ 할까, 말까?']);
+    return '<div class="askFollow">'+b.map(([k,l])=>'<button type="button" data-f="'+k+'">'+l+'</button>').join('')+'</div>';}
+
   function render(){
     const out=$('askOut');if(!curT||!base){out.innerHTML='';return;}
     const t=curT,D=T[t],r=base;const Y=new Date().getFullYear()+yrOff;
     const rs=sinsu(yearGZ(Y));const yi=Haeseok.yearly(rs,r.input.sex,Y-r.input.y+1);
-    const nat=chartScore(r,t),yr=chartScore(rs,t);
+    const nat=chartScore(r,t),yr=chartScore(rs,t);const K={nat,yr,rs,Y};
     const [lq]=topicLq(t);
     let ys=yr.s;if(yi.out.hangPal&&(lq.includes(rs.lqH[yi.out.hangPal])))ys+=0.6;
     let total=nat.s*0.35+ys*0.65;let gi=grade(total);let special='';
@@ -10932,7 +11031,7 @@ alDraw();
       if(ch.length)special+='<p>조심할 띠: <b>'+ch.join(', ')+'</b> · 부딪히거나(충) 서운함이 쌓이기 쉬운(원진) 관계예요. 나쁜 사람이라는 뜻이 아니라, 돈 거래나 큰 약속만 조심하면 돼요.</p>';
     }
     const pct=Math.max(8,Math.min(100,Math.round((total+1.5)/4.2*100)));
-    let h=(lastQ?'<p class="askEcho">🙋 "'+lastQ.replace(/[<>]/g,'')+'"</p>':'');
+    let h='';
     h+='<div class="askHead" data-s="'+total.toFixed(2)+'"><span class="em">'+D.e+'</span><div><b>'+Y+'년 '+(D.special==='caution'?'조심할 것':D.special==='samjae'?'삼재':D.n+' 운')+'</b><span class="ghPill '+GR[gi][1]+'">'+GR[gi][0]+'</span></div></div>';
     h+='<div class="ghBar"><i style="width:'+pct+'%"></i></div>';
     h+='<p class="askV">'+D.v[gi]+'</p>';
@@ -10958,7 +11057,7 @@ alDraw();
     if(D.special==='years'){
       const Y0=new Date().getFullYear();const ys2=[];
       for(let yy=Y0;yy<Y0+10;yy++){try{const rsx=sinsu(yearGZ(yy));const yix=Haeseok.yearly(rsx,r.input.sex,yy-r.input.y+1);let sc=chartScore(rsx,t).s;if(yix.out.hangPal&&lq.includes(rsx.lqH[yix.out.hangPal]))sc+=0.6;ys2.push([yy,sc,yearGZ(yy)]);}catch(e){}}
-      const best=ys2.slice().sort((a,b2)=>b2[1]-a[1]).slice(0,3).sort((a,b2)=>a[0]-b2[0]);const worst=ys2.slice().sort((a,b2)=>a[1]-b2[1]).slice(0,2).sort((a,b2)=>a[0]-b2[0]);
+      const best=ys2.slice().sort((a,b2)=>b2[1]-a[1]).slice(0,3).sort((a,b2)=>a[0]-b2[0]);K.best=best.map(x=>x[0]);const worst=ys2.slice().sort((a,b2)=>a[1]-b2[1]).slice(0,2).sort((a,b2)=>a[0]-b2[0]);
       h+='<h4>💒 앞으로 10년 중 좋은 해</h4><p>'+best.map(([yy,sc,gz])=>'<b>'+yy+'년('+gz+'년, '+(yy-r.input.y+1)+'세)</b>').join(', ')+'</p>';
       h+='<p>이 해에는 배우자의 자리와 가정의 문서가 함께 힘을 받아요. 결혼이나 약혼, 상견례 같은 큰일을 이때로 잡아 보세요.</p>';
       h+='<p class="note">조금 천천히 가도 좋은 해: '+worst.map(([yy])=>yy+'년').join(', ')+'</p>';
@@ -10978,21 +11077,21 @@ alDraw();
     // 좋은 달
     const ms=[];for(let m=1;m<=12;m++){const p=MPAL[m];let v=(lq.includes(rs.lqH[p])?1.2:lq.includes(rs.lqE[p])?0.6:0)+pScore(rs,p,t)*0.6;if(topicLq(t)[1].includes(rs.lqH[p]))v-=0.8;ms.push([m,v]);}
     const good=ms.filter(x=>x[1]>=0.8).sort((a,b)=>b[1]-a[1]).slice(0,3).map(x=>x[0]).sort((a,b)=>a-b);
-    const badm=ms.filter(x=>x[1]<=-0.4).sort((a,b)=>a[1]-b[1]).slice(0,2).map(x=>x[0]).sort((a,b)=>a-b);
+    const badm=ms.filter(x=>x[1]<=-0.4).sort((a,b)=>a[1]-b[1]).slice(0,2).map(x=>x[0]).sort((a,b)=>a-b);K.good=good;K.badm=badm;
     h+='<h4>🗓️ 좋은 달 · 조심할 달 (음력)</h4><p>'+(good.length?'<b>좋은 달: 음력 '+good.join('·')+'월</b>. 중요한 일을 이때 시작하거나 결정하세요.':'특별히 강한 달은 없어요. 아래 좋은 날을 활용하세요.')+(badm.length?' 조심할 달: 음력 '+badm.join('·')+'월. 이때는 큰 결정을 미루는 게 좋아요.':'')+'</p>';
     // 좋은 날 (올해일 때만, 앞으로 60일)
     if(yrOff===0){
       const now=new Date();const cache={};const days=[];
       for(let i=1;i<=60;i++){const dt=new Date(now.getFullYear(),now.getMonth(),now.getDate()+i);
         try{const x=dayInfo(dt.getFullYear(),dt.getMonth()+1,dt.getDate(),cache);const dp=x.d.p;let v=x.d.g+(lq.includes(x.rs.lqH[dp])?1:0)+pScore(x.rs,dp,t)*0.3;days.push([dt,v,x.d.gz]);}catch(e){}}
-      const top=days.sort((a,b)=>b[1]-a[1]).slice(0,5).sort((a,b)=>a[0]-b[0]);
+      const top=days.sort((a,b)=>b[1]-a[1]).slice(0,5).sort((a,b)=>a[0]-b[0]);K.days=top;
       if(D.special==='caution'){const low=days.slice().sort((a,c)=>a[1]-c[1]).slice(0,3).sort((a,c)=>a[0]-c[0]);h+='<h4>🚧 앞으로 60일 중 조심할 날</h4><p>'+low.map(([dt])=>'<b>'+(dt.getMonth()+1)+'월 '+dt.getDate()+'일('+'일월화수목금토'[dt.getDay()]+')</b>').join(', ')+'</p>';}
       h+='<h4>✨ 앞으로 60일 중 좋은 날</h4><p>'+top.map(([dt,v,gz])=>'<b>'+(dt.getMonth()+1)+'월 '+dt.getDate()+'일('+'일월화수목금토'[dt.getDay()]+')</b>').join(', ')+'</p><p class="note">'+(D.special==='caution'||D.special==='samjae'?'일진과 그날 운이 드러나는 칸의 문·자리를 따져 고른 날이에요.':'일진과 그날 운이 드러나는 칸에 '+D.n+' 기운이 있는지를 함께 따져 고른 날이에요.')+'</p>';
     }
     // 방위
     if(D.dir||t==='move'||D.special==='caution'){
       const ps=[1,2,3,4,6,7,8,9].map(p=>[p,pScore(rs,p,t)+(lq.includes(rs.lqH[p])?0.5:0)]).sort((a,b)=>b[1]-a[1]);
-      const gd=ps.filter(x=>x[1]>0.5).slice(0,2),bd=ps.slice().reverse().filter(x=>x[1]<0).slice(0,2);
+      const gd=ps.filter(x=>x[1]>0.5).slice(0,2),bd=ps.slice().reverse().filter(x=>x[1]<0).slice(0,2);K.dir=gd.map(([p])=>dirOf(p));K.badDir=bd.map(([p])=>dirOf(p));
       h+='<h4>🧭 '+Y+'년 좋은 방위</h4>';
       h+=gd.length?gd.map(([p])=>'<p><b>'+dirOf(p)+'</b> · '+DK[rs.door[p]]+'('+DM[rs.door[p]].replace(/\.$/,'')+')과 '+GK[rs.gua[p]]+'('+GU[rs.gua[p]].replace(/\.$/,'')+')'+jo(GK[rs.gua[p]],'이','가')+' 함께 있는 방향이에요.</p>').join(''):'<p>올해는 특별히 좋은 방향이 두드러지지 않아요. 피할 방위만 조심하세요.</p>';
       if(bd.length)h+='<p>피할 방위: '+bd.map(([p])=>'<b>'+dirOf(p)+'</b>('+DK[rs.door[p]]+'·'+GK[rs.gua[p]]+(rs.kong.has(p)?'·공망':'')+')').join(', ')+'</p>';
@@ -11000,16 +11099,31 @@ alDraw();
     }
     h+='<h4>💡 이렇게 해 보세요</h4>'+D.tips.map(x=>'<p>· '+x+'</p>').join('');
     h+='<p class="note">기문둔갑 원명국과 '+Y+'년 신수국을 바탕으로 한 참고용 풀이예요. 중요한 결정은 상황을 함께 살펴서 하세요.</p>';
-    out.innerHTML=h;if(window.__hangulize)window.__hangulize(out);
+    if(histBase!==base){hist=[];histBase=base;}
+    const sp=D.special==='caution'||D.special==='samjae';
+    const ans=abQ?decide(abQ,K):talk(t,D,gi,K);
+    curHtml='<div class="bub me">'+escH(lastQ)+'</div><div class="bub dk"><span class="av">👹</span><div>'+ans+'<details class="askMore"'+(sp?' open':'')+'><summary>📜 자세한 풀이 보기</summary>'+h+'</details>'+follow(t,D)+'</div></div>';
+    out.innerHTML=hist.map(x=>'<div class="old">'+x+'</div>').join('')+'<div class="cur">'+curHtml+'</div>';
+    out.querySelectorAll('.old .askFollow').forEach(x=>x.remove());
+    if(window.__hangulize)window.__hangulize(out);
   }
   // 화면
   const chips=$('askChips');chips.innerHTML=GROUPS.map(([g,l])=>'<p class="askG">'+l+'</p><div class="askChips3">'+ORDER.filter(k=>T[k].g===g).map(k=>'<button type="button" data-t="'+k+'">'+T[k].e+' '+T[k].n+'</button>').join('')+'</div>').join('');
   const allChips=()=>[...chips.querySelectorAll('button')];
-  function pick(t,q){curT=t;lastQ=q||'';allChips().forEach(x=>x.classList.toggle('on',x.dataset.t===t));render();setTimeout(()=>$('askOut').scrollIntoView({behavior:'smooth',block:'start'}),60);}
+  function autoQ(t){const D=T[t],Y=new Date().getFullYear()+yrOff;return D.special==='caution'?Y+'년에 조심할 건 뭐예요?':D.special==='samjae'?Y+'년 삼재가 들었나요?':ACT[t]?Y+'년에 '+D.n+', 해도 될까요?':Y+'년 '+D.n+'운 어때요?';}
+  function pick(t,q,ab){if(curHtml&&base===histBase){hist.push(curHtml);hist=hist.slice(-2);}curHtml='';abQ=ab||null;curT=t;lastQ=q||autoQ(t);allChips().forEach(x=>x.classList.toggle('on',x.dataset.t===t));render();setTimeout(()=>{const c=$('askOut').querySelector('.cur');(c||$('askOut')).scrollIntoView({behavior:'smooth',block:'start'});},60);}
   chips.addEventListener('click',e=>{const b=e.target.closest('button');if(b)pick(b.dataset.t,'');});
-  function ask(){const q=$('askQ').value.trim();if(!q)return;const hit=MATCH.find(k=>T[k].kw.some(w=>q.includes(w)));
-    if(hit){if(/내년|다음 ?해/.test(q)){yrOff=1;}else if(/올해|이번/.test(q)){yrOff=0;}[...$('askYr').children].forEach(b=>b.classList.toggle('on',+b.dataset.v===yrOff));pick(hit,q);}
-    else{curT=null;allChips().forEach(x=>x.classList.remove('on'));$('askOut').innerHTML='<p class="askEcho">🙋 "'+q.replace(/[<>]/g,'')+'"</p><p>아직 이 질문은 정확히 답하기 어려워요. 위의 주제 중에서 가장 가까운 것을 눌러 주세요. 예: 시험, 취업, 이직, 적성, 주식, 집 매매, 동업, 결혼, 재회, 임신, 이사, 유학</p>';}}
+  const setYr=v=>{yrOff=v;[...$('askYr').children].forEach(b=>b.classList.toggle('on',+b.dataset.v===yrOff));};
+  function ask(){const q=$('askQ').value.trim();if(!q)return;
+    setYr(/내년|다음 ?해/.test(q)?1:0);
+    const hit=MATCH.find(k=>T[k].kw.some(w=>q.includes(w)))||'gen';
+    pick(hit,q,qkind(q)==='ab'?q:null);$('askQ').value='';}
+  $('askOut').addEventListener('click',e=>{const b=e.target.closest('button[data-f]');if(!b||!curT)return;const D=T[curT],f=b.dataset.f;
+    if(f==='when')pick(curT,D.n+', 언제가 제일 좋아요?');
+    else if(f==='next'){setYr(1);pick(curT,'내년('+(new Date().getFullYear()+1)+') '+nmOf(D)+jo(nmOf(D),'은','는')+'요?',abQ);}
+    else if(f==='now'){setYr(0);pick(curT,'올해 '+nmOf(D)+jo(nmOf(D),'은','는')+'요?',abQ);}
+    else if(f==='caution')pick('caution',(yrOff?'내년에':'올해')+' 조심할 건요?');
+    else if(f==='ab'){const q=D.n+' 할까, 말까?';pick(curT,q,q);}});
   $('askGo').addEventListener('click',ask);$('askQ').addEventListener('keydown',e=>{if(e.key==='Enter')ask();});
   $('askYr').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;yrOff=+b.dataset.v;[...$('askYr').children].forEach(x=>x.classList.toggle('on',x===b));render();});
   const yb=$('askYr').children;yb[0].textContent='올해 ('+new Date().getFullYear()+')';yb[1].textContent='내년 ('+(new Date().getFullYear()+1)+')';
