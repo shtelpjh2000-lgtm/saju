@@ -8982,6 +8982,35 @@ body.hasnav main{padding-bottom:86px}
     return { solar: s, lunar: l, year: l.getYearInGanZhiByLiChun(), month: l.getMonthInGanZhiExact(), day: l.getDayInGanZhiExact(), hour: l.getTimeInGanZhi() };
   }
 
+  // ── 치윤법(초신접기): 상원 부두(甲子·己卯·甲午·己酉일)로 시작하는 15일마다 절기를 하나씩 배정하고,
+  //    부두가 절기보다 9일 이상 앞서면(초신) 망종·대설에서 윤국을 둬요. 운곡 프로그램의 국과 맞추기 위한 방식이에요.
+  const JQ_CACHE = {};
+  const dnum = (y, m, d) => Math.round(Date.UTC(y, m - 1, d) / 86400000);
+  function termList(Solar, y) {
+    const key = y; if (JQ_CACHE[key]) return JQ_CACHE[key];
+    const seen = new Map();
+    for (let yy = y - 12; yy <= y + 1; yy++) {
+      const t = Solar.fromYmd(yy, 6, 1).getLunar().getJieQiTable();
+      for (const k in t) { const nm = ALIAS[k] || k; if (!JU[nm]) continue; const so = t[k]; const dn = dnum(so.getYear(), so.getMonth(), so.getDay()); if (!seen.has(dn)) seen.set(dn, nm); }
+    }
+    const list = [...seen.entries()].sort((a, b) => a[0] - b[0]).map(([dn, nm]) => ({ dn, nm }));
+    return (JQ_CACHE[key] = list);
+  }
+  function zhirunTerm(Solar, P) {
+    const so = P.solar, extra = P.lunar.getDayInGanZhiExact() !== P.lunar.getDayInGanZhi() ? 1 : 0;
+    const D = dnum(so.getYear(), so.getMonth(), so.getDay()) + extra;
+    const s0 = GAN.indexOf(P.day[0]), z0 = ZHI.indexOf(P.day[1]), gi = md(6 * s0 - 5 * z0, 60);
+    const T = termList(Solar, so.getYear());
+    let U = D - (gi % 15); while (U - 15 > T[0].dn + 20) U -= 15;   // 가장 이른 블록부터
+    let j = T.findIndex(t => t.dn >= U - 5);
+    while (U + 15 <= D) {
+      const chao = T[j].dn - U;
+      if ((T[j].nm === '芒种' || T[j].nm === '大雪') && chao >= 9) { /* 윤국: 같은 절기를 한 번 더 */ }
+      else j++;
+      U += 15;
+    }
+    return T[j].nm;
+  }
   function calc(Solar, y, m, d, h, mi, opt) {
     opt = opt || {};
     const P = pillars(Solar, y, m, d, h, mi, opt.adjust);
@@ -8993,7 +9022,7 @@ body.hasnav main{padding-bottom:86px}
     const earthN = {5: X}, heavN = {5: Y};
     for (const p of [1, 2, 3, 4, 6, 7, 8, 9]) { earthN[p] = w10((X === 5 ? 10 : X) + p); heavN[p] = w10(Y - p); }
     // ── 연국(시가) ──
-    let jq = P.lunar.getPrevJieQi().getName(); jq = ALIAS[jq] || jq;
+    let jq = zhirunTerm(Solar, P);
     if (!JU[jq]) throw new Error('절기 이름을 확인하지 못했어요: ' + jq);
     const ds = GAN.indexOf(P.day[0]), dz = ZHI.indexOf(P.day[1]);
     const hs = GAN.indexOf(P.hour[0]), hz = ZHI.indexOf(P.hour[1]);
@@ -9015,7 +9044,7 @@ body.hasnav main{padding-bottom:86px}
     const L0 = yang ? w9(fp0 + hs) : w9(fp0 - hs), L = L0 === 5 ? 2 : L0, sd = iR(L) - iR(fp);
     RING.forEach((p, j) => { door[p] = DOOR[RING[md(j - sd, 8)]] + '門'; });
     (yang ? GOD_Y : GOD_N).forEach((g, k) => { god[RING[md(iR(HP) + (yang ? k : -k), 8)]] = g; });
-    const ts = BR_PAL[cols[0][1]];   // 태을구성: 년지(신수국은 그해 태세) 궁에서 太乙 시작(운곡 프로그램 화면과 대조해 맞춤)
+    const ts = yang ? w9(HP - 1) : w9(HP + 1);   // 태을구성: 攝提가 직부(時干) 궁에 오도록(운곡 프로그램 두 화면과 대조해 맞춤)
     TAIYI.forEach((n, k) => { taiyi[yang ? w9(ts + k) : w9(ts - k)] = n; });
     // ── 世 · 육친 ──
     const sePal = BR_PAL[P.day[1]], se = earthN[sePal];
@@ -9029,10 +9058,8 @@ body.hasnav main{padding-bottom:86px}
     for (let p = 1; p <= 9; p++) { lqE[p] = liuqin(earthN[p], se); lqH[p] = liuqin(heavN[p], se); }
     lqE[sePal] = '世'; lqH[seHeavPal] = '世';
     for (let p = 1; p <= 9; p++) { if (p !== sePal && lqE[p] === '世') lqE[p] = '兄'; if (p !== seHeavPal && lqH[p] === '世') lqH[p] = '兄'; }
-    // ── 팔괘(생기복덕) ── 양둔: 지반 世궁이 歸魂 / 음둔: 지반 世궁이 生氣(운곡 프로그램 화면과 대조해 맞춤)
-    let gb = sePal; if (gb === 5) gb = 2;
-    let bits = TRI[gb].slice();
-    if (!yang) bits[2] ^= 1;
+    // ── 팔괘(생기복덕) ── 遊魂이 직부(時干) 궁에 오도록: 직부 궁 괘의 상효·하효를 바꾼 괘가 본괘(歸魂)(운곡 프로그램 두 화면과 대조해 맞춤)
+    let bits = TRI[HP].slice(); bits[0] ^= 1; bits[2] ^= 1;
     const triPal = b => +Object.keys(TRI).find(k => TRI[k].join() === b.join());
     FLIP.forEach((f, k) => { bits[f] ^= 1; gua[triPal(bits)] = GUA[k]; });
     // ── 사주 위치 표시(지반/천반) ──
