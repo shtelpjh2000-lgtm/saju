@@ -9015,7 +9015,7 @@ body.hasnav main{padding-bottom:86px}
     const L0 = yang ? w9(fp0 + hs) : w9(fp0 - hs), L = L0 === 5 ? 2 : L0, sd = iR(L) - iR(fp);
     RING.forEach((p, j) => { door[p] = DOOR[RING[md(j - sd, 8)]] + '門'; });
     (yang ? GOD_Y : GOD_N).forEach((g, k) => { god[RING[md(iR(HP) + (yang ? k : -k), 8)]] = g; });
-    const ts = BR_PAL[P.hour[1]];
+    const ts = BR_PAL[cols[0][1]];   // 태을구성: 년지(신수국은 그해 태세) 궁에서 太乙 시작(운곡 프로그램 화면과 대조해 맞춤)
     TAIYI.forEach((n, k) => { taiyi[yang ? w9(ts + k) : w9(ts - k)] = n; });
     // ── 世 · 육친 ──
     const sePal = BR_PAL[P.day[1]], se = earthN[sePal];
@@ -9029,9 +9029,10 @@ body.hasnav main{padding-bottom:86px}
     for (let p = 1; p <= 9; p++) { lqE[p] = liuqin(earthN[p], se); lqH[p] = liuqin(heavN[p], se); }
     lqE[sePal] = '世'; lqH[seHeavPal] = '世';
     for (let p = 1; p <= 9; p++) { if (p !== sePal && lqE[p] === '世') lqE[p] = '兄'; if (p !== seHeavPal && lqH[p] === '世') lqH[p] = '兄'; }
-    // ── 팔괘(생기복덕) ── 양둔: 지반 世궁 기준 / 음둔: 천반 世궁 기준 (두 화면 기준 추정)
-    let gb = yang ? sePal : seHeavPal; if (gb === 5) gb = 2;
+    // ── 팔괘(생기복덕) ── 양둔: 지반 世궁이 歸魂 / 음둔: 지반 世궁이 生氣(운곡 프로그램 화면과 대조해 맞춤)
+    let gb = sePal; if (gb === 5) gb = 2;
     let bits = TRI[gb].slice();
+    if (!yang) bits[2] ^= 1;
     const triPal = b => +Object.keys(TRI).find(k => TRI[k].join() === b.join());
     FLIP.forEach((f, k) => { bits[f] ^= 1; gua[triPal(bits)] = GUA[k]; });
     // ── 사주 위치 표시(지반/천반) ──
