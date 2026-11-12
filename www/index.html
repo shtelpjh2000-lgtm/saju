@@ -9875,13 +9875,14 @@ function compute(){
   if(!dv||!tv)throw new Error('생년월일과 시각을 입력해 주세요.');
   let [y,m,d]=dv.split('-').map(Number);const [h,mi]=tv.split(':').map(Number);
   if(y<1900||y>2100)throw new Error('1900~2100년 사이로 입력해 주세요.');
+  const typed={cal,y,m,d,t:($('tSel')?$('tSel').textContent:'').trim()};
   if(cal!=='S'){
     try{const s=Lunar.fromYmd(y,cal==='LL'?-m:m,d).getSolar();y=s.getYear();m=s.getMonth();d=s.getDay();}
     catch(e){throw new Error('그 음력 날짜를 찾지 못했어요. 윤달 여부를 확인해 주세요.');}
   }
   const ad=$('adj').checked?autoAdjust(y,m,d):{a:0,why:[]};
   const r=Gimun.calc(Solar,y,m,d,h,mi,{adjust:ad.a});
-  r.input={y,m,d,h,mi,name:$('nm').value.trim(),sex,adj:ad};
+  r.input={y,m,d,h,mi,name:$('nm').value.trim(),sex,adj:ad,typed};
   return r;
 }
 
@@ -11682,8 +11683,11 @@ body.hasBase:not(.pro):not(.formOpen) #whoBar{display:flex}
     const on=!!base&&!B.classList.contains('pro')&&mode==='won';
     B.classList.toggle('hasBase',!!base);
     if(base){const I=base.input,p=v=>String(v).padStart(2,'0');
-      who.querySelector('b').textContent=(I.name?I.name+' · ':'')+I.y+'.'+I.m+'.'+I.d+' '+p(I.h)+':'+p(I.mi);
-      who.querySelector('small').textContent=(I.sex==='M'?'남자':'여자')+' · 지금 보고 있는 사람이에요';}
+      const T=I.typed||{cal:'S',y:I.y,m:I.m,d:I.d,t:''},lunar=T.cal!=='S';
+      const tm=/시/.test(T.t)?T.t.replace(/^[^\p{Script=Han}\p{Script=Hangul}]+/u,'').replace(/^(\p{Script=Han})\p{Script=Hangul}시/u,'$1時')+'':p(I.h)+':'+p(I.mi);
+      const ex=/입력\s*(\d{1,2}:\d{2})/.exec(T.t),tm2=ex?ex[1]+' ('+tm.split(' ')[0]+')':tm;
+      who.querySelector('b').textContent=(I.name?I.name+' · ':'')+(lunar?(T.cal==='LL'?'음력 윤':'음력 '):'양력 ')+T.y+'년 '+T.m+'월 '+T.d+'일 '+tm2;
+      who.querySelector('small').textContent=(I.sex==='M'?'남자':'여자')+(lunar?' · 양력으로 '+I.y+'년 '+I.m+'월 '+I.d+'일':'');}
     if(!on&&B.classList.contains('qaOn')){setOpen(null);}
     B.classList.toggle('qaOn',on);
     const pb=document.querySelector('.proBar');if(pb){const dst=on?card:$('menuCard');if(pb.parentNode!==dst)dst.appendChild(pb);}
