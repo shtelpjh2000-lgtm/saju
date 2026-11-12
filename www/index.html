@@ -9059,8 +9059,8 @@ body.hasnav main{padding-bottom:86px}
     for (let p = 1; p <= 9; p++) { lqE[p] = liuqin(earthN[p], se); lqH[p] = liuqin(heavN[p], se); }
     lqE[sePal] = '世'; lqH[seHeavPal] = '世';
     for (let p = 1; p <= 9; p++) { if (p !== sePal && lqE[p] === '世') lqE[p] = '兄'; if (p !== seHeavPal && lqH[p] === '世') lqH[p] = '兄'; }
-    // ── 팔괘(생기복덕) ── 지반 중궁 홍국수 번호의 궁이 본괘(歸魂)(운곡 프로그램 13개 화면과 대조). 중궁수가 五면 곤궁으로 봐요(미확인)
-    const gb = earthN[5] === 5 ? 2 : earthN[5];
+    // ── 팔괘(생기복덕) ── 지반 중궁 홍국수 번호의 궁이 본괘(歸魂), 중궁수가 五면 손궁(운곡 프로그램 15개 화면과 대조)
+    const gb = earthN[5] === 5 ? 4 : earthN[5];
     let bits = TRI[gb].slice();
     const triPal = b => +Object.keys(TRI).find(k => TRI[k].join() === b.join());
     FLIP.forEach((f, k) => { bits[f] ^= 1; gua[triPal(bits)] = GUA[k]; });
