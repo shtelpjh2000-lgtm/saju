@@ -393,7 +393,7 @@ body.hasnav main{padding-bottom:86px}
     <p class="modeExp" id="modeExp"></p>
   </div>
   <div class="card" id="askCard">
-    <div class="dkHead"><span class="dkAv">👹</span><div><b>기와 도깨비 영감</b><small>삼백 년 기와 위에서 사람 사는 걸 지켜본 도깨비</small></div></div>
+    <div class="dkHead"><span class="dkAv">👹</span><div><b>기와 도깨비 영감</b><small>오백 년 기와 위에서 사람 사는 걸 지켜본 도깨비</small></div></div>
     <div id="askOut"></div>
     
     <button type="button" class="askTog" id="askTog">📋 주제 목록에서 고르기 ▾</button><div class="askChips" id="askChips" style="display:none"></div>
@@ -11088,7 +11088,7 @@ alDraw();
     return '<div class="askFollow">'+b.map(([k,l])=>'<button type="button" data-f="'+k+'">'+l+'</button>').join('')+'</div>';}
   const QUICK=[['money','💰 돈 얘기','요즘 돈 문제가 궁금해요'],['love','💕 사람·인연 얘기','사람·인연 운은 어때요?'],['promo','💼 일 얘기','일은 잘 풀릴까요?'],['health','🏥 몸 얘기','건강은 괜찮을까요?'],['caution','⚠️ 올해 조심할 것','올해 조심할 건 뭐예요?'],['ab','⚖️ 고민 골라 주게',''],['talk','🙋 그냥 털어놓기','']];
   function greetHtml(){
-    const age=ageNow(base);let L=['어이, 왔는가. 나는 이 집 기와 위에서 삼백 년을 산 도깨비 영감일세. 자네 사주를 슬쩍 들여다봤네.'];
+    const age=ageNow(base);let L=['어이, 왔는가. 나는 이 집 기와 위에서 오백 년을 산 도깨비 영감일세. 자네 사주를 슬쩍 들여다봤네.'];
     try{const x=Haeseok.interpret(base,base.input.sex,age),cr=x.curRun;
       if(cr){if(cr.g>=1.5)L.push('요즘 <b>'+cr.theme+'</b> 쪽으로 기운이 차오르는 때라, 해 보고 싶은 게 많을 걸세. 이럴 땐 망설이지 말고 한 발 내디뎌 보게.');
         else if(cr.g>=0.5)L.push('요즘은 <b>'+cr.theme+'</b> 쪽으로 슬슬 바람이 부는 때일세. 차근차근 가면 손에 쥐는 게 있을 걸세.');
