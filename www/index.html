@@ -9195,9 +9195,11 @@ body.hasnav main{padding-bottom:86px}
 
     // 육친 집계
     const cnt = { 兄: 0, 父: 0, 孫: 0, 財: 0, 官: 0, 鬼: 0 }, where = { 兄: [], 父: [], 孫: [], 財: [], 官: [], 鬼: [] };
-    for (const p of ALL) for (const [n, lv] of [[r.earthN[p], '지반'], [r.heavN[p], '천반']]) {
-      if ((p === sp && lv === '지반') || (p === shp && lv === '천반')) continue;
-      const k = rel(n); cnt[k]++; where[k].push(p);
+    // 책: 해단은 동처(사지·사간·世·중궁 + 준동, 사지·사간은 천반의 같은 수에도 등극)로 해요 — 판 전체 수를 세지 않아요
+    const DP = dongPos(r);
+    for (const { p, n, lv } of DP) {
+      if ((p === sp && lv === '지반') || (p === shp && lv === '천반') || n === se) continue;
+      const k = rel(n); cnt[k]++; if (!where[k].includes(p)) where[k].push(p);
     }
     const grp = { 인성: cnt.父, 비겁: cnt.兄, 식상: cnt.孫, 재성: cnt.財, 관성: cnt.官 + cnt.鬼 };
     const dongPal = new Set([...Object.keys(r.tagE).map(Number), 5]);
@@ -9212,7 +9214,9 @@ body.hasnav main{padding-bottom:86px}
     };
     // 삼합
     const nums = new Set(); for (const p of ALL) { nums.add(r.earthN[p]); }
-    const sanhe = SAN.filter(([a, b, c]) => [a, b, c].every(x => [...ALL].some(p => r.earthN[p] === x && dongPal.has(p))));
+    const DN = dongNums(r);
+    const sanhe = SAN.filter(([a, b, c]) => [a, b, c].every(x => DN.has(x)) && sanOk(r, b));
+    const LQ_EL = { 兄: seE, 父: Object.keys(SHENG).find(e => SHENG[e] === seE), 孫: SHENG[seE], 財: KE[seE], 官: Object.keys(KE).find(e => KE[e] === seE) }; LQ_EL.鬼 = LQ_EL.官;
     // 삼살성(같은 궁 천지반 五五·七七·九九)
     const sal = []; for (const p of ALL) { const e = r.earthN[p], h = r.heavN[p]; if (e === h && [5, 7, 9].includes(e)) sal.push([p, { 5: '천강살(五五)', 7: '형혹성(七七)', 9: '태백성(九九)' }[e]]); }
 
@@ -9221,17 +9225,17 @@ body.hasnav main{padding-bottom:86px}
     for (const p of ALL) {
       for (const [lv, rng, n] of [['지반', r.ageE[p], r.earthN[p]], ['천반', r.ageH[p], r.heavN[p]]]) {
         const k = rel(n), rw = relWith(n, se);
-        let g = { 父: 2, 兄: 1, 孫: 0, 財: 0, 官: 0, 鬼: -2 }[k];
-        if (strong === 'strong') g = { 父: 0, 兄: -1, 孫: 1, 財: 2, 官: 1, 鬼: -1 }[k];
-        if (rw.includes('육합')) g += 1; if (rw.includes('충')) g -= 1;
-        if (r.kong.has(p)) g -= 0.5;
+        // 책: 대운 수는 동처와의 삼합→반합→육합→생→충극 순열로 풀고, 길문괘·살성을 더해요
+        const jj = judge(r, n, pickFor(relations(r, n), 'all'), strong);
+        let g = jj.s;
+        if (r.kong.has(p) && !kongFree(r, p, n)) g -= 0.5;
         // 대운의 괘문: 45세까지는 그 궁, 46세부터는 그 천반 수가 지반에 있는 궁의 문·괘를 봐요(길문괘가 대운 길흉의 중심)
         const gp = lv === '지반' ? p : (ALL.find(q => q !== 5 && r.earthN[q] === n) || p);
         const dr = r.door && r.door[gp], gu = r.gua && r.gua[gp];
         g += ({ 休門: 0.5, 生門: 0.5, 開門: 0.5, 死門: -0.5, 傷門: -0.5, 驚門: -0.5 })[dr] || 0;
         g += ({ 生氣: 0.5, 天宜: 0.5, 福德: 0.5, 絶命: -0.5, 禍害: -0.5, 絶體: -0.5 })[gu] || 0;
         const theme = { 父: '문서·학업·집·계약', 兄: '사람·경쟁·동업', 孫: '자녀·재능·새 일', 財: '재물·사업' + (sex === 'M' ? '·연애' : ''), 官: '직장·승진·명예' + (sex === 'F' ? '·연애' : ''), 鬼: '압박·관재·건강 주의' }[k];
-        runs.push({ p, gp, door: dr, gua: gu, lv, from: rng[0], to: rng[1], n, k, theme, g, rw: rw.filter(x => x === '육합' || x === '충') });
+        runs.push({ p, gp, door: dr, gua: gu, lv, from: rng[0], to: rng[1], n, k, theme, g, why: jj.txt, rw: rw.filter(x => x === '육합' || x === '충') });
       }
     }
     runs.sort((a, b) => a.from - b.from);
@@ -9287,7 +9291,15 @@ body.hasnav main{padding-bottom:86px}
     else if (strong === 'weak' && cnt.財 >= 3) { ms = 2.5; mType = '지키는 형 — 버는 것보다 새는 걸 막는 게 관건'; F.push('돈은 많이 보이는데 世가 약한 「재다신약(財多身弱)」이에요. 돈 냄새는 잘 맡지만 덥석 잡으면 몸이 상하거나 사람에게 뺏겨요. 혼자 크게 벌이지 말고, 계약서와 믿을 만한 파트너로 반드시 안전장치를 거세요.'); }
     else { ms = 3.5; mType = '모으는 형 — 티끌 모아 태산을 만드는 체질'; F.push('재성이 ' + cnt.財 + '곳에 있어 재물 복이 평균 이상이에요. 한 방보다 꾸준함이 무기라, 자동이체 적금처럼 "모르는 사이에 쌓이는 구조"를 만들면 중년 이후 확실히 차이가 나요.'); }
     if (cnt.孫 && cnt.財) { ms += 0.5; F.push('재능(孫)이 돈(財)으로 바로 연결되는 흐름이 있어요. 좋아하는 일을 돈 되는 일로 바꾸는 순간 수입이 뛰어요.'); }
-    if (cnt.兄 >= 4) { ms -= 1; F.push('⚠️ 비겁이 ' + cnt.兄 + '개나 돼 내 돈을 노리는 사람이 꼬여요. 보증, 동업, 지인 돈거래는 "절대 안 된다"고 정해 두세요.'); }
+    if (cnt.兄 >= 3) { ms -= 1; F.push('⚠️ 동처에 비겁이 ' + cnt.兄 + '곳이라 내 돈을 노리는 사람이 꼬여요. 보증, 동업, 지인 돈거래는 "절대 안 된다"고 정해 두세요.'); }
+    // 책: 삼합이 인성이면 재물에 귀격, 삼합의 오행이 世가 되면 대길 / 世약에 재성 삼합은 돈·여자로 괴로움 / 삼합 중 둘만 있으면 빠진 하나를 취하면 재물이 편해요
+    for (const s of sanhe) {
+      const e = s[3];
+      if (e === LQ_EL.父) { ms += 1; F.push('🏆 ' + NUMK[s[0]] + '·' + NUMK[s[1]] + '·' + NUMK[s[2]] + ' 삼합이 인성(문서)으로 맺혀 재물에 귀격이에요. 집·땅·문서로 재산이 불어나요.'); }
+      else if (e === seE) { ms += 1; F.push('🏆 ' + NUMK[s[0]] + '·' + NUMK[s[1]] + '·' + NUMK[s[2]] + ' 삼합이 世의 기운으로 모여 재물에 크게 길해요.'); }
+      else if (e === LQ_EL.財 && strong === 'weak') { ms -= 1; F.push('⚠️ 재성이 삼합으로 왕성한데 世가 약해 돈' + (sex === 'M' ? '과 여자' : '') + '가 들어오면 오히려 괴로움이 돼요. 큰돈은 나눠서 지키세요.'); }
+    }
+    if (!sanhe.length) for (const [a, b, c, e] of SAN) { const have = [a, b, c].filter(x => DN.has(x)); if (have.length === 2) { const m0 = [a, b, c].find(x => !DN.has(x)), mk = rel(m0); if (['父', '財', '孫', '官'].includes(mk) && (e === seE || e === LQ_EL.父 || e === LQ_EL.財)) { F.push('💡 삼합(' + NUMK[a] + '·' + NUMK[b] + '·' + NUMK[c] + ') 가운데 ' + NUMK[m0] + '만 빠져 있어요. 빠진 ' + LQKO[mk] + '(' + { 父: '문서·자격', 財: '돈·사업', 孫: '사업·장사·기술', 官: '직장·관직' }[mk] + ')을 취해 쓰면 재물이 어렵지 않아요.'); break; } } }
     const finSet = new Set(where.財);
     if (finSet.size && [...finSet].every(p => r.kong.has(p))) { ms -= 0.5; F.push('재성이 공망에 걸려 들어온 돈이 손에 오래 머물지 않아요. 수입이 생기면 바로 묶어 두는 습관이 필요해요.'); }
     const moneyRun = pickRun(strong === 'weak' ? ['父', '兄', '財'] : ['財', '孫'], 1);
@@ -9297,15 +9309,26 @@ body.hasnav main{padding-bottom:86px}
     HL.money = mType; SC.money = clamp(ms); S.money = F;
 
     // ── 직업(용신) ──
-    let yong;
-    if (strong === 'weak') yong = cnt.父 ? '父' : '兄';
-    else { const c = ['官', '財', '孫'].map(k => [k, cnt[k] + (k === '官' ? cnt.鬼 * 0.5 : 0)]).sort((a, b) => b[1] - a[1]); yong = c[0][1] > 0 ? c[0][0] : '孫'; }
-    const yongE = (() => { for (const p of ALL) { for (const n of [r.earthN[p], r.heavN[p]]) if (rel(n) === yong) return EL(n); } return seE; })();
+    // 책: 世약이면 인성(父)이 용신, 世왕이면 동한 재·관귀·손 가운데 왕성한 것이 용신
+    let yong, yongN = null;
+    if (strong === 'weak') yong = '父';
+    else {
+      const c = DP.filter(x => x.n !== se && ['財', '官', '鬼', '孫'].includes(rel(x.n))).map(x => ({ k: rel(x.n), n: x.n, pw: numPower(r, x.n, x.p) + (x.p === 5 ? 0.5 : 0) }));
+      c.sort((a, b) => b.pw - a.pw);
+      if (c.length) { yong = c[0].k; yongN = c[0].n; } else yong = '孫';
+    }
+    const yongE = yongN ? EL(yongN) : LQ_EL[yong];
+    const yongMiss = !DP.some(x => x.n !== se && rel(x.n) === yong);
+    const JY = jinyong(r, yong === '鬼' ? '官' : yong);
+    const jy = JY.cand[0] || null;
     const JOBHL = { 父: '자격증과 문서가 밥 먹여 주는 전문가형', 官: '조직에서 자리로 승부하는 관리자형', 鬼: '위기에서 빛나는 해결사형', 財: '숫자와 돈을 직접 굴리는 사업가형', 孫: '재능과 기술로 이름을 남기는 장인형', 兄: '사람을 모아 판을 키우는 네트워크형' };
     const AVOID = { 父: '실적 압박만 있고 배울 게 없는 영업직', 官: '혼자 책임지는 불안정한 자영업', 鬼: '변화 없는 반복 사무직', 財: '정해진 월급만 받는 단순 반복 업무', 孫: '창의성을 막는 딱딱한 위계 조직', 兄: '혼자 고립돼 일하는 자리' };
+    const jyK = jy ? (jy.k === '世' ? '兄' : jy.k) : null;
     S.job = [
-      '용신은 <b>' + LQKO[yong] + '(' + yong + ')</b>이에요. ' + ROLE[yong] + ' — 이 길로 가면 노력의 두 배를 돌려받아요.',
+      '용신은 <b>' + LQKO[yong] + '(' + yong + ')</b>이에요' + (strong === 'weak' ? '(世가 약해 나를 생해 주는 인성을 써요)' : '(世가 왕해 동한 재·관·손 가운데 가장 왕성한 것을 써요)') + '. ' + ROLE[yong] + (yongMiss ? ' — 다만 동처에 직접 드러나지 않아 운에서 들어올 때 힘을 써요.' : ' — 이 길로 가면 노력의 두 배를 돌려받아요.'),
+      jy ? '🔑 <b>진용(眞用)</b>은 ' + NUM[jy.n] + '(' + LQKO[jyK] + ')' + ' — ' + jy.q.type + '으로 용신의 ' + ELKO[JY.yE] + ' 기운을 더 왕성하게 해 줘요. 실제 직업과 개운은 이 쪽을 취할 때 더 잘 풀려요: ' + ROLE[jyK] + '.' : '',
       '용신 오행이 ' + ira(ELKO[yongE]) + '서 <b>' + JOB[yongE] + '</b> 분야가 당신 무대예요.',
+      sals(r).some(s => s.name.includes('삼형') && !s.light) && strong === 'strong' ? '三二九 삼형살이 있는데 世가 왕해 도리어 권세를 잡는 쪽으로 써요 — 결단·통솔이 필요한 자리에서 빛나요.' : '',
       '🚫 피해야 할 자리: ' + AVOID[yong] + '. 이런 곳에선 능력의 절반도 못 써요.',
       cnt.官 + cnt.鬼 && strong !== 'weak' ? '관성이 받쳐 줘 조직 안에서 직함과 명예를 얻는 사주예요. 승진 기회가 오면 사양하지 마세요.' : ''
     ].filter(Boolean);
@@ -9317,7 +9340,7 @@ body.hasnav main{padding-bottom:86px}
     const spK = sex === 'F' ? ['官', '鬼'] : ['財'];
     const spWord = sex === 'F' ? '남편 자리(官·鬼)' : '아내 자리(財)';
     const SPT = { 水: '속 깊고 눈치 빠른, 말없이 챙겨 주는 사람', 火: '밝고 표현이 확실한, 함께 있으면 웃게 되는 사람', 木: '곧고 정 많은, 미래를 같이 그려 가는 사람', 金: '똑 부러지고 책임감 강한, 약속은 꼭 지키는 사람', 土: '듬직하고 한결같은, 기댈 수 있는 사람' };
-    const spPals = []; for (const p of ALL) for (const [n, lv] of [[r.earthN[p], '지'], [r.heavN[p], '천']]) if (spK.includes(rel(n)) && !((p === sp && lv === '지') || (p === shp && lv === '천'))) spPals.push([p, n, lv]);
+    const spPals = DP.filter(x => x.n !== se && spK.includes(rel(x.n)) && !((x.p === sp && x.lv === '지반') || (x.p === shp && x.lv === '천반'))).map(x => [x.p, x.n, x.lv === '지반' ? '지' : '천']);
     const M = []; let ss = 3, spHL;
     if (!spPals.length) { ss = 2; spHL = '인연은 늦게, 그러나 운에서 확실히 들어와요'; M.push(spWord + '가 판에 드러나지 않아 연애가 쉽게 풀리지 않는 사주예요. 대신 운에서 배우자 기운이 들어오는 시기에 만나면 오래가요. 그 시기를 놓치지 마세요.'); }
     else {
@@ -9325,11 +9348,17 @@ body.hasnav main{padding-bottom:86px}
       const rw = relWith(main[1], se);
       spHL = '잘 맞는 사람: ' + SPT[EL(main[1])];
       M.push('당신의 짝은 <b>' + SPT[EL(main[1])] + '</b>이에요. (' + (sex === 'F' ? '남편' : '아내') + ' 수: ' + PK[main[0]] + ' ' + NUM[main[1]] + ', ' + ELKO[EL(main[1])] + ' 기운)');
-      if (rw.includes('육합')) { ss += 1; M.push('💞 배우자 수가 世와 육합 — 처음 본 순간 끌리고, 살수록 정이 깊어지는 찰떡 인연이에요.'); }
-      if (rw.includes('충')) { ss -= 1; M.push('⚡ 배우자 수가 世와 충 — 불꽃 튀게 사랑하고 불꽃 튀게 싸우는 사이예요. 각자의 공간과 시간을 인정해 주는 게 오래가는 비결이에요.'); }
+      // 책: 배우자 수가 世와 합(삼합·반합·육합)하면 사이가 좋고, 생하면 덕을 보고, 충극하면 부딪혀요
+      const spRel = relations(r, main[1]).find(q => q.with.includes(se));
+      if (spRel && spRel.type !== '생' && spRel.type !== '충극') { ss += 1; M.push('💞 배우자 수가 世와 ' + spRel.type + ' — 사이가 좋고 떨어져 살지 않는 금실이에요.'); }
+      else if (spRel && spRel.type === '생') { ss += 0.5; M.push('배우자 수가 世를 생해 배우자의 덕을 보는 인연이에요.'); }
+      else if (rw.includes('충') || (spRel && spRel.type === '충극')) { ss -= 1; M.push('⚡ 배우자 수가 世와 ' + (rw.includes('충') ? '충' : '충극') + ' — 불꽃 튀게 사랑하고 불꽃 튀게 싸우는 사이예요. 각자의 공간과 시간을 인정해 주는 게 오래가는 비결이에요.'); }
+      const HG4 = [[7, 9], [2, 9], [7, 4], [2, 4]], hg = q => HG4.some(([x, y]) => (r.earthN[q] === x && r.heavN[q] === y) || (r.earthN[q] === y && r.heavN[q] === x));
+      if (hg(sp) && spPals.some(([q]) => hg(q))) { ss -= 1.5; M.push('⚠️ 世궁과 배우자 자리의 천지반이 모두 화금상전이에요. 책에서는 해로하기 어려운 배치로 봐요 — 떨어져 지내는 시간을 일부러 만들고, 다툼은 그날 풀어야 해요.'); }
+      if (spPals.some(([, n]) => n === 3) && [3, 2, 9].every(x => DN.has(x))) { ss -= 1; M.push('⚠️ 배우자 수가 三인데 三二九 삼형살이 이뤄져 배우자 쪽이 충극을 받아요. 배우자의 건강·사고를 함께 챙기세요.'); }
       if (sex === 'F' && spPals.some(x => rel(x[1]) === '鬼') && spPals.some(x => rel(x[1]) === '官')) { ss -= 0.5; M.push('官과 鬼가 함께 있어 남자 인연이 겹치기 쉬워요. 끌리는 사람과 좋은 사람을 구분하는 눈이 필요해요.'); }
       if (sex === 'M' && spPals.length >= 4) M.push('재성이 많아 이성에게 인기가 많은 사주예요. 인연이 많은 만큼 한 사람에게 집중할 때 복이 커져요.');
-      if (spPals.every(([p]) => r.kong.has(p))) { ss -= 1; M.push('배우자 자리가 공망이라 서로 바빠 함께하는 시간이 줄기 쉬워요. 일부러라도 둘만의 시간을 정해 두세요.'); }
+      if (spPals.every(([p, n]) => r.kong.has(p) && !kongFree(r, p, n))) { ss -= 1; M.push('배우자 자리가 공망이라 서로 바빠 함께하는 시간이 줄기 쉬워요. 일부러라도 둘만의 시간을 정해 두세요.'); }
       if (spPals.some(([p]) => p === sp)) M.push('배우자 수가 世궁에 함께 있어 결혼 후 배우자가 인생의 중심이 되는 사주예요.');
       if (rel(r.heavN[sp]) === (sex === 'F' ? '官' : '財')) { ss += 1; M.push('世궁 천반이 배우자라 결혼하면 배우자 덕에 한 단계 올라서요.'); }
     }
@@ -9344,10 +9373,13 @@ body.hasnav main{padding-bottom:86px}
     else {
       cs = cnt.孫 >= 3 ? 4.5 : 3.5; chHL = cnt.孫 >= 3 ? '자녀가 복덩이 — 자식 덕을 보는 사주' : '자녀와 인연이 이어지는 사주';
       C.push('孫이 ' + cnt.孫 + '곳에 있어 ' + (cnt.孫 >= 3 ? '자녀 복이 많고, 나이 들수록 자식 덕을 톡톡히 봐요.' : '자녀 인연이 분명하고 자녀를 통해 기쁨을 얻어요.'));
-      if (where.孫.every(p => r.kong.has(p))) { cs -= 1; C.push('孫이 모두 공망이라 자녀와 떨어져 지내거나 생각이 엇갈리기 쉬워요. 간섭보다 응원이 통해요.'); }
+      if (where.孫.every(p => r.kong.has(p) && !kongFree(r, p))) { cs -= 1; C.push('孫이 모두 공망이라 자녀와 떨어져 지내거나 생각이 엇갈리기 쉬워요. 간섭보다 응원이 통해요.'); }
       if (cnt.父 >= 4) { cs -= 0.5; C.push('인성이 많아 자녀를 누르기 쉬워요. 잔소리를 반으로 줄이면 아이가 두 배로 자라요.'); }
       if (where.孫.includes(5)) { cs += 0.5; C.push('중궁에 孫이 있어 자녀가 집안의 기둥이 돼요.'); }
     }
+    // 책: 時干은 맏이, 時支는 그다음 자녀 — 그 수가 충극·삼형을 받으면 그 자녀가 힘들어요
+    { const tg = DP.find(x => x.lv === '지반' && (r.tagE[x.p] || []).includes('時干')), tz = DP.find(x => x.lv === '지반' && (r.tagE[x.p] || []).includes('時支'));
+      for (const [x, who] of [[tg, '맏이'], [tz, '둘째 이후 자녀']]) { if (!x) continue; const hit = sals(r).find(s => !s.light && s.bad && s.txt.includes(NUM[x.n] + '(')); if (hit) { cs -= 0.5; C.push('⚠️ ' + who + ' 자리(' + NUM[x.n] + ')가 ' + hit.name + '에 걸려 있어 그 자녀의 건강·사고를 챙기세요.'); } } }
     HL.child = chHL; SC.child = clamp(cs); S.child = C;
 
     // ── 건강 ──
@@ -9355,9 +9387,11 @@ body.hasnav main{padding-bottom:86px}
     const H = []; let hs = 4;
     H.push('世가 ' + ira(ELKO[seE]) + ' <b>' + ORGAN[seE] + '</b> 쪽이 가장 먼저 신호를 보내요. ' + HB[seE]);
     const guiE = (() => { for (const p of ALL) for (const n of [r.earthN[p], r.heavN[p]]) if (rel(n) === '鬼') return EL(n); return KE[KE[KE[KE[seE]]]]; })();
-    if (cnt.鬼 + cnt.官 >= 4 && strong !== 'strong') { hs -= 1; H.push('⚠️ 관귀가 많고 世가 약해 스트레스가 바로 몸으로 와요(' + ORGAN[guiE] + '). 일을 줄이는 게 최고의 보약이에요.'); }
+    if (cnt.鬼 + cnt.官 >= 3 && strong !== 'strong') { hs -= 1; H.push('⚠️ 관귀가 많고 世가 약해 스트레스가 바로 몸으로 와요(' + ORGAN[guiE] + '). 일을 줄이는 게 최고의 보약이에요.'); }
     if (['絶體', '絶命'].includes(r.gua[sp])) { hs -= 1; H.push('世궁에 ' + r.gua[sp] + '이 있어 체력이 갑자기 떨어지는 때가 있어요. 정기 검진은 미루지 마세요.'); }
-    if (sal.length) { hs -= 0.5; H.push(sal.map(([p, n]) => PK[p] + '의 ' + n).join(', ') + '이 있어 운전·운동 중 다치지 않게 조심하세요.'); }
+    if (sal.length) { const nearSe = sal.some(([p]) => p === sp || p === 5 || (r.tagE[p] || []).includes('年支')); hs -= nearSe ? 1 : 0.5; H.push(sal.map(([p, n]) => PK[p] + '의 ' + n).join(', ') + (nearSe ? '이 世·중궁·년지 자리에 있어 사고·수술을 특히 조심해야 해요.' : '이 있어 운전·운동 중 다치지 않게 조심하세요.')); }
+    { const hitSe = sals(r).filter(s => s.bad && !s.light && s.txt.includes('(세)') && /삼살|삼형|천강|형혹|태백/.test(s.name)); if (hitSe.length) { hs -= strong === 'strong' ? 0.5 : 1.5; H.push('⚠️ ' + hitSe.map(s => s.name).join('·') + '이 世(나) 자신을 치는 배치예요. ' + (strong === 'strong' ? '世가 왕해 큰 탈로 번지진 않지만, 그 운이 올 때 사고·수술·과로를 조심하세요.' : '世가 약해 그 운이 올 때 사고·수술·질병을 특히 조심해야 해요.')); } }
+    { const HG4 = [[7, 9], [2, 9], [7, 4], [2, 4]]; if (HG4.some(([x, y]) => (r.earthN[sp] === x && r.heavN[sp] === y) || (r.earthN[sp] === y && r.heavN[sp] === x))) { hs -= 1; H.push('⚠️ 世궁 천지반이 화금상전(불과 쇠의 싸움)이라 몸이 상하는 일을 조심해야 해요.'); } }
     if ([r.earthN[sp], r.heavN[sp]].some(v => v === 5 || v === 10)) H.push('世궁에 토(五·十)가 있어 소화기와 만성 피로를 살피세요.');
     const hRun = runs.filter(u => u.k === '鬼' && u.g <= -1 && u.to >= 20).sort((a, b) => a.g - b.g)[0];
     if (hRun) H.push('🩺 건강을 특히 챙길 시기: <b>' + ageTxt(hRun) + '</b>');
@@ -9389,7 +9423,7 @@ body.hasnav main{padding-bottom:86px}
       水: { c: ['검정', '남색', '파랑'], hex: ['#2b2b2b', '#283f8f', '#3b82f6'], a: ['쥐', '돼지'], ae: '🐭🐷', n: '1 · 6', it: '수족관·물병, 유리 소품, 물결무늬 물건', sea: '겨울', d: '북쪽' }
     };
     const L0 = LK[yongE];
-    const yPal = (where[yong] || []).find(p => p !== 5) || 0;
+    const yPal = (jy && jy.pals && jy.pals.find(p => p !== 5)) || (where[yong] || []).find(p => p !== 5) || 0;
     const pDir = yPal ? /\((.+)\)/.exec(PK[yPal])[1] + '쪽' : L0.d;
     const badE = KE[KE[KE[KE[seE]]]] === undefined ? null : Object.keys(KE).find(k => KE[k] === seE);
     const L1 = badE && badE !== yongE ? LK[badE] : null;
@@ -9438,6 +9472,47 @@ body.hasnav main{padding-bottom:86px}
       const geo = sup(PAL_EL0[p], e) || ((a === 5 || a === 10) && [2, 4, 6, 8].includes(p)), seung = sup(mon, e);
       if (geo || seung) out.push({ p, n: a, h: b, why: geo && seung ? '자리·월령 모두' : geo ? '자리에서 왕' : '월령의 생조' }); }
     return (r._jun = out);
+  }
+  // 동처 자리 목록: 지반(사주가 놓인 궁·世궁·중궁·준동) + 천반(사지·사간 등극·世 천반·중궁·준동) + 중궁 투출
+  function dongPos(r) {
+    if (r._dp) return r._dp;
+    const o = [], seen = new Set(), add = (p, n, lv) => { const k = p + lv; if (!seen.has(k)) { seen.add(k); o.push({ p, n, lv }); } };
+    const J = junDong(r).map(j => j.p);
+    for (const p of new Set([5, r.sePal, ...Object.keys(r.tagE || {}).map(Number), ...J])) add(p, r.earthN[p], '지반');
+    for (const p of new Set([5, r.seHeavPal, ...Object.keys(r.tagH || {}).map(Number), ...J])) add(p, r.heavN[p], '천반');
+    for (const x of touchul(r)) add(5, x.to, '투출');
+    return (r._dp = o);
+  }
+  // 홍국수의 힘: 거왕(자리)·승왕(월령)·겸왕/수생(같은 궁 반대 판) 가운데 몇 개인지
+  function numPower(r, n, p) {
+    const e = EL(n), sup = x => x === e || SHENG[x] === e, mon = SEASON[r.pillars[1][1]];
+    const other = r.earthN[p] === n ? r.heavN[p] : r.earthN[p];
+    return (sup(PAL_EL0[p]) || ((n === 5 || n === 10) && [2, 4, 6, 8].includes(p)) ? 1 : 0) + (sup(mon) ? 1 : 0) + (sup(EL(other)) ? 1 : 0);
+  }
+  // 공망을 논하지 않는 경우(책): 그 자리에 일간이 있거나, 태왕(자리·월령·겸왕/수생 모두)할 때
+  function kongFree(r, p, n) { if ((r.tagE[p] || []).includes('日干') || (r.tagH[p] || []).includes('日干')) return true; return numPower(r, n == null ? r.earthN[p] : n, p) >= 3; }
+  // 七五九 삼살이 六을 생하는지 三을 충극하는지(책의 성립·생성 규칙 요약). made: 'set'(명국에 이미 성립) | 'new'(운에서 생성)
+  const RING8 = [1, 8, 3, 4, 9, 2, 7, 6];
+  function samsal(r, made) {
+    const DP0 = dongPos(r), rel = relOf(r), at = n => DP0.filter(x => x.n === n).map(x => x.p);
+    const p3 = at(3), p6 = at(6), p9 = at(9), ilP = new Set([...Object.keys(r.tagE || {}).filter(q => (r.tagE[q] || []).includes('日干')), ...Object.keys(r.tagH || {}).filter(q => (r.tagH[q] || []).includes('日干'))].map(Number));
+    const near = (a, b) => a.some(x => b.some(y => x === y || Math.abs(RING8.indexOf(x) - RING8.indexOf(y)) % 6 === 1 || Math.abs(RING8.indexOf(x) - RING8.indexOf(y)) === 7));
+    const il = ps => ps.some(q => ilP.has(q));
+    if (!p3.length && !p6.length) return { t: 0, why: '三도 六도 없어 삼살 자체가 살성으로 작용' };
+    if (!p3.length) return { t: 6, why: '삼살이 내 자식 六을 생(탐생망극)' };
+    if (!p6.length) { if (rel(9) === '父' && subLq(9, r.se) === '편인' && r.se === 1) return { t: 'se', why: '三·六이 없어 편인 九가 世(一)를 생' }; return { t: 3, why: '六이 없어 삼살이 三을 충극' }; }
+    if (rel(9) === '父' && subLq(9, r.se) === '정인' && r.se === 6) return { t: 6, why: '삼살 九가 정인이라 世(六)를 생' };
+    if (il(p9)) return { t: 6, why: '삼살 九에 일간이 있어 충극보다 六 생을 택함' };
+    const mid3 = p3.includes(5), mid6 = p6.includes(5);
+    if (made === 'set') {
+      if (mid3 && !mid6) return { t: 3, why: '중궁 三이 동처 六을 앗아가 삼살이 三을 충극' };
+      if (il(p6) && !il(p3)) return { t: 6, why: '六에 일간이 있어 삼살이 六을 먼저 생' };
+      if (il(p3) && near(p3, p6)) return { t: 3, why: '六 옆의 三이 일간이라 삼살이 三을 충극' };
+      return near(p3, p6) ? { t: 3, why: '三과 六이 붙어 있어 삼살이 六을 앗아간 三을 충극' } : { t: 6, why: '三과 六이 떨어져 있어 삼살이 六을 생' };
+    }
+    if (mid3) return il([5]) ? { t: 3, why: '중궁 三에 일간이 있어 생성된 삼살이 三을 충극' } : { t: 6, why: '중궁 三이고 六이 동해 생성된 삼살이 六을 생' };
+    if (near(p3, p6) && (il(p3) || il(p6))) return { t: 3, why: '三과 六이 붙어 있고 일간이 있어 생성된 삼살이 三을 충극' };
+    return { t: 6, why: '생성된 삼살은 내 자식 六을 먼저 생' };
   }
   function dongNums(r) { if (r._dong) return r._dong; const S = new Set([r.earthN[5], r.heavN[5], r.earthN[r.sePal]]); for (const p of Object.keys(r.tagE || {})) S.add(r.earthN[p]); for (const j of junDong(r)) S.add(j.n); for (const t of touchul(r)) S.add(t.to); return (r._dong = S); }
   // 중궁 투출: 중궁 천지반에 二가 있으면 七, 四가 있으면 九가 투출(단 二六·四八로 충이면 투출 안 함)
@@ -9493,7 +9568,7 @@ body.hasnav main{padding-bottom:86px}
   function sals(r) {
     const D = dongNums(r), rel = relOf(r), out = [];
     const nk = n => NUM[n] + '(' + (rel(n) === '世' ? '세' : rel(n)) + ')';
-    if ([7, 5, 9].every(n => D.has(n))) out.push({ name: '七五九 삼살', bad: !D.has(6), txt: D.has(6) ? '삼살이 六' + '을 생해 ' + nk(6) + ' 육친이 왕성해져요(탐생망극)' : D.has(3) ? '삼살이 ' + nk(3) + '을 충극해 그 육친이 흉해요' : '삼살 자체가 살성이라 대운·신수·달에서 재물·직장·건강을 조심해요. 격이 좋으면 약이 되기도 해요' });
+    if ([7, 5, 9].every(n => D.has(n))) { const z = samsal(r, 'set'); out.push({ name: '七五九 삼살', bad: z.t !== 6 && z.t !== 'se', txt: z.why + (z.t === 6 ? ' → ' + nk(6) + ' 육친이 왕성해져요' : z.t === 3 ? ' → ' + nk(3) + ' 육친이 흉해요' : z.t === 'se' ? ' → 내가 힘을 얻어요' : ' → 대운·신수·달에서 재물·직장·건강을 조심해요. 격이 좋으면 약이 되기도 해요') }); }
     if ([3, 2, 9].every(n => D.has(n))) out.push({ name: '三二九 삼형살', bad: true, txt: nk(3) + ' 육친이 충극받아 흉해요. 世가 약하면 해가 되고, 왕하거나 격이 좋으면 도리어 권세·재물을 잡아요' });
     const HG = [[7, 9], [2, 9], [7, 4], [2, 4]];
     for (const p of ALL) { const a = r.earthN[p], b = r.heavN[p]; const h = HG.find(([x, y]) => (a === x && b === y) || (a === y && b === x)); if (h) { const metal = [a, b].find(n => n === 4 || n === 9); out.push({ name: '화금상전(' + NUM[h[0]] + NUM[h[1]] + ')', bad: true, txt: PK[p] + '의 천지반에서 불과 쇠가 싸워 ' + nk(metal) + ' 육친이 특히 흉해요(재물·이별·몸 상함)' }); } }
@@ -9544,7 +9619,7 @@ body.hasnav main{padding-bottom:86px}
     const D = dongNums(r), rel = relOf(r), nk = n => NUM[n] + '(' + rel(n) + ')';
     const done = (set) => set.includes(X) && set.filter(n => n !== X).every(n => D.has(n));
     if (done([3, 2, 9])) return { s: -1.5, t: ' · 三二九 삼형살이 이뤄져 ' + nk(3) + ' 육친이 흉' };
-    if (done([7, 5, 9])) return D.has(6) ? { s: 0.5, t: ' · 七五九 삼살이 六' + '을 생해 ' + nk(6) + ' 육친이 힘을 얻음' } : D.has(3) ? { s: -1, t: ' · 七五九 삼살이 ' + nk(3) + '을 충극' } : { s: -1, t: ' · 七五九 삼살(살성) — 재물·건강 조심' };
+    if (done([7, 5, 9])) { const z = samsal(r, 'new'); return z.t === 6 ? { s: 0.5, t: ' · 七五九 삼살 — ' + z.why + ', ' + nk(6) + ' 육친이 힘을 얻음' } : z.t === 3 ? { s: -1, t: ' · 七五九 삼살 — ' + z.why + ', ' + nk(3) + ' 육친이 흉' } : z.t === 'se' ? { s: 0.5, t: ' · 七五九 삼살 — ' + z.why } : { s: -1, t: ' · 七五九 삼살(살성) — 재물·건강 조심' }; }
     return null;
   }
   // 원국비기: 나이 → 홍국수(끝자리, 十은 0), 45세까지 지반·46세부터 천반 / 달: 그 수부터 1월, 지반은 순행(수+1), 천반은 역행(수−1), 11·12월은 1·2월 자리
