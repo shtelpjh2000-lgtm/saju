@@ -165,6 +165,7 @@ body.hasnav main{padding-bottom:86px}
 .ages{display:flex;justify-content:space-between;font-size:10px;color:var(--mute);margin-top:3px;gap:2px}
 .ages .on{background:var(--pink);color:#fff;font-weight:700;border-radius:999px;padding:0 4px}
 .ages .col{display:flex;flex-direction:column;align-items:flex-end}
+.ages .un{display:flex;flex-direction:column;justify-content:flex-end;font-family:"Noto Serif KR",serif;color:var(--ink);font-size:11px;line-height:1.25}
 .kong{color:var(--brown);font-weight:700}
 .center .gm{grid-template-columns:1fr}
 .legend{font-size:12px;color:var(--mute);margin:10px 4px 0}
@@ -9017,10 +9018,10 @@ body.hasnav main{padding-bottom:86px}
     const cols = [opt.yearGZ || P.year, P.month, P.day, P.hour];
     const sN = cols.map(c => GAN.indexOf(c[0]) + 1), bN = cols.map(c => ZHI.indexOf(c[1]) + 1);
     // ── 홍국수 ──
-    const X = w9(bN.reduce((a, b) => a + b, 0));    // 지반 중궁수
+    const X = w9(bN.reduce((a, b) => a + b, 0));    // 지반 중궁수 (五여도 그대로 궁번호+5 — 운곡 프로그램 1975.4.10·1975.10.10 화면 대조)
     const Y = w9(sN.reduce((a, b) => a + b, 0));    // 천반 중궁수
     const earthN = {5: X}, heavN = {5: Y};
-    for (const p of [1, 2, 3, 4, 6, 7, 8, 9]) { earthN[p] = w10((X === 5 ? 10 : X) + p); heavN[p] = w10(Y - p); }
+    for (const p of [1, 2, 3, 4, 6, 7, 8, 9]) { earthN[p] = w10(X + p); heavN[p] = w10(Y - p); }
     // ── 연국(시가) ──
     let jq = zhirunTerm(Solar, P);
     if (!JU[jq]) throw new Error('절기 이름을 확인하지 못했어요: ' + jq);
@@ -9059,6 +9060,12 @@ body.hasnav main{padding-bottom:86px}
     for (let p = 1; p <= 9; p++) { lqE[p] = liuqin(earthN[p], se); lqH[p] = liuqin(heavN[p], se); }
     lqE[sePal] = '世'; lqH[seHeavPal] = '世';
     for (let p = 1; p <= 9; p++) { if (p !== sePal && lqE[p] === '世') lqE[p] = '兄'; if (p !== seHeavPal && lqH[p] === '世') lqH[p] = '兄'; }
+    // ── 12운성: 世(지반) 홍국수의 오행을 양간식(土는 火와 같이)으로 12지지에 돌려요. 두 지지 궁은 [四生, 四庫] 순.
+    //    운곡 프로그램 화면(世 二·三·七·十·一)과 대조
+    const UN12 = '生浴帶祿旺衰病死墓絶胎養', UN_START = {水: 8, 木: 11, 火: 2, 土: 2, 金: 5};
+    const PAL_BR = {1: ['子'], 2: ['申', '未'], 3: ['卯'], 4: ['巳', '辰'], 6: ['亥', '戌'], 7: ['酉'], 8: ['寅', '丑'], 9: ['午']};
+    const unseong = {};
+    for (const p in PAL_BR) unseong[p] = PAL_BR[p].map(z => UN12[md(ZHI.indexOf(z) - UN_START[EL(se)], 12)]);
     // ── 팔괘(생기복덕) ── 지반 중궁 홍국수 번호의 궁이 본괘(歸魂), 중궁수가 五면 손궁(운곡 프로그램 15개 화면과 대조)
     const gb = earthN[5] === 5 ? 4 : earthN[5];
     let bits = TRI[gb].slice();
@@ -9087,7 +9094,7 @@ body.hasnav main{padding-bottom:86px}
     return {
       pillars: cols, solar: P.solar.toYmdHms ? P.solar.toYmdHms() : '', lunarText: P.lunar.toString(), lunarYmd: [P.lunar.getYear(), P.lunar.getMonth(), P.lunar.getDay()],
       jq, jqKo: JQ_KO[jq], jqHanja: JQ_HANJA[jq] || jq, yang, ju, yuan, yuanName: ['上元', '中元', '下元'][yuan],
-      X, Y, earthN, heavN, earthS, heavS, star, door, god, taiyi, gua, lqE, lqH,
+      X, Y, earthN, heavN, earthS, heavS, star, door, god, taiyi, gua, lqE, lqH, unseong,
       sePal, seHeavPal, se, tagE, tagH, kong, kongZ, ageE, ageH, zhifuPal: HP, zhishiPal: L, xun: '甲' + ZHI[z0], dun
     };
   }
@@ -9930,7 +9937,7 @@ function render(r){
     const [h0,h1]=r.ageH[p],[e0,e1]=r.ageE[p];
     const on=(a,b)=>age>=a&&age<=b?' class="on"':'';
     if(yInfo){const ms=Object.keys(MPAL).filter(m=>MPAL[m]===p);html+='<div class="ages"><span class="mo">'+(yInfo.out.hangPal===p?'행년 ':'')+'</span><span class="mo">'+(ms.length?'음 '+ms.join('·')+'월':'')+'</span></div>';}
-    else html+='<div class="ages"><span></span><span class="col"><span'+on(h0,h1)+'>('+h0+'~'+h1+')</span><span'+on(e0,e1)+'>('+e0+'~'+e1+')</span></span></div>';
+    else html+='<div class="ages"><span class="un">'+(r.unseong[p]||[]).map(u=>'<span>'+u+'</span>').join('')+'</span><span class="col"><span'+on(h0,h1)+'>('+h0+'~'+h1+')</span><span'+on(e0,e1)+'>('+e0+'~'+e1+')</span></span></div>';
     html+='</div>';
   }
   $('board').innerHTML=html;
