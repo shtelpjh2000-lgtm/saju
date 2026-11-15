@@ -81,10 +81,12 @@
     const cols = [opt.yearGZ || P.year, P.month, P.day, P.hour];
     const sN = cols.map(c => GAN.indexOf(c[0]) + 1), bN = cols.map(c => ZHI.indexOf(c[1]) + 1);
     // ── 홍국수 ──
-    const X = w9(bN.reduce((a, b) => a + b, 0));    // 지반 중궁수 (五여도 그대로 궁번호+5 — 운곡 프로그램 1975.4.10·1975.10.10 화면 대조)
+    const X = w9(bN.reduce((a, b) => a + b, 0));    // 지반 중궁수
     const Y = w9(sN.reduce((a, b) => a + b, 0));    // 천반 중궁수
     const earthN = {5: X}, heavN = {5: Y};
-    for (const p of [1, 2, 3, 4, 6, 7, 8, 9]) { earthN[p] = w10(X + p); heavN[p] = w10(Y - p); }
+    // 지반 중궁수가 五일 때: 지지 합을 9로 나눈 몫이 짝수면 궁번호+5(합 23 — 1975.4.10·1975.10.10 화면), 홀수면 궁번호+10(합 14 — 「기문둔갑 원칙」 p15 대한 상원 양3국 그림)
+    const bSum = bN.reduce((a, b) => a + b, 0), eBase = X === 5 ? (Math.floor(bSum / 9) % 2 ? 10 : 5) : X;
+    for (const p of [1, 2, 3, 4, 6, 7, 8, 9]) { earthN[p] = w10(eBase + p); heavN[p] = w10(Y - p); }
     // ── 연국(시가) ──
     let jq = zhirunTerm(Solar, P);
     if (!JU[jq]) throw new Error('절기 이름을 확인하지 못했어요: ' + jq);
@@ -154,7 +156,32 @@
     for (let k = 0; k < 9; k++) { const p = w9(sePal + k), n = earthN[p] === 10 ? mE : earthN[p]; ageE[p] = [a, a + n - 1]; a += n; }
     a = 46;
     for (let k = 0; k < 9; k++) { const p = w9(sePal - k), n = heavN[p] === 10 ? mH : heavN[p]; ageH[p] = [a, a + n - 1]; a += n; }
+    // ── 칸 신살(운곡 프로그램 표시): 홍국수의 지지(五=辰戌, 十=丑未)를 년지(歲劫·歲馬·年亡·年桃)·일지(日劫·日馬·日亡·桃花) 12신살로,
+    //    일간 천을귀인(天乙)·홍염(紅艶), 월지 천마(天馬)도 표시. 궁 자체 지지는 공망(空亡)·도궁·겁궁·망궁·마궁.
+    //    천반 수는 지반에 같은 수가 있는 궁의 표시를 그대로 봐요(46세 이후 대운 규칙). 중궁은 암장(五↔十 등)까지, 궁 표시는 곤궁에 붙여요(中五寄坤).
+    //    「기문둔갑 원칙」 그림 7장·운곡 화면 2장과 대조
+    const NBR = { 1: '子', 2: '巳', 3: '寅', 4: '酉', 5: '辰戌', 6: '亥', 7: '午', 8: '卯', 9: '申', 10: '丑未' };
+    const PBR = { 1: '子', 2: '未申', 3: '卯', 4: '辰巳', 6: '戌亥', 7: '酉', 8: '丑寅', 9: '午', 5: '' };
+    const G12 = z => '申子辰寅午戌巳酉丑亥卯未'.indexOf(z) >> 2 >= 0 ? ['申子辰', '寅午戌', '巳酉丑', '亥卯未'].findIndex(s => s.includes(z)) : -1;
+    const SALT = { 劫: '巳亥寅申', 馬: '寅申亥巳', 亡: '亥巳申寅', 桃: '酉卯午子' };
+    const TIANYI = { 甲: '丑未', 戊: '丑未', 庚: '丑未', 乙: '子申', 己: '子申', 丙: '亥酉', 丁: '亥酉', 辛: '寅午', 壬: '卯巳', 癸: '卯巳' };
+    const HONGYAN = { 甲: '午', 乙: '申', 丙: '寅', 丁: '未', 戊: '辰', 己: '辰', 庚: '戌', 辛: '酉', 壬: '子', 癸: '申' };
+    const TIANMA = { 寅: '午', 卯: '申', 辰: '戌', 巳: '子', 午: '寅', 未: '辰', 申: '午', 酉: '申', 戌: '戌', 亥: '子', 子: '寅', 丑: '辰' };
+    const yz = cols[0][1], dz2 = P.day[1], mz = P.month[1], dg = P.day[0];
+    const numMarks = n => { const o = []; for (const b of NBR[n]) {
+      for (const k of ['劫', '馬', '亡', '桃']) { if (SALT[k][G12(yz)] === b) o.push(k === '劫' || k === '馬' ? '歲' + k : '年' + k); if (SALT[k][G12(dz2)] === b) o.push(k === '桃' ? '桃花' : '日' + k); }
+      if (TIANYI[dg].includes(b)) o.push('天乙'); if (HONGYAN[dg] === b) o.push('紅艶'); if (TIANMA[mz] === b) o.push('天馬'); } return o; };
+    const palMarks = p => { const o = []; for (const b of PBR[p]) { if (kongZ.includes(b)) o.push('空亡'); for (const k of ['劫', '馬', '亡', '桃']) if (SALT[k][G12(yz)] === b || SALT[k][G12(dz2)] === b) o.push(k + '宮'); } return o; };
+    const uniq = a => [...new Set(a)];
+    const salE = {}, salH = {};
+    for (const p of [1, 2, 3, 4, 6, 7, 8, 9]) salE[p] = uniq([...numMarks(earthN[p]), ...palMarks(p)]);
+    salE[5] = uniq([...numMarks(earthN[5]), ...numMarks(w10(earthN[5] + 5))]);
+    const twinMarks = n => { let q = [1, 2, 3, 4, 6, 7, 8, 9].find(x => earthN[x] === n); if (!q && earthN[5] !== n) q = [1, 2, 3, 4, 6, 7, 8, 9].find(x => earthN[x] === w10(n + 5));
+      if (q) return salE[q]; return uniq([...salE[5], ...salE[2]]); };
+    for (const p of [1, 2, 3, 4, 6, 7, 8, 9]) salH[p] = twinMarks(heavN[p]);
+    salH[5] = uniq([...twinMarks(heavN[5]), ...twinMarks(w10(heavN[5] + 5))]);
     return {
+      salE, salH,
       pillars: cols, solar: P.solar.toYmdHms ? P.solar.toYmdHms() : '', lunarText: P.lunar.toString(), lunarYmd: [P.lunar.getYear(), P.lunar.getMonth(), P.lunar.getDay()],
       jq, jqKo: JQ_KO[jq], jqHanja: JQ_HANJA[jq] || jq, yang, ju, yuan, yuanName: ['上元', '中元', '下元'][yuan],
       X, Y, earthN, heavN, earthS, heavS, star, door, god, taiyi, gua, lqE, lqH, unseong,

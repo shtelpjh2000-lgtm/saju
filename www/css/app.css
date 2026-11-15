@@ -279,3 +279,6 @@ body.hasBase:not(.pro):not(.formOpen) #whoBar{display:flex}
 .qaA .card{box-shadow:none;border:0;margin:0;padding:6px 0;display:block!important}
 .qaA [data-sec],.qaA .rdTalk{display:block}.qaA .rdTalk{display:flex}
 .qaA .rdSec h4{display:none}
+
+.ages .smk{flex:1;display:flex;flex-direction:column;justify-content:flex-end;gap:1px;font-size:8.5px;line-height:1.15;color:var(--purple);font-family:"Noto Serif KR",serif;overflow:hidden}
+.ages .smk span{display:flex;flex-wrap:wrap;gap:0 3px}.ages .smk i{font-style:normal;white-space:nowrap}.ages .smk .h{opacity:.75}

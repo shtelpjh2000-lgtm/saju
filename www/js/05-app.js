@@ -78,6 +78,7 @@ function render(r){
     const dong=zhiE||(p===5&&zhiH);
     const tagStr=a=>{const g=[...new Set(a.map(t=>t[1]))];return g.map(k=>a.filter(t=>t[1]===k).map(t=>t[0]).join('')+k).join(' ');};
     const sal=(r.kong.has(p)?'<span class="kong">空亡</span>':'');
+    const smk=a=>(a||[]).filter(x=>x!=='空亡').map(x=>'<i>'+x+'</i>').join('');
     html+='<div class="cell p'+p+(dong?' dong':'')+(p===5?' center':'')+(yInfo&&!dInfo&&yInfo.out.hangPal===p?' hang':'')+(dInfo&&dInfo.x.d.p===p?' today':'')+'" data-p="'+p+'">';
     html+='<div class="tags"><span>'+(tE.length?'<span class="tag">'+tagStr(tE)+'</span>':'')+'</span><span class="sal">'+sal+'</span><span>'+(r.zhifuPal===p&&p!==5?'':'')+'</span></div>';
     html+='<div class="box">'+(tH.length?'<span class="ht">'+tagStr(tH)+'</span>':'');
@@ -94,7 +95,7 @@ function render(r){
     const [h0,h1]=r.ageH[p],[e0,e1]=r.ageE[p];
     const on=(a,b)=>age>=a&&age<=b?' class="on"':'';
     if(yInfo){const ms=Object.keys(MPAL).filter(m=>MPAL[m]===p);html+='<div class="ages"><span class="mo">'+(yInfo.out.hangPal===p?'행년 ':'')+'</span><span class="mo">'+(ms.length?'음 '+ms.join('·')+'월':'')+'</span></div>';}
-    else html+='<div class="ages"><span class="un">'+(r.unseong[p]||[]).map(u=>'<span>'+u+'</span>').join('')+'</span><span class="col"><span'+on(h0,h1)+'>('+h0+'~'+h1+')</span><span'+on(e0,e1)+'>('+e0+'~'+e1+')</span></span></div>';
+    else html+='<div class="ages"><span class="un">'+(r.unseong[p]||[]).map(u=>'<span>'+u+'</span>').join('')+'</span><span class="smk">'+(r.salH&&smk(r.salH[p])?'<span class="h">'+smk(r.salH[p])+'</span>':'')+(r.salE&&smk(r.salE[p])?'<span class="e">'+smk(r.salE[p])+'</span>':'')+'</span><span class="col"><span'+on(h0,h1)+'>('+h0+'~'+h1+')</span><span'+on(e0,e1)+'>('+e0+'~'+e1+')</span></span></div>';
     html+='</div>';
   }
   $('board').innerHTML=html;

@@ -5,7 +5,7 @@
 ## 구조
 - `www/index.html` 화면 뼈대, `www/css/app.css` 스타일
 - `www/js/01-lunar.js` 만세력 라이브러리(lunar-javascript, 수정 금지)
-- `www/js/02-gimun.js` **명국 계산**(국·홍국수·연국·태을·생기복덕·대운 나이·12운성) — `Gimun.calc`
+- `www/js/02-gimun.js` **명국 계산**(국·홍국수·연국·태을·생기복덕·대운 나이·12운성) — `Gimun.calc` (칸 신살 `salE`/`salH` 포함)
 - `www/js/03-haeseok.js` **풀이**(왕쇠·용신·진용·합 순열·살·원국비기·신수·일진) — `Haeseok.*`
 - `www/js/04-saju4.js` 사주 4주 풀이·기질 유형
 - `www/js/05-app.js` 화면 동작 전부(입력, 메뉴, 궁합, 작명, 해몽, 도깨비 대화, 알림, 공유)
@@ -15,6 +15,7 @@
 
 ## 검사 (고친 뒤 꼭)
 - `node tests/check.js` — 운곡 화면 15명 명국 값 1965칸 일치 + 무작위 500명 풀이 오류 없음
+- `node tests/book.js` — 「기문둔갑 원칙」 예시 명국 12개와 책 결론(용신·진용·개운·대운 살성 등) 대조
 - `node tests/browser.js` — 실제 화면(음력 입력·질문 열기·모든 탭·전문가 보기) 오류 없음
 - 계산을 일부러 바꿨고 화면과 다시 맞췄을 때만 `node tests/make-fixture.js`로 기준값 갱신
 
