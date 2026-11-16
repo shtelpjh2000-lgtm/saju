@@ -1443,7 +1443,8 @@ alDraw();
   const ACT={exam:'시험 도전',jobget:'지원',jobmove:'옮기는 것',promo:'승진 도전',invest:'투자',estate:'사고파는 것',biz:'시작하는 것',partner:'동업·계약',loan:'돈 빌려주는 것',love:'다가가는 것',marry:'결혼 이야기',reunion:'다시 연락하는 것',move:'이사',travel:'떠나는 것',law:'맞서는 것',gen:'그 일',child:'아이 계획',health:'치료·운동 시작'};
   const EMO=/힘들|힘드|지쳐|지친|지치|우울|속상|외로|외롭|불안|걱정|답답|짜증|슬퍼|슬프|무서|괴로|눈물|화나|화가|미치겠|막막|서러|서럽|후회/;
   function qkind(q){q=q||'';
-    if(/vs|VS|아니면|또는|말까|중에 ?뭐|중 ?어느|어느 ?쪽이|뭐가 ?나을/.test(q)||(q.match(/까(?=[\s?？,.!~]|$)/g)||[]).length>=2)return 'ab';
+    if(/어느 ?쪽|방향|방위|어디로/.test(q)&&!/vs|VS|아니면|또는/.test(q))return 'where';
+    if(/vs|VS|아니면|또는|말까|중에 ?뭐|중 ?어느|뭐가 ?나을/.test(q)||(q.match(/까(?=[\s?？,.!~]|$)/g)||[]).length>=2)return 'ab';
     if(/언제|몇 ?월|며칠|시기|때가|날짜/.test(q))return 'when';
     if(/될까|할까|해도|괜찮|좋을까|맞을까|갈까|살까|팔까|붙을까|풀릴까|되나요|돼요\?|할 수 있|가능/.test(q))return 'yn';
     return 'gen';}
@@ -1456,6 +1457,41 @@ alDraw();
     return '어디 보자… 자네 사주를 펴 놓고 보니,';}
   const UN={couple:'부부운',people:'인복',career:'진로운',law:'송사운',travel:'여행·이동운',move:'이사운',child:'자녀운',health:'건강운',money:'재물운',invest:'투자운',estate:'부동산운',biz:'사업운',partner:'동업운',loan:'돈거래운',love:'연애운',marry:'결혼운',reunion:'재회운',exam:'시험운',jobget:'취업운',jobmove:'이직운',promo:'직장운'};
   const unOf=D=>{const k=Object.keys(T).find(x=>T[x]===D);return UN[k]||(/운$|시기$|것$|삼재$/.test(D.n)?D.n:D.n+'운');};
+  // ── 세부 뜻: 같은 주제라도 질문의 뜻(팔기/사기/전세, 폐업, 받을 돈, 수술…)에 따라 보는 육친·문을 바꿔 날짜·달·방향과 결론이 달라지게 ──
+  const INTENT=[
+    {base:'estate',id:'estate_sell',re:/팔|매도|안 ?나가|내놓|처분|매각|정리하|급매/,n:'부동산 매도',act:'파는 것',un:'매도운',lq:['財','孫'],bad:['兄'],door:{開門:1.5,生門:1,景門:0.6},gua:{遊魂:0.6},
+      v:['팔린다! 올해 임자가 나선다. 값을 크게 깎지 마라.','팔린다. 조건만 조금 맞추면 손이 닿는다.','쉽게 안 나간다. 값보다 조건과 중개처를 바꿔라.','지금은 안 팔린다. 서두르면 헐값이다. 좋은 달까지 버텨라.'],
+      tips:['중개소를 한 곳 더 늘리고, 매물 사진과 설명을 새로 올려라.','값을 또 내리기 전에 잔금 일정·옵션·분할 매도 같은 조건부터 바꿔 보라.','계약서 도장은 좋은 날에 찍어라.']},
+    {base:'estate',id:'estate_buy',re:/사[려고도야서]|살까|사볼|매수|구입|청약|분양|장만|살 ?집/,n:'부동산 매수',act:'사는 것',un:'매수운',lq:['父','財'],bad:['兄'],door:{生門:1.5,休門:1.2,開門:0.6},gua:{天宜:0.5,福德:0.5},
+      v:['사라! 문서운이 크게 들어온 해다.','살 만하다. 발품을 팔면 좋은 물건이 걸린다.','급할 것 없다. 세 곳 이상 비교하고 사라.','지금은 사지 마라. 계약에서 탈이 난다.'],
+      tips:['등기부등본·대출·특약을 계약 전에 꼭 확인하라. 문서(父)가 핵심이다.','좋은 방위 쪽 지역부터 보라.','계약일은 좋은 날로 잡아라.']},
+    {base:'estate',id:'estate_rent',re:/전세|월세|임대|세입자|보증금|재계약/,n:'전·월세',act:'계약하는 것',un:'전월세운',lq:['父','兄'],bad:['鬼'],door:{休門:1.2,開門:1,生門:0.6},doorX:{驚門:-1.5,杜門:-1},
+      v:['계약이 술술 풀린다. 좋은 세입자·집을 만난다.','무난하다. 특약만 꼼꼼히 써라.','시간이 걸린다. 조건을 한 번 더 조정하라.','보증금 문제를 조심하라. 지금은 서두르지 마라.'],
+      tips:['보증금은 전세보증보험부터 확인하라.','특약(수리·원상복구·중도해지)은 글로 남겨라.','계약은 좋은 날 낮에 하라.']},
+    {base:'biz',id:'biz_close',re:/폐업|접[을어고]|그만둘|정리할|닫[을아]|양도|권리금/,n:'가게 정리·폐업',act:'정리하는 것',un:'정리운',lq:['財','父'],bad:['兄','鬼'],door:{開門:1.2,休門:1,生門:0.8},gua:{遊魂:0.8,歸魂:0.5},
+      v:['정리하기 좋은 때다. 권리금도 챙긴다.','정리할 만하다. 인수자부터 찾아라.','당장 접기보다 줄여서 버텨 보라.','지금 접으면 손해가 크다. 좋은 달까지 버텨라.'],
+      tips:['폐업 신고 전에 권리금·보증금·재고 정리 순서를 적어라.','인수자 면담은 좋은 날에 잡아라.','남은 빚과 세금부터 확인하라.']},
+    {base:'loan',id:'loan_get',re:/못 ?받|받을 ?돈|돌려받|떼[인였]|안 ?갚|받아낼/,n:'받을 돈',act:'받아내는 것',un:'받을 돈 운',lq:['財','官'],bad:['兄'],door:{開門:1.2,生門:1,景門:0.8},doorX:{死門:-1.5,杜門:-1.2},
+      v:['받는다. 올해 돈이 돌아온다.','받긴 한다. 나눠서라도 받아내라.','시간이 걸린다. 문자·통장 기록부터 모아라.','쉽게 안 들어온다. 법적 절차를 같이 준비하라.'],
+      tips:['빌려준 기록(계좌·문자)을 모두 모아 두라.','받을 날짜를 글로 받아라.','말은 좋은 날에 꺼내라.']},
+    {base:'health',id:'health_op',re:/수술|입원|시술|치료 ?시기|병원|검진|검사/,n:'수술·치료',act:'수술·치료',un:'치료운',lq:['孫','父'],bad:['鬼'],door:{生門:1.5,休門:1.2,開門:0.8},doorX:{死門:-2,傷門:-1.2},
+      v:['치료가 잘 듣는 해다. 미루지 마라.','치료 받을 만하다. 좋은 날로 잡아라.','서두르지 말고 병원 의견을 한 번 더 들어라.','몸이 약한 해다. 큰 수술은 의사와 날짜를 신중히 정하라.'],
+      tips:['수술·시술 날짜는 의사 판단이 먼저다. 고를 수 있으면 좋은 날로 하라.','검진은 미루지 마라.','치료 뒤엔 무조건 쉬어라.']},
+    {base:'move',id:'move_dir',re:/어느 ?쪽|방향|어디로|어디가|방위|지역/,n:'이사 방향',act:'이사',un:'이사 방위운',lq:['父','世'],bad:['鬼'],door:{生門:1.5,休門:1.5,開門:1},gua:{生氣:1,天宜:0.8,福德:0.8},
+      v:['좋은 방향이 뚜렷하다. 그쪽으로 가라.','좋은 쪽이 있다. 그 방향을 먼저 보라.','방향보다 집 조건이 중요하다.','올해는 방향이 막혔다. 큰 이사는 미뤄라.'],
+      tips:['지금 집을 가운데 두고 좋은 방위 쪽 동네부터 보라.','피할 방위로는 가지 마라.','이삿날은 좋은 날로 잡아라.']},
+    {base:'travel',id:'travel_study',re:/유학|어학연수|워홀|이민|해외 ?취업/,n:'유학·이민',act:'떠나는 것',un:'유학운',lq:['父','孫'],bad:['財'],door:{開門:1.5,景門:1,生門:0.6},gua:{遊魂:1},
+      v:['떠나라! 밖에서 크게 된다.','갈 만하다. 서류만 꼼꼼히 챙겨라.','한 해 더 준비하고 가라.','지금은 떠나지 마라. 서류·돈에서 막힌다.'],
+      tips:['비자·서류는 두 번 확인하라.','출국일은 좋은 날로 잡아라.','좋은 방위 쪽 나라·도시를 먼저 보라.']},
+    {base:'law',id:'law_settle',re:/합의|화해|조정|중재/,n:'합의·조정',act:'합의',un:'합의운',lq:['父','兄'],bad:['鬼'],door:{休門:1.5,開門:1,生門:0.8},doorX:{傷門:-1.5,驚門:-1.5},
+      v:['합의가 된다. 먼저 손 내밀어라.','합의할 만하다. 조건을 글로 정리하라.','상대가 버틴다. 중재인을 세워라.','합의가 어렵다. 증거부터 챙겨라.'],
+      tips:['합의서는 꼭 문서로 남겨라.','만남은 좋은 날 낮에 하라.','감정 대신 숫자로 말하라.']},
+    {base:'jobmove',id:'job_quit',re:/퇴사|그만둘|사표|쉬고 ?싶/,n:'퇴사',act:'그만두는 것',un:'퇴사운',lq:['孫','財'],bad:['官'],door:{開門:1.2,休門:1.2,生門:0.8},gua:{遊魂:0.8},
+      v:['그만둬도 된다. 다음 길이 열린다.','그만둘 만하다. 다음 자리부터 잡아라.','지금 나가면 아쉽다. 몇 달 더 버텨라.','지금은 나가지 마라. 버티는 게 이긴다.'],
+      tips:['사표는 다음 자리 계약서를 받은 뒤에 내라.','퇴직금·연차 정산을 미리 계산하라.','면담은 좋은 날에 하라.']}
+  ];
+  for(const I of INTENT){const B=T[I.base];T[I.id]=Object.assign({},B,{n:I.n,lq:I.lq,bad:I.bad,lqM:null,lqF:null,door:I.door,doorX:I.doorX||B.doorX,gua:I.gua||B.gua,v:I.v,tips:I.tips,dir:B.dir||I.base==='move',base:I.base});ACT[I.id]=I.act;UN[I.id]=I.un;}
+  const intentOf=(t,q)=>{const I=INTENT.find(x=>x.base===t&&x.re.test(q||''));return I?I.id:t;};
   const nmOf=D=>D.special==='caution'?'조심할 것':D.n;
   const plainTip=s=>s.replace(/위의 /g,'').replace(/아래 /g,'').replace(/<b>좋은 (날|달|방위|해)<\/b>/g,'좋은 $1');
   const md=([dt])=>(dt.getMonth()+1)+'월 '+dt.getDate()+'일('+'일월화수목금토'[dt.getDay()]+')';
@@ -1483,18 +1519,21 @@ alDraw();
     if(sp)v=D.e+' '+hage(D.v[gi]);
     else if(emo&&t==='gen')v=gi<=1?'💛 <b>그래도 올해 자네 기운은 나쁘지 않네.</b> 지금 힘든 건 지나가는 바람일세. 조금만 숨 고르면 다시 일어설 수 있네.':'💛 <b>올해가 자네한테 좀 무거운 해라 그렇다네.</b> 자네가 못나서가 아닐세. 이럴 땐 큰일 벌이지 말고, 잘 먹고 잘 자는 게 제일일세.';
     else if(kind==='yn'||(act&&kind!=='when')){const a=act||D.n;
-      v=[['👍','해 보게! 지금이 딱 그때일세.',' 올해는 '+a+'에 기운이 실리는 해일세.'],['🙆','해 볼 만하네.',' 준비만 단단히 하면 결과가 따라올 걸세.'],['🤔','반반일세.',' 서두르지 말고 한 번만 더 따져 보게.'],['✋','지금은 말리고 싶네.',' '+a+jo(a,'은','는')+' 조금 미뤄 두게.']][gi];
-      v=v[0]+' <b>'+v[1]+'</b>'+v[2];}
+      v=['👍','🙆','🤔','✋'][gi]+' <b>'+hage(D.v[gi]).replace(/아래 /g,'')+'</b>';}
     else v=D.e+' <b>'+K.Y+'년 '+(t==='gen'?'자네 운':unOf(D))+jo(t==='gen'?'운':unOf(D),'은','는')+' '+['아주 좋네','좋네','그저 그렇네','조심할 때일세'][gi]+'.</b> '+hage(D.v[gi].replace(/아래 /g,''));
     let h='<p class="dkOpen">'+opener(lastQ||'',kind)+'</p><p class="ansV">'+v+'</p>';
+    if(K.qm)h+='<p>📌 <b>물어본 음력 '+K.qm.m+'월</b>은 '+(K.qm.v>=0.8?'<b>좋은 달</b>일세. 그때 움직이게.':K.qm.v<=-0.4?'<b>피할 달</b>일세. 다른 달로 미루게.':'그저 그런 달일세. 더 좋은 달이 있네.')+'</p>';
     const W=whenOf(K);
+    if(kind==='where'&&!sp&&K.dir){const dd=K.dir.length?'🧭 <b>'+K.dir.join(', ')+'이 좋네.</b>'+(K.badDir&&K.badDir.length?' '+K.badDir.join(', ')+'은 피하게.':''):'🧭 <b>올해는 뚜렷하게 좋은 방향이 없네.</b> 방향보다 집 조건을 보게.';
+      return '<p class="dkOpen">방향을 묻는구먼. 어디 보자…</p><p class="ansV">'+dd+'</p><p>'+v+'</p><p>'+W+'</p><p>💡 <b>이렇게 하게</b> · '+hage(plainTip(D.tips[0]))+'</p>';}
     if(kind==='when'&&!sp)h='<p class="dkOpen">'+opener(lastQ||'',kind)+'</p><p class="ansV">'+D.e+' <b>'+D.n+jo(D.n,'이라','라')+'… 이때가 좋다네.</b></p><p>'+W+'</p><p>'+v+'</p>';
     if(!sp)h+='<p>'+reasonOf(K,gi,D)+'</p>';
     if(kind!=='when'||sp)h+='<p>'+W+'</p>';
     if(K.dir&&K.dir.length&&!sp)h+='<p>🧭 <b>어느 쪽이냐면</b> · <b>'+K.dir.join(', ')+'</b>이 좋네.'+(K.badDir&&K.badDir.length?' '+K.badDir.join(', ')+'은 피하게.':'')+'</p>';
     if(act&&!sp&&!(emo&&t==='gen'))h+='<p>🔮 <b>1년 뒤엔</b> · '+SCEN[gi]+'</p>';
     if(sp)h+='<p>🔎 조심할 것이랑 좋은 날은 아래 <b>자세한 풀이</b>에 적어 뒀네.</p>';
-    h+='<p>💡 <b>이렇게 하게</b> · '+(emo&&t==='gen'?'오늘은 따뜻한 밥 한 끼 먹고 일찍 자게. 그리고 믿는 사람 한 명한테 털어놓게. 그게 제일 큰 부적일세. 많이 힘들면 혼자 참지 말고 꼭 도움을 청하게.':hage(plainTip(D.tips[0])))+'</p>';
+    const priceTip=t==='estate_sell'&&/값|가격|내려|낮춰|깎/.test(lastQ||'')?'값을 더 내리지 말게. 내놓는 곳·조건을 바꾸고, 좋은 달에 다시 걸게.':null;
+    h+='<p>💡 <b>이렇게 하게</b> · '+(priceTip?priceTip:emo&&t==='gen'?'오늘은 따뜻한 밥 한 끼 먹고 일찍 자게. 그리고 믿는 사람 한 명한테 털어놓게. 그게 제일 큰 부적일세. 많이 힘들면 혼자 참지 말고 꼭 도움을 청하게.':hage(plainTip(D.tips[0])))+'</p>';
     return h;}
   function labelOf(p){p=p.replace(/[?？!.~]+$/,'').trim();if(/^(그냥 )?말까|^안 ?할까|^말기/.test(p)||!p)return '안 하기';return p;}
   function decide(q,K){
@@ -1636,16 +1675,16 @@ alDraw();
       try{const tt=Saju4.personality(r.pillars,r);const TY=typeof GM_TYPES!=='undefined'?GM_TYPES[tt.code]:null;h+='<p><b>'+(TY?TY[0]+' '+TY[1]+' '+TY[2]:'나의 기질')+'</b> · '+tt.work+'</p>';}catch(e){}
     }
     // 좋은 달
-    const ms=[];for(let m=1;m<=12;m++){const p=MPAL[m];let v=(lq.includes(rs.lqH[p])?1.2:lq.includes(rs.lqE[p])?0.6:0)+pScore(rs,p,t)*0.6;if(topicLq(t)[1].includes(rs.lqH[p]))v-=0.8;ms.push([m,v]);}
+    const ms=[];for(let m=1;m<=12;m++){const p=MPAL[m];const lh=lq.indexOf(rs.lqH[p]),le=lq.indexOf(rs.lqE[p]);let v=(lh===0?1.4:lh===1?0.8:le===0?0.6:le===1?0.3:0)+pScore(rs,p,t)*0.6;if(topicLq(t)[1].includes(rs.lqH[p]))v-=0.8;ms.push([m,v]);}
     const good=ms.filter(x=>x[1]>=0.8).sort((a,b)=>b[1]-a[1]).slice(0,3).map(x=>x[0]).sort((a,b)=>a-b);
-    const badm=ms.filter(x=>x[1]<=-0.4).sort((a,b)=>a[1]-b[1]).slice(0,2).map(x=>x[0]).sort((a,b)=>a-b);K.good=good;K.badm=badm;
+    const badm=ms.filter(x=>x[1]<=-0.4).sort((a,b)=>a[1]-b[1]).slice(0,2).map(x=>x[0]).sort((a,b)=>a-b);K.good=good;K.badm=badm;{const mm=/(?:음력\s*)?(1[0-2]|[1-9])\s*월/.exec(lastQ||'');if(mm){const m0=+mm[1];K.qm={m:m0,v:ms[m0-1][1]};}}
     h+='<h4>🗓️ 좋은 달 · 조심할 달 (음력)</h4><p>'+(good.length?'<b>좋은 달: 음력 '+good.join('·')+'월</b>. 중요한 일을 이때 시작하거나 결정하세요.':'특별히 강한 달은 없어요. 아래 좋은 날을 활용하세요.')+(badm.length?' 조심할 달: 음력 '+badm.join('·')+'월. 이때는 큰 결정을 미루는 게 좋아요.':'')+'</p>';
     // 좋은 날 (올해일 때만, 앞으로 60일)
     if(yrOff===0){
       const now=new Date();const cache={};const days=[];
       for(let i=1;i<=60;i++){const dt=new Date(now.getFullYear(),now.getMonth(),now.getDate()+i);
-        try{const x=dayInfo(dt.getFullYear(),dt.getMonth()+1,dt.getDate(),cache);const dp=x.d.p;let v=x.d.g+(lq.includes(x.rs.lqH[dp])?1:0)+pScore(x.rs,dp,t)*0.3;days.push([dt,v,x.d.gz]);}catch(e){}}
-      const top=days.sort((a,b)=>b[1]-a[1]).slice(0,5).sort((a,b)=>a[0]-b[0]);K.days=top;
+        try{const x=dayInfo(dt.getFullYear(),dt.getMonth()+1,dt.getDate(),cache);const dp=x.d.p;const li=lq.indexOf(x.rs.lqH[dp]);const dn={子:1,丑:10,寅:3,卯:8,辰:5,巳:2,午:7,未:10,申:9,酉:4,戌:5,亥:6}[x.d.gz[1]],dq=Gimun.liuqin(dn,r.se),di=lq.indexOf(dq==='鬼'&&lq.includes('官')?'官':dq);let v=(di===0?2.2:di===1?1.0:topicLq(t)[1].includes(dq)?-1.2:0)+x.d.g*0.25+(li===0?0.8:li===1?0.4:0)+pScore(x.rs,dp,t)*0.6-(topicLq(t)[1].includes(x.rs.lqH[dp])?0.6:0);days.push([dt,v,x.d.gz]);}catch(e){}}
+      const top=[];{const seen=new Set();for(const x of days.slice().sort((a,b)=>b[1]-a[1])){if(seen.has(x[2][1]))continue;seen.add(x[2][1]);top.push(x);if(top.length>=5)break;}}top.sort((a,b)=>a[0]-b[0]);K.days=top.slice().sort((a,b)=>b[1]-a[1]).slice(0,3).sort((a,b)=>a[0]-b[0]);
       if(D.special==='caution'){const low=days.slice().sort((a,c)=>a[1]-c[1]).slice(0,3).sort((a,c)=>a[0]-c[0]);h+='<h4>🚧 앞으로 60일 중 조심할 날</h4><p>'+low.map(([dt])=>'<b>'+(dt.getMonth()+1)+'월 '+dt.getDate()+'일('+'일월화수목금토'[dt.getDay()]+')</b>').join(', ')+'</p>';}
       h+='<h4>✨ 앞으로 60일 중 좋은 날</h4><p>'+top.map(([dt,v,gz])=>'<b>'+(dt.getMonth()+1)+'월 '+dt.getDate()+'일('+'일월화수목금토'[dt.getDay()]+')</b>').join(', ')+'</p><p class="note">'+(D.special==='caution'||D.special==='samjae'?'일진과 그날 운이 드러나는 칸의 문·자리를 따져 고른 날이에요.':'일진과 그날 운이 드러나는 칸에 '+D.n+' 기운이 있는지를 함께 따져 고른 날이에요.')+'</p>';
     }
@@ -1670,12 +1709,12 @@ alDraw();
   const chips=$('askChips');chips.innerHTML=GROUPS.map(([g,l])=>'<p class="askG">'+l+'</p><div class="askChips3">'+ORDER.filter(k=>T[k].g===g).map(k=>'<button type="button" data-t="'+k+'">'+T[k].e+' '+T[k].n+'</button>').join('')+'</div>').join('');
   const allChips=()=>[...chips.querySelectorAll('button')];
   function autoQ(t){const D=T[t],Y=new Date().getFullYear()+yrOff;return D.special==='caution'?Y+'년에 조심할 건 뭐예요?':D.special==='samjae'?Y+'년 삼재가 들었나요?':ACT[t]?Y+'년에 '+D.n+', 해도 될까요?':Y+'년 '+D.n+'운 어때요?';}
-  function pick(t,q,ab){if(curHtml&&base===histBase){hist.push(curHtml);hist=hist.slice(-2);}curHtml='';abQ=ab||null;curT=t;lastQ=q||autoQ(t);allChips().forEach(x=>x.classList.toggle('on',x.dataset.t===t));render();setTimeout(()=>{const c=$('askOut').querySelector('.cur');(c||$('askOut')).scrollIntoView({behavior:'smooth',block:'start'});},60);}
+  function pick(t,q,ab){if(curHtml&&base===histBase){hist.push(curHtml);hist=hist.slice(-2);}curHtml='';abQ=ab||null;curT=t;lastQ=q||autoQ(t);allChips().forEach(x=>x.classList.toggle('on',x.dataset.t===(T[t].base||t)));render();setTimeout(()=>{const c=$('askOut').querySelector('.cur');(c||$('askOut')).scrollIntoView({behavior:'smooth',block:'start'});},60);}
   chips.addEventListener('click',e=>{const b=e.target.closest('button');if(b)pick(b.dataset.t,'');});
   const setYr=v=>{yrOff=v;[...$('askYr').children].forEach(b=>b.classList.toggle('on',+b.dataset.v===yrOff));};
   function ask(){const q=$('askQ').value.trim();if(!q)return;
     setYr(/내년|다음 ?해/.test(q)?1:0);
-    const hit=MATCH.find(k=>T[k].kw.some(w=>q.includes(w)))||'gen';
+    const hit0=MATCH.find(k=>T[k].kw.some(w=>q.includes(w)))||'gen',hit=intentOf(hit0,q);
     pick(hit,q,qkind(q)==='ab'?q:null);$('askQ').value='';}
   $('askOut').addEventListener('click',e=>{const b=e.target.closest('button[data-f]');if(!b||!curT)return;const D=T[curT],f=b.dataset.f;
     if(f==='when')pick(curT,D.n+', 언제가 제일 좋아요?');
