@@ -241,7 +241,7 @@ function renderReading(r){
     if(cr)L.push('⏳ <b>지금('+cr.from+(cr.to>cr.from?'~'+cr.to:'')+'세)</b> · '+cr.theme+'의 시기고, 흐름은 <b>'+(cr.g>=2?'좋네':cr.g>=1?'괜찮은 편일세':cr.g<=-1?'조심할 때일세':'보통일세')+'</b>');
     if(HL.luck)L.push('🧭 <b>지금 할 일</b> · '+st(HL.luck));
     if(L.length)h+='<div data-sec="sum" class="bub dk rdTalk"><span class="av">👹</span><div><p class="ansV"><b>허허, 한마디로 정리해 주겠네.</b></p>'+L.map(t=>'<p>'+t+'</p>').join('')+'<p class="note">궁금한 게 있으면 위에서 이 영감한테 그냥 물어보게.</p></div></div>';}catch(e){console.error(e);}
-  const sec=k=>'<div data-sec="'+k+'" class="rdSec'+(k==='total'?' top':k==='lucky'?' lucky':'')+'"><h4>'+T[k]+'</h4>'+star(x.SC&&x.SC[k])+(x.HL&&x.HL[k]?'<p class="rdHL">'+x.HL[k]+'</p>':'')+lifeHtml(x,k,r.input.sex,ageNow(r))+x.S[k].map(t=>'<p'+(/^📌/.test(t)?' class="note"':'')+'>'+t+'</p>').join('')+'</div>';
+  const sec=k=>'<div data-sec="'+k+'" class="rdSec'+(k==='total'?' top':k==='lucky'?' lucky':'')+'"><h4>'+T[k]+'</h4>'+star(x.SC&&x.SC[k])+(x.HL&&x.HL[k]?'<p class="rdHL">'+x.HL[k]+'</p>':'')+(x.SH&&x.SH[k]&&x.SH[k].length?'<div class="sh">'+x.SH[k].map(s=>'<p>'+s+'</p>').join('')+'</div>':'')+lifeHtml(x,k,r.input.sex,ageNow(r))+x.S[k].map(t=>'<p'+(/^📌/.test(t)?' class="note"':'')+'>'+t+'</p>').join('')+'</div>';
   for(const k of Object.keys(T)){if(k==='lucky'||!x.S[k]||!x.S[k].length)continue;h+=sec(k);}
   const gc=g=>g>=2?['g2','좋음']:g>=1?['g1','무난·좋음']:g<=-1?['gm1','주의']:['g0','보통'];
   h+='<div data-sec="deep" class="rdSec"><h4>🔎 원리 풀이</h4><p class="rdHL">왕쇠·용신·진용·없는 육신·살·살성을 근거와 함께</p>'+deepHtml(r,x)+'</div>';

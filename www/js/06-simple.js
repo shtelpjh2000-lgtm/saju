@@ -16,6 +16,9 @@
     if(pro||!root)return;
     root.querySelectorAll('.rdSec:not([data-cut])').forEach(sec=>{
       sec.dataset.cut='1';const k=sec.dataset.sec;if(['lucky','deep','wonbi'].includes(k))return;
+      const shBox=sec.querySelector(':scope>.sh');
+      if(shBox){const rest=[...sec.children].filter(c=>!(c.tagName==='H4'||c.classList.contains('rdStar')||c.classList.contains('rdHL')||c===shBox));
+        if(rest.length){const d=document.createElement('details');d.className='more';d.innerHTML='<summary>근거 보기</summary>';rest.forEach(c=>d.appendChild(c));sec.appendChild(d);}return;}
       const ps=[...sec.children].filter(c=>c.tagName==='P'&&!c.classList.contains('rdHL'));
       const plain=ps.filter(p=>!p.classList.contains('note')&&!/^[📌🌀]/u.test(p.textContent.trim())&&p.textContent.trim());
       if(!plain.length)return;

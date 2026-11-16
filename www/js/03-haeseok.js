@@ -357,7 +357,51 @@
       L1 ? '🚫 <b>피해야 할 색:</b> ' + L1.c.slice(0, 2).join('·') + ' — 世(' + ELKO[seE] + ')를 누르는 ' + ELKO[badE] + ' 기운이라, 큰일을 앞두고는 이 색을 몸에 지니지 마세요.' : ''
     ].filter(Boolean);
 
-    return { strong, strongKo, score: Math.round(score * 10) / 10, wang: { geo, seung, susaeng }, yong, cnt, where, S, HL, SC, runs, curRun };
+    // ── 단정형 핵심 요약(SH): 섹션마다 2~3줄, 먼저 보여 줘요. 자세한 근거는 S에 그대로 ──
+    const SH = {}, A = u => '<b>' + ageTxt(u) + '</b>';
+    // 앞으로 올 시기를 먼저(지난 시기는 쓰지 않아요)
+    const HI = Math.min(75, Math.max(age, 20) + 30), fut = (ks, min, hi) => runs.filter(u => ks.includes(u.k) && u.g >= min && u.to >= Math.max(age, 20) && u.from <= Math.min(hi || HI, HI)).sort((a, b) => b.g - a.g || a.from - b.from)[0] || null;
+    const futBad = ks => runs.filter(u => ks.includes(u.k) && u.g <= 0 && u.to >= Math.max(age, 20) && u.from <= HI).sort((a, b) => a.g - b.g || a.from - b.from)[0] || null;
+    const ALLK = ['父', '兄', '孫', '財', '官', '鬼'];
+    const fBest = fut(ALLK, -9), fWorst = futBad(ALLK);
+    const fMoney = fut(strong === 'weak' ? ['父', '兄', '財'] : ['財', '孫'], 1), fLeak = futBad(['兄', '鬼']);
+    const fJob = fut(strong === 'weak' ? ['父', '官'] : ['官', '財', '孫'], 1, 65), fLove = age <= 45 ? fut(spK, 0.5, 45) : null, fHealth = runs.filter(u => u.k === '鬼' && u.g <= -1 && u.to >= age && u.from <= HI).sort((a, b) => a.g - b.g)[0] || null;
+    const WEAK = { 水: '속을 안 보여 오해를 산다.', 火: '욱하는 한마디가 판을 깬다.', 木: '고집 때문에 부러진다.', 金: '말에 날이 서 사람을 잃는다.', 土: '재다가 기회를 놓친다.' };
+    const STRONG1 = { 水: '머리로 이기는 전략가다.', 火: '판을 뒤집는 불꽃이다.', 木: '꺾이지 않는 개척자다.', 金: '맺고 끊는 결단가다.', 土: '끝까지 버티는 큰 산이다.' };
+    SH.total = [(strong === 'strong' ? '기운이 센 명국이다. 남 밑보다 내 판이 맞다.' : '기운이 여린 명국이다. 누구 곁에 서느냐가 운을 가른다.'),
+      (fBest ? '앞으로 가장 좋은 때는 ' + A(fBest) + (fWorst && fWorst !== fBest ? ', 몸을 낮출 때는 ' + A(fWorst) : '') + '.' : '')];
+    SH.total = SH.total.filter(Boolean);
+    SH.char = [STRONG1[seE] + ' ' + (strong === 'strong' ? '스스로 판을 짠다.' : '좋은 스승을 만나면 확 달라진다.'), '약점: ' + WEAK[seE]];
+    { const M0 = [];
+      const gw = sanhe.find(s => s[3] === LQ_EL.父 || s[3] === seE);
+      if (cnt.財 === 0) M0.push('재성이 안 보인다. 돈을 쫓지 말고 기술로 벌어라.');
+      else if (strong === 'strong') M0.push('돈 그릇이 크다. 월급에 머물지 말고 직접 굴려라.');
+      else if (cnt.財 >= 3) M0.push('돈은 보이나 감당이 버겁다. 벌기보다 지켜라.');
+      else M0.push('재물복은 평균 이상이다. 꾸준히 모으면 쌓인다.');
+      if (gw) M0.push('삼합이 재물 귀격이다. 집·땅·문서로 불어난다.');
+      if (fMoney) M0.push('재물 전성기 ' + A(fMoney) + '. 이때 승부하라.' + (fLeak ? ' ' + A(fLeak) + '엔 투자·보증 금지.' : ''));
+      else if (fLeak) M0.push(A(fLeak) + '엔 투자·보증 금지.');
+      SH.money = M0.slice(0, 3); }
+    { const RS = { 父: '자격·문서로 먹고산다', 官: '조직에서 자리로 큰다', 鬼: '위기를 다루는 일로 큰다', 財: '돈을 직접 굴려야 산다', 孫: '기술·재능으로 번다', 兄: '사람을 모아 판을 키운다' };
+      SH.job = ['용신 ' + LQKO[yong] + ' — ' + RS[yong] + '.' + (jy ? ' 진용은 ' + NUM[jy.n] + '(' + LQKO[jyK] + '), 이쪽을 취하라.' : ''),
+        '맞는 판: ' + JOB[yongE] + '.'];
+      if (fJob) SH.job.push(A(fJob) + '에 이직·창업·승진을 걸어라.'); }
+    { const SPS = { 水: '속 깊고 눈치 빠른 사람', 火: '밝고 표현이 확실한 사람', 木: '곧고 정 많은 사람', 金: '똑 부러지고 책임감 강한 사람', 土: '듬직하고 한결같은 사람' }, L0 = [];
+      if (!spPals.length) L0.push('배우자 자리가 비었다. 인연은 운에서 온다.');
+      else { const mn = spPals.find(([q]) => q === sp) || spPals.find(([q]) => q === 5) || spPals[0]; L0.push('짝은 ' + SPS[EL(mn[1])] + '이다.');
+        const bad = M.find(x => /화금상전|삼형살/.test(x)), good = M.find(x => /💞/.test(x)), clash = M.find(x => /⚡/.test(x));
+        L0.push(bad ? '해로가 어렵다. 떨어져 지낼 시간을 일부러 만들어라.' : good ? '世와 합이다. 금실이 좋다.' : clash ? '世와 부딪힌다. 다툼은 그날 풀어라.' : '무난한 인연이다. 표현이 오래 간다.'); }
+      if (fLove) L0.push('인연은 ' + A(fLove) + '에 온다.');
+      SH.spouse = L0; }
+    SH.child = [cnt.孫 === 0 ? '자녀 인연이 늦다. 하나를 귀하게 키운다.' : cnt.孫 >= 3 ? '자식 덕을 본다. 늙을수록 든든하다.' : '자녀 인연이 분명하다.', C.find(x => /⚠️/.test(x)) ? (/맏이/.test(C.find(x => /⚠️/.test(x))) ? '맏이는' : '둘째 이후 자녀는') + ' 건강을 챙겨라.' : (cnt.父 >= 4 ? '잔소리를 반으로 줄여라.' : '')].filter(Boolean);
+    SH.health = ['약한 곳은 ' + ORGAN[seE] + '이다.', H.some(x => /世\(나\) 자신|화금상전/.test(x)) ? '사고·수술수가 있다. 운전과 칼을 조심하라.' : ['絶體', '絶命'].includes(r.gua[sp]) ? '체력이 갑자기 꺾인다. 검진을 거르지 마라.' : '타고난 체력은 버틴다. 과로만 끊어라.'];
+    if (fHealth) SH.health.push(A(fHealth) + '엔 몸부터 챙겨라.');
+    if (curRun) { const gv = curRun.g, sw = salWords(curRun.marks);
+      SH.luck = ['지금 ' + age + '세는 ' + LQKO[curRun.k] + ' 대운 — ' + (gv >= 2 ? '치고 나갈 때다.' : gv >= 1 ? '쌓을 때다.' : gv <= -1 ? '엎드릴 때다.' : '골라 잡을 때다.')];
+      if (sw.length) SH.luck.push(sw.slice(0, 2).map(x => x[1].replace(/\(.+\)/, '').replace(/ 조심$/, '')).join(', ') + '이 붙은 대운이다.');
+      const nx = runs.find(x => x.from > age); if (nx) SH.luck.push('다음은 ' + nx.from + '세 ' + LQKO[nx.k] + ' 대운, ' + (nx.g >= 1 ? '좋아진다.' : nx.g <= -1 ? '미리 대비하라.' : '흐름이 바뀐다.')); }
+    SH.lucky = ['살리는 기운은 ' + ELKO[yongE] + '. 중요한 날엔 ' + L0.c[0] + '을 지니고 ' + pDir + '을 향하라.'];
+    return { strong, strongKo, score: Math.round(score * 10) / 10, wang: { geo, seung, susaeng }, yong, cnt, where, S, HL, SC, SH, runs, curRun };
   }
 
 

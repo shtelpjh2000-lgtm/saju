@@ -282,3 +282,6 @@ body.hasBase:not(.pro):not(.formOpen) #whoBar{display:flex}
 
 .ages .smk{flex:1;display:flex;flex-direction:column;justify-content:flex-end;gap:1px;font-size:8.5px;line-height:1.15;color:var(--purple);font-family:"Noto Serif KR",serif;overflow:hidden}
 .ages .smk span{display:flex;flex-wrap:wrap;gap:0 3px}.ages .smk i{font-style:normal;white-space:nowrap}.ages .smk .h{opacity:.75}
+
+.sh{margin:6px 0 4px}.sh p{margin:3px 0!important;font-size:15.5px;line-height:1.55;font-weight:600;color:var(--ink)}
+body.pro .sh{border-left:3px solid var(--pink);padding-left:8px}
