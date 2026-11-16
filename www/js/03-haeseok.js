@@ -265,7 +265,7 @@
       else if (spRel && spRel.type === '생') { ss += 0.5; M.push('배우자 수가 世를 생해 배우자의 덕을 보는 인연이에요.'); }
       else if (rw.includes('충') || (spRel && spRel.type === '충극')) { ss -= 1; M.push('⚡ 배우자 수가 世와 ' + (rw.includes('충') ? '충' : '충극') + ' — 불꽃 튀게 사랑하고 불꽃 튀게 싸우는 사이예요. 각자의 공간과 시간을 인정해 주는 게 오래가는 비결이에요.'); }
       const HG4 = [[7, 9], [2, 9], [7, 4], [2, 4]], hg = q => HG4.some(([x, y]) => (r.earthN[q] === x && r.heavN[q] === y) || (r.earthN[q] === y && r.heavN[q] === x));
-      if (hg(sp) && spPals.some(([q]) => hg(q))) { ss -= 1.5; M.push('⚠️ 世궁과 배우자 자리의 천지반이 모두 화금상전이에요. 책에서는 해로하기 어려운 배치로 봐요 — 떨어져 지내는 시간을 일부러 만들고, 다툼은 그날 풀어야 해요.'); }
+      if (hg(sp) && spPals.some(([q]) => hg(q))) { ss -= 1.5; M.push('⚠️ 世궁과 배우자 자리의 천지반이 모두 화금상전이에요. 전통 원리로는 해로하기 어려운 배치로 봐요 — 떨어져 지내는 시간을 일부러 만들고, 다툼은 그날 풀어야 해요.'); }
       if (spPals.some(([, n]) => n === 3) && [3, 2, 9].every(x => DN.has(x))) { ss -= 1; M.push('⚠️ 배우자 수가 三인데 三二九 삼형살이 이뤄져 배우자 쪽이 충극을 받아요. 배우자의 건강·사고를 함께 챙기세요.'); }
       if (sex === 'F' && spPals.some(x => rel(x[1]) === '鬼') && spPals.some(x => rel(x[1]) === '官')) { ss -= 0.5; M.push('官과 鬼가 함께 있어 남자 인연이 겹치기 쉬워요. 끌리는 사람과 좋은 사람을 구분하는 눈이 필요해요.'); }
       if (sex === 'M' && spPals.length >= 4) M.push('재성이 많아 이성에게 인기가 많은 사주예요. 인연이 많은 만큼 한 사람에게 집중할 때 복이 커져요.');
@@ -318,7 +318,7 @@
       SC.luck = clamp(gv >= 2 ? 5 : gv >= 1 ? 4 : gv <= -1 ? 2 : 3);
       D.push('지금 ' + age + '세는 <b>' + curRun.k + '(' + LQKO[curRun.k] + ') 대운</b>(' + ageTxt(curRun) + ', ' + PK[curRun.p] + ' ' + curRun.lv + ' ' + NUM[curRun.n] + ')이에요. ' + curRun.theme + '의 일이 인생의 중심에 서요.');
       D.push(gv >= 2 ? '世를 밀어 주는 바람이 부는 시기예요. 미뤄 둔 계획이 있다면 지금 시작하세요. 이 바람은 영원히 불지 않아요.' : gv >= 1 ? '큰 파도는 없지만 쌓는 만큼 남는 시기예요. 자격증, 저축, 인맥 — 다음 대운의 밑천을 지금 만드세요.' : gv <= -1 ? '世를 누르는 바람이 부는 시기예요. 확장·투자·이직은 한 템포 늦추고, 지키는 사람이 결국 이겨요.' : '좋고 나쁨이 섞인 시기예요. 다 잡으려 하지 말고 확실한 것 하나만 고르세요.');
-      { const sw = salWords(curRun.marks); if (sw.length) D.push('🔖 이 대운에 붙은 살성: ' + sw.map(x => x[0] + ' ' + x[1]).join(', ') + (curRun.lv === '천반' ? ' — 46세 이후라 이 수가 지반에 있는 궁의 살성을 봐요(운곡 원리).' : '.')); }
+      { const sw = salWords(curRun.marks); if (sw.length) D.push('🔖 이 대운에 붙은 살성: ' + sw.map(x => x[0] + ' ' + x[1]).join(', ') + (curRun.lv === '천반' ? ' — 46세 이후라 이 수가 지반에 있는 궁의 살성을 봐요.' : '.')); }
       if (curRun.rw.length) D.push('대운 수가 世와 ' + curRun.rw.join('·') + ' — ' + (curRun.rw.includes('육합') ? '귀인과 좋은 인연이 먼저 손을 내밀어요.' : '이사·이직·관계 변화 같은 큰 변동이 찾아와요.'));
     }
     const next = runs.find(x => x.from > age);

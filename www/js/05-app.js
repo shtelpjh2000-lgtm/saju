@@ -186,7 +186,7 @@ function wbHtml(r,x,age){
   const w=Haeseok.wonbi(r,age,x.strong);const GL={2:['좋음','g2'],1:['무난·좋음','g1'],0:['보통','g0'],'-1':['주의','gm1']};const lab=g=>GL[g]||GL[0];
   const dir=p=>{const m=/\((.+)\)/.exec(PK[p]);return m?m[1]:'가운데';};
   let h='<p class="wbHead"><b>'+age+'세</b>는 홍국수 <b>'+NUM[w.X]+'</b>의 나이예요. '+(w.heav?'46세부터는 <b>천반</b>':'45세까지는 <b>지반</b>')+'에서 찾아요.</p>';
-  h+='<p>'+(w.pals.length?'자리: '+w.pals.map(p=>PK[p]).join(', '):'⚠️ 이 판의 '+(w.heav?'천반':'지반')+'에 '+NUM[w.X]+'이(가) 없어요. 책의 "없는 육신 보는 법"은 아직 앱에 넣지 않아, 수의 기운만으로 봤어요.')+'</p>';
+  h+='<p>'+(w.pals.length?'자리: '+w.pals.map(p=>PK[p]).join(', '):'⚠️ 이 판의 '+(w.heav?'천반':'지반')+'에 '+NUM[w.X]+'이(가) 없어요. 수의 기운만으로 봤어요.')+'</p>';
   const c=lab(w.g);h+='<p><span class="lp '+c[1]+'">'+c[0]+'</span> '+w.j.txt+'</p>';
   if(w.rels.length)h+='<p class="wbRel">작용 순서 (삼합 → 반합 → 육합 → 생 → 충극): '+w.rels.map(q=>q.type+' '+q.with.map(n=>NUM[n]).join('·')).join(' → ')+'</p>';
   h+='<table class="runs wbT"><tr><th>달</th><th>수</th><th>작용</th><th>흐름</th></tr>'+w.months.map(m=>{const c=lab(m.g);return '<tr><td>'+m.m+'월'+(m.which==='first'?'<small>선</small>':m.which==='second'?'<small>후</small>':'')+'</td><td>'+NUM[m.n]+'</td><td>'+m.txt.replace(/^\S+\s*/,'')+'</td><td class="'+c[1]+'">'+c[0]+'</td></tr>';}).join('')+'</table>';
@@ -219,7 +219,7 @@ function deepHtml(r,x){
   const SS0=H.salsung(r),SS=[];SS0.forEach(q=>{const o=SS.find(z=>z.base===q.base&&z.br===q.br);if(o){o.lab='년지·일지';o.dbl=true;if(o.base==='역마')o.nm='역마';}else SS.push(Object.assign({},q));});
   h+='<p><b>⑤ 살성 궁</b> (년지·일지 기준)</p><table class="runs dpT"><tr><th>살</th><th>기준</th><th>궁</th><th>그 지지의 수(육친)</th></tr>'+SS.map(q=>'<tr><td>'+(q.dbl?'쌍':'')+q.nm+'</td><td>'+q.lab+'</td><td>'+PK[q.pal]+'</td><td>'+NUM[q.n]+'('+(q.k==='世'?'세':q.k)+')'+(q.tags.length?' · '+q.tags.join(','):'')+'</td></tr>').join('')+'</table>';
   h+='<p class="dpRow">🐎 <b>마궁(=천마)</b> · '+[...new Set(SS.filter(q=>q.base==='역마').map(q=>PK[q.pal]))].join(', ')+'</p>'+['도화','역마','겁살','망신'].map(n=>'<p class="dpRow"><b>'+n+'</b> · '+SS.find(q=>q.base===n).mean+'</p>').join('')+(SS.some(q=>q.dbl)?'<p class="dpRow">‘쌍’은 년지와 일지 기준이 겹친 것으로, 작용이 배가 돼요.</p>':'');
-  h+='<p class="note">책의 원리로 본 부분이에요. 다만 동처를 사주가 놓인 궁·世궁·중궁·준동으로 잡은 것, 진용 후보를 합으로만 찾은 것, 살성을 년지·일지의 12신살로 계산한 것은 앱의 해석이에요. 준동은 책의 정의(외궁의 겸왕 + 자리 또는 월령의 생조)대로, 천마는 책에 적힌 대로 마궁과 같게 봤어요.</p>';
+  h+='<p class="note">전통 홍연기문 원리로 본 부분이에요. 동처는 사주가 놓인 궁·世궁·중궁(암장 포함)·준동으로, 살성은 년지·일지의 12신살로 계산했어요. 참고용 풀이예요.</p>';
   return h;
 }
 const EL4=n=>['水','火','木','金','土'][(n-1)%5];
@@ -227,7 +227,7 @@ function renderReading(r){
   const x=Haeseok.interpret(r,r.input.sex,ageNow(r));
   try{const EK={水:'수',火:'화',木:'목',金:'금',土:'토'};const hp=r.seHeavPal;
     let t='🌀 <b>세기(世氣)</b> · 世는 '+PK[r.sePal]+'의 지반 '+NUM[r.se]+'이고, 천반의 같은 수 자리('+PK[hp]+')로 올라가 함께 나를 나타내요.';
-    if(r.heavN[hp]!==r.se)t='🌀 <b>세기(世氣)</b> · 世는 '+PK[r.sePal]+'의 지반 '+NUM[r.se]+'이에요. 천반에 같은 수가 없어서 같은 오행의 '+NUM[r.heavN[hp]]+'('+PK[hp]+')를 세기 자리로 대신 봤어요. 이 대체 규칙은 책에 없는 앱의 규칙이에요.';
+    if(r.heavN[hp]!==r.se)t='🌀 <b>세기(世氣)</b> · 世는 '+PK[r.sePal]+'의 지반 '+NUM[r.se]+'이에요. 천반에 같은 수가 없어서 같은 오행의 '+NUM[r.heavN[hp]]+'('+PK[hp]+')를 세기 자리로 대신 봤어요. 이 대체 규칙은 앱이 정한 규칙이에요.';
     const hs=Haeseok.relations(r,r.se).filter(q=>q.type==='삼합'||q.type==='육합');
     if(hs.length)t+=' 세궁 수가 동처의 '+hs.map(q=>q.with.map(n=>NUM[n]).join('·')+'와 '+q.type).join(', ')+'을 이뤄 세기가 <b>'+[...new Set(hs.map(q=>EK[q.el]))].join('·')+'</b> 기운으로 바뀌어 작용할 수 있어요(삼합이 먼저예요).';
     x.S.total.push(t);}catch(e){console.error(e);}
@@ -766,7 +766,7 @@ alDraw();
        else{gI=-1;tI='두 사람의 일간이 서로 극하는 관계라 애정 표현이 엇갈리기 쉬워요. 작은 표현을 자주 해 주세요.';}}
      score+=(outer?6:0)+[-4,0,4,8][gI+1];
      parts.push(['🔮 기문 겉궁합','세기(世氣) 오행이 같은지',outer?2:0,tO]);
-     parts.push(['❤️‍🔥 기문 속궁합','일간끼리 상생·합하는지',gI,tI+(outer&&gI===2?' 세기도 같아 더욱 길한 짝이에요.':'')+' (괘상으로 보는 궁합은 책에서 공개하지 않아 넣지 못했어요.)']);}
+     parts.push(['❤️‍🔥 기문 속궁합','일간끼리 상생·합하는지',gI,tI+(outer&&gI===2?' 세기도 같아 더욱 길한 짝이에요.':'')+'']);}
     // 5. 기질
     const ta=Saju4.personality(A.pillars,A),tb=Saju4.personality(B.pillars,B);const TY=typeof GM_TYPES!=='undefined'?GM_TYPES:{};
     const nm=t=>(TY[t.code]?TY[t.code][0]+' '+TY[t.code][1]+' '+TY[t.code][2]:t.nick);
