@@ -164,20 +164,42 @@ function lifeHtml(x,k,sex,age){
   };
   const C=CFG[k];if(!C||!x.runs||!x.runs.length)return '';
   const TH={父:'문서·도움',兄:'사람·경쟁',孫:'재능·새 일',財:'재물',官:'직장·명예',鬼:'압박·시련'};
+  const F=sex==='F';
+  // 항목 × 그 시기 육친마다 [좋을 때, 나쁠 때] 문장 — 단계 문장 4개를 돌려 쓰지 않게
+  const PH={
+    money:{父:['문서·부동산으로 돈이 불어나요 — 집·땅·계약을 잡으세요','계약·서류에 돈이 묶여요 — 보증·서명 조심'],兄:['사람이 돈을 물어 와요 — 동업·모임에서 기회','돈이 사람 따라 나가요 — 빌려주기·보증 금지'],孫:['재주·장사로 버는 때 — 부업·창업 수입','벌인 일이 많아 새요 — 새 사업은 작게'],財:['현금이 직접 들어와요 — 종잣돈을 키우세요','들어온 만큼 나가요 — 큰 지출은 미루세요'],官:['월급·직위로 돈이 붙어요 — 직장에서 올리세요','일은 많은데 돈은 그대로 — 세금·벌금 조심'],鬼:['남이 꺼리는 일에서 돈이 나와요','사고·병원비로 돈이 새요 — 보험부터 점검']},
+    job:{父:['자격·시험이 길을 열어요 — 공부·자격증','서류·평가에서 막혀요 — 꼼꼼히 준비'],兄:['동료·인맥이 자리를 만들어 줘요','경쟁자에게 밀리기 쉬워요 — 내 몫 챙기기'],孫:['재능이 드러나요 — 창업·전문직 도전','윗사람과 부딪혀요 — 말 조심, 이직은 신중'],財:['성과가 돈으로 찍혀요 — 영업·사업 확장','돈 때문에 자리를 옮기고 싶어져요 — 조건부터'],官:['승진·발령의 때 — 자리를 잡으세요','책임만 무거워져요 — 감당할 만큼만'],鬼:['어려운 일을 맡아 인정받아요','압박·구설이 따라요 — 큰 이동은 미루세요']},
+    spouse:{父:['어른 소개·혼인 문서로 인연이 묶여요','집안 반대·서류 문제로 늦어져요'],兄:['친구·모임에서 인연이 와요','경쟁자·제3자가 끼어들어요'],孫:[F?'연애는 즐겁지만 남자가 오래 안 가요':'연애가 즐거운 때 — 데이트·여행',F?'남자 일이 꼬여요 — 기대를 낮추세요':'즐거움만 좇다 놓쳐요'],財:[F?'시댁·돈 문제가 풀려요':'여자 인연이 강하게 와요 — 결혼·연애 적기',F?'돈 문제로 부부가 다퉈요':'돈 때문에 여자와 다퉈요'],官:[F?'좋은 남자가 와요 — 결혼·연애 적기':'일·체면에 치여 집에 소홀해요',F?'남자가 바빠 멀어져요':'일 때문에 관계가 식어요'],鬼:[F?'강한 남자를 만나요 — 끌림이 커요':'긴장 속에 정이 들어요','집착·압박하는 관계 조심']},
+    child:{父:['자녀 교육·진학 일이 풀려요','자녀를 누르기 쉬워요 — 잔소리 줄이기'],兄:['자녀 친구·형제 사이가 좋아요','자녀 일로 돈이 나가요'],孫:['자녀 경사 — 임신·출산·합격 소식','자녀 일로 마음 쓸 때 — 들어 주세요'],財:['자녀에게 돈 쓸 일이 기쁨이 돼요','자녀 뒷바라지에 허리가 휘어요'],官:['자녀가 자리를 잡아요','자녀 직장·진로 걱정'],鬼:['자녀가 고비를 넘기고 단단해져요','자녀 건강·안전 챙기기']},
+    health:{父:['쉬면서 회복하는 때 — 보약·휴식','약·수술 서류 일이 생겨요 — 검진 챙기기'],兄:['운동 친구가 생겨 몸이 가벼워요','무리한 경쟁으로 지쳐요 — 과로 금지'],孫:['기운이 넘쳐요 — 운동 시작하기 좋아요','먹고 노는 데 몸이 상해요 — 술·야식 줄이기'],財:['몸 관리에 돈 쓸 여유가 생겨요','돈 걱정이 몸으로 와요 — 잠부터 챙기기'],官:['규칙적인 생활로 건강해져요','일 스트레스가 몸으로 와요'],鬼:['고비를 넘기고 회복해요','병원 갈 일 — 검진·안전 필수']},
+    total:{父:['문서·도움으로 크게 얻는 때','문서·계약에서 막히는 때'],兄:['사람을 얻어 판을 키우는 때','사람 때문에 손해 보는 때'],孫:['재능으로 이름을 내는 때','벌인 일이 많아 지치는 때'],財:['돈과 실속을 챙기는 때','돈이 새는 때 — 지출을 묶으세요'],官:['자리와 명예가 오르는 때','책임이 무거운 때'],鬼:['고비를 넘어 단단해지는 때','압박·시련이 오는 때 — 몸을 낮추세요']}
+  };PH.luck=PH.total;
+  const relOfWhy=w=>{const m=/(삼합|반합|육합)/.exec(w||'');if(m)return m[1];if(/를 생|을 생/.test(w||''))return '생';if(/충극/.test(w||''))return '충극';return '';};
   const cls=v=>v>=3?0:v>=1.5?1:v>-0.5?2:3;
   const segs=[];
   for(const u of x.runs){if(u.to<C.from)continue;const from=Math.max(u.from,C.from);
     const v=u.g+(C.good.includes(u.k)?1:0)-(C.bad.includes(u.k)?1:0);const c=cls(v);const L=segs[segs.length-1];
-    if(L&&L.c===c&&L.to+1>=from){L.to=u.to;if(!L.th.includes(TH[u.k]))L.th.push(TH[u.k]);}
-    else segs.push({from,to:u.to,c,th:[TH[u.k]]});}
+    if(L&&L.c===c&&L.k===u.k&&L.to+1>=from){L.to=u.to;}
+    else segs.push({from,to:u.to,c,k:u.k,th:[TH[u.k]],why:u.why,marks:u.marks||[]});}
   if(!segs.length)return '';
+  const WHO={父:'문서',兄:'사람',孫:'재능',財:'돈',官:'직장',鬼:'압박',세:'나'};
+  const partner=w=>{const m=/가 (.+?)(와|를|을) (삼합|반합|육합|생|극)/.exec(w||'');if(!m)return '';const ks=[...m[1].matchAll(/\((.)\)/g)].map(z=>WHO[z[1]]).filter(Boolean);if(!ks.length)return '';const who=[...new Set(ks)].join('·');
+    const gw=w=>{const c=w.charCodeAt(w.length-1)-0xAC00;return w+(c>=0&&c%28?'과':'와');};return m[3]==='생'?who+'에 힘을 보탬':m[3]==='극'?gw(who)+' 부딪힘':gw(who)+' 손잡음';};
+  const seen={};
+  const textOf=u=>{const ph=(PH[k]||PH.total)[u.k]||[C.t[u.c],C.t[u.c]];let s=u.c<=1?ph[0]:u.c===3?ph[1]:ph[0].split(' — ')[0]+'… 다만 크게 기대하진 마세요';
+    const key=u.k+u.c;if(seen[key])return seen[key]+'세 때와 같은 흐름이에요 ('+s.split(' — ').pop()+')';seen[key]=rg(u).replace('세','');
+    if(u.c===0)s='크게 · '+s;
+    const pt=partner(u.why);if(pt)s+=' · '+pt;
+    const wantBad=u.c>=2;const sw=(window.Haeseok&&Haeseok.salWords?Haeseok.salWords(u.marks):[]).filter(z=>wantBad?/⚡|🌀/.test(z[0]):/🌸|🛫|🙏/.test(z[0]));
+    if(sw.length&&(k!=='money'||wantBad))s+=' · '+sw[0][0]+' '+sw[0][1].replace(/\(.+\)/,'').replace(/ 조심$/,'');
+    return s;};
   const GL=[['아주 좋음','lv0'],['좋음','lv1'],['보통','lv2'],['조심','lv3']];
   const span=segs[segs.length-1].to-segs[0].from+1;
   const rg=u=>u.from+(u.to>u.from?'~'+u.to:'')+'세';
   const now=u=>age>=u.from&&age<=u.to;
   let h='<div class="life"><p class="lifeH">🗓️ 평생 '+C.n+' 흐름 <span>(나이별)</span></p><div class="lifeBar">'+segs.map(u=>'<i class="'+GL[u.c][1]+(now(u)?' nw':'')+'" style="flex:'+(u.to-u.from+1)+'" title="'+rg(u)+'"></i>').join('')+'</div>';
   h+='<div class="lifeAx"><span>'+segs[0].from+'세</span><span>'+Math.round(segs[0].from+span/2)+'세</span><span>'+segs[segs.length-1].to+'세</span></div>';
-  h+='<div class="lifeL">'+segs.map(u=>'<div class="lifeR'+(now(u)?' nw':'')+'"><b>'+rg(u)+(now(u)?' <em>지금</em>':'')+'</b><span class="lp '+GL[u.c][1]+'">'+GL[u.c][0]+'</span><p>'+C.t[u.c]+'<small> · '+u.th.slice(0,2).join('·')+' 기운</small></p></div>').join('')+'</div>';
+  h+='<div class="lifeL">'+segs.map(u=>'<div class="lifeR'+(now(u)?' nw':'')+'"><b>'+rg(u)+(now(u)?' <em>지금</em>':'')+'</b><span class="lp '+GL[u.c][1]+'">'+GL[u.c][0]+'</span><p>'+textOf(u)+'<small> · '+u.th.join('·')+' 기운</small></p></div>').join('')+'</div>';
   const best=segs.filter(u=>u.c===0).map(rg),bad=segs.filter(u=>u.c===3).map(rg);
   h+='<p class="note" style="margin:6px 0 0">대운(나이별 궁의 수)과 이 항목에 맞는 육친으로 계산한 참고용 흐름이에요.</p><p class="lifeSum">'+(best.length?'🌟 <b>가장 좋은 때</b> '+best.join(', '):'🌟 크게 튀는 때 없이 고른 편이에요')+(bad.length?'<br>⚠️ <b>조심할 때</b> '+bad.join(', '):'<br>⚠️ 크게 조심할 때는 없어요')+'</p></div>';
   return h;
