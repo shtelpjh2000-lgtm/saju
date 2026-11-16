@@ -13,7 +13,7 @@ const url = 'file://' + require('path').resolve(__dirname, '../www/index.html');
   // 도깨비 대화: 질문 뜻을 제대로 알아듣는지
   await pg.evaluate(() => { const i = document.querySelector('.qaI[data-k=ask]'); if (!i.classList.contains('open')) i.querySelector('.qaQ').click(); }); await pg.waitForTimeout(300);
   const askT = async q => { await pg.fill('#askQ', q); await pg.click('#askGo'); await pg.waitForTimeout(800); return pg.evaluate(() => document.querySelector('#askOut .cur .bub.dk').innerText); };
-  for (const [q, want, not] of [['부동산투자 한게있는데 이자만나가고 매매도 안되는데 언제 팔릴까요?', '매도', '주식'], ['주식 투자 해도 될까요?', '투자', '부동산'], ['이사 가려는데 어느 쪽이 좋아요?', '쪽이 좋네', '두 갈래'], ['땅 투자 어때요?', '부동산', '주식'], ['갭투자 해도 될까요', '매물', '코인']]) {
+  for (const [q, want, not] of [['부동산투자 한게있는데 이자만나가고 매매도 안되는데 언제 팔릴까요?', '매도', '주식'], ['주식 투자 해도 될까요?', '투자', '부동산'], ['이사 가려는데 어느 쪽이 좋아요?', '쪽이 좋네', '두 갈래'], ['땅 투자 어때요?', '매물', '주식'], ['갭투자 해도 될까요', '매물', '코인']]) {
     const a = await askT(q); if (!a.includes(want) || a.includes(not)) errs.push('대화 오답: ' + q + ' → ' + a.slice(0, 80)); }
   for (const v of ['sin', 'gh', 'jm', 'dm', 'won']) { await pg.click('#mode button[data-v=' + v + ']'); await pg.waitForTimeout(800); }
   await pg.evaluate(() => document.querySelector('.proBar button').click()); await pg.waitForTimeout(1000);
