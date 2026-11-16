@@ -288,7 +288,7 @@ function renderYear(r){
   const gc=g=>g>=2?['g2','좋음']:g>=1?['g1','무난·좋음']:g<=-1?['gm1','주의']:['g0','보통'];
   const nowM=(()=>{try{const l=Solar.fromDate(new Date()).getLunar();return l.getYear()===yearSel?Math.abs(l.getMonth()):0;}catch(e){return 0;}})();
   h+='<h4>월운 (음력)</h4><table class="runs"><tr><th>달</th><th>궁</th><th>천반수</th><th>중심 주제</th><th>흐름</th></tr>';
-  for(const m of o.months){const c=gc(m.g);h+='<tr'+(m.m===nowM?' class="now"':'')+'><td>'+m.m+'월'+(m.which==='first'?'<small class="wbS">선</small>':m.which==='second'?'<small class="wbS">후</small>':'')+'</td><td>'+PN[m.p]+'</td><td>'+NUM[m.n]+' '+m.k+'</td><td>'+m.theme+(m.rtxt?'<small class="mRel">'+m.rtxt.replace(/^\S+\s*/,'')+'</small>':'')+'</td><td class="'+c[0]+'">'+c[1]+'</td></tr>';}
+  for(const m of o.months){const c=gc(m.g);h+='<tr'+(m.m===nowM?' class="now"':'')+'><td>'+m.m+'월'+(m.which==='first'?'<small class="wbS">선</small>':m.which==='second'?'<small class="wbS">후</small>':'')+'</td><td>'+PN[m.p]+'</td><td>'+NUM[m.n]+' '+m.k+'</td><td>'+(m.say||m.theme)+(m.rtxt?'<small class="mRel proOnly">'+m.rtxt.replace(/^\S+\s*/,'')+'</small>':'')+'</td><td class="'+c[0]+'">'+c[1]+'</td></tr>';}
   h+='</table><p class="note">신수국은 년주를 그해 태세로 바꾸고 생월·생일·생시는 그대로 두어 세웠어요. 월운은 달마다 해당 궁(1월·12월 간궁, 2월 진궁, 3·4월 손궁, 5월 이궁, 6·7월 곤궁, 8월 태궁, 9·10월 건궁, 11월 감궁)의 천반 홍국수로 봐요. 한 궁을 함께 쓰는 두 달은 앞 달(12·3·6·9월, 선)을 삼합·반합·육합으로(합이 없으면 생), 뒤 달(1·4·7·10월, 후)을 그다음 순서인 생으로(생이 없으면 충극) 나눠 봐요. 짝이 되는 수는 동처(사주가 놓인 궁·世궁·중궁)의 수예요. 행년은 나이 끝자리 수가 있는 궁(45세까지 지반, 46세부터 천반)의 천반 수로 봐요. 자동 판단이라 참고용이에요.</p>';
   $('reading').innerHTML=h;
 }
@@ -1328,7 +1328,7 @@ alDraw();
       v:['투자운이 좋은 편이에요. 공부한 종목이나 꾸준히 모아 온 투자에서 결실을 볼 수 있어요. 그래도 한 번에 다 걸지는 마세요.','수익을 낼 수 있는 흐름이에요. 나눠서 사고, 목표 수익에 닿으면 일부를 챙기세요.','오르내림이 커서 얻는 만큼 잃기도 쉬워요. 새로 큰돈을 넣기보다 지켜보는 게 좋아요.','손실을 조심해야 하는 때예요. 빚내서 하는 투자, 남의 말만 믿는 투자는 꼭 피하세요.'],
       tips:['이 풀이는 투자 권유가 아니에요. 투자는 꼭 스스로 판단하고, 잃어도 되는 돈으로만 하세요.','빚을 내서 하는 투자는 피하세요. 형(兄)·귀(鬼)의 기운이 손실을 키워요.','사고팔 때는 위의 <b>좋은 날</b>을 참고하고, 조심할 달에는 쉬어 가세요.']},
     estate:{g:'money',n:'부동산·집 매매',e:'🏘️',lq:['父','財'],bad:['兄'],door:{生門:1.5,休門:1,開門:0.8},dir:true,
-      kw:['부동산','집 사','집을 사','매매','아파트','청약','분양','땅','건물','집 팔','상가','전세','월세','계약금'],
+      kw:['부동산','집 사','집을 사','매매','아파트','청약','분양','땅','건물','집 팔','상가','전세','월세','계약금','갭투자','재건축','재개발','오피스텔','빌라','토지','주택','집값','부지','임야','농지','원룸','다가구','경매','등기','매물','점포','공장','전원주택','시골집','집이','집을','집도','내 집'],
       why:'부동산은 집·계약서를 뜻하는 <b>부(父)</b>와 돈인 <b>재(財)</b>로 보고, 재산이 자라는 <b>생문</b>과 편안히 머무는 <b>휴문</b>이 있는 방향을 함께 봐요. 형(兄)이 강하면 경쟁자가 많거나 돈이 나뉘기 쉬워요.',
       v:['집이나 땅을 사고팔기 아주 좋은 때예요. 문서운과 재물운이 함께 들어와요.','좋은 매물을 만날 수 있는 흐름이에요. 아래 좋은 방위와 좋은 달을 참고하세요.','서두를 필요는 없어요. 여러 곳을 비교하고 조건이 맞을 때 결정하세요.','계약에서 손해를 보기 쉬운 때예요. 큰 매매는 미루거나, 서류를 아주 꼼꼼히 확인하세요.'],
       tips:['계약 전에 등기부등본, 대출, 특약을 꼭 확인하세요. 문서(父)가 핵심이에요.','계약일은 위의 <b>좋은 날</b>에서 고르세요.','위의 <b>좋은 방위</b> 쪽 지역을 먼저 살펴보세요.']},
@@ -1427,7 +1427,9 @@ alDraw();
   const MATCH=['samjae','reunion','couple','marry','child','invest','estate','loan','partner','jobget','jobmove','promo','career','exam','biz','money','love','health','move','travel','law','people','caution'];
   // 질문 속 낱말을 모두 따져 가장 구체적인 주제(긴 낱말·많이 걸린 주제)를 고름 — '부동산 투자'는 투자보다 부동산
   const PRI={estate:2,invest:0};
-  const topicOf=q=>{let best=null,bs=0;MATCH.forEach((k,i)=>{const hit=T[k].kw.filter(w=>q.includes(w));if(!hit.length)return;const s=hit.reduce((a,w)=>a+w.length,0)*10+(PRI[k]||0)*5-i*0.01;if(s>bs){bs=s;best=k;}});return best;};
+  const topicOf=q=>{let best=null,bs=0;MATCH.forEach((k,i)=>{const hit=T[k].kw.filter(w=>q.includes(w));if(!hit.length)return;const s=hit.reduce((a,w)=>a+w.length,0)*10+(PRI[k]||0)*5-i*0.01;if(s>bs){bs=s;best=k;}});
+    // 부동산 낱말이 하나라도 있으면 '투자·돈'보다 부동산(부동산 투자는 부동산 질문)
+    if(['invest','money','loan'].includes(best)&&T.estate.kw.some(w=>q.includes(w))&&!/주식|코인|비트|펀드|ETF|etf|대출금|빌려/.test(q))best='estate';return best;};
   const jo=(w,a,c)=>{const ch=String(w).replace(/[^가-힣]/g,'').slice(-1);if(!ch)return c;return ((ch.charCodeAt(0)-0xAC00)%28)?a:c;};
   const dirOf=p=>{const m=/\((.+)\)/.exec(PK[p]);return m?m[1]+'쪽':'가운데';};
   const P2=v=>String(v).padStart(2,'0');

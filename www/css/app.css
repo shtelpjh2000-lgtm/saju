@@ -286,3 +286,5 @@ body.hasBase:not(.pro):not(.formOpen) #whoBar{display:flex}
 .sh{margin:6px 0 4px}.sh p{margin:3px 0!important;font-size:15.5px;line-height:1.55;font-weight:600;color:var(--ink)}
 body.pro .sh{border-left:3px solid var(--pink);padding-left:8px}
 .qaNote{margin:12px 2px 0;font-size:12px;line-height:1.5;color:var(--mute)}
+
+body:not(.pro) .proOnly{display:none}

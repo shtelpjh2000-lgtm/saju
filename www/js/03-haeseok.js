@@ -626,6 +626,24 @@
   }
   // ── 신수(한 해) 풀이 ── rs: 신수국(년주=당년 태세), age: 그해 세는나이
   const MONTH_PAL = { 1: 8, 2: 3, 3: 4, 4: 4, 5: 9, 6: 2, 7: 2, 8: 7, 9: 6, 10: 6, 11: 1, 12: 8 };
+  // 달 풀이를 쉬운 말로: 그 달에 무엇이 무엇과 엮이는지 + 할 일/말 일 + 그 달 칸의 문·살성
+  function monthSay(rs, n, q, g, p, sex) {
+    const rel = relOf(rs), k = rel(n);
+    const NOUN = { 世: '나 자신', 父: '문서·집 일', 兄: '사람·모임', 孫: '새 일·재능', 財: sex === 'M' ? '돈·여자 인연' : '돈', 官: sex === 'F' ? '직장·남자 인연' : '직장 일', 鬼: '압박·건강 문제' };
+    const DO = { 世: '내 일에 집중하고 건강 관리를 시작하라', 父: '계약·이사·서류 제출을 잡아라', 兄: '모임에 나가 인맥을 넓혀라', 孫: '새 일을 시작하라', 財: '거래·매매·영업에 나서라', 官: '면접·승진 요청·인사 이동을 노려라', 鬼: '미뤄 둔 어려운 일을 정면으로 풀어라' };
+    const DONT = { 世: '과로하지 마라', 父: '서명·보증은 하지 마라', 兄: '돈 빌려주기·동업은 하지 마라', 孫: '윗사람과 다투지 마라', 財: '큰 지출·투자는 하지 마라', 官: '사표·이직은 미뤄라', 鬼: '무리한 일정과 운전을 조심하라' };
+    const DOORW = { 生門: '돈과 일이 자라는 달', 開門: '새 길이 열리는 달', 休門: '쉬면서 도움받는 달', 景門: '이름이 드러나는 달', 杜門: '일이 막히는 달', 傷門: '다툼이 생기는 달', 驚門: '놀랄 일이 생기는 달', 死門: '일이 멈추는 달' };
+    const jo2 = (w, a, b) => { const c = w.charCodeAt(w.length - 1) - 0xAC00; return w + (c >= 0 && c % 28 ? a : b); };
+    let s = '';
+    if (q && q.with && q.with.length) { const pk = rel(q.with[0]), pn = NOUN[pk] || '', me = NOUN[k];
+      s = q.type === '충극' ? jo2(me, '이', '가') + ' ' + jo2(pn, '을', '를') + ' 누른다' : q.type === '생' ? jo2(me, '이', '가') + ' ' + jo2(pn, '을', '를') + ' 키운다' : jo2(me, '과', '와') + ' ' + jo2(pn, '이', '가') + ' 맞물린다'; }
+    else s = jo2(NOUN[k], '이', '가') + ' 이 달의 중심이다';
+    s += '. ' + (g >= 1 ? DO[k] : g <= -1 ? DONT[k] : DO[k].replace(/라$/, '되 작게 하라')) + '.';
+    const d = rs.door && rs.door[p], goodD = ['生門', '開門', '休門', '景門'].includes(d); if (d && DOORW[d] && (g >= 1 ? goodD : g <= -1 ? !goodD : true)) s += ' (' + DOORW[d] + ')';
+    const sw = salWords((rs.salH || {})[p]).filter(z => g <= 0 ? /⚡|🌀/.test(z[0]) : /🌸|🛫|🙏/.test(z[0]));
+    if (sw.length) s += ' ' + sw[0][0] + ' ' + sw[0][1].replace(/\(.+\)/, '');
+    return s;
+  }
   function yearly(rs, sex, age) {
     const base = interpret(rs, sex, age);
     const se = rs.se, seE = EL(se), sp = rs.sePal;
@@ -668,9 +686,9 @@
       const p = MONTH_PAL[m], n = rs.heavN[p], k = rel(n), rw = relWith(n, se);
       // 운곡 신수비기: 천반 수로 보고, 한 궁을 쓰는 두 달은 앞 달(12·3·6·9월)=합(없으면 생), 뒤 달(1·4·7·10월)=그다음 순서(생, 없으면 충극)
       const which = [12, 3, 6, 9].includes(m) ? 'first' : [1, 4, 7, 10].includes(m) ? 'second' : 'all';
-      const jj = judge(rs, n, pickFor(relations(rs, n), which), strong);
+      const qq = pickFor(relations(rs, n), which), jj = judge(rs, n, qq, strong);
       const gr = gradeOf(jj.s - (rs.kong.has(p) ? 0.5 : 0));
-      out.months.push({ m, p, n, k: n === se ? '世' : k, theme: n === se ? '나 자신·건강·독립' : THEME[k], rw, g: gr, which, rtxt: jj.txt });
+      out.months.push({ m, p, n, k: n === se ? '世' : k, theme: n === se ? '나 자신·건강·독립' : THEME[k], rw, g: gr, which, rtxt: jj.txt, say: monthSay(rs, n, qq, gr, p, sex) });
     }
     const best = out.months.filter(x => x.g >= 2).map(x => x.m + '월'), worst = out.months.filter(x => x.g <= -1).map(x => x.m + '월');
     if (best.length) out.total.push('좋은 달은 음력 ' + best.join('·') + '이에요.');
