@@ -1403,6 +1403,9 @@ alDraw();
   const ORDER=Object.keys(T);
   // 직접 입력 낱말 찾기: 더 구체적인 주제부터
   const MATCH=['samjae','reunion','couple','marry','child','invest','estate','loan','partner','jobget','jobmove','promo','career','exam','biz','money','love','health','move','travel','law','people','caution'];
+  // 질문 속 낱말을 모두 따져 가장 구체적인 주제(긴 낱말·많이 걸린 주제)를 고름 — '부동산 투자'는 투자보다 부동산
+  const PRI={estate:2,invest:0};
+  const topicOf=q=>{let best=null,bs=0;MATCH.forEach((k,i)=>{const hit=T[k].kw.filter(w=>q.includes(w));if(!hit.length)return;const s=hit.reduce((a,w)=>a+w.length,0)*10+(PRI[k]||0)*5-i*0.01;if(s>bs){bs=s;best=k;}});return best;};
   const jo=(w,a,c)=>{const ch=String(w).replace(/[^가-힣]/g,'').slice(-1);if(!ch)return c;return ((ch.charCodeAt(0)-0xAC00)%28)?a:c;};
   const dirOf=p=>{const m=/\((.+)\)/.exec(PK[p]);return m?m[1]+'쪽':'가운데';};
   const P2=v=>String(v).padStart(2,'0');
@@ -1507,9 +1510,11 @@ alDraw();
     else s+=K.Y+'년에는 이 일의 기운이 뚜렷하지 않네. 운보다 자네 준비가 결과를 정할 걸세.';
     return '🔍 <b>왜 그러냐면</b> · '+s;}
   function whenOf(K){
-    let s='';if(K.good&&K.good.length)s+='음력 <b>'+K.good.join('·')+'월</b>이 제일 좋네.';else s+='딱히 센 달은 없네. 꾸준한 게 답일세.';
-    if(K.days&&K.days.length)s+=' 가까운 날로는 <b>'+K.days.slice(0,3).map(md).join(', ')+'</b>이 좋고.';
-    if(K.badm&&K.badm.length)s+=' 음력 '+K.badm.join('·')+'월은 피하게.';
+    let s='';
+    if(K.bestC)s+='<b>'+K.bestC+'</b>이 제일 좋네.'+(K.goodC.length>1?' 그다음은 '+K.goodC.filter(x=>x!==K.bestC).join(', ')+'일세.':'');
+    else s+='앞으로 몇 달은 센 달이 없네. 아래 날을 쓰게.';
+    if(K.days&&K.days.length)s+=' 가까운 날로는 <b>'+K.days.slice(0,3).map(md).join(', ')+'</b>.';
+    if(K.badC&&K.badC.length)s+=' '+K.badC.join(', ')+'은 피하게.';
     if(K.best)s+=' 앞으로 10년 중에는 <b>'+K.best.join('·')+'년</b>이 가장 좋다네.';
     return '📅 <b>언제가 좋으냐면</b> · '+s;}
   const SCEN=['지금 움직이면 1년 뒤에 “그때 하길 참 잘했다” 할 걸세.','준비한 만큼 1년 뒤 손에 쥐는 게 있을 걸세.','서두르면 반쯤 만족이고, 석 달만 더 다지고 하면 훨씬 낫네.','지금 밀어붙이면 1년 뒤에 후회가 남기 쉽네. 대신 지금 준비해 두면 다음 좋은 때에 크게 쓰일 걸세.'];
@@ -1522,11 +1527,12 @@ alDraw();
       v=['👍','🙆','🤔','✋'][gi]+' <b>'+hage(D.v[gi]).replace(/아래 /g,'')+'</b>';}
     else v=D.e+' <b>'+K.Y+'년 '+(t==='gen'?'자네 운':unOf(D))+jo(t==='gen'?'운':unOf(D),'은','는')+' '+['아주 좋네','좋네','그저 그렇네','조심할 때일세'][gi]+'.</b> '+hage(D.v[gi].replace(/아래 /g,''));
     let h='<p class="dkOpen">'+opener(lastQ||'',kind)+'</p><p class="ansV">'+v+'</p>';
-    if(K.qm)h+='<p>📌 <b>물어본 음력 '+K.qm.m+'월</b>은 '+(K.qm.v>=0.8?'<b>좋은 달</b>일세. 그때 움직이게.':K.qm.v<=-0.4?'<b>피할 달</b>일세. 다른 달로 미루게.':'그저 그런 달일세. 더 좋은 달이 있네.')+'</p>';
     const W=whenOf(K);
     if(kind==='where'&&!sp&&K.dir){const dd=K.dir.length?'🧭 <b>'+K.dir.join(', ')+'이 좋네.</b>'+(K.badDir&&K.badDir.length?' '+K.badDir.join(', ')+'은 피하게.':''):'🧭 <b>올해는 뚜렷하게 좋은 방향이 없네.</b> 방향보다 집 조건을 보게.';
       return '<p class="dkOpen">방향을 묻는구먼. 어디 보자…</p><p class="ansV">'+dd+'</p><p>'+v+'</p><p>'+W+'</p><p>💡 <b>이렇게 하게</b> · '+hage(plainTip(D.tips[0]))+'</p>';}
-    if(kind==='when'&&!sp)h='<p class="dkOpen">'+opener(lastQ||'',kind)+'</p><p class="ansV">'+D.e+' <b>'+D.n+jo(D.n,'이라','라')+'… 이때가 좋다네.</b></p><p>'+W+'</p><p>'+v+'</p>';
+    if(kind==='when'&&!sp)h='<p class="dkOpen">'+opener(lastQ||'',kind)+'</p><p class="ansV">'+D.e+' <b>'+(K.bestC?D.n+jo(D.n,'은','는')+' '+K.bestC+'일세.':D.n+jo(D.n,'은','는')+' 앞으로 몇 달은 센 때가 없네.')+'</b></p><p>'+W+'</p><p>'+v+'</p>';
+    if(/이자|대출|빚|원리금/.test(lastQ||'')&&/estate|money|biz|invest|loan/.test(t))h+='<p>💸 <b>이자 얘기</b> · '+(K.bestC&&!/^내년/.test(K.bestC)&&gi<=1?K.bestC.replace(/\(.*\)/,'')+'까지만 버티게. 그때 풀리네. 새 대출은 늘리지 말게.':(K.bestC?'풀리는 때가 '+K.bestC.replace(/\(.*\)/,'')+jo(K.bestC.replace(/\(.*\)/,''),'이라','라')+' 이자 부담이 길어지네. ':'')+'지금 바로 대출 갈아타기나 일부 상환으로 이자부터 줄이게.')+'</p>';
+    if(K.qm)h+='<p>📌 <b>물어본 음력 '+K.qm.m+'월</b>은 '+(K.qm.v>=0.8?'<b>좋은 달</b>일세. 그때 움직이게.':K.qm.v<=-0.4?'<b>피할 달</b>일세. 다른 달로 미루게.':'그저 그런 달일세. 더 좋은 달이 있네.')+'</p>';
     if(!sp)h+='<p>'+reasonOf(K,gi,D)+'</p>';
     if(kind!=='when'||sp)h+='<p>'+W+'</p>';
     if(K.dir&&K.dir.length&&!sp)h+='<p>🧭 <b>어느 쪽이냐면</b> · <b>'+K.dir.join(', ')+'</b>이 좋네.'+(K.badDir&&K.badDir.length?' '+K.badDir.join(', ')+'은 피하게.':'')+'</p>';
@@ -1541,7 +1547,7 @@ alDraw();
     if(parts.length<2){const m=q.match(/^(.*?(?:까요|까))\s*(.+)$/);if(m&&m[2])parts=[m[1],m[2]];}
     if(parts.length<2)parts=[q,'안 하기'];
     parts=parts.slice(0,2);
-    const opts=parts.map(p=>{const tp=MATCH.find(k=>T[k].kw.some(w=>p.includes(w)));return {lab:labelOf(p),t:tp||null};});
+    const opts=parts.map(p=>{const tp=topicOf(p);return {lab:labelOf(p),t:tp?intentOf(tp,p):null};});
     if(!opts[0].t&&!opts[1].t)opts[0].t=curT;
     opts.forEach(o=>{o.s=o.t?scoreOf(o.t,K.Y):null;});
     const a=opts.find(o=>o.t),other=opts.find(o=>o!==a);
@@ -1675,10 +1681,21 @@ alDraw();
       try{const tt=Saju4.personality(r.pillars,r);const TY=typeof GM_TYPES!=='undefined'?GM_TYPES[tt.code]:null;h+='<p><b>'+(TY?TY[0]+' '+TY[1]+' '+TY[2]:'나의 기질')+'</b> · '+tt.work+'</p>';}catch(e){}
     }
     // 좋은 달
-    const ms=[];for(let m=1;m<=12;m++){const p=MPAL[m];const lh=lq.indexOf(rs.lqH[p]),le=lq.indexOf(rs.lqE[p]);let v=(lh===0?1.4:lh===1?0.8:le===0?0.6:le===1?0.3:0)+pScore(rs,p,t)*0.6;if(topicLq(t)[1].includes(rs.lqH[p]))v-=0.8;ms.push([m,v]);}
-    const good=ms.filter(x=>x[1]>=0.8).sort((a,b)=>b[1]-a[1]).slice(0,3).map(x=>x[0]).sort((a,b)=>a-b);
-    const badm=ms.filter(x=>x[1]<=-0.4).sort((a,b)=>a[1]-b[1]).slice(0,2).map(x=>x[0]).sort((a,b)=>a-b);K.good=good;K.badm=badm;{const mm=/(?:음력\s*)?(1[0-2]|[1-9])\s*월/.exec(lastQ||'');if(mm){const m0=+mm[1];K.qm={m:m0,v:ms[m0-1][1]};}}
-    h+='<h4>🗓️ 좋은 달 · 조심할 달 (음력)</h4><p>'+(good.length?'<b>좋은 달: 음력 '+good.join('·')+'월</b>. 중요한 일을 이때 시작하거나 결정하세요.':'특별히 강한 달은 없어요. 아래 좋은 날을 활용하세요.')+(badm.length?' 조심할 달: 음력 '+badm.join('·')+'월. 이때는 큰 결정을 미루는 게 좋아요.':'')+'</p>';
+    // 좋은 달: 앞으로 올 달만(지난 달은 빼고, 올해가 끝나 가면 내년 달까지), 양력 날짜 범위도 함께
+    const mScore=(rsX)=>{const o=[];for(let m=1;m<=12;m++){const p=MPAL[m];const lh=lq.indexOf(rsX.lqH[p]),le=lq.indexOf(rsX.lqE[p]);let v=(lh===0?1.4:lh===1?0.8:le===0?0.6:le===1?0.3:0)+pScore(rsX,p,t)*0.6;if(topicLq(t)[1].includes(rsX.lqH[p]))v-=0.8;o.push(v);}return o;};
+    const ms=mScore(rs).map((v,i)=>[i+1,v]);
+    const nowL=(()=>{try{const l=Solar.fromDate(new Date()).getLunar();return {y:l.getYear(),m:Math.abs(l.getMonth())};}catch(e){return {y:Y,m:1};}})();
+    const solarRange=(ly,lm)=>{try{const a=Lunar.fromYmd(ly,lm,1).getSolar();const nx=lm===12?Lunar.fromYmd(ly+1,1,1):Lunar.fromYmd(ly,lm+1,1);const b=nx.getSolar().next(-1);return a.getMonth()+'/'+a.getDay()+'~'+b.getMonth()+'/'+b.getDay();}catch(e){return '';}};
+    const cand=[];
+    if(yrOff===0){ms.forEach(([m,v])=>{if(m>=nowL.m)cand.push({y:Y,m,v});});
+      if(nowL.m>=7){try{const rs2=sinsu(yearGZ(Y+1));mScore(rs2).forEach((v,i)=>{if(i+1<=nowL.m+3)cand.push({y:Y+1,m:i+1,v});});}catch(e){}}}
+    else ms.forEach(([m,v])=>cand.push({y:Y,m,v}));
+    const lab=c=>(c.y!==Y?'내년 ':'')+'음력 '+c.m+'월'+(solarRange(c.y,c.m)?'(양력 '+solarRange(c.y,c.m)+')':'');
+    const goodC=cand.filter(c=>c.v>=0.8).sort((a,b)=>b.v-a.v).slice(0,3).sort((a,b)=>a.y-b.y||a.m-b.m);
+    const badC=cand.filter(c=>c.v<=-0.4).sort((a,b)=>a.v-b.v).slice(0,2).sort((a,b)=>a.y-b.y||a.m-b.m);
+    const good=goodC.map(c=>c.m),badm=badC.map(c=>c.m);K.good=good;K.badm=badm;K.goodC=goodC.map(lab);K.badC=badC.map(lab);K.bestC=goodC.length?lab(goodC.slice().sort((a,b)=>b.v-a.v)[0]):null;
+    {const mm=/(?:음력\s*)?(1[0-2]|[1-9])\s*월/.exec(lastQ||'');if(mm){const m0=+mm[1];K.qm={m:m0,v:ms[m0-1][1]};}}
+    h+='<h4>🗓️ 앞으로 좋은 달 · 조심할 달</h4><p>'+(goodC.length?'<b>좋은 달: '+K.goodC.join(', ')+'</b>. 중요한 일을 이때 하세요.':'앞으로 몇 달 안에는 특별히 강한 달이 없어요. 아래 좋은 날을 활용하세요.')+(badC.length?' 조심할 달: '+K.badC.join(', ')+'.':'')+'</p>';
     // 좋은 날 (올해일 때만, 앞으로 60일)
     if(yrOff===0){
       const now=new Date();const cache={};const days=[];
@@ -1714,7 +1731,7 @@ alDraw();
   const setYr=v=>{yrOff=v;[...$('askYr').children].forEach(b=>b.classList.toggle('on',+b.dataset.v===yrOff));};
   function ask(){const q=$('askQ').value.trim();if(!q)return;
     setYr(/내년|다음 ?해/.test(q)?1:0);
-    const hit0=MATCH.find(k=>T[k].kw.some(w=>q.includes(w)))||'gen',hit=intentOf(hit0,q);
+    const hit0=topicOf(q)||'gen',hit=intentOf(hit0,q);
     pick(hit,q,qkind(q)==='ab'?q:null);$('askQ').value='';}
   $('askOut').addEventListener('click',e=>{const b=e.target.closest('button[data-f]');if(!b||!curT)return;const D=T[curT],f=b.dataset.f;
     if(f==='when')pick(curT,D.n+', 언제가 제일 좋아요?');
