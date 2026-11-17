@@ -433,7 +433,7 @@ function renderType(r){
   h+='<h4>일하는 스타일</h4><p>'+t.work+'</p>';
   h+='<h4>잘 맞는 사람</h4><p>'+t.match.map(c=>GM_TYPES[c]?GM_TYPES[c][0]+' '+GM_TYPES[c][1]+' '+GM_TYPES[c][2]:c).join(', ')+'과 서로 부족한 점을 채워 줘요. '+t.matchEl+'</p>';
   h+='<h4>한마디 조언</h4><p>'+t.advice+'</p>';
-  h+='<p class="note">심리 검사 결과가 아니라, '+t.whyEl+'의 분포와 십신(비겁·식상·재성·관성·인성)을 네 가지 성향으로 바꿔 풀어 본 도깨비 사주만의 기질 유형이에요. 참고로 비슷한 성격 유형 코드는 '+t.code+'예요.</p>';
+  h+='<p class="note">심리 검사 결과가 아니라, '+t.whyEl+'의 분포와 다섯 가지 힘(경쟁·재능·돈·직장·도움)을 네 가지 성향으로 바꿔 풀어 본 도깨비 사주만의 기질 유형이에요. 참고로 비슷한 성격 유형 코드는 '+t.code+'예요.</p>';
   $('typecard').innerHTML=h;
   const F=Saju4.fourPillars(r.pillars);
   let f='<h2>🏛️ 4주 풀이</h2><span class="badge">년주 · 월주 · 일주 · 시주</span>';
