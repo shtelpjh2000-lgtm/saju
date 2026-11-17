@@ -97,3 +97,29 @@ figure.art{margin:18px 0 16px;padding:0}
 figure.art img{display:block;width:100%;height:auto;border-radius:10px;border:1px solid var(--line);filter:sepia(.18) contrast(1.02);box-shadow:0 2px 10px rgba(0,0,0,.18)}
 figure.art figcaption{font-family:"Gowun Batang","Noto Serif KR",serif;font-size:17px;line-height:1.8;color:var(--mute);margin-top:10px;word-break:keep-all}
 figure.art figcaption b{display:block;color:var(--goldT);font-size:15px;letter-spacing:.04em;margin-bottom:2px}
+/* ── 선명한 도깨비 색 (대비 높임) + 넓은 화면 ── */
+:root{--bg:#ffffff;--card:#ffffff;--paper:#fffaf0;--ink:#111111;--mute:#4a4540;--line:#e6dccb;--acc:#c8261a;--goldT:#b0580a;--lav2:#f4ece0;--pink2:#fff1e6}
+@media(prefers-color-scheme:dark){:root{--bg:#0b0b0f;--card:#15151b;--paper:#15151b;--ink:#ffffff;--mute:#d6d0c4;--line:#34343e;--acc:#ff4b3a;--goldT:#ffc93c;--lav2:#26262e;--pink2:#2a1714}}
+@media(prefers-color-scheme:dark){button,.seg button.on,.zhi button.on,#mode button.on,#mnGrid button.on,.bub.me{color:#ffffff!important}#mode button.on small{color:#ffffff!important}.dkAv::after,.bub .av::after{color:#fff}}
+/* 넓게: 바깥 여백·겹친 상자 여백 줄이기, 왼쪽 금색 줄 없애기 */
+main{padding:10px 6px 72px}
+.card{padding:16px 12px}
+#qaCard{padding:14px 6px}
+.qaI{margin:8px 0;border-width:1.5px}
+.qaI.open{border-color:var(--acc)!important}
+.qaI.open .qaQ{background:var(--pink2)!important;color:var(--goldT)!important}
+.qaA{padding:2px 4px 12px}
+.bub.dk>div{border:0!important;border-left:0!important;padding:10px 6px!important;background:transparent!important}
+.bub.dk .av{margin:4px 6px 4px}
+#askCard{padding:14px 6px}
+#askOut p,.qaA p,.rd p,.rdSec p,.bub.dk>div{color:var(--ink);font-size:19.5px}
+#askOut .ansV,.ansV,.qaA .ansV{color:var(--goldT);font-size:22px}
+.dkOpen{color:var(--acc)!important}
+#askOut b,.qaA b{color:var(--ink)}
+#askOut .ansV b,.qaA .ansV b{color:var(--goldT)}
+figure.art{margin:16px -2px}
+figure.art img{border-radius:8px;filter:none;border:0}
+figure.art figcaption{color:var(--mute);font-size:17.5px;padding:0 4px}
+figure.art figcaption b{color:var(--acc)}
+.bub.me{background:var(--acc)!important}
+.qaA .rdSec,.qaA .card,.today{background:transparent!important}

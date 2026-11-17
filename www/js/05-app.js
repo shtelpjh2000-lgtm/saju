@@ -306,7 +306,7 @@ function renderReading(r){
 
 function renderYear(r){
   const o=yInfo.out,b=yInfo.base;
-  let h='<h2>🎊 '+yearSel+'년 신수</h2><span class="badge">'+r.pillars[0]+'년 · '+ageNow(base)+'세 · '+b.strongKo+'</span>';
+  let h='<h2>'+yearSel+'년 신수</h2><span class="badge">'+r.pillars[0]+'년 · '+ageNow(base)+'세 · '+b.strongKo+'</span>';
   h+='<h4>한 해 총운</h4>'+o.total.map(t=>'<p>'+t+'</p>').join('');
   h+='<h4>분야별</h4>'+o.field.map(t=>{const i=t.indexOf(' · ');return '<p><b>'+t.slice(0,i)+'</b> · '+t.slice(i+3)+'</p>';}).join('');
   h+='<h4>행년 (그해의 큰일)</h4>'+o.hang.map(t=>'<p>'+t+'</p>').join('');
@@ -695,7 +695,7 @@ alDraw();
   stepper(yr,[{t:'‹',f:()=>{yr.value=(+yr.value||new Date().getFullYear())-1;fire(yr);}},{t:'›',f:()=>{yr.value=(+yr.value||new Date().getFullYear())+1;fire(yr);}},{t:'올해',c:'tx',f:()=>{yr.value=new Date().getFullYear();fire(yr);}}]);
   const shift=n=>{const v=ild.value?new Date(ild.value+'T12:00:00'):new Date();v.setDate(v.getDate()+n);ild.value=v.getFullYear()+'-'+P(v.getMonth()+1)+'-'+P(v.getDate());fire(ild);};
   stepper(ild,[{t:'‹',f:()=>shift(-1)},{t:'›',f:()=>shift(1)},{t:'오늘',c:'tx',f:()=>{const n=new Date();ild.value=n.getFullYear()+'-'+P(n.getMonth()+1)+'-'+P(n.getDate());fire(ild);}}]);
-  $('yrWrap').querySelector('label').textContent='🎊 몇 년 운세를 볼까요?';
+  $('yrWrap').querySelector('label').textContent='몇 년 운세를 볼까요?';
   $('ilWrap').querySelector('label').textContent='어느 날 운세를 볼까요?';
   // 아래 고정 메뉴
   const nav=document.createElement('nav');nav.className='bnav';nav.setAttribute('aria-label','운세 종류');
