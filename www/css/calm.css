@@ -148,3 +148,11 @@ body.qaOn #heroCard{display:block}
 .tdEmoji{display:none}.tdMain{gap:0}
 figure.art figcaption em.k{font-style:normal;font-weight:700;color:var(--goldT)}
 figure.art img.sm{width:auto;max-width:78%;max-height:520px;margin:0 auto}
+/* 태어난 시 고르기: 시간을 크고 또렷하게 */
+.zhi button{min-height:84px!important;padding:10px 2px!important;gap:4px!important}
+.zhi button .n{font-family:"Noto Sans KR",sans-serif!important;font-size:17px!important;font-weight:700}
+.zhi button .r{font-size:16.5px!important;font-weight:700;color:var(--ink)!important;letter-spacing:-.01em}
+.zhi button.on .r{color:#fff!important}
+.tline{font-size:17px}.tline b{font-size:18px}
+.thint{font-size:15px}
+@media(max-width:370px){.zhi button .r{font-size:15px!important;letter-spacing:-.03em}}
