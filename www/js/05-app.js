@@ -1653,14 +1653,14 @@ alDraw();
       if(gi<=1&&d[1]<0)s+=' 그래도 다른 자리에서 받쳐 주는 힘이 더 크다네.';}
     else s+=K.Y+'년에는 이 일의 기운이 뚜렷하지 않네. 운보다 자네 준비가 결과를 정할 걸세.';
     return s;}
-  function whenOf(K,again){
-    let s='';
-    if(K.bestC&&again)s+=(K.goodC.length>1?'그 달 말고도 '+K.goodC.filter(x=>x!==K.bestC).join(', ')+'도 괜찮네.':'그 달을 놓치지 말게.');
-    else if(K.bestC)s+=pv(['때로 치면 ','날을 고르자면 ','시기는 말일세, '])+'<b>'+K.bestC+'</b>이 제일 좋네.'+(K.goodC.length>1?' 그다음으로는 '+K.goodC.filter(x=>x!==K.bestC).join(', ')+'도 괜찮고.':'');
+  function whenOf(K,again){ // 시기는 꼭 필요한 만큼만: 제일 좋은 달 1, 가까운 날 2, 피할 달 1, (해를 고르는 질문만) 좋은 해 2
+    let s='';const noR=x=>x.replace(/\(.*\)/,'');
+    if(K.bestC&&again)s+='그 달을 놓치지 말게.';
+    else if(K.bestC)s+=pv(['때로 치면 ','날을 고르자면 ','시기는 말일세, '])+'<b>'+K.bestC+'</b>이 제일 좋네.';
     else s+='앞으로 몇 달은 딱히 센 달이 없네. 그럴 땐 날이라도 골라 쓰면 되네.';
-    if(K.days&&K.days.length)s+=pv([' 날을 딱 집어 달라면 ',' 가까운 날로는 ',' 달력에 표시해 두게. '])+'<b>'+K.days.slice(0,3).map(md).join(', ')+'</b>'+pv(['일세.','이 좋네.','이 길하네.']);
-    if(K.badC&&K.badC.length)s+=pv([' 대신 '+K.badC.join(', ')+'은 손대지 말고 쉬어 가게.',' '+K.badC.join(', ')+'은 피하게. 그때 벌이면 고생일세.']);
-    if(K.best)s+=' 길게 보면 앞으로 10년 중엔 <b>'+K.best.join('·')+'년</b>이 자네 해일세.';
+    if(K.days&&K.days.length)s+=pv([' 날을 딱 집어 달라면 ',' 가까운 날로는 ',' 달력에 표시해 두게. '])+'<b>'+K.days.slice(0,2).map(md).join(', ')+'</b>'+pv(['일세.','이 좋네.','이 길하네.']);
+    if(K.badC&&K.badC.length)s+=pv([' 대신 '+noR(K.badC[0])+'은 손대지 말고 쉬어 가게.',' '+noR(K.badC[0])+'은 피하게. 그때 벌이면 고생일세.']);
+    if(K.best)s+=' 길게 보면 <b>'+K.best.slice(0,2).join('·')+'년</b>이 자네 해일세.';
     return ''+s;}
   const SCEN=['지금 움직이면 1년 뒤에 “그때 하길 참 잘했다” 할 걸세.','준비한 만큼 1년 뒤 손에 쥐는 게 있을 걸세.','서두르면 반쯤 만족이고, 석 달만 더 다지고 하면 훨씬 낫네.','지금 밀어붙이면 1년 뒤에 후회가 남기 쉽네. 대신 지금 준비해 두면 다음 좋은 때에 크게 쓰일 걸세.'];
 const TART={exam:[['seodang','chaek'],['gamchal']],jobget:[['daejang','hojak'],['sanggun','gamchal']],jobmove:[['haengsang','yeonso'],['honga','gamchal']],promo:[['suryeong','moran'],['nongali','sanggun']],career:[['daejang','munja'],['gamchal']],
@@ -1931,7 +1931,7 @@ const TART={exam:[['seodang','chaek'],['gamchal']],jobget:[['daejang','hojak'],[
       const now=new Date();const cache={};const days=[];
       for(let i=1;i<=60;i++){const dt=new Date(now.getFullYear(),now.getMonth(),now.getDate()+i);
         try{const x=dayInfo(dt.getFullYear(),dt.getMonth()+1,dt.getDate(),cache);const dp=x.d.p;const li=lq.indexOf(x.rs.lqH[dp]);const dn={子:1,丑:10,寅:3,卯:8,辰:5,巳:2,午:7,未:10,申:9,酉:4,戌:5,亥:6}[x.d.gz[1]],dq=Gimun.liuqin(dn,r.se),di=lq.indexOf(dq==='鬼'&&lq.includes('官')?'官':dq);let v=(di===0?2.2:di===1?1.0:topicLq(t)[1].includes(dq)?-1.2:0)+x.d.g*0.25+(li===0?0.8:li===1?0.4:0)+pScore(x.rs,dp,t)*0.6-(topicLq(t)[1].includes(x.rs.lqH[dp])?0.6:0);days.push([dt,v,x.d.gz]);}catch(e){}}
-      const top=[];{const seen=new Set();for(const x of days.slice().sort((a,b)=>b[1]-a[1])){if(seen.has(x[2][1]))continue;seen.add(x[2][1]);top.push(x);if(top.length>=5)break;}}top.sort((a,b)=>a[0]-b[0]);K.days=top.slice().sort((a,b)=>b[1]-a[1]).slice(0,3).sort((a,b)=>a[0]-b[0]);
+      const top=[];{const seen=new Set();for(const x of days.slice().sort((a,b)=>b[1]-a[1])){if(seen.has(x[2][1]))continue;seen.add(x[2][1]);top.push(x);if(top.length>=3)break;}}top.sort((a,b)=>a[0]-b[0]);K.days=top.slice().sort((a,b)=>b[1]-a[1]).slice(0,3).sort((a,b)=>a[0]-b[0]);
       if(D.special==='caution'){const low=days.slice().sort((a,c)=>a[1]-c[1]).slice(0,3).sort((a,c)=>a[0]-c[0]);h+='<h4>🚧 앞으로 60일 중 조심할 날</h4><p>'+low.map(([dt])=>'<b>'+(dt.getMonth()+1)+'월 '+dt.getDate()+'일('+'일월화수목금토'[dt.getDay()]+')</b>').join(', ')+'</p>';}
       h+='<h4>✨ 앞으로 60일 중 좋은 날</h4><p>'+top.map(([dt,v,gz])=>'<b>'+(dt.getMonth()+1)+'월 '+dt.getDate()+'일('+'일월화수목금토'[dt.getDay()]+')</b>').join(', ')+'</p><p class="note">'+(D.special==='caution'||D.special==='samjae'?'일진과 그날 운이 드러나는 칸의 문·자리를 따져 고른 날이에요.':'일진과 그날 운이 드러나는 칸에 '+D.n+' 기운이 있는지를 함께 따져 고른 날이에요.')+'</p>';
     }
