@@ -95,7 +95,11 @@
   const SKIP=new Set(['SCRIPT','STYLE','INPUT','TEXTAREA','SELECT','OPTION']);
   function run(root){
     const w=document.createTreeWalker(root||document.body,NodeFilter.SHOW_TEXT,{acceptNode:n=>n.parentNode&&!SKIP.has(n.parentNode.nodeName)&&!n.parentNode.closest('#board .box,#board .tags')?NodeFilter.FILTER_ACCEPT:NodeFilter.FILTER_REJECT});
-    let n;while((n=w.nextNode())){const v=n.nodeValue;if(!v||!/[가-힣世一-十]/.test(v))continue;const t=plain(v);if(t!==v)n.nodeValue=t;}
+    let n;while((n=w.nextNode())){const v=n.nodeValue;if(!v||!/[가-힣世一-十]/.test(v))continue;let t=plain(v);
+      // <b>떠도는 자리</b>을 처럼 굵은 글씨 뒤에 붙은 조사도 맞춰요
+      const pr=n.previousSibling;if(pr&&pr.nodeType===1&&/^(B|STRONG|EM|I)$/.test(pr.nodeName)){const e=(pr.textContent||'').trim();
+        if(/[가-힣]$/.test(e))t=t.replace(/^(이에요|예요|으로|이라|은|는|을|를|과|와|로|라|이|가)(?=[^가-힣]|$)/,p=>fix(e,p).slice(e.length));}
+      if(t!==v)n.nodeValue=t;}
   }
   let tm=null;new MutationObserver(()=>{clearTimeout(tm);tm=setTimeout(()=>run(),30);}).observe(document.body,{childList:true,subtree:true,characterData:true});
   window.__plain={run,plain};run();

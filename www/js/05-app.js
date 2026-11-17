@@ -1753,7 +1753,7 @@ alDraw();
     if(histBase!==base){hist=[];histBase=base;}
     const sp=D.special==='caution'||D.special==='samjae';
     const ans=abQ?decide(abQ,K):talk(t,D,gi,K);
-    curHtml='<div class="bub me">'+escH(lastQ)+'</div><div class="bub dk"><span class="av">👹</span><div>'+ans+'<details class="askMore"'+(sp?' open':'')+'><summary>📜 자세한 풀이 보기</summary>'+h+'</details>'+follow(t,D)+'</div></div>';
+    curHtml='<div class="bub me">'+escH(lastQ)+'</div><div class="bub dk"><span class="av">👹</span><div>'+ans+'<details class="askMore"'+(sp?' open':'')+'><summary>📜 자세한 풀이 보기</summary>'+hage(h)+'</details>'+follow(t,D)+'</div></div>';
     showAll();
   }
   // 화면
