@@ -123,3 +123,27 @@ figure.art figcaption{color:var(--mute);font-size:17.5px;padding:0 4px}
 figure.art figcaption b{color:var(--acc)}
 .bub.me{background:var(--acc)!important}
 .qaA .rdSec,.qaA .card,.today{background:transparent!important}
+/* ── 첫 화면 한 장면 카드 ── */
+#heroCard{display:none;padding:22px 14px 18px;text-align:center}
+body.qaOn #heroCard{display:block}
+#heroCard .hPunch{font-family:"Gowun Batang","Noto Serif KR",serif;font-size:21px;font-weight:700;color:var(--acc);line-height:1.6;margin:0 0 14px;word-break:keep-all}
+#heroCard .hTitle{margin:0 0 6px;font-family:"Gowun Batang","Noto Serif KR",serif;line-height:1.35}
+#heroCard .hTitle small{display:block;font-size:18px;color:var(--mute)}
+#heroCard .hTitle b{display:block;font-size:31px;color:var(--goldT);margin:6px 0;word-break:keep-all}
+#heroCard figure.art{margin:14px 0}
+#heroCard .hLine{font-family:"Gowun Batang","Noto Serif KR",serif;font-size:19.5px;line-height:1.85;text-align:left;margin:10px 4px;word-break:keep-all}
+.dd{display:inline-block;margin-left:6px;padding:1px 10px;border-radius:999px;background:var(--acc);color:#fff;font-family:"Noto Sans KR",sans-serif;font-weight:700;font-size:16px;vertical-align:2px}
+.dd.now{background:var(--goldT);color:#111}
+.yeogo{margin:18px 0 6px;padding:14px 12px;border:1.5px solid var(--goldT);border-radius:12px;text-align:left}
+.ygH{font-family:"Gowun Batang","Noto Serif KR",serif;font-weight:700;font-size:20px;color:var(--goldT);margin:0 0 8px;text-align:center}
+.ygI{display:flex;align-items:center;gap:10px;margin:10px 0;font-size:18px;line-height:1.5}
+.ygI>b{flex:0 0 46px;font-size:19px;color:var(--acc)}
+.ygI>span{flex:1}.ygI small{color:var(--mute);font-size:15.5px}
+.ygI .dd{margin:0}
+.ygN{font-size:14.5px;color:var(--mute);margin:8px 0 0;text-align:center}
+.heroShare{width:100%;margin-top:14px;font-size:19px!important;min-height:58px}
+/* 오늘 카드 그림 */
+.today figure.art{margin:12px 0 6px}
+.ygI .dd{flex:0 0 auto;width:auto}
+.tdEmoji{display:none}.tdMain{gap:0}
+figure.art figcaption em.k{font-style:normal;font-weight:700;color:var(--goldT)}

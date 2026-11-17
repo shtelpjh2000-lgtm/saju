@@ -162,7 +162,7 @@ const ART={
   naruteo:['나룻배','강을 건너려면 배 떠나는 때를 알아야 하네. 옮기는 데도 때가 있지.'],
   giwa:['기와이기','기와를 한 장씩 올려야 집이 서듯, 집과 땅 일은 차근차근 쌓아야 하네.'],
   mudong:['무동','장단이 맞으면 춤이 절로 나오지. 운이 맞는 달엔 몸을 움직이게.'],
-  jeomgwae:['점괘','옛사람들도 갈림길에선 괘를 뽑아 봤네. 오늘 하루 길도 한번 짚어 보세.'],
+  jeomgwae:['점괘','옛사람들도 갈림길에선 점을 쳐 봤네. 오늘 하루 길도 한번 짚어 보세.'],
   nongali:['논갈이','봄에 논을 갈아야 가을에 거두네. 지금 애쓴 게 다음 해 밥이 되지.'],
   tajak:['벼타작','거둘 땐 거둬야 하네. 땀 흘린 만큼 곳간이 차는 법일세.'],
   jumak:['주막','길 가다 주막에 들르듯, 사람 사이도 쉬어 가며 정이 드는 법일세.'],
@@ -170,8 +170,8 @@ const ART={
   haengsang:['행상','등짐 지고 길 떠나는 장사꾼처럼, 밖으로 나가야 길이 열리는 운일세.'],
   bbalrae:['빨래터','묵은 때는 빨아야 빠지네. 묵은 감정도 털어 내야 다시 이어지지.']
 };
-function artFig(k){const a=ART[k];if(!a)return '';
-  return '<figure class="art"><img src="img/art/'+k+'.jpg" alt="김홍도 「'+a[0]+'」" loading="lazy" onerror="this.parentNode.remove()"><figcaption><b>김홍도 「'+a[0]+'」</b>'+a[1]+'</figcaption></figure>';}
+function artFig(k,cap){const a=ART[k];if(!a)return '';
+  return '<figure class="art"><img src="img/art/'+k+'.jpg" alt="김홍도 「'+a[0]+'」" loading="lazy" onerror="this.parentNode.remove()"><figcaption><b>김홍도 「'+a[0]+'」</b>'+(cap||a[1])+'</figcaption></figure>';}
 
 // ── 항목별 평생 나이 흐름 ──
 function lifeHtml(x,k,sex,age){
@@ -425,6 +425,7 @@ function baseFromProfile(pr){const [y,m,d]=pr.d.split('-').map(Number),[h,mi]=pr
 function buildNotifications(al,days){
   const keep=base;base=baseFromProfile(al.profile);const cache={},out=[];
   const [hh,mm]=al.time.split(':').map(Number),now=new Date();
+  let YG0=null;try{YG0=JSON.parse(localStorage.getItem('hongmyeongguk.yeogo')||'null');}catch(e){}
   try{
     for(let i=0;i<days;i++){
       const at=new Date(now.getFullYear(),now.getMonth(),now.getDate()+i,hh,mm,0);
@@ -432,7 +433,8 @@ function buildNotifications(al,days){
       const y=at.getFullYear(),m=at.getMonth()+1,d=at.getDate(),x=dayInfo(y,m,d,cache);
       const g=x.d.g,grade=g>=1.5?'좋음':g>=0.5?'무난·좋음':g<=-1?'주의':'보통';
       const p=v=>String(v).padStart(2,'0');
-      out.push({id:1000+i,title:(al.profile.name?al.profile.name+'님 ':'')+'오늘의 일진 · '+m+'월 '+d+'일 '+x.d.gz+'일 ('+grade+')',body:x.d.summary,largeBody:x.d.summary,schedule:{at,allowWhileIdle:true},isExactNotification:false,extra:{date:y+'-'+p(m)+'-'+p(d)}});
+      const ds=y+'-'+p(m)+'-'+p(d),yg=YG0&&YG0.d===al.profile.d?YG0.list.filter(z=>z.s===ds):[];const pre=yg.length?'📜 영감이 예고한 그 달이 왔네! '+yg.map(z=>z.txt).join(' / ')+'\n':'';
+      out.push({id:1000+i,title:(yg.length?'예고한 달 시작 · ':'')+(al.profile.name?al.profile.name+'님 ':'')+'오늘의 일진 · '+m+'월 '+d+'일 '+x.d.gz+'일 ('+grade+')',body:pre+x.d.summary,largeBody:pre+x.d.summary,schedule:{at,allowWhileIdle:true},isExactNotification:false,extra:{date:y+'-'+p(m)+'-'+p(d)}});
     }
   }finally{base=keep;}
   return out;
@@ -571,13 +573,20 @@ alDraw();
     if(g<=-1)return {t:'주의',c:'g0',e:'🧐',w:'한 번 더 조심하면 괜찮은 날'};
     return {t:'보통',c:'g1',e:'😌',w:'평소처럼 지내면 좋은 날'};
   }
+  // 오늘의 그림: 그날 일진 지지가 나에게 어떤 육친인지로 고르는 그림과 영감 한마디
+  const DAYART={財:['jangteo','오늘은 <em class="k">장터길</em> 날일세. 셈이 오가는 날이니 지갑은 단단히, 기회는 놓치지 말게.'],官:['daejang','오늘은 <em class="k">대장간</em> 날일세. 일이 몰려오니 쇠뿔도 단김에 빼게.'],
+    父:['seodang','오늘은 <em class="k">서당</em> 날일세. 서류·공부·계약은 오늘 손대면 잘 풀리네.'],孫:['mudong','오늘은 <em class="k">무동</em> 날일세. 새 일 벌이고 즐기는 데 기운이 실리네.'],
+    兄:['ssireum','오늘은 <em class="k">씨름</em> 날일세. 겨룰 일이 생기니 말다툼은 한 발 물러서게.'],鬼:['nongali','오늘은 <em class="k">논갈이</em> 날일세. 몸이 무거우니 무리 말고 묵묵히 하게.'],
+    世:['haengsang','오늘은 <em class="k">행상</em> 날일세. 밖에 나가 사람을 만나면 길이 열리네.']};
+  function dayArt(b,x){try{const dn={子:1,丑:10,寅:3,卯:8,辰:5,巳:2,午:7,未:10,申:9,酉:4,戌:5,亥:6}[x.d.gz[1]];const q=Gimun.liuqin(dn,b.se);const a=DAYART[q]||DAYART.世;
+    const tail=x.d.g>=1.5?' 오늘 운이 세니 미뤄 둔 일을 하게.':x.d.g<=-1?' 다만 오늘은 큰 결정은 내일로 미루게.':'';return artFig(a[0],a[1]+tail);}catch(e){return '';}}
   function html(b,who,top){
     const {n,x}=todayInfo(b);const G=grade(x.d.g);
     const pct=Math.max(8,Math.min(100,Math.round((x.d.g+2.5)/5*100)));
     const nm=who?who+'님의 ':'나의 ';
     return '<div class="tdHead"><span class="tdDate">'+(n.getMonth()+1)+'월 '+n.getDate()+'일 ('+'일월화수목금토'[n.getDay()]+') · '+x.d.gz+'일</span><span class="tdBadge '+G.c+'">오늘 '+G.t+'</span></div>'+
       '<div class="tdMain"><div class="tdEmoji">'+G.e+'</div><div><p class="tdTitle">'+nm+'오늘: '+G.w+'</p><p class="tdSum">'+x.d.summary+'</p></div></div>'+
-      '<div class="tdMeter"><i style="width:'+pct+'%"></i></div>'+
+      '<div class="tdMeter"><i style="width:'+pct+'%"></i></div>'+dayArt(b,x)+
       '<div class="tdBtns">'+(top?'<button type="button" data-a="open">🔮 내 명국 열기</button><button type="button" class="sec" data-a="new">✏️ 다른 생일 보기</button>':'<button type="button" data-a="il">☀️ 오늘 일진 자세히 보기</button>')+'</div>';
   }
   function drawOut(){
@@ -1639,8 +1648,81 @@ const TART={exam:'seodang',jobget:'daejang',jobmove:'haengsang',promo:'nongali',
     b.push(['home','다른 얘기 할래요']);
     return '<div class="askFollow">'+b.map(([k,l])=>'<button type="button" data-f="'+k+'">'+l+'</button>').join('')+'</div>';}
   const QUICK=[['money','💰 돈 얘기','요즘 돈 문제가 궁금해요'],['love','💕 사람·인연 얘기','사람·인연 운은 어때요?'],['promo','💼 일 얘기','일은 잘 풀릴까요?'],['health','🏥 몸 얘기','건강은 괜찮을까요?'],['caution','올해 조심할 것','올해 조심할 건 뭐예요?'],['ab','고민 골라 주게',''],['talk','🙋 그냥 털어놓기','']];
+  // ── 첫 화면 한 장면: "올해 자네는 OO일세" + 찌르는 첫마디 + 날짜 박은 예고(D-day) + 공유 그림 ──
+  const PUNCH={목:['자네, 한번 마음먹으면 남 말은 귓등으로 듣지?','자네, 하고 싶은 건 많은데 첫발을 자꾸 미루지?'],
+    화:['자네, 속에 있는 말은 꼭 해야 직성이 풀리지?','자네, 겉으론 웃어도 속으론 혼자 애태우는 날이 많지?'],
+    토:['자네, 남 얘기는 다 들어주면서 제 고집은 절대 안 꺾지?','자네, 남 부탁은 거절 못 하고 혼자 끙끙 앓지?'],
+    금:['자네, 아닌 건 칼같이 잘라야 속이 시원하지?','자네, 맺고 끊는 게 어려워서 손해 본 적 많지?'],
+    수:['자네, 머리는 빨리 도는데 속마음은 좀처럼 안 보여 주지?','자네, 생각이 많아 밤에 잠 못 드는 날이 많지?']};
+  const ARCH={財:['jangteo','장에서 큰 셈을 치르는 장꾼','큰 장을 앞두고 셈을 다지는 장꾼','돈·사업','money'],
+    官:['daejang','달궈진 쇠를 내려치는 대장장이','쇠를 달구며 때를 기다리는 대장장이','일·자리','promo'],
+    父:['seodang','새 책을 펴는 서당 선비','밤새 책장을 넘기는 서생','문서·계약·공부','estate'],
+    孫:['mudong','장단 타고 춤추는 무동','장단을 고르는 무동','새 일·재능','biz'],
+    兄:['ssireum','판 한가운데 선 씨름꾼','샅바를 고쳐 매는 씨름꾼','사람·경쟁','people'],
+    鬼:['nongali','봄 논을 가는 우직한 농부','비탈 논을 묵묵히 가는 농부','건강·압박','health'],
+    世:['haengsang','등짐 지고 새 길 떠나는 장수','갈림길에서 길을 고르는 등짐장수','나 자신','gen']};
+  const EL5={甲:'목',乙:'목',丙:'화',丁:'화',戊:'토',己:'토',庚:'금',辛:'금',壬:'수',癸:'수'};
+  const toD=s=>new Date(s.getYear(),s.getMonth()-1,s.getDay());
+  function monthsFor(t){ // 앞으로 12달(음력) 중 이 일이 센 달·약한 달
+    const lq=topicLq(t)[0],badq=topicLq(t)[1];const nl=Solar.fromDate(new Date()).getLunar();const ly=nl.getYear(),lm=Math.abs(nl.getMonth());
+    const o=[];for(let k=0;k<12;k++){const y=lm+k>12?ly+1:ly,m=(lm+k-1)%12+1;let rsX;try{rsX=sinsu(yearGZ(y));}catch(e){continue;}
+      const p=MPAL[m];const lh=lq.indexOf(rsX.lqH[p]),le=lq.indexOf(rsX.lqE[p]);let v=(lh===0?1.4:lh===1?0.8:le===0?0.6:le===1?0.3:0)+pScore(rsX,p,t)*0.6;if(badq.includes(rsX.lqH[p]))v-=0.8;
+      let a=null,b=null;try{a=toD(Lunar.fromYmd(y,m,1).getSolar());b=toD((m===12?Lunar.fromYmd(y+1,1,1):Lunar.fromYmd(y,m+1,1)).getSolar());b.setDate(b.getDate()-1);}catch(e){}
+      o.push({y,m,v,a,b,lab:(y!==ly?'내년 ':'')+'음력 '+m+'월'+(a?'(양력 '+(a.getMonth()+1)+'/'+a.getDate()+'~'+(b.getMonth()+1)+'/'+b.getDate()+')':'')});}
+    return {best:o.filter(c=>c.v>=0.8).sort((x,z)=>z.v-x.v)[0]||null,bad:o.filter(c=>c.v<=-0.4).sort((x,z)=>x.v-z.v)[0]||null};}
+  function dday(c){if(!c||!c.a)return '';const t0=new Date();t0.setHours(0,0,0,0);if(c.a<=t0&&t0<=c.b)return '<span class="dd now">지금이 그 달</span>';return '<span class="dd">D-'+Math.round((c.a-t0)/864e5)+'</span>';}
+  const YG=[['money','돈','돈이 들어오거나 큰 셈을 치를 달'],['promo','일','일·자리에서 기회가 오는 달'],['people','사람','귀한 사람·인연이 닿는 달']];
+  let heroData=null;
+  function heroHtml(){
+    const r=base;if(!r)return '';const Y=new Date().getFullYear();
+    const rs=sinsu(yearGZ(Y)),yi=Haeseok.yearly(rs,r.input.sex,Y-r.input.y+1);
+    const q=(yi.out.hangPal&&rs.lqH[yi.out.hangPal])||'世',A=ARCH[q]||ARCH.世;
+    const gi=grade(chartScore(r,'gen').s*0.35+chartScore(rs,'gen').s*0.65),good=gi<=1;
+    let strong='strong';try{strong=Haeseok.interpret(r,r.input.sex,ageNow(r)).strong;}catch(e){}
+    const punch=PUNCH[EL5[r.pillars[2][0]]][strong==='weak'?1:0],nick=good?A[1]:A[2];
+    const M=monthsFor(A[4]),chung=(yi.out.hang||[]).join('').includes('충');
+    const L=['올해 큰일은 <b>'+A[3]+'</b> 쪽에서 터지네.'+(chung?' 다만 자네와 부딪히는 자리라, 한바탕 힘겨루기는 각오하게.':good?' 운이 받쳐 주니 판을 크게 벌여도 되네.':' 운이 버거우니 판을 줄이고 실속부터 챙기게.'),
+      M.best?'제일 센 때는 <b>'+M.best.lab+'</b>일세. '+dday(M.best):'올해는 한 방보다 꾸준함이 이기는 해일세.',
+      M.bad?'<b>'+M.bad.lab+'</b>엔 큰돈·큰 결정은 쉬어 가게.':'크게 막히는 달은 없으니 겁먹지 말게.'];
+    const pr=YG.map(([t,n,w])=>{const m=monthsFor(t);return m.best?{n,w,c:m.best}:null;}).filter(Boolean).sort((x,z)=>(x.c.a||0)-(z.c.a||0));
+    try{const P=v=>String(v).padStart(2,'0'),iso=d=>d.getFullYear()+'-'+P(d.getMonth()+1)+'-'+P(d.getDate());const I=r.input;
+      localStorage.setItem('hongmyeongguk.yeogo',JSON.stringify({d:I.y+'-'+P(I.m)+'-'+P(I.d),list:pr.filter(x=>x.c.a).map(x=>({s:iso(x.c.a),e:iso(x.c.b),txt:x.n+' — '+x.c.lab+', '+x.w}))}));}catch(e){}
+    heroData={k:A[0],nick,punch,line:L[0].replace(/<[^>]+>/g,''),name:r.input.name||'',Y};
+    return '<p class="hPunch">'+punch+'</p><p class="hTitle"><small>'+Y+'년, 자네는</small><b>'+nick+'</b><small>일세.</small></p>'+artFig(A[0])+
+      L.map(x=>'<p class="hLine">'+x+'</p>').join('')+
+      (pr.length?'<div class="yeogo"><p class="ygH">영감의 예고</p>'+pr.map(x=>'<p class="ygI"><b>'+x.n+'</b><span>'+x.c.lab+'<br><small>'+x.w+'</small></span>'+dday(x.c)+'</p>').join('')+'<p class="ygN">그 달이 오면 아침 알림으로 일러 주겠네. (알림을 켜 두게)</p></div>':'')+
+      '<button type="button" class="heroShare">이 풀이 카톡으로 보내기</button>';}
+  window.__heroHtml=()=>{try{return heroHtml();}catch(e){console.error(e);return '';}};
+  // 공유용 그림(1080×1350)
+  async function heroImage(){
+    const d=heroData;if(!d)return null;const W=1080,H=1350,c=document.createElement('canvas');c.width=W;c.height=H;const g=c.getContext('2d');
+    if(document.fonts&&document.fonts.ready)await document.fonts.ready;
+    g.fillStyle='#0b0b0f';g.fillRect(0,0,W,H);g.strokeStyle='#ffc93c';g.lineWidth=4;g.strokeRect(30,30,W-60,H-60);
+    const img=await new Promise(res=>{const i=new Image();i.onload=()=>res(i);i.onerror=()=>res(null);i.src='img/art/'+d.k+'.jpg';});
+    const F='"Gowun Batang","Noto Serif KR",serif';g.textAlign='center';
+    g.fillStyle='#ff4b3a';g.font='700 40px '+F;g.fillText('도깨비 사주 · '+d.Y+'년 운세',W/2,110);
+    if(img){const k=Math.min((W-160)/img.width,580/img.height),iw=img.width*k,ih=img.height*k;g.drawImage(img,(W-iw)/2,150+(580-ih)/2,iw,ih);}
+    g.fillStyle='#ffffff';g.font='400 40px '+F;g.fillText((d.name?d.name+', ':'')+d.Y+'년의 자네는',W/2,800);
+    g.fillStyle='#ffc93c';g.font='700 66px '+F;wrap(g,d.nick,W/2,890,W-140,80);
+    g.fillStyle='#e8e2d6';g.font='400 38px '+F;wrap(g,'“'+d.punch+'”',W/2,1060,W-160,54);
+    g.fillStyle='#ff4b3a';g.font='700 34px '+F;g.fillText('나도 보기 → shtelpjh2000-lgtm.github.io/saju',W/2,1250);
+    return c;}
+  function wrap(g,t,x,y,mw,lh){const w=[...t];let line='',yy=y;for(const ch of w){if(g.measureText(line+ch).width>mw&&line){g.fillText(line,x,yy);line=ch;yy+=lh;}else line+=ch;}g.fillText(line,x,yy);}
+  async function heroShare(){
+    const c=await heroImage();if(!c)return;const txt='도깨비 영감이 그러는데 올해 나는 「'+heroData.nick+'」래. 너는? https://shtelpjh2000-lgtm.github.io/saju/';
+    const C=window.Capacitor;
+    try{
+      if(C&&C.isNativePlatform&&C.isNativePlatform()){const FS=(C.Plugins&&C.Plugins.Filesystem)||C.registerPlugin('Filesystem');const SH=(C.Plugins&&C.Plugins.Share)||C.registerPlugin('Share');
+        const w=await FS.writeFile({path:'dokkaebi-saju.jpg',data:c.toDataURL('image/jpeg',.88).split(',')[1],directory:'CACHE'});
+        await SH.share({title:'도깨비 사주',text:txt,files:[w.uri],dialogTitle:'카톡으로 보내기'});return;}
+      const blob=await new Promise(r=>c.toBlob(r,'image/jpeg',.88));const f=new File([blob],'dokkaebi-saju.jpg',{type:'image/jpeg'});
+      if(navigator.canShare&&navigator.canShare({files:[f]})){await navigator.share({files:[f],text:txt});return;}
+      const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='dokkaebi-saju.jpg';document.body.appendChild(a);a.click();a.remove();
+    }catch(e){if(e&&e.name!=='AbortError')console.warn(e);}
+  }
+  document.addEventListener('click',e=>{if(e.target.closest('.heroShare'))heroShare();});
   function greetHtml(){
-    const age=ageNow(base);let L=['어이, 왔는가. 나는 이 집 기와 위에서 오백 년을 산 도깨비 영감일세. 자네 사주를 슬쩍 들여다봤네.'];
+    const age=ageNow(base);let L=['어이, 왔는가. 오백 년 산 도깨비 영감 눈은 못 속이네.'];
     try{const x=Haeseok.interpret(base,base.input.sex,age),cr=x.curRun;
       if(cr){if(cr.g>=1.5)L.push('요즘 <b>'+cr.theme+'</b> 쪽으로 기운이 차오르는 때라, 해 보고 싶은 게 많을 걸세. 이럴 땐 망설이지 말고 한 발 내디뎌 보게.');
         else if(cr.g>=0.5)L.push('요즘은 <b>'+cr.theme+'</b> 쪽으로 슬슬 바람이 부는 때일세. 차근차근 가면 손에 쥐는 게 있을 걸세.');

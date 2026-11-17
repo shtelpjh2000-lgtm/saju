@@ -9,6 +9,7 @@
   const card=document.createElement('div');card.className='card';card.id='qaCard';
   card.innerHTML='<h2 class="qaH">무엇이 궁금한가?</h2><p class="qaSub">궁금한 걸 누르면 바로 아래에 풀어 주겠네. 다시 누르면 닫혀.</p><div id="qaList"></div><p class="note qaNote">※ 전통 역학 원리로 본 재미·참고용 풀이예요. 건강·돈·법률 같은 중요한 결정은 꼭 전문가와 상의하세요.</p>';
   $('ctl').insertAdjacentElement('afterend',card);
+  const hero=document.createElement('div');hero.className='card';hero.id='heroCard';who.insertAdjacentElement('afterend',hero);let heroOf=null;
   const sec=k=>[...$('reading').querySelectorAll('[data-sec="'+k+'"]')].filter(e=>!e.matches('p.note'));
   const copy=els=>els.filter(Boolean).map(e=>{const c=e.cloneNode(true);c.removeAttribute('id');return c;});
   const Q=[
@@ -31,7 +32,7 @@
     const x=Q.find(q=>q.k===k),A=list.querySelector('.qaI[data-k="'+k+'"] .qaA');A.innerHTML='';
     if(x.move){const el=$(x.move);if(!el)return;if(!ph[x.move]){ph[x.move]=document.createComment(x.move);el.before(ph[x.move]);}A.appendChild(el);}
     else{const n=x.get();if(n.length)n.forEach(c=>A.appendChild(c));else A.innerHTML='<p class="note">이 명국에서는 따로 풀 내용이 없네.</p>';}
-    const QART={sum:'ssireum',char:'seohwa',money:'jangteo',job:'daejang',love:'sinhaeng',health:'jeomsim',lucky:'mudong',today:'jeomgwae'};
+    const QART={sum:'ssireum',char:'seohwa',money:'jangteo',job:'daejang',love:'sinhaeng',health:'jeomsim',lucky:'mudong'};
     if(QART[k])A.insertAdjacentHTML('afterbegin',artFig(QART[k]));
   }
   function setOpen(k){
@@ -52,6 +53,7 @@
       who.querySelector('small').textContent=(I.sex==='M'?'남자':'여자')+(lunar?' · 양력으로 '+I.y+'년 '+I.m+'월 '+I.d+'일':'');}
     if(!on&&B.classList.contains('qaOn')){setOpen(null);}
     B.classList.toggle('qaOn',on);
+    if(on&&base&&heroOf!==base&&window.__heroHtml){heroOf=base;hero.innerHTML=window.__heroHtml();}
     const pb=document.querySelector('.proBar');if(pb){const dst=on?card:$('menuCard');if(pb.parentNode!==dst)dst.appendChild(pb);}
     if(on&&open){const k=open;restore();fill(k);}
   }

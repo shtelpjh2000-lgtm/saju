@@ -9,6 +9,8 @@ const url = 'file://' + require('path').resolve(__dirname, '../www/index.html');
   await pg.evaluate(() => { document.getElementById('t').value = '11:00'; });
   await pg.click('#go'); await pg.waitForTimeout(1500);
   const who = await pg.evaluate(() => document.querySelector('#whoBar b').textContent);
+  // 첫 화면 한 장면 카드(올해 자네는 OO) · 예고 · 공유 버튼
+  if (!(await pg.evaluate(() => { const h = document.querySelector('#heroCard'); return h && h.querySelector('.hTitle b') && h.querySelector('.heroShare') && getComputedStyle(h).display !== 'none'; }))) errs.push('첫 화면 카드 없음');
   for (const k of ['sum', 'char', 'money', 'job', 'love', 'health', 'lucky', 'today', 'ask']) { await pg.click('.qaI[data-k=' + k + '] .qaQ'); await pg.waitForTimeout(300); }
   // 도깨비 대화: 질문 뜻을 제대로 알아듣는지
   await pg.evaluate(() => { const i = document.querySelector('.qaI[data-k=ask]'); if (!i.classList.contains('open')) i.querySelector('.qaQ').click(); }); await pg.waitForTimeout(300);
