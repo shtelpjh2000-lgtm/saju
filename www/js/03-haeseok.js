@@ -150,7 +150,7 @@
     runs.sort((a, b) => a.from - b.from);
     const curRun = runs.find(x => age >= x.from && age <= x.to);
     const ageTxt = u => u.from + (u.to > u.from ? '~' + u.to : '') + '세';
-    const pickRun = (ks, min, lo, hi) => runs.filter(u => ks.includes(u.k) && u.g >= min && u.to >= (lo || 20) && u.from <= (hi || 75)).sort((a, b) => b.g - a.g || a.from - b.from)[0];
+    const pickRun = (ks, min, lo, hi) => runs.filter(u => ks.includes(u.k) && u.g >= min && u.to >= Math.max(lo || 20, age) && u.from <= Math.max(hi || 75, age + 10)).sort((a, b) => b.g - a.g || a.from - b.from)[0]; // 지난 나이는 고르지 않아요
     const clamp = v => Math.max(1, Math.min(5, Math.round(v)));
     const S = {}, HL = {}, SC = {};
 
@@ -181,7 +181,7 @@
     const top2 = Object.entries(grp).sort((a, b) => b[1] - a[1]).slice(0, 2);
     const miss = Object.entries(grp).filter(([, v]) => v === 0).map(([k]) => k);
     const GRPW = { 인성: '배움·문서·도움', 비겁: '사람·경쟁·자존심', 식상: '재능·표현·자녀', 재성: '돈·현실 감각', 관성: '직장·명예·책임' };
-    const adult = runs.filter(u => u.to >= 20 && u.from <= 80);
+    const adult0 = runs.filter(u => u.to >= Math.max(20, age) && u.from <= 85), adult = adult0.length ? adult0 : runs.filter(u => u.to >= age).concat(runs.slice(-1));
     const bestAll = adult.slice().sort((a, b) => b.g - a.g || a.from - b.from)[0];
     const worstAll = adult.slice().sort((a, b) => a.g - b.g || a.from - b.from)[0];
     const gwa = w => { const c = w.charCodeAt(w.length - 1) - 0xAC00; return c >= 0 && c % 28 ? '과' : '와'; };
@@ -215,7 +215,7 @@
     if (finSet.size && [...finSet].every(p => r.kong.has(p))) { ms -= 0.5; F.push('재성이 공망에 걸려 들어온 돈이 손에 오래 머물지 않아요. 수입이 생기면 바로 묶어 두는 습관이 필요해요.'); }
     const moneyRun = pickRun(strong === 'weak' ? ['父', '兄', '財'] : ['財', '孫'], 1);
     if (moneyRun) F.push('💰 재물운 전성기: <b>' + ageTxt(moneyRun) + '</b> — 이 시기에 종잣돈을 키우세요.');
-    const leakRun = runs.filter(u => (u.k === '兄' || u.k === '鬼') && u.g <= 0 && u.from >= 20 && u.from <= 80).sort((a, b) => a.g - b.g)[0];
+    const leakRun = runs.filter(u => (u.k === '兄' || u.k === '鬼') && u.g <= 0 && u.to >= Math.max(20, age) && u.from <= 85).sort((a, b) => a.g - b.g)[0];
     if (leakRun) F.push('💸 돈이 새기 쉬운 때: <b>' + ageTxt(leakRun) + '</b> — 큰 투자와 빌려주는 돈은 피하세요.');
     HL.money = mType; SC.money = clamp(ms); S.money = F;
 
@@ -305,7 +305,7 @@
     { const hitSe = sals(r).filter(s => s.bad && !s.light && s.txt.includes('(세)') && /삼살|삼형|천강|형혹|태백/.test(s.name)); if (hitSe.length) { hs -= strong === 'strong' ? 0.5 : 1.5; H.push('⚠️ ' + hitSe.map(s => s.name).join('·') + '이 世(나) 자신을 치는 배치예요. ' + (strong === 'strong' ? '世가 왕해 큰 탈로 번지진 않지만, 그 운이 올 때 사고·수술·과로를 조심하세요.' : '世가 약해 그 운이 올 때 사고·수술·질병을 특히 조심해야 해요.')); } }
     { const HG4 = [[7, 9], [2, 9], [7, 4], [2, 4]]; if (HG4.some(([x, y]) => (r.earthN[sp] === x && r.heavN[sp] === y) || (r.earthN[sp] === y && r.heavN[sp] === x))) { hs -= 1; H.push('⚠️ 世궁 천지반이 화금상전(불과 쇠의 싸움)이라 몸이 상하는 일을 조심해야 해요.'); } }
     if ([r.earthN[sp], r.heavN[sp]].some(v => v === 5 || v === 10)) H.push('世궁에 토(五·十)가 있어 소화기와 만성 피로를 살피세요.');
-    const hRun = runs.filter(u => u.k === '鬼' && u.g <= -1 && u.to >= 20).sort((a, b) => a.g - b.g)[0];
+    const hRun = runs.filter(u => u.k === '鬼' && u.g <= -1 && u.to >= Math.max(20, age)).sort((a, b) => a.g - b.g)[0];
     if (hRun) H.push('🩺 건강을 특히 챙길 시기: <b>' + ageTxt(hRun) + '</b>');
     HL.health = hs >= 4 ? '타고난 체력은 좋은 편, 한 곳만 지키면 돼요' : hs >= 3 ? '무리하면 바로 티가 나는 체질' : '몸이 보내는 신호를 절대 무시하면 안 되는 사주';
     SC.health = clamp(hs); S.health = H;

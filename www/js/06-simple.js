@@ -54,3 +54,27 @@
   const _sh=show;show=function(){const r=_sh.apply(this,arguments);try{apply();}catch(e){console.error(e);}return r;};
   apply();
 })();
+// ── 쉬운 말: 쉬운 보기에서는 어려운 역학 용어를 누구나 아는 말로 바꿔 보여 줘요(받침이 같은 말로 골라 조사가 어긋나지 않게) ──
+(function(){
+  const W=[
+    ['월운','달별 운'],['왕(旺)한 편','기운이 센 편'],['약(弱)한 편','기운이 여린 편'],['거왕(居旺)','자리 힘'],['승왕(乘旺)','달 힘'],    ['원명국','타고난 운'],['신수국','올해 운'],['명국','타고난 운'],['신수','올해 운세'],['일진','하루 운'],['대운표','10년 운 표'],['대운','10년 운'],['행년궁','올해 큰일 칸'],['행년','올해 큰일 칸'],
+    ['용신','살리는 기운'],['진용','진짜 길'],['世궁','내 칸'],['세궁','내 칸'],['세기','내 기운'],['중궁','가운데 칸'],['천반','겉 운'],['지반','속 운'],['홍국수','운 숫자'],
+    ['재성','돈 기운'],['관성','직장 기운'],['정관','직장 기운'],['편관','압박 기운'],['관귀','직장 기운'],['인성','도움 기운'],['식상','재능 기운'],['비겁','경쟁 기운'],['육친','가족 인연'],['육신','기운'],
+    ['공망','빈 칸'],['살성','살 기운'],['동처','움직이는 자리'],['준동','움직이는 자리'],['구궁도','운명 지도'],['원국비기','나이·달 보기'],['신수비기','달 운 보기'],
+    ['귀혼','돌아오는 자리'],['유혼','떠도는 자리'],['절명','위험한 자리'],['절체','지치는 자리'],['화해','다툼 자리'],['생기','살아나는 자리'],['천의','도움받는 자리'],['복덕','복 받는 자리']
+  ];
+  const RE=new RegExp(W.map(x=>x[0].replace(/[()]/g,'\\$&')).join('|'),'g'),MAP=Object.fromEntries(W);
+  const SE={가:'내가',는:'나는',를:'나를',와:'나와',의:'나의',도:'나도',에게:'나에게','':'나'};
+  const plain=s=>s.replace(RE,w=>MAP[w])
+    .replace(/世(에게|가|는|를|와|의|도)?/g,(m,p)=>SE[p||''])
+    .replace(/[一二三四五六七八九十]\(([^)]{2,})\)/g,'$1')
+    .replace(/\s?\((?:財|官|鬼|孫|父|兄|世|재|관|귀|손|부|형|세)\)/g,'');
+  const SKIP=new Set(['SCRIPT','STYLE','INPUT','TEXTAREA','SELECT','OPTION']);
+  function run(root){
+    if(document.body.classList.contains('pro'))return;
+    const w=document.createTreeWalker(root||document.body,NodeFilter.SHOW_TEXT,{acceptNode:n=>n.parentNode&&!SKIP.has(n.parentNode.nodeName)&&!n.parentNode.closest('#board,.proOnly')?NodeFilter.FILTER_ACCEPT:NodeFilter.FILTER_REJECT});
+    let n;while((n=w.nextNode())){const v=n.nodeValue;if(!v||!/[가-힣世一-十]/.test(v))continue;const t=plain(v);if(t!==v)n.nodeValue=t;}
+  }
+  let tm=null;new MutationObserver(()=>{clearTimeout(tm);tm=setTimeout(()=>run(),30);}).observe(document.body,{childList:true,subtree:true});
+  window.__plain={run,plain};run();
+})();

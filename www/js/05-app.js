@@ -181,6 +181,7 @@ function lifeHtml(x,k,sex,age){
     const v=u.g+(C.good.includes(u.k)?1:0)-(C.bad.includes(u.k)?1:0);const c=cls(v);const L=segs[segs.length-1];
     if(L&&L.c===c&&L.k===u.k&&L.to+1>=from){L.to=u.to;}
     else segs.push({from,to:u.to,c,k:u.k,th:[TH[u.k]],why:u.why,marks:u.marks||[]});}
+  { const pro=document.body.classList.contains('pro'); if(!pro){ for(let i=segs.length-1;i>=0;i--) if(segs[i].to<age) segs.splice(i,1); if(segs.length&&segs[0].from<age) segs[0].from=age; } }
   if(!segs.length)return '';
   const WHO={父:'문서',兄:'사람',孫:'재능',財:'돈',官:'직장',鬼:'압박',세:'나'};
   const partner=w=>{const m=/가 (.+?)(와|를|을) (삼합|반합|육합|생|극)/.exec(w||'');if(!m)return '';const ks=[...m[1].matchAll(/\((.)\)/g)].map(z=>WHO[z[1]]).filter(Boolean);if(!ks.length)return '';const who=[...new Set(ks)].join('·');
@@ -197,7 +198,7 @@ function lifeHtml(x,k,sex,age){
   const span=segs[segs.length-1].to-segs[0].from+1;
   const rg=u=>u.from+(u.to>u.from?'~'+u.to:'')+'세';
   const now=u=>age>=u.from&&age<=u.to;
-  let h='<div class="life"><p class="lifeH">🗓️ 평생 '+C.n+' 흐름 <span>(나이별)</span></p><div class="lifeBar">'+segs.map(u=>'<i class="'+GL[u.c][1]+(now(u)?' nw':'')+'" style="flex:'+(u.to-u.from+1)+'" title="'+rg(u)+'"></i>').join('')+'</div>';
+  let h='<div class="life"><p class="lifeH">🗓️ '+(document.body.classList.contains('pro')?'평생 ':'앞으로의 ')+C.n+' 흐름 <span>(나이별)</span></p><div class="lifeBar">'+segs.map(u=>'<i class="'+GL[u.c][1]+(now(u)?' nw':'')+'" style="flex:'+(u.to-u.from+1)+'" title="'+rg(u)+'"></i>').join('')+'</div>';
   h+='<div class="lifeAx"><span>'+segs[0].from+'세</span><span>'+Math.round(segs[0].from+span/2)+'세</span><span>'+segs[segs.length-1].to+'세</span></div>';
   h+='<div class="lifeL">'+segs.map(u=>'<div class="lifeR'+(now(u)?' nw':'')+'"><b>'+rg(u)+(now(u)?' <em>지금</em>':'')+'</b><span class="lp '+GL[u.c][1]+'">'+GL[u.c][0]+'</span><p>'+textOf(u)+'<small> · '+u.th.join('·')+' 기운</small></p></div>').join('')+'</div>';
   const best=segs.filter(u=>u.c===0).map(rg),bad=segs.filter(u=>u.c===3).map(rg);
@@ -287,9 +288,10 @@ function renderYear(r){
   h+='<h4>행년 (그해의 큰일)</h4>'+o.hang.map(t=>'<p>'+t+'</p>').join('');
   const gc=g=>g>=2?['g2','좋음']:g>=1?['g1','무난·좋음']:g<=-1?['gm1','주의']:['g0','보통'];
   const nowM=(()=>{try{const l=Solar.fromDate(new Date()).getLunar();return l.getYear()===yearSel?Math.abs(l.getMonth()):0;}catch(e){return 0;}})();
-  h+='<h4>월운 (음력)</h4><table class="runs"><tr><th>달</th><th>궁</th><th>천반수</th><th>중심 주제</th><th>흐름</th></tr>';
-  for(const m of o.months){const c=gc(m.g);h+='<tr'+(m.m===nowM?' class="now"':'')+'><td>'+m.m+'월'+(m.which==='first'?'<small class="wbS">선</small>':m.which==='second'?'<small class="wbS">후</small>':'')+'</td><td>'+PN[m.p]+'</td><td>'+NUM[m.n]+' '+m.k+'</td><td>'+(m.say||m.theme)+(m.rtxt?'<small class="mRel proOnly">'+m.rtxt.replace(/^\S+\s*/,'')+'</small>':'')+'</td><td class="'+c[0]+'">'+c[1]+'</td></tr>';}
-  h+='</table><p class="note">신수국은 년주를 그해 태세로 바꾸고 생월·생일·생시는 그대로 두어 세웠어요. 월운은 달마다 해당 궁(1월·12월 간궁, 2월 진궁, 3·4월 손궁, 5월 이궁, 6·7월 곤궁, 8월 태궁, 9·10월 건궁, 11월 감궁)의 천반 홍국수로 봐요. 한 궁을 함께 쓰는 두 달은 앞 달(12·3·6·9월, 선)을 삼합·반합·육합으로(합이 없으면 생), 뒤 달(1·4·7·10월, 후)을 그다음 순서인 생으로(생이 없으면 충극) 나눠 봐요. 짝이 되는 수는 동처(사주가 놓인 궁·世궁·중궁)의 수예요. 행년은 나이 끝자리 수가 있는 궁(45세까지 지반, 46세부터 천반)의 천반 수로 봐요. 자동 판단이라 참고용이에요.</p>';
+  h+='<h4>월운 (음력)</h4><table class="runs mon"><tr><th>달</th><th>궁</th><th>천반수</th><th>중심 주제</th><th>흐름</th></tr>';
+  const proV=document.body.classList.contains('pro');let hidM=0;
+  for(const m of o.months){if(!proV&&nowM&&m.m<nowM){hidM++;continue;}const c=gc(m.g);h+='<tr'+(m.m===nowM?' class="now"':'')+'><td>'+m.m+'월'+(m.which==='first'?'<small class="wbS">선</small>':m.which==='second'?'<small class="wbS">후</small>':'')+'</td><td>'+PN[m.p]+'</td><td>'+NUM[m.n]+' '+m.k+'</td><td>'+(m.say||m.theme)+(m.rtxt?'<small class="mRel proOnly">'+m.rtxt.replace(/^\S+\s*/,'')+'</small>':'')+'</td><td class="'+c[0]+'">'+c[1]+'</td></tr>';}
+  h+='</table>'+(hidM?'<p class="note">지난 '+hidM+'달은 숨겼어요.</p>':'')+'<p class="note">신수국은 년주를 그해 태세로 바꾸고 생월·생일·생시는 그대로 두어 세웠어요. 월운은 달마다 해당 궁(1월·12월 간궁, 2월 진궁, 3·4월 손궁, 5월 이궁, 6·7월 곤궁, 8월 태궁, 9·10월 건궁, 11월 감궁)의 천반 홍국수로 봐요. 한 궁을 함께 쓰는 두 달은 앞 달(12·3·6·9월, 선)을 삼합·반합·육합으로(합이 없으면 생), 뒤 달(1·4·7·10월, 후)을 그다음 순서인 생으로(생이 없으면 충극) 나눠 봐요. 짝이 되는 수는 동처(사주가 놓인 궁·世궁·중궁)의 수예요. 행년은 나이 끝자리 수가 있는 궁(45세까지 지반, 46세부터 천반)의 천반 수로 봐요. 자동 판단이라 참고용이에요.</p>';
   $('reading').innerHTML=h;
 }
 
