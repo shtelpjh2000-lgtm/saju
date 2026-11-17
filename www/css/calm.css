@@ -147,3 +147,4 @@ body.qaOn #heroCard{display:block}
 .ygI .dd{flex:0 0 auto;width:auto}
 .tdEmoji{display:none}.tdMain{gap:0}
 figure.art figcaption em.k{font-style:normal;font-weight:700;color:var(--goldT)}
+figure.art img.sm{width:auto;max-width:78%;max-height:520px;margin:0 auto}
