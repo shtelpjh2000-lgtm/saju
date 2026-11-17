@@ -9,6 +9,8 @@ const GU={生氣:'기운이 살아나는 길한 자리.',天宜:'하늘의 도�
 const EL_KO={水:'수',火:'화',木:'목',金:'금',土:'토'};
 let sex='M',cal='S',cur=null,base=null,mode='won',yearSel=new Date().getFullYear(),yInfo=null,dInfo=null;
 let LEG0='';
+// 음력 ly년 lm월의 가운데(15일)가 들어가는 양력 연·월 — 화면에는 양력 달로 말해요
+function smon(ly,lm){try{const s=Lunar.fromYmd(ly,lm,15).getSolar();return {y:s.getYear(),m:s.getMonth()};}catch(e){return {y:ly,m:lm};}}
 const MPAL={1:8,2:3,3:4,4:4,5:9,6:2,7:2,8:7,9:6,10:6,11:1,12:8};
 
 // 한국 표준시(동경 135°) 보정 -30분, 서머타임 -60분
@@ -388,14 +390,14 @@ function renderYear(r){
   let h='<h2>'+yearSel+'년 신수</h2><span class="badge">'+r.pillars[0]+'년 · '+ageNow(base)+'세 · '+b.strongKo+'</span>';
   const proY=document.body.classList.contains('pro');
   const nowM=(()=>{try{const l=Solar.fromDate(new Date()).getLunar();return l.getYear()===yearSel?Math.abs(l.getMonth()):0;}catch(e){return 0;}})();
-  const futM=t=>{const m=/^(좋은|조심할) 달은 음력 (.+)이에요\.$/.exec(t);if(!m||proY||!nowM)return t;const L=m[2].split('·').map(x=>parseInt(x)).filter(x=>x>=nowM);return L.length?m[1]+' 달은 음력 '+L.map(x=>x+'월').join('·')+'이에요.':'';};
+  const futM=t=>{const m=/^(좋은|조심할) 달은 음력 (.+)이에요\.$/.exec(t);if(!m||proY)return t;const L=m[2].split('·').map(x=>parseInt(x)).filter(x=>!nowM||x>=nowM).map(x=>{const t=smon(yearSel,x);return (t.y>yearSel?'내년 ':'')+t.m;});return L.length?m[1]+' 달은 '+L.map(x=>x+'월').join('·')+'이에요.':'';};
   h+='<h4>한 해 총운</h4>'+(proY||!o.totalE?o.total:o.totalE).map(futM).filter(Boolean).map(t=>'<p>'+t+'</p>').join('');
   h+='<h4>분야별</h4>'+(proY||!o.fieldE?o.field:o.fieldE).map(t=>{const i=t.indexOf(' · ');return '<p><b>'+t.slice(0,i)+'</b> · '+t.slice(i+3)+'</p>';}).join('');
   h+='<h4>'+(proY?'행년 (그해의 큰일)':'올해 가장 큰 일')+'</h4>'+(proY||!o.hangE?o.hang:o.hangE).map(t=>'<p>'+t+'</p>').join('');
   const gc=g=>g>=2?['g2','좋음']:g>=1?['g1','무난·좋음']:g<=-1?['gm1','주의']:['g0','보통'];
-  h+='<h4>월운 (음력)</h4><table class="runs mon"><tr><th>달</th><th>궁</th><th>천반수</th><th>중심 주제</th><th>흐름</th></tr>';
+  h+='<h4>'+(proY?'월운 (음력)':'달별 운')+'</h4><table class="runs mon"><tr><th>달</th><th>궁</th><th>천반수</th><th>중심 주제</th><th>흐름</th></tr>';
   const proV=document.body.classList.contains('pro');let hidM=0;
-  for(const m of o.months){if(!proV&&nowM&&m.m<nowM){hidM++;continue;}const c=gc(m.g);h+='<tr'+(m.m===nowM?' class="now"':'')+'><td>'+m.m+'월'+(m.which==='first'?'<small class="wbS">선</small>':m.which==='second'?'<small class="wbS">후</small>':'')+'</td><td>'+PN[m.p]+'</td><td>'+NUM[m.n]+' '+m.k+'</td><td>'+(m.say||m.theme)+(m.rtxt?'<small class="mRel proOnly">'+m.rtxt.replace(/^\S+\s*/,'')+'</small>':'')+'</td><td class="'+c[0]+'">'+c[1]+'</td></tr>';}
+  for(const m of o.months){if(!proV&&nowM&&m.m<nowM){hidM++;continue;}const c=gc(m.g);h+='<tr'+(m.m===nowM?' class="now"':'')+'><td>'+(proV?m.m:(t=>(t.y>yearSel?'내년 ':'')+t.m)(smon(yearSel,m.m)))+'월'+(m.which==='first'?'<small class="wbS">선</small>':m.which==='second'?'<small class="wbS">후</small>':'')+'</td><td>'+PN[m.p]+'</td><td>'+NUM[m.n]+' '+m.k+'</td><td>'+(m.say||m.theme)+(m.rtxt?'<small class="mRel proOnly">'+m.rtxt.replace(/^\S+\s*/,'')+'</small>':'')+'</td><td class="'+c[0]+'">'+c[1]+'</td></tr>';}
   h+='</table>'+(hidM?'<p class="note">지난 '+hidM+'달은 숨겼어요.</p>':'')+'<p class="note proOnly">신수국은 년주를 그해 태세로 바꾸고 생월·생일·생시는 그대로 두어 세웠어요. 월운은 달마다 해당 궁(1월·12월 간궁, 2월 진궁, 3·4월 손궁, 5월 이궁, 6·7월 곤궁, 8월 태궁, 9·10월 건궁, 11월 감궁)의 천반 홍국수로 봐요. 한 궁을 함께 쓰는 두 달은 앞 달(12·3·6·9월, 선)을 삼합·반합·육합으로(합이 없으면 생), 뒤 달(1·4·7·10월, 후)을 그다음 순서인 생으로(생이 없으면 충극) 나눠 봐요. 짝이 되는 수는 동처(사주가 놓인 궁·世궁·중궁)의 수예요. 행년은 나이 끝자리 수가 있는 궁(45세까지 지반, 46세부터 천반)의 천반 수로 봐요. 자동 판단이라 참고용이에요.</p>';
   $('reading').innerHTML=h;
 }
@@ -1686,7 +1688,7 @@ const TART={exam:[['seodang','chaek'],['gamchal']],jobget:[['daejang','hojak'],[
       return '<p class="dkOpen">'+link+'방향을 묻는구먼. 어디 보자…</p><p class="ansV">'+dd+'</p><p>'+v+'</p><p>'+W+'</p><p>'+pv(['그리고 ','하나 더 일러두자면, '])+hage(plainTip(D.tips[0]))+'</p>';}
     if(kind==='when'&&!sp)h='<p class="dkOpen">'+link+opener(lastQ||'',kind)+'</p><p class="ansV">'+D.e+' <b>'+(K.bestC?D.n+jo(D.n,'은','는')+' '+K.bestC+'일세.':D.n+jo(D.n,'은','는')+' 앞으로 몇 달은 센 때가 없네.')+'</b></p><p>'+whenOf(K,1)+'</p><p>'+v+'</p>';
     if(/이자|대출|빚|원리금/.test(lastQ||'')&&/estate|money|biz|invest|loan/.test(t))h+='<p>💸 이자 걱정 말인데, '+(K.bestC&&!/^내년/.test(K.bestC)&&gi<=1?K.bestC.replace(/\(.*\)/,'')+'까지만 버티게. 그때 풀리네. 새 대출은 늘리지 말게.':(K.bestC?'풀리는 때가 '+K.bestC.replace(/\(.*\)/,'')+jo(K.bestC.replace(/\(.*\)/,''),'이라','라')+' 이자 부담이 길어지네. ':'')+'지금 바로 대출 갈아타기나 일부 상환으로 이자부터 줄이게.')+'</p>';
-    if(K.qm)h+='<p>📌 자네가 짚은 <b>음력 '+K.qm.m+'월</b>은 '+(K.qm.v>=0.8?'<b>좋은 달</b>일세. 그때 움직이게.':K.qm.v<=-0.4?'<b>피할 달</b>일세. 다른 달로 미루게.':'그저 그런 달일세. 더 좋은 달이 있네.')+'</p>';
+    if(K.qm)h+='<p>📌 자네가 짚은 <b>'+(K.qm.lun?'음력 ':'')+K.qm.m+'월</b>은 '+(K.qm.v>=0.8?'<b>좋은 달</b>일세. 그때 움직이게.':K.qm.v<=-0.4?'<b>피할 달</b>일세. 다른 달로 미루게.':'그저 그런 달일세. 더 좋은 달이 있네.')+'</p>';
     const calm=emo&&t==='gen';
     if(!sp&&!calm)h+='<p>🔍 '+pv(['왜 그런고 하니, ','내가 왜 이리 말하냐면, ','가만 들여다보니 '])+reasonOf(K,gi,D)+'</p>';
     if((kind!=='when'||sp)&&!calm)h+='<p>'+W+'</p>';
@@ -1756,7 +1758,7 @@ const TART={exam:[['seodang','chaek'],['gamchal']],jobget:[['daejang','hojak'],[
     const o=[];for(let k=0;k<12;k++){const y=lm+k>12?ly+1:ly,m=(lm+k-1)%12+1;let rsX;try{rsX=sinsu(yearGZ(y));}catch(e){continue;}
       const p=MPAL[m];const lh=lq.indexOf(rsX.lqH[p]),le=lq.indexOf(rsX.lqE[p]);let v=(lh===0?1.4:lh===1?0.8:le===0?0.6:le===1?0.3:0)+pScore(rsX,p,t)*0.6;if(badq.includes(rsX.lqH[p]))v-=0.8;
       let a=null,b=null;try{a=toD(Lunar.fromYmd(y,m,1).getSolar());b=toD((m===12?Lunar.fromYmd(y+1,1,1):Lunar.fromYmd(y,m+1,1)).getSolar());b.setDate(b.getDate()-1);}catch(e){}
-      o.push({y,m,v,a,b,lab:(y!==ly?'내년 ':'')+'음력 '+m+'월'+(a?'(양력 '+(a.getMonth()+1)+'/'+a.getDate()+'~'+(b.getMonth()+1)+'/'+b.getDate()+')':'')});}
+      o.push({y,m,v,a,b,lab:(()=>{const t=smon(y,m),Y0=new Date().getFullYear();return (t.y>Y0?'내년 ':'')+t.m+'월';})()});}
     return {best:o.filter(c=>c.v>=0.8).sort((x,z)=>z.v-x.v)[0]||null,bad:o.filter(c=>c.v<=-0.4).sort((x,z)=>x.v-z.v)[0]||null};}
   function dday(c){if(!c||!c.a)return '';const t0=new Date();t0.setHours(0,0,0,0);if(c.a<=t0&&t0<=c.b)return '<span class="dd now">지금이 그 달</span>';return '<span class="dd">D-'+Math.round((c.a-t0)/864e5)+'</span>';}
   const YG=[['money','돈','돈이 들어오거나 큰 셈을 치를 달'],['promo','일','일·자리에서 기회가 오는 달'],['people','사람','귀한 사람·인연이 닿는 달']];
@@ -1920,11 +1922,11 @@ const TART={exam:[['seodang','chaek'],['gamchal']],jobget:[['daejang','hojak'],[
     if(yrOff===0){ms.forEach(([m,v])=>{if(m>=nowL.m)cand.push({y:Y,m,v});});
       if(nowL.m>=7){try{const rs2=sinsu(yearGZ(Y+1));mScore(rs2).forEach((v,i)=>{if(i+1<=nowL.m+3)cand.push({y:Y+1,m:i+1,v});});}catch(e){}}}
     else ms.forEach(([m,v])=>cand.push({y:Y,m,v}));
-    const lab=c=>(yrOff!==0?c.y+'년 ':c.y!==Y?'내년 ':'')+'음력 '+c.m+'월'+(solarRange(c.y,c.m)?'(양력 '+solarRange(c.y,c.m)+')':'');
+    const Y0=new Date().getFullYear();const lab=c=>{const t=smon(c.y,c.m);return (yrOff!==0||t.y>Y0+1?t.y+'년 ':t.y>Y0?'내년 ':'')+t.m+'월';};
     const goodC=cand.filter(c=>c.v>=0.8).sort((a,b)=>b.v-a.v).slice(0,3).sort((a,b)=>a.y-b.y||a.m-b.m);
     const badC=cand.filter(c=>c.v<=-0.4).sort((a,b)=>a.v-b.v).slice(0,2).sort((a,b)=>a.y-b.y||a.m-b.m);
     const good=goodC.map(c=>c.m),badm=badC.map(c=>c.m);K.good=good;K.badm=badm;K.goodC=goodC.map(lab);K.badC=badC.map(lab);K.bestC=goodC.length?lab(goodC.slice().sort((a,b)=>b.v-a.v)[0]):null;
-    {const mm=/(?:음력\s*)?(1[0-2]|[1-9])\s*월/.exec(lastQ||'');if(mm){const m0=+mm[1];K.qm={m:m0,v:ms[m0-1][1]};}}
+    {const mm=/(음력\s*)?(1[0-2]|[1-9])\s*월/.exec(lastQ||'');if(mm){const m0=+mm[2];let lm=m0;if(!mm[1]){const f=[1,2,3,4,5,6,7,8,9,10,11,12].find(x=>smon(Y,x).m===m0);if(f)lm=f;}K.qm={m:m0,lun:!!mm[1],v:ms[lm-1][1]};}}
     h+='<h4>🗓️ 앞으로 좋은 달 · 조심할 달</h4><p>'+(goodC.length?'<b>좋은 달: '+K.goodC.join(', ')+'</b>. 중요한 일을 이때 하세요.':'앞으로 몇 달 안에는 특별히 강한 달이 없어요. 아래 좋은 날을 활용하세요.')+(badC.length?' 조심할 달: '+K.badC.join(', ')+'.':'')+'</p>';
     // 좋은 날 (올해일 때만, 앞으로 60일)
     if(yrOff===0){
