@@ -21,6 +21,10 @@ const url = 'file://' + require('path').resolve(__dirname, '../www/index.html');
   await pg.evaluate(() => document.querySelector('.proBar button').click()); await pg.waitForTimeout(1000);
   for (const k of ['deep', 'map', 'wonbi', 'four']) { await pg.evaluate(k => document.querySelector('#mnGrid button[data-k=' + k + ']').click(), k); await pg.waitForTimeout(400); }
   await pg.evaluate(() => document.querySelector('.proBar button').click()); await pg.waitForTimeout(500);
+  // 다시 켰을 때 첫 화면(오늘 카드)에는 그림이 없어야 함 — 그림은 사주 넣고 풀이한 뒤에만
+  await pg.reload(); await pg.waitForTimeout(1200);
+  if (await pg.evaluate(() => { const t = document.getElementById('todayTop'); return t && t.style.display !== 'none' && t.querySelector('figure'); })) errs.push('시작 화면에 그림이 나옴');
+  console.log('시작 화면 오늘 카드:', await pg.evaluate(() => { const t = document.getElementById('todayTop'); return t && t.style.display !== 'none' ? '보임(그림 ' + t.querySelectorAll('figure').length + '개)' : '없음'; }));
   console.log('맨 위 줄:', who);
   console.log(errs.length ? '❌ 화면 오류:\n' + errs.join('\n') : '✅ 화면 오류 없음');
   await b.close(); process.exit(errs.length ? 1 : 0);

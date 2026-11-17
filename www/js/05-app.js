@@ -621,14 +621,15 @@ alDraw();
     兄:['ssireum','오늘은 <em class="k">씨름</em> 날일세. 겨룰 일이 생기니 말다툼은 한 발 물러서게.'],鬼:['nongali','오늘은 <em class="k">논갈이</em> 날일세. 몸이 무거우니 무리 말고 묵묵히 하게.'],
     世:['haengsang','오늘은 <em class="k">행상</em> 날일세. 밖에 나가 사람을 만나면 길이 열리네.']};
   function dayArt(b,x){try{const dn={子:1,丑:10,寅:3,卯:8,辰:5,巳:2,午:7,未:10,申:9,酉:4,戌:5,亥:6}[x.d.gz[1]];const q=Gimun.liuqin(dn,b.se);const a=DAYART[q]||DAYART.世;
-    const tail=x.d.g>=1.5?' 오늘 운이 세니 미뤄 둔 일을 하게.':x.d.g<=-1?' 다만 오늘은 큰 결정은 내일로 미루게.':'';return artFig(a[0],a[1]+tail);}catch(e){return '';}}
+    if(x.d.g<=-1){const W=[['honga','오늘은 <em class="k">액막이</em> 날일세. 붉은 옷의 신이 막아 서 있으니, 구설·다툼만 피하면 무탈하네.'],['gamchal','오늘은 <em class="k">감찰</em> 날일세. 말 한마디, 도장 하나도 한 번 더 살피게.'],['sansin','오늘은 <em class="k">산신</em>께 비는 날일세. 큰일은 내일로 미루고 몸을 아끼게.']][(x.d.gz.charCodeAt(0)+x.d.gz.charCodeAt(1))%3];return artFig(W[0],W[1]);}
+    const tail=x.d.g>=1.5?' 오늘 운이 세니 미뤄 둔 일을 하게.':'';return artFig(a[0],a[1]+tail);}catch(e){return '';}}
   function html(b,who,top){
     const {n,x}=todayInfo(b);const G=grade(x.d.g);
     const pct=Math.max(8,Math.min(100,Math.round((x.d.g+2.5)/5*100)));
     const nm=who?who+'님의 ':'나의 ';
     return '<div class="tdHead"><span class="tdDate">'+(n.getMonth()+1)+'월 '+n.getDate()+'일 ('+'일월화수목금토'[n.getDay()]+') · '+x.d.gz+'일</span><span class="tdBadge '+G.c+'">오늘 '+G.t+'</span></div>'+
       '<div class="tdMain"><div class="tdEmoji">'+G.e+'</div><div><p class="tdTitle">'+nm+'오늘: '+G.w+'</p><p class="tdSum">'+x.d.summary+'</p></div></div>'+
-      '<div class="tdMeter"><i style="width:'+pct+'%"></i></div>'+dayArt(b,x)+
+      '<div class="tdMeter"><i style="width:'+pct+'%"></i></div>'+(top?'':dayArt(b,x))+
       '<div class="tdBtns">'+(top?'<button type="button" data-a="open">🔮 내 명국 열기</button><button type="button" class="sec" data-a="new">✏️ 다른 생일 보기</button>':'<button type="button" data-a="il">☀️ 오늘 일진 자세히 보기</button>')+'</div>';
   }
   function drawOut(){
