@@ -1464,7 +1464,7 @@ alDraw();
     if(r.kong.has(p))s+=' 다만 공망이라 힘이 덜 실려요. 기대를 조금 낮추고 차근차근 가세요.';
     return s;
   }
-  let curT=null,yrOff=0,lastQ='',abQ=null,hist=[],curHtml='',histBase=null;
+  let prevT=null,curT=null,yrOff=0,lastQ='',abQ=null,hist=[],curHtml='',histBase=null;
   // ── 대화형 답변: 기와 도깨비 영감 말투(하게체), 결론 먼저 ──
   const escH=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
   const PLQ={父:'문서·도움',官:'직장·명예',財:'돈',孫:'재능·즐거움',兄:'경쟁·친구',鬼:'압박',世:'자네'};
@@ -1483,41 +1483,44 @@ alDraw();
     if(/싸웠|싸워|다퉜|다투|헤어졌|헤어지/.test(q))return '저런, 마음이 편치 않겠구먼. 어디 한번 보세.';
     if(kind==='ab')return '허허, 두 갈래 길이라… 어디 한번 견줘 보세.';
     if(kind==='when')return '때를 묻는구먼. 어디 보자…';
-    return '어디 보자… 자네 사주를 펴 놓고 보니,';}
+    return pv(['어디 보자… 자네 사주를 펴 놓고 보니,','허허, 그거 말인가. 내 한번 짚어 보지.','옳지, 마침 잘 물었네. 가만 보자…','그 얘기라면 내가 좀 알지. 들어 보게.']);}
+  // 같은 질문엔 같은 말, 다른 질문엔 다른 말투가 나오게(무작위 아님)
+  const hsh=s=>{let h=7;for(const c of s||'')h=(h*31+c.charCodeAt(0))>>>0;return h;};
+  let seed=0;const pv=a=>a[(seed=(seed*1103515245+12345)>>>0)%a.length];
   const UN={couple:'부부운',people:'인복',career:'진로운',law:'송사운',travel:'여행·이동운',move:'이사운',child:'자녀운',health:'건강운',money:'재물운',invest:'투자운',estate:'부동산운',biz:'사업운',partner:'동업운',loan:'돈거래운',love:'연애운',marry:'결혼운',reunion:'재회운',exam:'시험운',jobget:'취업운',jobmove:'이직운',promo:'직장운'};
   const unOf=D=>{const k=Object.keys(T).find(x=>T[x]===D);return UN[k]||(/운$|시기$|것$|삼재$/.test(D.n)?D.n:D.n+'운');};
   // ── 세부 뜻: 같은 주제라도 질문의 뜻(팔기/사기/전세, 폐업, 받을 돈, 수술…)에 따라 보는 육친·문을 바꿔 날짜·달·방향과 결론이 달라지게 ──
   const INTENT=[
     {base:'estate',id:'estate_sell',re:/팔|매도|안 ?나가|내놓|처분|매각|정리하|급매/,n:'부동산 매도',act:'파는 것',un:'매도운',lq:['財','孫'],bad:['兄'],door:{開門:1.5,生門:1,景門:0.6},gua:{遊魂:0.6},
-      v:['팔린다! 올해 임자가 나선다. 값을 크게 깎지 마라.','팔린다. 조건만 조금 맞추면 손이 닿는다.','쉽게 안 나간다. 값보다 조건과 중개처를 바꿔라.','지금은 안 팔린다. 서두르면 헐값이다. 좋은 달까지 버텨라.'],
-      tips:['중개소를 한 곳 더 늘리고, 매물 사진과 설명을 새로 올려라.','값을 또 내리기 전에 잔금 일정·옵션·분할 매도 같은 조건부터 바꿔 보라.','계약서 도장은 좋은 날에 찍어라.']},
+      v:['팔리네! 올해 임자가 나서네. 값을 크게 깎지 말게.','팔리네. 조건만 조금 맞추면 손이 닿네.','쉽게 안 나가네. 값보다 조건과 중개처를 바꾸게.','지금은 안 팔리네. 서두르면 헐값일세. 좋은 달까지 버티게.'],
+      tips:['중개소를 한 곳 더 늘리고, 매물 사진과 설명을 새로 올리게.','값을 또 내리기 전에 잔금 일정·옵션·분할 매도 같은 조건부터 바꿔 보게.','계약서 도장은 좋은 날에 찍게.']},
     {base:'estate',id:'estate_buy',re:/사[려고도야서]|살까|사볼|매수|구입|청약|분양|장만|살 ?집/,n:'부동산 매수',act:'사는 것',un:'매수운',lq:['父','財'],bad:['兄'],door:{生門:1.5,休門:1.2,開門:0.6},gua:{天宜:0.5,福德:0.5},
-      v:['사라! 문서운이 크게 들어온 해다.','살 만하다. 발품을 팔면 좋은 물건이 걸린다.','급할 것 없다. 세 곳 이상 비교하고 사라.','지금은 사지 마라. 계약에서 탈이 난다.'],
-      tips:['등기부등본·대출·특약을 계약 전에 꼭 확인하라. 문서(父)가 핵심이다.','좋은 방위 쪽 지역부터 보라.','계약일은 좋은 날로 잡아라.']},
+      v:['사게! 문서운이 크게 들어온 해일세.','살 만하네. 발품을 팔면 좋은 물건이 걸리네.','급할 것 없네. 세 곳 이상 비교하고 사게.','지금은 사지 말게. 계약에서 탈이 나네.'],
+      tips:['등기부등본·대출·특약을 계약 전에 꼭 확인하게. 문서가 핵심일세.','좋은 방위 쪽 지역부터 보게.','계약일은 좋은 날로 잡게.']},
     {base:'estate',id:'estate_rent',re:/전세|월세|임대|세입자|보증금|재계약/,n:'전·월세',act:'계약하는 것',un:'전월세운',lq:['父','兄'],bad:['鬼'],door:{休門:1.2,開門:1,生門:0.6},doorX:{驚門:-1.5,杜門:-1},
-      v:['계약이 술술 풀린다. 좋은 세입자·집을 만난다.','무난하다. 특약만 꼼꼼히 써라.','시간이 걸린다. 조건을 한 번 더 조정하라.','보증금 문제를 조심하라. 지금은 서두르지 마라.'],
-      tips:['보증금은 전세보증보험부터 확인하라.','특약(수리·원상복구·중도해지)은 글로 남겨라.','계약은 좋은 날 낮에 하라.']},
+      v:['계약이 술술 풀리네. 좋은 세입자·집을 만나네.','무난하네. 특약만 꼼꼼히 쓰게.','시간이 걸리네. 조건을 한 번 더 조정하게.','보증금 문제를 조심하게. 지금은 서두르지 말게.'],
+      tips:['보증금은 전세보증보험부터 확인하게.','특약(수리·원상복구·중도해지)은 글로 남기게.','계약은 좋은 날 낮에 하게.']},
     {base:'biz',id:'biz_close',re:/폐업|접[을어고]|그만둘|정리할|닫[을아]|양도|권리금/,n:'가게 정리·폐업',act:'정리하는 것',un:'정리운',lq:['財','父'],bad:['兄','鬼'],door:{開門:1.2,休門:1,生門:0.8},gua:{遊魂:0.8,歸魂:0.5},
-      v:['정리하기 좋은 때다. 권리금도 챙긴다.','정리할 만하다. 인수자부터 찾아라.','당장 접기보다 줄여서 버텨 보라.','지금 접으면 손해가 크다. 좋은 달까지 버텨라.'],
-      tips:['폐업 신고 전에 권리금·보증금·재고 정리 순서를 적어라.','인수자 면담은 좋은 날에 잡아라.','남은 빚과 세금부터 확인하라.']},
+      v:['정리하기 좋은 때일세. 권리금도 챙기네.','정리할 만하네. 인수자부터 찾게.','당장 접기보다 줄여서 버텨 보게.','지금 접으면 손해가 크네. 좋은 달까지 버티게.'],
+      tips:['폐업 신고 전에 권리금·보증금·재고 정리 순서를 적어 두게.','인수자 면담은 좋은 날에 잡게.','남은 빚과 세금부터 확인하게.']},
     {base:'loan',id:'loan_get',re:/못 ?받|받을 ?돈|돌려받|떼[인였]|안 ?갚|받아낼/,n:'받을 돈',act:'받아내는 것',un:'받을 돈 운',lq:['財','官'],bad:['兄'],door:{開門:1.2,生門:1,景門:0.8},doorX:{死門:-1.5,杜門:-1.2},
-      v:['받는다. 올해 돈이 돌아온다.','받긴 한다. 나눠서라도 받아내라.','시간이 걸린다. 문자·통장 기록부터 모아라.','쉽게 안 들어온다. 법적 절차를 같이 준비하라.'],
-      tips:['빌려준 기록(계좌·문자)을 모두 모아 두라.','받을 날짜를 글로 받아라.','말은 좋은 날에 꺼내라.']},
+      v:['받아 내네. 올해 돈이 돌아오네.','받긴 하네. 나눠서라도 받아내게.','시간이 걸리네. 문자·통장 기록부터 모으게.','쉽게 안 들어오네. 법적 절차를 같이 준비하게.'],
+      tips:['빌려준 기록(계좌·문자)을 모두 모아 두게.','받을 날짜를 글로 받게.','말은 좋은 날에 꺼내게.']},
     {base:'health',id:'health_op',re:/수술|입원|시술|치료 ?시기|병원|검진|검사/,n:'수술·치료',act:'수술·치료',un:'치료운',lq:['孫','父'],bad:['鬼'],door:{生門:1.5,休門:1.2,開門:0.8},doorX:{死門:-2,傷門:-1.2},
-      v:['치료가 잘 듣는 해다. 미루지 마라.','치료 받을 만하다. 좋은 날로 잡아라.','서두르지 말고 병원 의견을 한 번 더 들어라.','몸이 약한 해다. 큰 수술은 의사와 날짜를 신중히 정하라.'],
-      tips:['수술·시술 날짜는 의사 판단이 먼저다. 고를 수 있으면 좋은 날로 하라.','검진은 미루지 마라.','치료 뒤엔 무조건 쉬어라.']},
+      v:['치료가 잘 듣는 해일세. 미루지 말게.','치료 받을 만하네. 좋은 날로 잡게.','서두르지 말고 병원 의견을 한 번 더 듣게.','몸이 약한 해일세. 큰 수술은 의사와 날짜를 신중히 정하게.'],
+      tips:['수술·시술 날짜는 의사 판단이 먼저일세. 고를 수 있으면 좋은 날로 하게.','검진은 미루지 말게.','치료 뒤엔 무조건 쉬게.']},
     {base:'move',id:'move_dir',re:/어느 ?쪽|방향|어디로|어디가|방위|지역/,n:'이사 방향',act:'이사',un:'이사 방위운',lq:['父','世'],bad:['鬼'],door:{生門:1.5,休門:1.5,開門:1},gua:{生氣:1,天宜:0.8,福德:0.8},
-      v:['좋은 방향이 뚜렷하다. 그쪽으로 가라.','좋은 쪽이 있다. 그 방향을 먼저 보라.','방향보다 집 조건이 중요하다.','올해는 방향이 막혔다. 큰 이사는 미뤄라.'],
-      tips:['지금 집을 가운데 두고 좋은 방위 쪽 동네부터 보라.','피할 방위로는 가지 마라.','이삿날은 좋은 날로 잡아라.']},
+      v:['좋은 방향이 뚜렷하네. 그쪽으로 가게.','좋은 쪽이 있네. 그 방향을 먼저 보게.','방향보다 집 조건이 중요하네.','올해는 방향이 막혔네. 큰 이사는 미루게.'],
+      tips:['지금 집을 가운데 두고 좋은 방위 쪽 동네부터 보게.','피할 방위로는 가지 말게.','이삿날은 좋은 날로 잡게.']},
     {base:'travel',id:'travel_study',re:/유학|어학연수|워홀|이민|해외 ?취업/,n:'유학·이민',act:'떠나는 것',un:'유학운',lq:['父','孫'],bad:['財'],door:{開門:1.5,景門:1,生門:0.6},gua:{遊魂:1},
-      v:['떠나라! 밖에서 크게 된다.','갈 만하다. 서류만 꼼꼼히 챙겨라.','한 해 더 준비하고 가라.','지금은 떠나지 마라. 서류·돈에서 막힌다.'],
-      tips:['비자·서류는 두 번 확인하라.','출국일은 좋은 날로 잡아라.','좋은 방위 쪽 나라·도시를 먼저 보라.']},
+      v:['떠나게! 밖에서 크게 되네.','갈 만하네. 서류만 꼼꼼히 챙기게.','한 해 더 준비하고 가게.','지금은 떠나지 말게. 서류·돈에서 막히네.'],
+      tips:['비자·서류는 두 번 확인하게.','출국일은 좋은 날로 잡게.','좋은 방위 쪽 나라·도시를 먼저 보게.']},
     {base:'law',id:'law_settle',re:/합의|화해|조정|중재/,n:'합의·조정',act:'합의',un:'합의운',lq:['父','兄'],bad:['鬼'],door:{休門:1.5,開門:1,生門:0.8},doorX:{傷門:-1.5,驚門:-1.5},
-      v:['합의가 된다. 먼저 손 내밀어라.','합의할 만하다. 조건을 글로 정리하라.','상대가 버틴다. 중재인을 세워라.','합의가 어렵다. 증거부터 챙겨라.'],
-      tips:['합의서는 꼭 문서로 남겨라.','만남은 좋은 날 낮에 하라.','감정 대신 숫자로 말하라.']},
+      v:['합의가 되네. 먼저 손 내밀게.','합의할 만하네. 조건을 글로 정리하게.','상대가 버티네. 중재인을 세우게.','합의가 어렵네. 증거부터 챙기게.'],
+      tips:['합의서는 꼭 문서로 남기게.','만남은 좋은 날 낮에 하게.','감정 대신 숫자로 말하게.']},
     {base:'jobmove',id:'job_quit',re:/퇴사|그만둘|사표|쉬고 ?싶/,n:'퇴사',act:'그만두는 것',un:'퇴사운',lq:['孫','財'],bad:['官'],door:{開門:1.2,休門:1.2,生門:0.8},gua:{遊魂:0.8},
-      v:['그만둬도 된다. 다음 길이 열린다.','그만둘 만하다. 다음 자리부터 잡아라.','지금 나가면 아쉽다. 몇 달 더 버텨라.','지금은 나가지 마라. 버티는 게 이긴다.'],
-      tips:['사표는 다음 자리 계약서를 받은 뒤에 내라.','퇴직금·연차 정산을 미리 계산하라.','면담은 좋은 날에 하라.']}
+      v:['그만둬도 되네. 다음 길이 열리네.','그만둘 만하네. 다음 자리부터 잡게.','지금 나가면 아쉽네. 몇 달 더 버티게.','지금은 나가지 말게. 버티는 게 이기네.'],
+      tips:['사표는 다음 자리 계약서를 받은 뒤에 내게.','퇴직금·연차 정산을 미리 계산하게.','면담은 좋은 날에 하게.']}
   ];
   for(const I of INTENT){const B=T[I.base];T[I.id]=Object.assign({},B,{n:I.n,lq:I.lq,bad:I.bad,lqM:null,lqF:null,door:I.door,doorX:I.doorX||B.doorX,gua:I.gua||B.gua,v:I.v,tips:I.tips,dir:B.dir||I.base==='move',base:I.base});ACT[I.id]=I.act;UN[I.id]=I.un;}
   const intentOf=(t,q)=>{const I=INTENT.find(x=>x.base===t&&x.re.test(q||''));return I?I.id:t;};
@@ -1534,38 +1537,43 @@ alDraw();
       if(gi>=2&&d[1]>0&&!K.rs.kong.has(h.p))s+=' 좋은 낌새는 있네만, 통틀어 보면 아직 힘이 모자라네.';
       if(gi<=1&&d[1]<0)s+=' 그래도 다른 자리에서 받쳐 주는 힘이 더 크다네.';}
     else s+=K.Y+'년에는 이 일의 기운이 뚜렷하지 않네. 운보다 자네 준비가 결과를 정할 걸세.';
-    return '🔍 <b>왜 그러냐면</b> · '+s;}
-  function whenOf(K){
+    return s;}
+  function whenOf(K,again){
     let s='';
-    if(K.bestC)s+='<b>'+K.bestC+'</b>이 제일 좋네.'+(K.goodC.length>1?' 그다음은 '+K.goodC.filter(x=>x!==K.bestC).join(', ')+'일세.':'');
-    else s+='앞으로 몇 달은 센 달이 없네. 아래 날을 쓰게.';
-    if(K.days&&K.days.length)s+=' 가까운 날로는 <b>'+K.days.slice(0,3).map(md).join(', ')+'</b>.';
-    if(K.badC&&K.badC.length)s+=' '+K.badC.join(', ')+'은 피하게.';
-    if(K.best)s+=' 앞으로 10년 중에는 <b>'+K.best.join('·')+'년</b>이 가장 좋다네.';
-    return '📅 <b>언제가 좋으냐면</b> · '+s;}
+    if(K.bestC&&again)s+=(K.goodC.length>1?'그 달 말고도 '+K.goodC.filter(x=>x!==K.bestC).join(', ')+'도 괜찮네.':'그 달을 놓치지 말게.');
+    else if(K.bestC)s+=pv(['때로 치면 ','날을 고르자면 ','시기는 말일세, '])+'<b>'+K.bestC+'</b>이 제일 좋네.'+(K.goodC.length>1?' 그다음으로는 '+K.goodC.filter(x=>x!==K.bestC).join(', ')+'도 괜찮고.':'');
+    else s+='앞으로 몇 달은 딱히 센 달이 없네. 그럴 땐 날이라도 골라 쓰면 되네.';
+    if(K.days&&K.days.length)s+=pv([' 날을 딱 집어 달라면 ',' 가까운 날로는 ',' 달력에 표시해 두게. '])+'<b>'+K.days.slice(0,3).map(md).join(', ')+'</b>'+pv(['일세.','이 좋네.','이 길하네.']);
+    if(K.badC&&K.badC.length)s+=pv([' 대신 '+K.badC.join(', ')+'은 손대지 말고 쉬어 가게.',' '+K.badC.join(', ')+'은 피하게. 그때 벌이면 고생일세.']);
+    if(K.best)s+=' 길게 보면 앞으로 10년 중엔 <b>'+K.best.join('·')+'년</b>이 자네 해일세.';
+    return '📅 '+s;}
   const SCEN=['지금 움직이면 1년 뒤에 “그때 하길 참 잘했다” 할 걸세.','준비한 만큼 1년 뒤 손에 쥐는 게 있을 걸세.','서두르면 반쯤 만족이고, 석 달만 더 다지고 하면 훨씬 낫네.','지금 밀어붙이면 1년 뒤에 후회가 남기 쉽네. 대신 지금 준비해 두면 다음 좋은 때에 크게 쓰일 걸세.'];
   function talk(t,D,gi,K){
     const kind=qkind(lastQ),act=ACT[t],sp=D.special==='caution'||D.special==='samjae',emo=EMO.test(lastQ||'');
+    seed=hsh((lastQ||'')+t);
+    const link=prevT&&T[prevT]&&prevT!==t&&T[prevT].n!==D.n?pv(['아까 '+T[prevT].n+' 얘기에 이어서, 이번엔 '+D.n+' 말이구먼. ','그래, '+T[prevT].n+' 다음엔 '+D.n+jo(D.n,'이','가')+' 마음에 걸렸구먼. ']):'';
     let v;
     if(sp)v=D.e+' '+hage(D.v[gi]);
     else if(emo&&t==='gen')v=gi<=1?'💛 <b>그래도 올해 자네 기운은 나쁘지 않네.</b> 지금 힘든 건 지나가는 바람일세. 조금만 숨 고르면 다시 일어설 수 있네.':'💛 <b>올해가 자네한테 좀 무거운 해라 그렇다네.</b> 자네가 못나서가 아닐세. 이럴 땐 큰일 벌이지 말고, 잘 먹고 잘 자는 게 제일일세.';
     else if(kind==='yn'||(act&&kind!=='when')){const a=act||D.n;
       v=['👍','🙆','🤔','✋'][gi]+' <b>'+hage(D.v[gi]).replace(/아래 /g,'')+'</b>';}
     else v=D.e+' <b>'+K.Y+'년 '+(t==='gen'?'자네 운':unOf(D))+jo(t==='gen'?'운':unOf(D),'은','는')+' '+['아주 좋네','좋네','그저 그렇네','조심할 때일세'][gi]+'.</b> '+hage(D.v[gi].replace(/아래 /g,''));
-    let h='<p class="dkOpen">'+opener(lastQ||'',kind)+'</p><p class="ansV">'+v+'</p>';
+    let h='<p class="dkOpen">'+link+opener(lastQ||'',kind)+'</p><p class="ansV">'+v+'</p>';
     const W=whenOf(K);
     if(kind==='where'&&!sp&&K.dir){const dd=K.dir.length?'🧭 <b>'+K.dir.join(', ')+'이 좋네.</b>'+(K.badDir&&K.badDir.length?' '+K.badDir.join(', ')+'은 피하게.':''):'🧭 <b>올해는 뚜렷하게 좋은 방향이 없네.</b> 방향보다 집 조건을 보게.';
-      return '<p class="dkOpen">방향을 묻는구먼. 어디 보자…</p><p class="ansV">'+dd+'</p><p>'+v+'</p><p>'+W+'</p><p>💡 <b>이렇게 하게</b> · '+hage(plainTip(D.tips[0]))+'</p>';}
-    if(kind==='when'&&!sp)h='<p class="dkOpen">'+opener(lastQ||'',kind)+'</p><p class="ansV">'+D.e+' <b>'+(K.bestC?D.n+jo(D.n,'은','는')+' '+K.bestC+'일세.':D.n+jo(D.n,'은','는')+' 앞으로 몇 달은 센 때가 없네.')+'</b></p><p>'+W+'</p><p>'+v+'</p>';
-    if(/이자|대출|빚|원리금/.test(lastQ||'')&&/estate|money|biz|invest|loan/.test(t))h+='<p>💸 <b>이자 얘기</b> · '+(K.bestC&&!/^내년/.test(K.bestC)&&gi<=1?K.bestC.replace(/\(.*\)/,'')+'까지만 버티게. 그때 풀리네. 새 대출은 늘리지 말게.':(K.bestC?'풀리는 때가 '+K.bestC.replace(/\(.*\)/,'')+jo(K.bestC.replace(/\(.*\)/,''),'이라','라')+' 이자 부담이 길어지네. ':'')+'지금 바로 대출 갈아타기나 일부 상환으로 이자부터 줄이게.')+'</p>';
-    if(K.qm)h+='<p>📌 <b>물어본 음력 '+K.qm.m+'월</b>은 '+(K.qm.v>=0.8?'<b>좋은 달</b>일세. 그때 움직이게.':K.qm.v<=-0.4?'<b>피할 달</b>일세. 다른 달로 미루게.':'그저 그런 달일세. 더 좋은 달이 있네.')+'</p>';
-    if(!sp)h+='<p>'+reasonOf(K,gi,D)+'</p>';
-    if(kind!=='when'||sp)h+='<p>'+W+'</p>';
-    if(K.dir&&K.dir.length&&!sp)h+='<p>🧭 <b>어느 쪽이냐면</b> · <b>'+K.dir.join(', ')+'</b>이 좋네.'+(K.badDir&&K.badDir.length?' '+K.badDir.join(', ')+'은 피하게.':'')+'</p>';
-    if(act&&!sp&&!(emo&&t==='gen'))h+='<p>🔮 <b>1년 뒤엔</b> · '+SCEN[gi]+'</p>';
+      return '<p class="dkOpen">'+link+'방향을 묻는구먼. 어디 보자…</p><p class="ansV">'+dd+'</p><p>'+v+'</p><p>'+W+'</p><p>'+pv(['그리고 ','하나 더 일러두자면, '])+hage(plainTip(D.tips[0]))+'</p>';}
+    if(kind==='when'&&!sp)h='<p class="dkOpen">'+link+opener(lastQ||'',kind)+'</p><p class="ansV">'+D.e+' <b>'+(K.bestC?D.n+jo(D.n,'은','는')+' '+K.bestC+'일세.':D.n+jo(D.n,'은','는')+' 앞으로 몇 달은 센 때가 없네.')+'</b></p><p>'+whenOf(K,1)+'</p><p>'+v+'</p>';
+    if(/이자|대출|빚|원리금/.test(lastQ||'')&&/estate|money|biz|invest|loan/.test(t))h+='<p>💸 이자 걱정 말인데, '+(K.bestC&&!/^내년/.test(K.bestC)&&gi<=1?K.bestC.replace(/\(.*\)/,'')+'까지만 버티게. 그때 풀리네. 새 대출은 늘리지 말게.':(K.bestC?'풀리는 때가 '+K.bestC.replace(/\(.*\)/,'')+jo(K.bestC.replace(/\(.*\)/,''),'이라','라')+' 이자 부담이 길어지네. ':'')+'지금 바로 대출 갈아타기나 일부 상환으로 이자부터 줄이게.')+'</p>';
+    if(K.qm)h+='<p>📌 자네가 짚은 <b>음력 '+K.qm.m+'월</b>은 '+(K.qm.v>=0.8?'<b>좋은 달</b>일세. 그때 움직이게.':K.qm.v<=-0.4?'<b>피할 달</b>일세. 다른 달로 미루게.':'그저 그런 달일세. 더 좋은 달이 있네.')+'</p>';
+    const calm=emo&&t==='gen';
+    if(!sp&&!calm)h+='<p>🔍 '+pv(['왜 그런고 하니, ','내가 왜 이리 말하냐면, ','가만 들여다보니 '])+reasonOf(K,gi,D)+'</p>';
+    if((kind!=='when'||sp)&&!calm)h+='<p>'+W+'</p>';
+    if(K.dir&&K.dir.length&&!sp)h+='<p>🧭 방향으로는 <b>'+K.dir.join(', ')+'</b>이 좋네.'+(K.badDir&&K.badDir.length?' '+K.badDir.join(', ')+'은 피하게.':'')+'</p>';
+    if(act&&!sp&&!(emo&&t==='gen'))h+='<p>🔮 '+pv(['이대로 가면 말일세, ','길게 보면, ','내 보기엔 '])+SCEN[gi]+'</p>';
     if(sp)h+='<p>🔎 조심할 것이랑 좋은 날은 아래 <b>자세한 풀이</b>에 적어 뒀네.</p>';
     const priceTip=t==='estate_sell'&&/값|가격|내려|낮춰|깎/.test(lastQ||'')?'값을 더 내리지 말게. 내놓는 곳·조건을 바꾸고, 좋은 달에 다시 걸게.':null;
-    h+='<p>💡 <b>이렇게 하게</b> · '+(priceTip?priceTip:emo&&t==='gen'?'오늘은 따뜻한 밥 한 끼 먹고 일찍 자게. 그리고 믿는 사람 한 명한테 털어놓게. 그게 제일 큰 부적일세. 많이 힘들면 혼자 참지 말고 꼭 도움을 청하게.':hage(plainTip(D.tips[0])))+'</p>';
+    h+='<p>💡 '+pv(['그러니 ','내 당부 하나 하지. ','딱 하나만 기억하게. '])+(priceTip?priceTip:emo&&t==='gen'?'오늘은 따뜻한 밥 한 끼 먹고 일찍 자게. 그리고 믿는 사람 한 명한테 털어놓게. 그게 제일 큰 부적일세. 많이 힘들면 혼자 참지 말고 꼭 도움을 청하게.':hage(plainTip(D.tips[0])))+'</p>';
+    h+='<p class="dkEnd">'+(emo?'혼자 끙끙 앓지 말고, 답답하면 또 오게. 내 여기 있네.':pv(['또 궁금한 게 있으면 언제든 물어보게. 허허.','걱정은 반만 하고, 나머진 이 영감한테 맡기게.','내 말 한 귀에 담아 두게. 또 오게나.']))+'</p>';
     return h;}
   function labelOf(p){p=p.replace(/[?？!.~]+$/,'').trim();if(/^(그냥 )?말까|^안 ?할까|^말기/.test(p)||!p)return '안 하기';return p;}
   function decide(q,K){
@@ -1593,7 +1601,7 @@ alDraw();
     let h='<p class="dkOpen">'+opener(q,'ab')+'</p><p class="ansV">⚖️ <b>나 같으면 「'+escH(w.lab)+'」 쪽이네.</b> '+(Math.abs(opts[0].s-opts[1].s)<0.25?'두 길이 크게 다르지 않으니, 마음 편한 쪽을 골라도 괜찮네.':'두 길 중에 운이 더 받쳐 주는 쪽일세.')+'</p>';
     h+=opts.map(card).join('');
     if(!w.stay)h+='<p>'+whenOf(K)+'</p>';
-    h+='<p>💡 <b>이렇게 하게</b> · 정하기 전에 “제일 나쁜 경우”를 한 줄 적어 보게. 감당할 만하면 해도 되고, 아니면 한 번 더 기다리게.</p>';
+    h+='<p>💡 그래도 망설여지면, 정하기 전에 “제일 나쁜 경우”를 한 줄 적어 보게. 감당할 만하면 해도 되고, 아니면 한 번 더 기다리게.</p>';
     return h;}
   function scoreOf(t,Y){const r=base;const rs=sinsu(yearGZ(Y));const yi=Haeseok.yearly(rs,r.input.sex,Y-r.input.y+1);
     const [lq]=topicLq(t);let ys=chartScore(rs,t).s;if(yi.out.hangPal&&lq.includes(rs.lqH[yi.out.hangPal]))ys+=0.6;return chartScore(r,t).s*0.35+ys*0.65;}
@@ -1752,7 +1760,7 @@ alDraw();
   const chips=$('askChips');chips.innerHTML=GROUPS.map(([g,l])=>'<p class="askG">'+l+'</p><div class="askChips3">'+ORDER.filter(k=>T[k].g===g).map(k=>'<button type="button" data-t="'+k+'">'+T[k].e+' '+T[k].n+'</button>').join('')+'</div>').join('');
   const allChips=()=>[...chips.querySelectorAll('button')];
   function autoQ(t){const D=T[t],Y=new Date().getFullYear()+yrOff;return D.special==='caution'?Y+'년에 조심할 건 뭐예요?':D.special==='samjae'?Y+'년 삼재가 들었나요?':ACT[t]?Y+'년에 '+D.n+', 해도 될까요?':Y+'년 '+D.n+'운 어때요?';}
-  function pick(t,q,ab){if(curHtml&&base===histBase){hist.push(curHtml);hist=hist.slice(-2);}curHtml='';abQ=ab||null;curT=t;lastQ=q||autoQ(t);allChips().forEach(x=>x.classList.toggle('on',x.dataset.t===(T[t].base||t)));render();setTimeout(()=>{const c=$('askOut').querySelector('.cur');(c||$('askOut')).scrollIntoView({behavior:'smooth',block:'start'});},60);}
+  function pick(t,q,ab){if(curHtml&&base===histBase){hist.push(curHtml);hist=hist.slice(-2);}curHtml='';abQ=ab||null;if(curT!==t)prevT=curT;curT=t;lastQ=q||autoQ(t);allChips().forEach(x=>x.classList.toggle('on',x.dataset.t===(T[t].base||t)));render();setTimeout(()=>{const c=$('askOut').querySelector('.cur');(c||$('askOut')).scrollIntoView({behavior:'smooth',block:'start'});},60);}
   chips.addEventListener('click',e=>{const b=e.target.closest('button');if(b)pick(b.dataset.t,'');});
   const setYr=v=>{yrOff=v;[...$('askYr').children].forEach(b=>b.classList.toggle('on',+b.dataset.v===yrOff));};
   function ask(){const q=$('askQ').value.trim();if(!q)return;
