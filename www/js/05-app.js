@@ -171,7 +171,7 @@ const ART={
   bbalrae:['빨래터','묵은 때는 빨아야 빠지네. 묵은 감정도 털어 내야 다시 이어지지.']
 };
 function artFig(k,cap){const a=ART[k];if(!a)return '';
-  return '<figure class="art"><img src="img/art/'+k+'.jpg" alt="김홍도 「'+a[0]+'」" loading="lazy" onerror="this.parentNode.remove()"><figcaption><b>김홍도 「'+a[0]+'」</b>'+(cap||a[1])+'</figcaption></figure>';}
+  return '<figure class="art"><img src="img/art/'+k+'.jpg" alt="옛 그림 '+a[0]+'" loading="lazy" onerror="this.parentNode.remove()"><figcaption>'+(cap||a[1])+'</figcaption></figure>';}
 
 // ── 항목별 평생 나이 흐름 ──
 function lifeHtml(x,k,sex,age){
