@@ -1438,7 +1438,7 @@ alDraw();
       kw:['돈','재물','부자','재테크','월급','수입','금전','돈복','재복'],
       why:'재물은 돈 그 자체인 <b>재(財)</b>와 돈을 만들어 내는 재능·활동인 <b>손(孫)</b>으로 보고, 재물이 자라는 문인 <b>생문(生門)</b>을 함께 봐요. 형(兄)이 강하면 돈이 나뉘거나 새기 쉬워요.',
       v:['재물운이 아주 좋아요. 들어오는 돈이 늘고, 그동안 해 둔 노력이 결실을 맺어요.','돈이 들어오는 흐름이 좋아요. 다만 크게 걸기보다 나눠서 하는 게 안전해요.','들어오는 만큼 나가는 흐름이에요. 새 투자보다 지출 관리가 먼저예요.','돈이 새기 쉬운 때예요. 보증, 빌려주기, 큰 지출은 피하고 지키는 데 집중하세요.'],
-      tips:['보증이나 돈 빌려주기는 피하세요. 형(兄)의 기운이 재물을 나눠 가져가요.','큰돈이 드는 결정은 위의 <b>좋은 달</b>에 하세요.','수입의 일부를 먼저 떼어 저축하는 습관이 재물운을 지켜 줘요.']},
+      tips:['보증이나 돈 빌려주기는 피하세요. 주변 사람들이 재물을 나눠 가져가요.','큰돈이 드는 결정은 위의 <b>좋은 달</b>에 하세요.','수입의 일부를 먼저 떼어 저축하는 습관이 재물운을 지켜 줘요.']},
     invest:{g:'money',n:'주식·코인·투자',e:'📈',lq:['財','孫'],bad:['兄','鬼'],door:{生門:1.5,開門:0.5},doorX:{驚門:-1.5,傷門:-1.5,杜門:-1},
       kw:['주식','코인','비트코인','투자','펀드','선물','가상화폐','etf','ETF','배당','로또','복권'],
       why:'투자는 돈인 <b>재(財)</b>와 돈을 불리는 활동인 <b>손(孫)</b>으로 보되, 손실과 경쟁을 뜻하는 <b>형(兄)</b>·<b>귀(鬼)</b>와 놀람·손해의 문인 <b>경문(驚門)·상문(傷門)</b>을 특히 조심해서 봐요.',
@@ -1463,7 +1463,7 @@ alDraw();
       kw:['빌려','빚','대출','보증','갚','못 받','떼인','돈 받','차용','이자'],
       why:'돈을 빌려주거나 빚을 정리하는 일은 내 돈인 <b>재(財)</b>와 차용증·약속인 <b>부(父)</b>가 힘이 있는지, 돈을 나눠 가는 <b>형(兄)</b>과 손실의 <b>귀(鬼)</b>가 강한지로 봐요. <b>사문·두문</b>에 재물이 있으면 돈이 묶이기 쉬워요.',
       v:['돈 문제를 풀기 좋은 때예요. 받을 돈은 받고, 빚도 정리할 수 있어요.','약속을 분명히 하면 무난해요. 차용증과 갚는 날짜를 꼭 정해 두세요.','돈이 묶이기 쉬운 흐름이에요. 빌려줄 때는 못 받아도 괜찮은 만큼만 하세요.','돈을 빌려주거나 보증을 서는 건 피하세요. 지금은 지키는 게 가장 좋아요.'],
-      tips:['빌려줄 때는 꼭 차용증을 쓰고, 계좌로 보내 기록을 남기세요.','보증은 거절해도 괜찮아요. 형(兄)의 기운이 강한 때는 특히 조심하세요.','받을 돈 이야기는 위의 <b>좋은 날</b>에 부드럽게 꺼내 보세요.']},
+      tips:['빌려줄 때는 꼭 차용증을 쓰고, 계좌로 보내 기록을 남기세요.','보증은 거절해도 괜찮아요. 주변 사람들이 강한 때는 특히 조심하세요.','받을 돈 이야기는 위의 <b>좋은 날</b>에 부드럽게 꺼내 보세요.']},
     love:{g:'love',n:'연애·새 인연',e:'💕',lqM:['財','孫'],lqF:['官','鬼'],badM:['兄'],badF:['孫'],door:{休門:1,景門:0.8,開門:0.5,生門:0.5},gua:{天宜:0.5,福德:0.5},
       kw:['연애','남자친구','여자친구','애인','만남','소개팅','썸','짝','인연','남친','여친','솔로','고백'],
       why:'연애는 남자는 <b>재(財)</b>, 여자는 <b>관(官)</b>을 이성의 자리로 보고, 만남과 설렘을 뜻하는 <b>손(孫)</b>, 마음이 편해지는 <b>휴문</b>과 드러나는 <b>경문</b>을 함께 봐요.',
@@ -1868,14 +1868,14 @@ const TART={exam:[['seodang','chaek'],['gamchal']],jobget:[['daejang','hojak'],[
     }
     const pct=Math.max(8,Math.min(100,Math.round((total+1.5)/4.2*100)));
     let h='';
-    h+='<div class="askHead" data-s="'+total.toFixed(2)+'"><span class="em">'+D.e+'</span><div><b>'+Y+'년 '+(D.special==='caution'?'조심할 것':D.special==='samjae'?'삼재':D.n+' 운')+'</b><span class="ghPill '+GR[gi][1]+'">'+GR[gi][0]+'</span></div></div>';
+    h+='<div class="askHead" data-s="'+total.toFixed(2)+'"><span class="em">'+D.e+'</span><div><b>'+Y+'년 '+(D.special==='caution'?'조심할 것':D.special==='samjae'?'삼재':(/운$/.test(D.n)?D.n:D.n+' 운'))+'</b><span class="ghPill '+GR[gi][1]+'">'+GR[gi][0]+'</span></div></div>';
     h+='<div class="ghBar"><i style="width:'+pct+'%"></i></div>';
     h+='<p class="askV">'+D.v[gi]+'</p>';
     h+='<h4>🔍 이렇게 봤어요</h4><p>'+D.why+'</p>';
     h+=special;
     const skipNat=D.special==='samjae'||D.special==='caution';
     // 타고난 운
-    if(!skipNat){h+='<h4>🌱 타고난 '+D.n+' 운</h4>';
+    if(!skipNat){h+='<h4>🌱 타고난 '+(/운$/.test(D.n)?D.n:D.n+' 운')+'</h4>';
     const nh=nat.hits.slice(0,2);
     if(!nh.length)h+='<p>원명국에서 이 주제의 기운이 뚜렷하게 드러나지 않아요. 타고난 힘보다 그해의 운과 노력이 더 크게 작용하는 편이에요.</p>';
     nh.forEach(x=>{h+='<p>'+palaceLine(r,x,t)+'</p>';});
@@ -1920,7 +1920,7 @@ const TART={exam:[['seodang','chaek'],['gamchal']],jobget:[['daejang','hojak'],[
     if(yrOff===0){ms.forEach(([m,v])=>{if(m>=nowL.m)cand.push({y:Y,m,v});});
       if(nowL.m>=7){try{const rs2=sinsu(yearGZ(Y+1));mScore(rs2).forEach((v,i)=>{if(i+1<=nowL.m+3)cand.push({y:Y+1,m:i+1,v});});}catch(e){}}}
     else ms.forEach(([m,v])=>cand.push({y:Y,m,v}));
-    const lab=c=>(c.y!==Y?'내년 ':'')+'음력 '+c.m+'월'+(solarRange(c.y,c.m)?'(양력 '+solarRange(c.y,c.m)+')':'');
+    const lab=c=>(yrOff!==0?c.y+'년 ':c.y!==Y?'내년 ':'')+'음력 '+c.m+'월'+(solarRange(c.y,c.m)?'(양력 '+solarRange(c.y,c.m)+')':'');
     const goodC=cand.filter(c=>c.v>=0.8).sort((a,b)=>b.v-a.v).slice(0,3).sort((a,b)=>a.y-b.y||a.m-b.m);
     const badC=cand.filter(c=>c.v<=-0.4).sort((a,b)=>a.v-b.v).slice(0,2).sort((a,b)=>a.y-b.y||a.m-b.m);
     const good=goodC.map(c=>c.m),badm=badC.map(c=>c.m);K.good=good;K.badm=badm;K.goodC=goodC.map(lab);K.badC=badC.map(lab);K.bestC=goodC.length?lab(goodC.slice().sort((a,b)=>b.v-a.v)[0]):null;
@@ -1958,9 +1958,13 @@ const TART={exam:[['seodang','chaek'],['gamchal']],jobget:[['daejang','hojak'],[
   function autoQ(t){const D=T[t],Y=new Date().getFullYear()+yrOff;return D.special==='caution'?Y+'년에 조심할 건 뭐예요?':D.special==='samjae'?Y+'년 삼재가 들었나요?':ACT[t]?Y+'년에 '+D.n+', 해도 될까요?':Y+'년 '+D.n+'운 어때요?';}
   function pick(t,q,ab){if(curHtml&&base===histBase){hist.push(curHtml);hist=hist.slice(-2);}curHtml='';abQ=ab||null;if(curT!==t)prevT=curT;curT=t;lastQ=q||autoQ(t);allChips().forEach(x=>x.classList.toggle('on',x.dataset.t===(T[t].base||t)));render();setTimeout(()=>{const c=$('askOut').querySelector('.cur');(c||$('askOut')).scrollIntoView({behavior:'smooth',block:'start'});},60);}
   chips.addEventListener('click',e=>{const b=e.target.closest('button');if(b)pick(b.dataset.t,'');});
+  // 질문 속 연도: '2027년'·'27년'·'내후년'·'내년'·'작년' → 올해 기준 몇 해 뒤인지(앞뒤 10년까지)
+  const yearOffOf=q=>{const Y0=new Date().getFullYear();let m=/(19\d{2}|20\d{2})\s*년/.exec(q)||/(?:^|[^\d])(\d{2})\s*년(?!\s*(?:생|도생))/.exec(q);
+    if(m){let y=+m[1];if(y<100)y+=2000;const o=y-Y0;if(o>=-10&&o<=10)return o;}
+    return /내후년|다다음 ?해/.test(q)?2:/내년|다음 ?해/.test(q)?1:/작년|지난 ?해/.test(q)?-1:0;};
   const setYr=v=>{yrOff=v;[...$('askYr').children].forEach(b=>b.classList.toggle('on',+b.dataset.v===yrOff));};
   function ask(){const q=$('askQ').value.trim();if(!q)return;
-    setYr(/내년|다음 ?해/.test(q)?1:0);
+    setYr(yearOffOf(q));
     const hit0=topicOf(q)||'gen',hit=intentOf(hit0,q);
     pick(hit,q,qkind(q)==='ab'?q:null);$('askQ').value='';}
   $('askOut').addEventListener('click',e=>{const b=e.target.closest('button[data-f]');if(!b||!curT)return;const D=T[curT],f=b.dataset.f;
