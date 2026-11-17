@@ -629,19 +629,20 @@
   // 달 풀이를 쉬운 말로: 그 달에 무엇이 무엇과 엮이는지 + 할 일/말 일 + 그 달 칸의 문·살성
   function monthSay(rs, n, q, g, p, sex) {
     const rel = relOf(rs), k = rel(n);
-    const NOUN = { 世: '나 자신', 父: '문서·집 일', 兄: '사람·모임', 孫: '새 일·재능', 財: sex === 'M' ? '돈·여자 인연' : '돈', 官: sex === 'F' ? '직장·남자 인연' : '직장 일', 鬼: '압박·건강 문제' };
-    const DO = { 世: '내 일에 집중하고 건강 관리를 시작하라', 父: '계약·이사·서류 제출을 잡아라', 兄: '모임에 나가 인맥을 넓혀라', 孫: '새 일을 시작하라', 財: '거래·매매·영업에 나서라', 官: '면접·승진 요청·인사 이동을 노려라', 鬼: '미뤄 둔 어려운 일을 정면으로 풀어라' };
-    const DONT = { 世: '과로하지 마라', 父: '서명·보증은 하지 마라', 兄: '돈 빌려주기·동업은 하지 마라', 孫: '윗사람과 다투지 마라', 財: '큰 지출·투자는 하지 마라', 官: '사표·이직은 미뤄라', 鬼: '무리한 일정과 운전을 조심하라' };
-    const DOORW = { 生門: '돈과 일이 자라는 달', 開門: '새 길이 열리는 달', 休門: '쉬면서 도움받는 달', 景門: '이름이 드러나는 달', 杜門: '일이 막히는 달', 傷門: '다툼이 생기는 달', 驚門: '놀랄 일이 생기는 달', 死門: '일이 멈추는 달' };
+    const NOUN = { 世: '내 일', 父: '서류·집 문제', 兄: '친구·모임', 孫: '새 일·재능', 財: sex === 'M' ? '돈·이성 문제' : '돈 문제', 官: sex === 'F' ? '직장·남자 문제' : '직장 일', 鬼: '스트레스·건강 문제' };
+    const DO = { 世: '내 일에 집중하고 건강을 챙기세요', 父: '계약·이사·서류 제출은 이 달에 하세요', 兄: '모임에 나가 사람을 넓히세요', 孫: '새 일을 시작해 보세요', 財: '사고팔기·영업에 나서 보세요', 官: '면접이나 승진 요청을 해 보세요', 鬼: '미뤄 둔 어려운 일을 이 달에 정리하세요' };
+    const DONT = { 世: '과로하지 마세요', 父: '서명·보증은 하지 마세요', 兄: '돈 빌려주기·동업은 하지 마세요', 孫: '윗사람과 다투지 마세요', 財: '큰 지출·투자는 하지 마세요', 官: '사표·이직은 미루세요', 鬼: '무리한 일정과 운전을 조심하세요' };
+    const DOORW = { 生門: '돈과 일이 자라는 달이에요', 開門: '새 길이 열리는 달이에요', 休門: '쉬면서 도움받는 달이에요', 景門: '이름이 드러나는 달이에요', 杜門: '일이 막히기 쉬운 달이에요', 傷門: '다툼이 나기 쉬운 달이에요', 驚門: '놀랄 일이 있는 달이에요', 死門: '일이 멈추기 쉬운 달이에요' };
+    const SALS = { '🛫': '먼 곳으로 나갈 일이 생겨요.', '🌸': '이성에게 인기가 많아져요.', '🙏': '도와주는 사람이 나타나요.', '⚡': '말다툼·사고·다칠 일을 조심하세요.', '🌀': '돈 잃을 일이나 창피당할 일을 조심하세요.' };
     const jo2 = (w, a, b) => { const c = w.charCodeAt(w.length - 1) - 0xAC00; return w + (c >= 0 && c % 28 ? a : b); };
     let s = '';
     if (q && q.with && q.with.length) { const pk = rel(q.with[0]), pn = NOUN[pk] || '', me = NOUN[k];
-      s = q.type === '충극' ? jo2(me, '이', '가') + ' ' + jo2(pn, '을', '를') + ' 누른다' : q.type === '생' ? jo2(me, '이', '가') + ' ' + jo2(pn, '을', '를') + ' 키운다' : jo2(me, '과', '와') + ' ' + jo2(pn, '이', '가') + ' 맞물린다'; }
-    else s = jo2(NOUN[k], '이', '가') + ' 이 달의 중심이다';
-    s += '. ' + (g >= 1 ? DO[k] : g <= -1 ? DONT[k] : DO[k].replace(/라$/, '되 작게 하라')) + '.';
-    const d = rs.door && rs.door[p], goodD = ['生門', '開門', '休門', '景門'].includes(d); if (d && DOORW[d] && (g >= 1 ? goodD : g <= -1 ? !goodD : true)) s += ' (' + DOORW[d] + ')';
+      s = q.type === '충극' ? me + ' 때문에 ' + jo2(pn, '이', '가') + ' 눌리기 쉬워요' : q.type === '생' ? me + ' 덕분에 ' + jo2(pn, '이', '가') + ' 잘 풀려요' : jo2(me, '과', '와') + ' ' + jo2(pn, '이', '가') + ' 함께 움직여요'; }
+    else s = '이 달은 ' + jo2(NOUN[k], '이', '가') + ' 중심이에요';
+    s += '. ' + (g >= 1 ? DO[k] + '.' : g <= -1 ? DONT[k] + '.' : DO[k] + '. 다만 무리하지는 마세요.');
+    const d = rs.door && rs.door[p], goodD = ['生門', '開門', '休門', '景門'].includes(d); if (d && DOORW[d] && (g >= 1 ? goodD : g <= -1 ? !goodD : true)) s += ' ' + DOORW[d] + '.';
     const sw = salWords((rs.salH || {})[p]).filter(z => g <= 0 ? /⚡|🌀/.test(z[0]) : /🌸|🛫|🙏/.test(z[0]));
-    if (sw.length) s += ' ' + sw[0][0] + ' ' + sw[0][1].replace(/\(.+\)/, '');
+    if (sw.length && SALS[sw[0][0]]) s += ' ' + SALS[sw[0][0]];
     return s;
   }
   function yearly(rs, sex, age) {
@@ -656,8 +657,10 @@
     const top = rel(rs.heavN[sp]), mid = rel(rs.heavN[5]), midE = rel(rs.earthN[5]);
     const topTxt = { 兄: '世궁 천반이 같은 기운이라 한 해 동안 내 힘이 받쳐 줘요(겸왕).', 父: '世궁 천반이 世를 생해 도움과 보호를 받는 해예요(수생).', 孫: '世궁 천반이 孫이라 힘을 밖으로 쓰는 해예요. 새 일과 표현이 늘지만 지치기 쉬워요.', 財: '世궁 천반이 財라 돈과 실속을 쫓아 움직이는 해예요.', 官: '世궁 천반이 官이라 책임과 일이 늘어나는 해예요.', 鬼: '世궁 천반이 鬼라 압박과 신경 쓸 일이 생기기 쉬운 해예요.' };
     out.total.push(rs.pillars[0] + '년 신수는 ' + base.strongKo + '이에요. ' + topTxt[top]);
+    { const ET = { 兄: '한 해 내내 내 편이 되어 주는 기운이 있어요.', 父: '도와주는 사람과 보호를 받는 해예요.', 孫: '힘을 밖으로 많이 쓰는 해예요. 새 일과 하고 싶은 말은 늘지만 지치기 쉬워요.', 財: '돈과 실속을 쫓아 바쁘게 움직이는 해예요.', 官: '책임과 맡을 일이 늘어나는 해예요.', 鬼: '스트레스와 신경 쓸 일이 생기기 쉬운 해예요.' };
+      out.totalE = ['올해는 ' + (strong === 'weak' ? '내 힘이 약한 편이에요. ' : '내 힘이 센 편이에요. ') + ET[top], '올해의 중심은 ' + THEME[midE] + ' 쪽 일이에요.']; }
     out.total.push('중궁(그해의 중심 기운)은 지반 ' + LQKO[midE] + ', 천반 ' + ira(LQKO[mid]) + '서 ' + THEME[midE] + ' 쪽 일이 한 해의 중심이 돼요.');
-    if (rs.kong.has(sp)) out.total.push('世궁이 공망이라 계획이 헛돌기 쉬워요. 큰 결정은 서두르지 마세요.');
+    if (rs.kong.has(sp)) { out.total.push('世궁이 공망이라 계획이 헛돌기 쉬워요. 큰 결정은 서두르지 마세요.'); out.totalE.push('올해는 계획이 헛돌기 쉬워요. 큰 결정은 서두르지 마세요.'); }
     const g = base.cnt;
     // 분야별
     const near = k => [rs.heavN[sp], rs.earthN[5], rs.heavN[5]].some(n => rel(n) === k);
@@ -680,6 +683,7 @@
     if (!hp) hp = [1, 2, 3, 4, 6, 7, 8, 9, 5].find(p => src[p] === (tn > 5 ? tn - 5 : tn + 5)) || 5;
     const hn = rs.heavN[hp], hk = rel(hn), hr = relWith(hn, se);
     out.hangPal = hp;
+    out.hangE = ['올해 가장 큰 일은 ' + THEME[hk] + ' 쪽에서 생기기 쉬워요.' + (hr.length ? (hr.includes('육합') ? ' 좋은 쪽으로 풀려요.' : ' 다만 나와 부딪히는 일이라 마음고생이 있어요.') : '')];
     out.hang.push(age + '세 행년궁은 ' + PK[hp] + '이고, 그 천반 수는 ' + NUM[hn] + '(' + hk + ')예요. 올해 큰일은 ' + THEME[hk] + ' 쪽에서 일어나기 쉬워요.' + (hr.length ? ' 世와 ' + hr.join('·') + (hr.includes('육합') ? '이라 좋은 쪽으로 풀려요.' : '이라 부딪힘이 있어요.') : ''));
     // 월운
     for (let m = 1; m <= 12; m++) {
@@ -691,8 +695,10 @@
       out.months.push({ m, p, n, k: n === se ? '世' : k, theme: n === se ? '나 자신·건강·독립' : THEME[k], rw, g: gr, which, rtxt: jj.txt, say: monthSay(rs, n, qq, gr, p, sex) });
     }
     const best = out.months.filter(x => x.g >= 2).map(x => x.m + '월'), worst = out.months.filter(x => x.g <= -1).map(x => x.m + '월');
-    if (best.length) out.total.push('좋은 달은 음력 ' + best.join('·') + '이에요.');
-    if (worst.length) out.total.push('조심할 달은 음력 ' + worst.join('·') + '이에요.');
+    if (best.length) { out.total.push('좋은 달은 음력 ' + best.join('·') + '이에요.'); out.totalE.push('좋은 달은 음력 ' + best.join('·') + '이에요.'); }
+    if (worst.length) { out.total.push('조심할 달은 음력 ' + worst.join('·') + '이에요.'); out.totalE.push('조심할 달은 음력 ' + worst.join('·') + '이에요.'); }
+    out.fieldE = out.field.map(t => t.replace('世궁과 중궁에 財가 닿아', '돈 기운이 가까이 있어').replace('다만 世가 약해', '다만 내 힘이 약해').replace('兄이 많아', '경쟁·지출 기운이 많아')
+      .replace('官이 世 가까이에 있어', '직장 기운이 가까이 있어').replace('鬼가 가까워', '스트레스 기운이 가까워').replace('배우자를 뜻하는 수가 世와 합이라', '배우자 기운이 나와 잘 맞아').replace(/삼살성\([^)]*\)이 있어 /, ''));
     return { base, out };
   }
 

@@ -249,16 +249,27 @@ function lifeHtml(x,k,sex,age){
     else segs.push({from,to:u.to,c,k:u.k,th:[TH[u.k]],why:u.why,marks:u.marks||[]});}
   { const pro=document.body.classList.contains('pro'); if(!pro){ for(let i=segs.length-1;i>=0;i--) if(segs[i].to<age) segs.splice(i,1); if(segs.length&&segs[0].from<age) segs[0].from=age; } }
   if(!segs.length)return '';
-  const WHO={父:'문서',兄:'사람',孫:'재능',財:'돈',官:'직장',鬼:'압박',세:'나'};
+  const WHO={父:'문서',兄:'사람',孫:'재능',財:'돈',官:'직장',鬼:'골치 아픈',세:'내'};
+  // 짧은 말(단어 나열)을 쉬운 완성 문장으로
+  const SEN={'감당할 만큼만':'감당할 만큼만 하세요','검진 챙기기':'검진을 꼭 받으세요','검진·안전 필수':'검진과 안전은 꼭 챙기세요','결혼·연애 적기':'결혼·연애하기 딱 좋은 때예요','공부·자격증':'공부하고 자격증을 따 두세요',
+    '과로 금지':'무리해서 일하지 마세요','꼼꼼히 준비':'꼼꼼히 준비하세요','내 몫 챙기기':'내 몫은 꼭 챙기세요','데이트·여행':'데이트나 여행을 즐기세요','동업·모임에서 기회':'동업이나 모임에서 기회가 와요',
+    '말 조심, 이직은 신중':'말을 조심하고, 이직은 신중히 하세요','보약·휴식':'보약 먹고 푹 쉬세요','보증·서명 조심':'보증과 서명은 조심하세요','보험부터 점검':'보험부터 점검하세요','부업·창업 수입':'부업이나 창업으로 돈이 들어와요',
+    '빌려주기·보증 금지':'돈을 빌려주거나 보증 서지 마세요','새 사업은 작게':'새 사업은 작게 시작하세요','세금·벌금 조심':'세금과 벌금을 조심하세요','술·야식 줄이기':'술과 야식을 줄이세요','영업·사업 확장':'영업과 사업을 넓혀 보세요',
+    '임신·출산·합격 소식':'임신·출산·합격 같은 기쁜 소식이 와요','잔소리 줄이기':'잔소리를 줄이세요','잠부터 챙기기':'잠부터 챙기세요','조건부터':'옮기기 전에 조건부터 따져 보세요','창업·전문직 도전':'창업이나 전문직에 도전해 보세요','직장에서 올리세요':'직장에서 몸값을 올리세요',
+    '보증·빌려주기·큰 투자 금지':'보증, 돈 빌려주기, 큰 투자는 하지 마세요','임신·출산·자녀 경사':'임신·출산 같은 자녀 경사가 있어요','인생의 황금기':'인생의 황금기예요',
+    '병원 갈 일':'병원 갈 일이 생겨요','승진·발령의 때':'승진·발령이 나는 때예요','일은 많은데 돈은 그대로':'일은 많은데 돈은 그대로예요','자녀 건강·안전 챙기기':'자녀 건강과 안전을 챙기세요',
+    '자녀 경사':'자녀에게 경사가 생겨요','자녀 직장·진로 걱정':'자녀 직장·진로가 걱정되는 때예요','집착·압박하는 관계 조심':'집착하거나 몰아붙이는 관계는 조심하세요'};
+  const sen1=f=>{f=f.trim();let o=SEN[f]||(/때$/.test(f)?f+'예요':f);return /[.!?]$/.test(o)?o:o+'.';};
+  const sen=t=>t.split(' — ').map(sen1).join(' ');
   const partner=w=>{const m=/가 (.+?)(와|를|을) (삼합|반합|육합|생|극)/.exec(w||'');if(!m)return '';const ks=[...m[1].matchAll(/\((.)\)/g)].map(z=>WHO[z[1]]).filter(Boolean);if(!ks.length)return '';const who=[...new Set(ks)].join('·');
-    const gw=w=>{const c=w.charCodeAt(w.length-1)-0xAC00;return w+(c>=0&&c%28?'과':'와');};return m[3]==='생'?who+'에 힘을 보탬':m[3]==='극'?gw(who)+' 부딪힘':gw(who)+' 손잡음';};
-  const seen={};
-  const textOf=u=>{const ph=(PH[k]||PH.total)[u.k]||[C.t[u.c],C.t[u.c]];let s=u.c<=1?ph[0]:u.c===3?ph[1]:ph[0].split(' — ')[0]+'… 다만 크게 기대하진 마세요';
-    const key=u.k+u.c;if(seen[key])return seen[key]+'세 때와 같은 흐름이에요 ('+s.split(' — ').pop()+')';seen[key]=rg(u).replace('세','');
-    if(u.c===0)s='크게 · '+s;
-    const pt=partner(u.why);if(pt)s+=' · '+pt;
-    const wantBad=u.c>=2;const sw=(window.Haeseok&&Haeseok.salWords?Haeseok.salWords(u.marks):[]).filter(z=>wantBad?/⚡|🌀/.test(z[0]):/🌸|🛫|🙏/.test(z[0]));
-    if(sw.length&&(k!=='money'||wantBad))s+=' · '+sw[0][0]+' '+sw[0][1].replace(/\(.+\)/,'').replace(/ 조심$/,'');
+    const gw=w=>{const c=w.charCodeAt(w.length-1)-0xAC00;return w+(c>=0&&c%28?'과':'와');};return m[3]==='생'?who+' 일에도 힘이 실려요.':m[3]==='극'?who+' 일과는 부딪히기 쉬워요.':who+' 일이 함께 풀려요.';};
+  const seen={},salSeen=new Set();
+  const textOf=u=>{const ph=(PH[k]||PH.total)[u.k]||[C.t[u.c],C.t[u.c]];const raw=u.c<=1?ph[0]:u.c===3?ph[1]:ph[0];
+    let s=u.c===2?sen1(raw.split(' — ')[0])+' 다만 크게 기대하진 마세요.':sen(raw);
+    const key=u.k+u.c;if(seen[key])return seen[key]+'세 때와 같은 흐름이에요. '+sen1(raw.split(' — ').pop());seen[key]=rg(u).replace('세','');
+    const pt=partner(u.why);if(pt&&document.body.classList.contains('pro'))s+=' '+pt;
+    const wantBad=u.c>=2;const sw=(window.Haeseok&&Haeseok.salWords?Haeseok.salWords(u.marks):[]).filter(z=>wantBad?/⚡|🌀/.test(z[0]):/🌸|🛫|🙏/.test(z[0])).filter(z=>!/🌸/.test(z[0])||k==='spouse'||k==='total'||k==='luck').filter(z=>!salSeen.has(z[1]));
+    if(sw.length&&(k!=='money'||wantBad)){salSeen.add(sw[0][1]);s+=' '+({'🛫':'해외나 먼 곳으로 나갈 일도 생겨요.','🌸':'이성에게 인기가 많아져요.','⚡':'말다툼·사고·다칠 일도 조심하세요.','🌀':'돈 잃을 일이나 창피당할 일도 조심하세요.','🙏':'도와주는 귀한 사람이 나타나요.'}[sw[0][0]]||'');}
     return s;};
   const GL=[['아주 좋음','lv0'],['좋음','lv1'],['보통','lv2'],['조심','lv3']];
   const span=segs[segs.length-1].to-segs[0].from+1;
@@ -266,7 +277,7 @@ function lifeHtml(x,k,sex,age){
   const now=u=>age>=u.from&&age<=u.to;
   let h='<div class="life"><p class="lifeH">🗓️ '+(document.body.classList.contains('pro')?'평생 ':'앞으로의 ')+C.n+' 흐름 <span>(나이별)</span></p><div class="lifeBar">'+segs.map(u=>'<i class="'+GL[u.c][1]+(now(u)?' nw':'')+'" style="flex:'+(u.to-u.from+1)+'" title="'+rg(u)+'"></i>').join('')+'</div>';
   h+='<div class="lifeAx"><span>'+segs[0].from+'세</span><span>'+Math.round(segs[0].from+span/2)+'세</span><span>'+segs[segs.length-1].to+'세</span></div>';
-  h+='<div class="lifeL">'+segs.map(u=>'<div class="lifeR'+(now(u)?' nw':'')+'"><b>'+rg(u)+(now(u)?' <em>지금</em>':'')+'</b><span class="lp '+GL[u.c][1]+'">'+GL[u.c][0]+'</span><p>'+textOf(u)+'<small> · '+u.th.join('·')+' 기운</small></p></div>').join('')+'</div>';
+  h+='<div class="lifeL">'+segs.map(u=>'<div class="lifeR'+(now(u)?' nw':'')+'"><b>'+rg(u)+(now(u)?' <em>지금</em>':'')+'</b><span class="lp '+GL[u.c][1]+'">'+GL[u.c][0]+'</span><p>'+textOf(u)+'<small class="proOnly"> · '+u.th.join('·')+' 기운</small></p></div>').join('')+'</div>';
   const best=segs.filter(u=>u.c===0).map(rg),bad=segs.filter(u=>u.c===3).map(rg);
   h+='<p class="note" style="margin:6px 0 0">대운(나이별 궁의 수)과 이 항목에 맞는 육친으로 계산한 참고용 흐름이에요.</p><p class="lifeSum">'+(best.length?'🌟 <b>가장 좋은 때</b> '+best.join(', '):'🌟 크게 튀는 때 없이 고른 편이에요')+(bad.length?'<br>⚠️ <b>조심할 때</b> '+bad.join(', '):'<br>⚠️ 크게 조심할 때는 없어요')+'</p></div>';
   return h;
@@ -349,15 +360,17 @@ function renderReading(r){
 function renderYear(r){
   const o=yInfo.out,b=yInfo.base;
   let h='<h2>'+yearSel+'년 신수</h2><span class="badge">'+r.pillars[0]+'년 · '+ageNow(base)+'세 · '+b.strongKo+'</span>';
-  h+='<h4>한 해 총운</h4>'+o.total.map(t=>'<p>'+t+'</p>').join('');
-  h+='<h4>분야별</h4>'+o.field.map(t=>{const i=t.indexOf(' · ');return '<p><b>'+t.slice(0,i)+'</b> · '+t.slice(i+3)+'</p>';}).join('');
-  h+='<h4>행년 (그해의 큰일)</h4>'+o.hang.map(t=>'<p>'+t+'</p>').join('');
-  const gc=g=>g>=2?['g2','좋음']:g>=1?['g1','무난·좋음']:g<=-1?['gm1','주의']:['g0','보통'];
+  const proY=document.body.classList.contains('pro');
   const nowM=(()=>{try{const l=Solar.fromDate(new Date()).getLunar();return l.getYear()===yearSel?Math.abs(l.getMonth()):0;}catch(e){return 0;}})();
+  const futM=t=>{const m=/^(좋은|조심할) 달은 음력 (.+)이에요\.$/.exec(t);if(!m||proY||!nowM)return t;const L=m[2].split('·').map(x=>parseInt(x)).filter(x=>x>=nowM);return L.length?m[1]+' 달은 음력 '+L.map(x=>x+'월').join('·')+'이에요.':'';};
+  h+='<h4>한 해 총운</h4>'+(proY||!o.totalE?o.total:o.totalE).map(futM).filter(Boolean).map(t=>'<p>'+t+'</p>').join('');
+  h+='<h4>분야별</h4>'+(proY||!o.fieldE?o.field:o.fieldE).map(t=>{const i=t.indexOf(' · ');return '<p><b>'+t.slice(0,i)+'</b> · '+t.slice(i+3)+'</p>';}).join('');
+  h+='<h4>'+(proY?'행년 (그해의 큰일)':'올해 가장 큰 일')+'</h4>'+(proY||!o.hangE?o.hang:o.hangE).map(t=>'<p>'+t+'</p>').join('');
+  const gc=g=>g>=2?['g2','좋음']:g>=1?['g1','무난·좋음']:g<=-1?['gm1','주의']:['g0','보통'];
   h+='<h4>월운 (음력)</h4><table class="runs mon"><tr><th>달</th><th>궁</th><th>천반수</th><th>중심 주제</th><th>흐름</th></tr>';
   const proV=document.body.classList.contains('pro');let hidM=0;
   for(const m of o.months){if(!proV&&nowM&&m.m<nowM){hidM++;continue;}const c=gc(m.g);h+='<tr'+(m.m===nowM?' class="now"':'')+'><td>'+m.m+'월'+(m.which==='first'?'<small class="wbS">선</small>':m.which==='second'?'<small class="wbS">후</small>':'')+'</td><td>'+PN[m.p]+'</td><td>'+NUM[m.n]+' '+m.k+'</td><td>'+(m.say||m.theme)+(m.rtxt?'<small class="mRel proOnly">'+m.rtxt.replace(/^\S+\s*/,'')+'</small>':'')+'</td><td class="'+c[0]+'">'+c[1]+'</td></tr>';}
-  h+='</table>'+(hidM?'<p class="note">지난 '+hidM+'달은 숨겼어요.</p>':'')+'<p class="note">신수국은 년주를 그해 태세로 바꾸고 생월·생일·생시는 그대로 두어 세웠어요. 월운은 달마다 해당 궁(1월·12월 간궁, 2월 진궁, 3·4월 손궁, 5월 이궁, 6·7월 곤궁, 8월 태궁, 9·10월 건궁, 11월 감궁)의 천반 홍국수로 봐요. 한 궁을 함께 쓰는 두 달은 앞 달(12·3·6·9월, 선)을 삼합·반합·육합으로(합이 없으면 생), 뒤 달(1·4·7·10월, 후)을 그다음 순서인 생으로(생이 없으면 충극) 나눠 봐요. 짝이 되는 수는 동처(사주가 놓인 궁·世궁·중궁)의 수예요. 행년은 나이 끝자리 수가 있는 궁(45세까지 지반, 46세부터 천반)의 천반 수로 봐요. 자동 판단이라 참고용이에요.</p>';
+  h+='</table>'+(hidM?'<p class="note">지난 '+hidM+'달은 숨겼어요.</p>':'')+'<p class="note proOnly">신수국은 년주를 그해 태세로 바꾸고 생월·생일·생시는 그대로 두어 세웠어요. 월운은 달마다 해당 궁(1월·12월 간궁, 2월 진궁, 3·4월 손궁, 5월 이궁, 6·7월 곤궁, 8월 태궁, 9·10월 건궁, 11월 감궁)의 천반 홍국수로 봐요. 한 궁을 함께 쓰는 두 달은 앞 달(12·3·6·9월, 선)을 삼합·반합·육합으로(합이 없으면 생), 뒤 달(1·4·7·10월, 후)을 그다음 순서인 생으로(생이 없으면 충극) 나눠 봐요. 짝이 되는 수는 동처(사주가 놓인 궁·世궁·중궁)의 수예요. 행년은 나이 끝자리 수가 있는 궁(45세까지 지반, 46세부터 천반)의 천반 수로 봐요. 자동 판단이라 참고용이에요.</p>';
   $('reading').innerHTML=h;
 }
 
