@@ -26,6 +26,12 @@ seg('mode',v=>{mode=v;$('yrWrap').style.display=v==='sin'?'block':'none';$('ilWr
 $('ild').addEventListener('change',()=>{if(base&&$('ild').value)show();});
 $('yr').addEventListener('change',()=>{const v=+$('yr').value;if(v>=1900&&v<=2100){yearSel=v;if(base)show();}});
 
+// 결혼·자녀·하는 일(선택): 풀이 문장을 나이·처지에 맞게 고르는 데만 써요
+function profGet(){const v=id=>{const b=document.querySelector('#'+id+' button.on');return b?b.dataset.v:'';};return {mar:v('mar'),kid:v('kid'),job:($('job')&&$('job').value)||''};}
+function profSet(p){p=p||{};['mar','kid'].forEach(id=>{const el=$(id);if(el)[...el.children].forEach(b=>b.classList.toggle('on',b.dataset.v===(p[id]||'')));});if($('job'))$('job').value=p.job||'';}
+['mar','kid'].forEach(id=>{const el=document.getElementById(id);if(el)el.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const on=b.classList.contains('on');[...el.children].forEach(x=>x.classList.remove('on'));if(!on)b.classList.add('on');});});
+// 처지: 기혼으로 볼지(입력 없으면 40세부터), 자녀 나이대(50세부터 손주), 일 대신 활동(은퇴·주부·65세부터)
+function lifeCtx(I,age){I=I||{};return {married:I.mar==='M'||(!I.mar&&age>=40),single:I.mar==='S'||I.mar==='D',senior:age>=50,noKid:I.kid==='N',rest:I.job==='ret'||I.job==='home'||(!I.job&&age>=65)};}
 function compute(){
   const dv=$('d').value,tv=$('t').value;
   if(!dv||!tv)throw new Error('생년월일과 시각을 입력해 주세요.');
@@ -38,7 +44,7 @@ function compute(){
   }
   const ad=$('adj').checked?autoAdjust(y,m,d):{a:0,why:[]};
   const r=Gimun.calc(Solar,y,m,d,h,mi,{adjust:ad.a});
-  r.input={y,m,d,h,mi,name:$('nm').value.trim(),sex,adj:ad,typed};
+  r.input={y,m,d,h,mi,name:$('nm').value.trim(),sex,adj:ad,typed,...profGet()};
   return r;
 }
 
@@ -240,6 +246,25 @@ function lifeHtml(x,k,sex,age){
     health:{父:['쉬면서 회복하는 때 — 보약·휴식','약·수술 서류 일이 생겨요 — 검진 챙기기'],兄:['운동 친구가 생겨 몸이 가벼워요','무리한 경쟁으로 지쳐요 — 과로 금지'],孫:['기운이 넘쳐요 — 운동 시작하기 좋아요','먹고 노는 데 몸이 상해요 — 술·야식 줄이기'],財:['몸 관리에 돈 쓸 여유가 생겨요','돈 걱정이 몸으로 와요 — 잠부터 챙기기'],官:['규칙적인 생활로 건강해져요','일 스트레스가 몸으로 와요'],鬼:['고비를 넘기고 회복해요','병원 갈 일 — 검진·안전 필수']},
     total:{父:['문서·도움으로 크게 얻는 때','문서·계약에서 막히는 때'],兄:['사람을 얻어 판을 키우는 때','사람 때문에 손해 보는 때'],孫:['재능으로 이름을 내는 때','벌인 일이 많아 지치는 때'],財:['돈과 실속을 챙기는 때','돈이 새는 때 — 지출을 묶으세요'],官:['자리와 명예가 오르는 때','책임이 무거운 때'],鬼:['고비를 넘어 단단해지는 때','압박·시련이 오는 때 — 몸을 낮추세요']}
   };PH.luck=PH.total;
+  // 나이·처지에 맞게: 기혼(입력 없으면 40세부터)은 부부운, 50세부터 자녀는 결혼·손주, 은퇴·주부(입력 없으면 65세부터)는 일 대신 활동
+  const cx=lifeCtx(base&&base.input,age),I0=(base&&base.input)||{};
+  // 칸(나이)마다 그 나이에 맞는 문장 묶음을 고름: 기혼이면(입력 없으면 40세 이후) 부부, 미혼으로 55세 이후면 말벗·동반자, 자녀는 50세 이후 결혼·손주, 일은 은퇴·주부이거나 65세 이후면 활동, 돈은 65세 이후 지키기
+  const PHM={父:['집안 어른 도움으로 부부 사이가 편해져요 — 양가 일에 함께 나서세요','집안·서류 문제로 부부가 신경 써요 — 서로 탓하지 마세요'],兄:['부부가 함께 어울리는 모임이 늘어요 — 같이 나가세요','남 때문에 부부 사이에 금이 가기 쉬워요 — 남의 말은 걸러 들으세요'],
+      孫:['부부가 함께 즐길 일이 늘어요 — 취미를 같이 해 보세요',F?'남편과 사이가 서먹해지기 쉬워요 — 먼저 말을 건네세요':'밖의 재미에 빠져 집에 소홀해져요 — 일찍 들어가세요'],
+      財:[F?'살림이 늘고 집안 돈 문제가 풀려요 — 큰 살림 장만에 좋아요':'아내와 사이가 좋아지고 살림이 늘어요 — 함께 재테크를 의논하세요',F?'돈 문제로 부부가 다퉈요 — 돈 관리는 함께 정하세요':'돈 때문에 아내와 다퉈요 — 돈 관리는 함께 정하세요'],
+      官:[F?'남편 일이 잘 풀려 집안이 펴요 — 남편을 밀어 주세요':'일이 잘 풀려 집안이 편해요 — 바빠도 가족 시간을 지키세요',F?'남편이 바빠 멀어지기 쉬워요 — 서운한 건 그때그때 말하세요':'일에 치여 집에 소홀해요 — 주말만큼은 집에 계세요'],
+      鬼:['고비를 함께 넘기며 정이 깊어져요 — 서로 기대세요','서로 몰아붙이기 쉬워요 — 말을 아끼세요']};
+  const PHS={父:['지인 소개로 좋은 사람을 만나요','주변 반대로 마음고생해요 — 내 마음을 믿으세요'],兄:['모임·취미에서 말벗이 생겨요','남의 말에 흔들리기 쉬워요 — 내 마음을 믿으세요'],孫:['함께 즐길 사람이 생겨요 — 여행·취미를 함께 해 보세요','즐거움만 좇다 마음을 다쳐요 — 천천히 가세요'],
+      財:F?['형편 넉넉한 사람과 인연이 닿아요','돈 문제가 끼어들어요 — 돈거래는 하지 마세요']:['마음 맞는 여성과 인연이 닿아요','돈 때문에 인연이 틀어져요 — 돈거래는 하지 마세요'],
+      官:F?['믿음직한 남성과 인연이 닿아요','고집 센 사람에게 휘둘리기 쉬워요 — 선을 그으세요']:['일로 만난 사람과 정이 들어요','책임만 지우는 관계는 피하세요'],鬼:['어려울 때 곁을 지켜 줄 사람이 생겨요','집착하는 관계는 조심하세요']};
+  const PHC=Object.assign({},PH.child,{孫:['자녀에게 경사가 있어요 — 자녀 결혼이나 손주 소식이 와요','자녀 일로 마음 쓸 때 — 들어 주세요'],父:['자녀가 공부·자격으로 자리 잡아요','자녀에게 간섭하기 쉬워요 — 한발 물러서세요']});
+  const PHJ={父:['배움·자격이 새 활동을 열어 줘요 — 배우고 싶던 걸 시작하세요','서류 일에서 막혀요 — 꼼꼼히 준비'],兄:['사람들과 함께하는 활동이 늘어요 — 모임에 나가 보세요','남과 비교하며 지치기 쉬워요 — 내 속도대로 가세요'],孫:['취미·재능으로 이름이 나요 — 솜씨를 보여 주세요','벌인 일이 많아 지쳐요 — 하나만 고르세요'],
+      財:['작은 일거리로 용돈이 생겨요 — 소일거리를 잡으세요','돈 욕심에 무리하기 쉬워요 — 감당할 만큼만'],官:['맡아 달라는 자리가 생겨요 — 봉사·모임 자리를 맡아 보세요','책임만 늘어나요 — 거절도 하세요'],鬼:['어려운 일을 맡아 인정받아요 — 끝까지 해내세요','몸과 마음이 지쳐요 — 쉬세요']};
+  const PHMo={父:['집·땅으로 재산이 지켜져요 — 문서를 잘 챙기세요','계약·서류에 돈이 묶여요 — 보증·서명 조심'],兄:['자식·친지가 살뜰히 챙겨 줘요','돈이 사람 따라 나가요 — 빌려주기·보증 금지'],孫:['솜씨로 용돈이 생겨요 — 소일거리를 잡으세요','벌인 일이 많아 새요 — 일을 줄이세요'],
+      財:['현금이 들어와요 — 쓸 곳에 쓰고 나머지는 지키세요','들어온 만큼 나가요 — 큰 지출은 미루세요'],官:['연금·고정 수입이 든든해요','책임질 돈이 늘어요 — 큰 지출은 미루세요'],鬼:['남이 꺼리는 일에서 돈이 나와요 — 감당할 만큼만','사고·병원비로 돈이 새요 — 보험부터 점검']};
+  const setOf=u=>k==='spouse'?((I0.mar==='M'||(!I0.mar&&u.from>=40))?PHM:(u.from>=55?PHS:null)):k==='child'?(u.from>=50?PHC:null):k==='job'?((cx.rest||u.from>=65)?PHJ:null):k==='money'?(u.from>=65?PHMo:null):null;
+  if(k==='spouse'&&cx.married&&!cx.single){CFG.spouse.n='부부운';}
+  if(k==='job'&&cx.rest)CFG.job.n='일·활동운';
   const relOfWhy=w=>{const m=/(삼합|반합|육합)/.exec(w||'');if(m)return m[1];if(/를 생|을 생/.test(w||''))return '생';if(/충극/.test(w||''))return '충극';return '';};
   const cls=v=>v>=3?0:v>=1.5?1:v>-0.5?2:3;
   const segs=[];
@@ -252,7 +277,7 @@ function lifeHtml(x,k,sex,age){
   const WHO={父:'문서',兄:'사람',孫:'재능',財:'돈',官:'직장',鬼:'골치 아픈',세:'내'};
   // 짧은 말(단어 나열)을 쉬운 완성 문장으로
   const SEN={'감당할 만큼만':'감당할 만큼만 하세요','검진 챙기기':'검진을 꼭 받으세요','검진·안전 필수':'검진과 안전은 꼭 챙기세요','결혼·연애 적기':'결혼·연애하기 딱 좋은 때예요','공부·자격증':'공부하고 자격증을 따 두세요',
-    '과로 금지':'무리해서 일하지 마세요','꼼꼼히 준비':'꼼꼼히 준비하세요','내 몫 챙기기':'내 몫은 꼭 챙기세요','데이트·여행':'데이트나 여행을 즐기세요','동업·모임에서 기회':'동업이나 모임에서 기회가 와요',
+    '과로 금지':'무리해서 일하지 마세요','꼼꼼히 준비':'꼼꼼히 준비하세요','일을 줄이세요':'일을 줄이세요','내 몫 챙기기':'내 몫은 꼭 챙기세요','데이트·여행':'데이트나 여행을 즐기세요','동업·모임에서 기회':'동업이나 모임에서 기회가 와요',
     '말 조심, 이직은 신중':'말을 조심하고, 이직은 신중히 하세요','보약·휴식':'보약 먹고 푹 쉬세요','보증·서명 조심':'보증과 서명은 조심하세요','보험부터 점검':'보험부터 점검하세요','부업·창업 수입':'부업이나 창업으로 돈이 들어와요',
     '빌려주기·보증 금지':'돈을 빌려주거나 보증 서지 마세요','새 사업은 작게':'새 사업은 작게 시작하세요','세금·벌금 조심':'세금과 벌금을 조심하세요','술·야식 줄이기':'술과 야식을 줄이세요','영업·사업 확장':'영업과 사업을 넓혀 보세요',
     '임신·출산·합격 소식':'임신·출산·합격 같은 기쁜 소식이 와요','잔소리 줄이기':'잔소리를 줄이세요','잠부터 챙기기':'잠부터 챙기세요','조건부터':'옮기기 전에 조건부터 따져 보세요','창업·전문직 도전':'창업이나 전문직에 도전해 보세요','직장에서 올리세요':'직장에서 몸값을 올리세요',
@@ -263,12 +288,13 @@ function lifeHtml(x,k,sex,age){
   const sen=t=>t.split(' — ').map(sen1).join(' ');
   const partner=w=>{const m=/가 (.+?)(와|를|을) (삼합|반합|육합|생|극)/.exec(w||'');if(!m)return '';const ks=[...m[1].matchAll(/\((.)\)/g)].map(z=>WHO[z[1]]).filter(Boolean);if(!ks.length)return '';const who=[...new Set(ks)].join('·');
     const gw=w=>{const c=w.charCodeAt(w.length-1)-0xAC00;return w+(c>=0&&c%28?'과':'와');};return m[3]==='생'?who+' 일에도 힘이 실려요.':m[3]==='극'?who+' 일과는 부딪히기 쉬워요.':who+' 일이 함께 풀려요.';};
-  const seen={},salSeen=new Set();
-  const textOf=u=>{const ph=(PH[k]||PH.total)[u.k]||[C.t[u.c],C.t[u.c]];const raw=u.c<=1?ph[0]:u.c===3?ph[1]:ph[0];
-    let s=u.c===2?sen1(raw.split(' — ')[0])+' 다만 크게 기대하진 마세요.':sen(raw);
-    const key=u.k+u.c;if(seen[key])return seen[key]+'세 때와 같은 흐름이에요. '+sen1(raw.split(' — ').pop());seen[key]=rg(u).replace('세','');
+  const seen={},salSeen=x._salSeen||(x._salSeen=new Set());let nMid=(x._nMid=(x._nMid||0)+1)-1,nSame=nMid;
+  const textOf=u=>{const ph=(setOf(u)||PH[k]||PH.total)[u.k]||[C.t[u.c],C.t[u.c]];const raw=u.c<=1?ph[0]:u.c===3?ph[1]:ph[0];
+    const MID=['다만 크게 기대하진 마세요.','욕심을 줄이면 무난해요.','큰 기대보다 꾸준함이 이겨요.','조금씩 쌓아 가면 돼요.','서두르지만 않으면 괜찮아요.'];
+    let s=u.c===2?sen1(raw.split(' — ')[0])+' '+MID[(nMid++)%MID.length]:sen(raw);
+    const key=u.k+u.c;if(seen[key]){const SAME=['세 때와 같은 흐름이 다시 와요.','세 때와 비슷한 때예요.','세 때 흐름이 한 번 더 와요.'];return seen[key]+SAME[(nSame++)%SAME.length]+' '+sen1(raw.split(' — ').pop());}seen[key]=rg(u).replace('세','');
     const pt=partner(u.why);if(pt&&document.body.classList.contains('pro'))s+=' '+pt;
-    const wantBad=u.c>=2;const sw=(window.Haeseok&&Haeseok.salWords?Haeseok.salWords(u.marks):[]).filter(z=>wantBad?/⚡|🌀/.test(z[0]):/🌸|🛫|🙏/.test(z[0])).filter(z=>!/🌸/.test(z[0])||k==='spouse'||k==='total'||k==='luck').filter(z=>!salSeen.has(z[1]));
+    const wantBad=u.c>=2;const sw=(window.Haeseok&&Haeseok.salWords?Haeseok.salWords(u.marks):[]).filter(z=>wantBad?/⚡|🌀/.test(z[0]):/🌸|🛫|🙏/.test(z[0])).filter(z=>!/🌸/.test(z[0])||((k==='spouse'||k==='total'||k==='luck')&&u.from<60)).filter(z=>!salSeen.has(z[1]));
     if(sw.length&&(k!=='money'||wantBad)){salSeen.add(sw[0][1]);s+=' '+({'🛫':'해외나 먼 곳으로 나갈 일도 생겨요.','🌸':'이성에게 인기가 많아져요.','⚡':'말다툼·사고·다칠 일도 조심하세요.','🌀':'돈 잃을 일이나 창피당할 일도 조심하세요.','🙏':'도와주는 귀한 사람이 나타나요.'}[sw[0][0]]||'');}
     return s;};
   const GL=[['아주 좋음','lv0'],['좋음','lv1'],['보통','lv2'],['조심','lv3']];
@@ -462,10 +488,10 @@ function drawSaved(){
   $('saved').innerHTML=list.map((s,i)=>'<button data-i="'+i+'">'+(s.name||'이름 없음')+' '+s.d.slice(2)+'</button>').join('');
 }
 $('saved').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const s=loadSaved()[+b.dataset.i];
-  $('nm').value=s.name;$('d').value=s.d;$('t').value=s.t;sex=s.sex;cal='S';$('adj').checked=s.adj!==false;
+  $('nm').value=s.name;$('d').value=s.d;$('t').value=s.t;sex=s.sex;cal='S';$('adj').checked=s.adj!==false;profSet(s);
   [...$('sex').children].forEach(x=>x.classList.toggle('on',x.dataset.v===sex));[...$('cal').children].forEach((x,i)=>x.classList.toggle('on',i===0));go();});
 $('save').addEventListener('click',()=>{if(!cur)return;const I=cur.input,p=v=>String(v).padStart(2,'0');
-  const item={name:I.name,d:I.y+'-'+p(I.m)+'-'+p(I.d),t:p(I.h)+':'+p(I.mi),sex:I.sex,adj:$('adj').checked};
+  const item={name:I.name,d:I.y+'-'+p(I.m)+'-'+p(I.d),t:p(I.h)+':'+p(I.mi),sex:I.sex,adj:$('adj').checked,mar:I.mar||'',kid:I.kid||'',job:I.job||''};
   const list=loadSaved().filter(s=>!(s.d===item.d&&s.t===item.t&&s.name===item.name));list.unshift(item);
   try{localStorage.setItem(KEY,JSON.stringify(list.slice(0,30)));$('save').textContent='저장했어요';setTimeout(()=>$('save').textContent='이 명국 저장',1500);}catch(e){$('save').textContent='저장할 수 없어요';}
   drawSaved();});
@@ -475,8 +501,8 @@ const AL_KEY='hongmyeongguk.alarm';
 const LN=(()=>{try{const C=window.Capacitor;if(!C||!(C.isNativePlatform&&C.isNativePlatform()))return null;return (C.Plugins&&C.Plugins.LocalNotifications)||(C.registerPlugin&&C.registerPlugin('LocalNotifications'))||null;}catch(e){return null;}})();
 function alLoad(){try{return JSON.parse(localStorage.getItem(AL_KEY)||'null');}catch(e){return null;}}
 function alStore(v){try{localStorage.setItem(AL_KEY,JSON.stringify(v));return true;}catch(e){return false;}}
-function profileOf(I){const p=v=>String(v).padStart(2,'0');return {name:I.name,d:I.y+'-'+p(I.m)+'-'+p(I.d),t:p(I.h)+':'+p(I.mi),sex:I.sex,adj:I.adj.a!==0||I.adj.why.length>0};}
-function baseFromProfile(pr){const [y,m,d]=pr.d.split('-').map(Number),[h,mi]=pr.t.split(':').map(Number);const ad=pr.adj?autoAdjust(y,m,d):{a:0,why:[]};const r=Gimun.calc(Solar,y,m,d,h,mi,{adjust:ad.a});r.input={y,m,d,h,mi,name:pr.name,sex:pr.sex,adj:ad};return r;}
+function profileOf(I){const p=v=>String(v).padStart(2,'0');return {name:I.name,d:I.y+'-'+p(I.m)+'-'+p(I.d),t:p(I.h)+':'+p(I.mi),sex:I.sex,adj:I.adj.a!==0||I.adj.why.length>0,mar:I.mar||'',kid:I.kid||'',job:I.job||''};}
+function baseFromProfile(pr){const [y,m,d]=pr.d.split('-').map(Number),[h,mi]=pr.t.split(':').map(Number);const ad=pr.adj?autoAdjust(y,m,d):{a:0,why:[]};const r=Gimun.calc(Solar,y,m,d,h,mi,{adjust:ad.a});r.input={y,m,d,h,mi,name:pr.name,sex:pr.sex,adj:ad,mar:pr.mar||'',kid:pr.kid||'',job:pr.job||''};return r;}
 function buildNotifications(al,days){
   const keep=base;base=baseFromProfile(al.profile);const cache={},out=[];
   const [hh,mm]=al.time.split(':').map(Number),now=new Date();
@@ -515,7 +541,7 @@ $('alSave').addEventListener('click',alApply);
 $('alOn').addEventListener('change',alApply);
 function openDay(date){
   const al=alLoad();if(!al)return;const pr=al.profile;
-  $('nm').value=pr.name||'';$('d').value=pr.d;$('t').value=pr.t;sex=pr.sex;cal='S';$('adj').checked=pr.adj!==false;
+  $('nm').value=pr.name||'';$('d').value=pr.d;$('t').value=pr.t;sex=pr.sex;cal='S';$('adj').checked=pr.adj!==false;profSet(pr);
   [...$('sex').children].forEach(x=>x.classList.toggle('on',x.dataset.v===sex));[...$('cal').children].forEach((x,i)=>x.classList.toggle('on',i===0));
   base=compute();mode='il';[...$('mode').children].forEach(x=>x.classList.toggle('on',x.dataset.v==='il'));
   $('yrWrap').style.display='none';$('ilWrap').style.display='block';$('ild').value=date;show();$('out').scrollIntoView();
@@ -663,7 +689,7 @@ alDraw();
   $('todayOut').addEventListener('click',e=>{const b=e.target.closest('button');if(b&&b.dataset.a==='il')openDayToday();});
   $('todayTop').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const pr=$('todayTop')._pr;
     if(b.dataset.a==='new'){$('nm').value='';$('form').scrollIntoView({behavior:'smooth'});return;}
-    if(b.dataset.a==='open'&&pr){$('nm').value=pr.name||'';$('d').value=pr.d;$('t').value=pr.t;sex=pr.sex;cal='S';$('adj').checked=pr.adj!==false;
+    if(b.dataset.a==='open'&&pr){$('nm').value=pr.name||'';$('d').value=pr.d;$('t').value=pr.t;sex=pr.sex;cal='S';$('adj').checked=pr.adj!==false;profSet(pr);
       [...$('sex').children].forEach(x=>x.classList.toggle('on',x.dataset.v===sex));[...$('cal').children].forEach((x,i)=>x.classList.toggle('on',i===0));go();}});
   // 명국을 세우면 다음에 앱을 열 때 바로 보이게 기억해 둬요
   $('go').addEventListener('click',()=>{if(base&&$('err').style.display==='none'){try{localStorage.setItem(LAST,JSON.stringify(profileOf(base.input)));}catch(e){}drawTop();}});

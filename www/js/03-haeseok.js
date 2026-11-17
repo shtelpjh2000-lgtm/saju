@@ -639,7 +639,7 @@
     if (q && q.with && q.with.length) { const pk = rel(q.with[0]), pn = NOUN[pk] || '', me = NOUN[k];
       s = q.type === '충극' ? me + ' 때문에 ' + jo2(pn, '이', '가') + ' 눌리기 쉬워요' : q.type === '생' ? me + ' 덕분에 ' + jo2(pn, '이', '가') + ' 잘 풀려요' : jo2(me, '과', '와') + ' ' + jo2(pn, '이', '가') + ' 함께 움직여요'; }
     else s = '이 달은 ' + jo2(NOUN[k], '이', '가') + ' 중심이에요';
-    s += '. ' + (g >= 1 ? DO[k] + '.' : g <= -1 ? DONT[k] + '.' : DO[k] + '. 다만 무리하지는 마세요.');
+    s += '. ' + (g >= 1 ? DO[k] + '.' : g <= -1 ? DONT[k] + '.' : DO[k] + '. ' + ['다만 무리하지는 마세요.', '욕심은 조금 덜어 두세요.', '천천히 해도 늦지 않아요.', '한 번 더 따져 보고 하세요.'][(p + n) % 4]);
     const d = rs.door && rs.door[p], goodD = ['生門', '開門', '休門', '景門'].includes(d); if (d && DOORW[d] && (g >= 1 ? goodD : g <= -1 ? !goodD : true)) s += ' ' + DOORW[d] + '.';
     const sw = salWords((rs.salH || {})[p]).filter(z => g <= 0 ? /⚡|🌀/.test(z[0]) : /🌸|🛫|🙏/.test(z[0]));
     if (sw.length && SALS[sw[0][0]]) s += ' ' + SALS[sw[0][0]];

@@ -101,7 +101,14 @@
     <div><label for="nm">이름 (선택)</label><input id="nm" placeholder="닉네임도 좋아요"></div>
     <div><label>성별</label><div class="seg" id="sex"><button data-v="M" class="on">남</button><button data-v="F">여</button></div></div>
   </div>
-  <div class="row">
+  <div class="row prof">
+    <div><label>결혼 <span style="font-weight:400">· 선택</span></label><div class="seg tog" id="mar"><button type="button" data-v="S">미혼</button><button type="button" data-v="M">기혼</button><button type="button" data-v="D">이혼·사별</button></div></div>
+  </div>
+  <div class="row prof">
+    <div><label>자녀 <span style="font-weight:400">· 선택</span></label><div class="seg tog" id="kid"><button type="button" data-v="N">없음</button><button type="button" data-v="Y">있음</button></div></div>
+    <div><label for="job">하는 일 <span style="font-weight:400">· 선택</span></label><select id="job"><option value="">고르지 않음</option><option value="emp">직장인</option><option value="biz">자영업·사업</option><option value="home">주부</option><option value="stu">학생</option><option value="seek">구직 중</option><option value="ret">은퇴</option></select></div>
+  </div>
+<div class="row">
     <div><label>달력</label><div class="seg" id="cal"><button data-v="S" class="on">양력</button><button data-v="L">음력</button><button data-v="LL">음력 윤달</button></div></div>
   </div>
   <div style="margin-bottom:12px">
