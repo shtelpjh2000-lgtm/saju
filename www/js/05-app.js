@@ -187,8 +187,31 @@ const ART={
   baekja:['백자도','아이들 뛰노는 그림은 집안에 웃음이 늘라는 뜻일세.'],
   sansin:['산신도','산신령이 호랑이를 거느리듯, 큰 어른의 도움이 자네를 지켜 주네.'],
   sasum:['녹귀도','사슴과 거북은 오래 사는 짐승일세. 서두르지 말고 길게 보게.'],
-  munja:['문자도','효·제·충·신, 옛사람이 글자로 새긴 도리일세. 기본을 지키면 탈이 없네.']
+  munja:['문자도','효·제·충·신, 옛사람이 글자로 새긴 도리일세. 기본을 지키면 탈이 없네.'],
+  // 무신도(굿당에 모시던 신 그림)
+  cheonja:['천자','하늘 임금이 자네를 내려다보네. 큰 운이 자네 쪽으로 기울었네.'],
+  jeseok:['제석','복과 명을 내려 주는 제석님일세. 곳간과 집안에 복이 드는 운일세.'],
+  bongung:['본궁','집과 터를 지키는 신일세. 집 일, 터 일이 든든해지네.'],
+  sanggun:['상군','장수 신이 칼을 쥐었네. 맞서야 할 때는 물러서지 말되, 칼끝은 다스리게.'],
+  gamchal:['감찰','잘잘못을 살피는 신일세. 서류와 말은 한 번 더 살피고 도장은 천천히 찍게.'],
+  suryeong:['수령','고을을 다스리는 신일세. 자리와 직함이 따라오는 운일세.'],
+  wonmang:['원망','맺힌 원을 풀어 주는 신일세. 묵은 서운함은 자네가 먼저 풀어야 길이 트이네.'],
+  jungjeon:['중전','안방을 지키는 중전 신일세. 짝과 집안의 화목이 복의 뿌리일세.'],
+  sangsa:['상사','그리움을 맡은 신일세. 마음 둔 사람이 있으면 숨기지 말게.'],
+  honga:['홍아','붉은 옷의 신이 액을 막아 서 있네. 큰 탈은 비켜 가니 무리만 말게.'],
+  changbu:['창부','재주와 흥을 맡은 창부신일세. 끼를 내보이면 사람과 돈이 모이네.'],
+  ilwol:['일월','해와 달을 받든 신일세. 어두운 때가 지나면 반드시 밝은 때가 오네.']
 };
+// 풀이 결과에 맞는 그림: 좋음(g) / 버거움(b). 같은 사람·같은 질문엔 같은 그림
+const pickArt=(L,seed)=>{if(!L||!L.length)return null;let h=7;for(const c of String(seed||''))h=(h*31+c.charCodeAt(0))>>>0;return L[h%L.length];};
+const SECART={sum:[['ssireum','cheonja','ilwol'],['ilwol','munyeo']],char:[['seohwa','munja','changbu'],['munja','gamchal']],money:[['jangteo','moran','jeseok'],['honga','gamchal']],
+  job:[['daejang','suryeong'],['sanggun','gamchal']],love:[['sinhaeng','hwajo','jungjeon'],['wonmang','sangsa']],health:[['jangsaeng','sasum'],['honga','sansin']],lucky:[['hojak','jeseok','ilwol'],['hojak','jeseok','ilwol']]};
+let _secX=null,_secB=null;
+function secArt(k){const L=SECART[k];if(!L||!base)return '';
+  try{if(_secB!==base){_secX=Haeseok.interpret(base,base.input.sex,ageNow(base));_secB=base;}}catch(e){return '';}
+  const key={sum:'total',love:'spouse'}[k]||k,n=_secX&&_secX.SC?_secX.SC[key]:0;
+  const I=base.input;return artFig(pickArt(n&&n<=2?L[1]:L[0],I.y+'-'+I.m+'-'+I.d+'-'+I.h+k));}
+window.__secArt=secArt;
 function artFig(k,cap){const a=ART[k];if(!a)return '';
   return '<figure class="art"><img src="img/art/'+k+'.jpg" alt="옛 그림 '+a[0]+'" loading="lazy" onerror="this.parentNode.remove()" onload="if(this.naturalWidth<500)this.classList.add(\'sm\')"><figcaption>'+(cap||a[1])+'</figcaption></figure>';}
 
@@ -1600,8 +1623,12 @@ alDraw();
     if(K.best)s+=' 길게 보면 앞으로 10년 중엔 <b>'+K.best.join('·')+'년</b>이 자네 해일세.';
     return ''+s;}
   const SCEN=['지금 움직이면 1년 뒤에 “그때 하길 참 잘했다” 할 걸세.','준비한 만큼 1년 뒤 손에 쥐는 게 있을 걸세.','서두르면 반쯤 만족이고, 석 달만 더 다지고 하면 훨씬 낫네.','지금 밀어붙이면 1년 뒤에 후회가 남기 쉽네. 대신 지금 준비해 두면 다음 좋은 때에 크게 쓰일 걸세.'];
-const TART={exam:['seodang','chaek'],jobget:['daejang','hojak'],jobmove:['haengsang','yeonso'],promo:['nongali','moran'],career:['daejang','munja'],invest:['tajak','moran'],money:['jangteo','moran'],estate:['giwa'],biz:['jumak','jusa'],partner:['jumak','cheonggeum'],loan:['jangteo'],love:['umulga','wolha'],reunion:['bbalrae','nojung'],marry:['sinhaeng','hwajo'],couple:['gilssam','hwajo'],people:['jumak','cheonggeum','nojung'],child:['gilssam','baekja'],health:['jeomsim','jangsaeng','sasum'],move:['naruteo','yeonso'],travel:['haengsang','yeonso'],law:['geom','jeomgwae'],gen:['ssireum','hojak'],caution:['nongali','munyeo','yeon'],samjae:['munyeo','sansin']};
-  const artOf=t=>{const L=TART[t];return L?L[hsh((lastQ||'')+t)%L.length]:null;};
+const TART={exam:[['seodang','chaek'],['gamchal']],jobget:[['daejang','hojak'],['sanggun','gamchal']],jobmove:[['haengsang','yeonso'],['honga','gamchal']],promo:[['suryeong','moran'],['nongali','sanggun']],career:[['daejang','munja'],['gamchal']],
+    invest:[['tajak','moran'],['gamchal','honga']],money:[['jangteo','moran','jeseok'],['honga','gamchal']],estate:[['giwa','bongung'],['gamchal']],biz:[['jumak','jusa','changbu'],['honga']],partner:[['cheonggeum','jumak'],['gamchal']],loan:[['jangteo'],['gamchal']],
+    love:[['umulga','wolha','sangsa'],['wonmang']],reunion:[['nojung','sangsa'],['wonmang','bbalrae']],marry:[['sinhaeng','hwajo','jungjeon'],['wonmang']],couple:[['gilssam','hwajo','jungjeon'],['wonmang']],people:[['cheonggeum','nojung','jumak'],['wonmang','geom']],
+    child:[['baekja','jeseok'],['honga','sansin']],health:[['jangsaeng','sasum','jeomsim'],['honga','sansin']],move:[['naruteo','yeonso','bongung'],['sansin']],travel:[['yeonso','haengsang'],['sansin']],law:[['geom','sanggun'],['gamchal','sanggun']],
+    gen:[['hojak','cheonja','ilwol'],['ilwol','munyeo']],caution:[['munyeo','gamchal','honga','sansin'],['munyeo','gamchal','honga','sansin']],samjae:[['munyeo','sansin','honga'],['munyeo','sansin','honga']]};
+  const artOf=(t,gi)=>{const L=TART[t];return L?pickArt(gi<=1?L[0]:L[1],(lastQ||'')+t):null;};
   function talk(t,D,gi,K){
     const kind=qkind(lastQ),act=ACT[t],sp=D.special==='caution'||D.special==='samjae',emo=EMO.test(lastQ||'');
     seed=hsh((lastQ||'')+t);
@@ -1613,11 +1640,11 @@ const TART={exam:['seodang','chaek'],jobget:['daejang','hojak'],jobmove:['haengs
       v=['👍','🙆','🤔','✋'][gi]+' <b>'+hage(D.v[gi]).replace(/아래 /g,'')+'</b>';}
     else v=D.e+' <b>'+K.Y+'년 '+(t==='gen'?'자네 운':unOf(D))+jo(t==='gen'?'운':unOf(D),'은','는')+' '+['아주 좋네','좋네','그저 그렇네','조심할 때일세'][gi]+'.</b> '+hage(D.v[gi].replace(/아래 /g,''));
     let h='<p class="dkOpen">'+link+opener(lastQ||'',kind)+'</p><p class="ansV">'+v+'</p>';
-    const fig=artFig(artOf((T[t]&&T[t].base)||t)||artOf(t));h+=fig;
+    const fig=artFig(artOf((T[t]&&T[t].base)||t,gi)||artOf(t,gi)); // 그림은 풀이 다 읽은 뒤(당부 앞)에
     const W=whenOf(K);
     if(kind==='where'&&!sp&&K.dir){const dd=K.dir.length?'🧭 <b>'+K.dir.join(', ')+'이 좋네.</b>'+(K.badDir&&K.badDir.length?' '+K.badDir.join(', ')+'은 피하게.':''):'🧭 <b>올해는 뚜렷하게 좋은 방향이 없네.</b> 방향보다 집 조건을 보게.';
       return '<p class="dkOpen">'+link+'방향을 묻는구먼. 어디 보자…</p><p class="ansV">'+dd+'</p><p>'+v+'</p><p>'+W+'</p><p>'+pv(['그리고 ','하나 더 일러두자면, '])+hage(plainTip(D.tips[0]))+'</p>';}
-    if(kind==='when'&&!sp)h='<p class="dkOpen">'+link+opener(lastQ||'',kind)+'</p><p class="ansV">'+D.e+' <b>'+(K.bestC?D.n+jo(D.n,'은','는')+' '+K.bestC+'일세.':D.n+jo(D.n,'은','는')+' 앞으로 몇 달은 센 때가 없네.')+'</b></p>'+fig+'<p>'+whenOf(K,1)+'</p><p>'+v+'</p>';
+    if(kind==='when'&&!sp)h='<p class="dkOpen">'+link+opener(lastQ||'',kind)+'</p><p class="ansV">'+D.e+' <b>'+(K.bestC?D.n+jo(D.n,'은','는')+' '+K.bestC+'일세.':D.n+jo(D.n,'은','는')+' 앞으로 몇 달은 센 때가 없네.')+'</b></p><p>'+whenOf(K,1)+'</p><p>'+v+'</p>';
     if(/이자|대출|빚|원리금/.test(lastQ||'')&&/estate|money|biz|invest|loan/.test(t))h+='<p>💸 이자 걱정 말인데, '+(K.bestC&&!/^내년/.test(K.bestC)&&gi<=1?K.bestC.replace(/\(.*\)/,'')+'까지만 버티게. 그때 풀리네. 새 대출은 늘리지 말게.':(K.bestC?'풀리는 때가 '+K.bestC.replace(/\(.*\)/,'')+jo(K.bestC.replace(/\(.*\)/,''),'이라','라')+' 이자 부담이 길어지네. ':'')+'지금 바로 대출 갈아타기나 일부 상환으로 이자부터 줄이게.')+'</p>';
     if(K.qm)h+='<p>📌 자네가 짚은 <b>음력 '+K.qm.m+'월</b>은 '+(K.qm.v>=0.8?'<b>좋은 달</b>일세. 그때 움직이게.':K.qm.v<=-0.4?'<b>피할 달</b>일세. 다른 달로 미루게.':'그저 그런 달일세. 더 좋은 달이 있네.')+'</p>';
     const calm=emo&&t==='gen';
@@ -1626,6 +1653,7 @@ const TART={exam:['seodang','chaek'],jobget:['daejang','hojak'],jobmove:['haengs
     if(K.dir&&K.dir.length&&!sp)h+='<p>🧭 방향으로는 <b>'+K.dir.join(', ')+'</b>이 좋네.'+(K.badDir&&K.badDir.length?' '+K.badDir.join(', ')+'은 피하게.':'')+'</p>';
     if(act&&!sp&&!(emo&&t==='gen'))h+='<p>🔮 '+pv(['이대로 가면 말일세, ','길게 보면, ','내 보기엔 '])+SCEN[gi]+'</p>';
     if(sp)h+='<p>🔎 조심할 것이랑 좋은 날은 아래 <b>자세한 풀이</b>에 적어 뒀네.</p>';
+    h+=fig;
     const priceTip=t==='estate_sell'&&/값|가격|내려|낮춰|깎/.test(lastQ||'')?'값을 더 내리지 말게. 내놓는 곳·조건을 바꾸고, 좋은 달에 다시 걸게.':null;
     h+='<p>💡 '+pv(['그러니 ','내 당부 하나 하지. ','딱 하나만 기억하게. '])+(priceTip?priceTip:emo&&t==='gen'?'오늘은 따뜻한 밥 한 끼 먹고 일찍 자게. 그리고 믿는 사람 한 명한테 털어놓게. 그게 제일 큰 부적일세. 많이 힘들면 혼자 참지 말고 꼭 도움을 청하게.':hage(plainTip(D.tips[0])))+'</p>';
     h+='<p class="dkEnd">'+(emo?'혼자 끙끙 앓지 말고, 답답하면 또 오게. 내 여기 있네.':pv(['또 궁금한 게 있으면 언제든 물어보게. 허허.','걱정은 반만 하고, 나머진 이 영감한테 맡기게.','내 말 한 귀에 담아 두게. 또 오게나.']))+'</p>';
@@ -1708,8 +1736,8 @@ const TART={exam:['seodang','chaek'],jobget:['daejang','hojak'],jobmove:['haengs
     try{const P=v=>String(v).padStart(2,'0'),iso=d=>d.getFullYear()+'-'+P(d.getMonth()+1)+'-'+P(d.getDate());const I=r.input;
       localStorage.setItem('hongmyeongguk.yeogo',JSON.stringify({d:I.y+'-'+P(I.m)+'-'+P(I.d),list:pr.filter(x=>x.c.a).map(x=>({s:iso(x.c.a),e:iso(x.c.b),txt:x.n+' — '+x.c.lab+', '+x.w}))}));}catch(e){}
     heroData={k:A[0],nick,punch,line:L[0].replace(/<[^>]+>/g,''),name:r.input.name||'',Y};
-    return '<p class="hPunch">'+punch+'</p><p class="hTitle"><small>'+Y+'년, 자네는</small><b>'+nick+'</b><small>일세.</small></p>'+artFig(A[0])+
-      L.map(x=>'<p class="hLine">'+x+'</p>').join('')+
+    return '<p class="hPunch">'+punch+'</p><p class="hTitle"><small>'+Y+'년, 자네는</small><b>'+nick+'</b><small>일세.</small></p>'+
+      L.map(x=>'<p class="hLine">'+x+'</p>').join('')+artFig(A[0])+
       (pr.length?'<div class="yeogo"><p class="ygH">영감의 예고</p>'+pr.map(x=>'<p class="ygI"><b>'+x.n+'</b><span>'+x.c.lab+'<br><small>'+x.w+'</small></span>'+dday(x.c)+'</p>').join('')+'<p class="ygN">그 달이 오면 아침 알림으로 일러 주겠네. (알림을 켜 두게)</p></div>':'')+
       '<button type="button" class="heroShare">이 풀이 카톡으로 보내기</button>';}
   window.__heroHtml=()=>{try{return heroHtml();}catch(e){console.error(e);return '';}};
