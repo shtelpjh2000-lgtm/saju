@@ -1,0 +1,84 @@
+/* 차분한 화면: 큰 글씨·단순한 색·만화 느낌 줄이기 (app.css 위에 덮어씀) */
+:root{--bg:#f6f2ea;--bg2:#f6f2ea;--card:#ffffff;--ink:#22201c;--mute:#6f685d;--line:#e4dccd;--acc:#8c2f23;--acc2:#f3e6d8;--gold:#b0862f;
+  --pink:#8c2f23;--pink2:#f3e6d8;--lav:#8c2f23;--lav2:#efe8dc;--red:#b23a2b;--shadow:none}
+@media(prefers-color-scheme:dark){:root{--bg:#121316;--bg2:#121316;--card:#1d1f24;--ink:#f1ede4;--mute:#a7a091;--line:#30333a;--acc:#d8b469;--acc2:#2b2a24;--gold:#d8b469;
+  --pink:#d8b469;--pink2:#2b2a24;--lav:#d8b469;--lav2:#26282d;--red:#e07a63;--shadow:none}}
+body{font-family:"Noto Sans KR","Pretendard","Apple SD Gothic Neo",sans-serif;font-size:18px;line-height:1.65;background:var(--bg)!important;letter-spacing:-.01em}
+main{padding:16px 14px 72px}
+h1{font-family:"Noto Serif KR",serif;font-weight:700;font-size:26px}h1 b{color:var(--acc);font-weight:700}
+.sub{font-size:15px}
+.hero svg{filter:none}
+.card{border-radius:14px;border:1px solid var(--line);box-shadow:none;padding:20px 18px}
+label{font-size:15px;color:var(--mute)}
+input,select{border-radius:10px;border:1.5px solid var(--line);font-size:18px;padding:14px}
+input:focus{border-color:var(--acc)}
+button{background:var(--acc)!important;color:#fff;border-radius:12px;box-shadow:none!important;font-size:18px;min-height:52px;font-family:inherit!important}
+@media(prefers-color-scheme:dark){button{color:#16171a}}
+button.sec,.tline button,#whoBar button,.qaBack,.proBar button,.sheetX{background:var(--lav2)!important;color:var(--ink)!important;min-height:0}
+.seg{border-radius:12px;border:1.5px solid var(--line);padding:4px;background:var(--bg)}
+.seg button{background:transparent!important;color:var(--mute)!important;border-radius:9px;min-height:46px;font-size:17px}
+.seg button.on{background:var(--acc)!important;color:#fff!important}
+@media(prefers-color-scheme:dark){.seg button.on{color:#16171a!important}}
+/* 12시 고르기: 동물 그림 빼고 글자만 크게 */
+.zhi{grid-template-columns:repeat(3,1fr)!important;gap:8px}
+.zhi button{background:var(--bg)!important;color:var(--ink)!important;border:1.5px solid var(--line);border-radius:10px;min-height:64px}
+.zhi button .e{display:none}
+.zhi button.on{background:var(--acc)!important;color:#fff!important;border-color:var(--acc)}
+@media(prefers-color-scheme:dark){.zhi button.on{color:#16171a!important}}
+/* 무엇을 볼까요: 그림 빼고 글자 크게 */
+#mode button{background:var(--bg)!important;color:var(--ink)!important;border:1.5px solid var(--line)!important;border-radius:12px!important;min-height:72px}
+#mode button .ic{display:none}
+#mode button .tt{font-family:inherit!important;font-size:20px;font-weight:700}
+#mode button.on{background:var(--acc)!important;color:#fff!important;border-color:var(--acc)!important}
+@media(prefers-color-scheme:dark){#mode button.on{color:#16171a!important}#mode button.on small{color:#16171a!important}}
+#mode button.on::after{display:none}
+/* 궁금한 것 목록: 한 줄씩 크게 */
+.qaH{font-size:24px}
+.qaI{border-radius:12px!important;border:1.5px solid var(--line)!important;box-shadow:none!important;background:var(--card)!important}
+.qaQ{background:transparent!important;color:var(--ink)!important;font-size:20px!important;font-weight:700;padding:20px 16px!important;min-height:66px}
+.qaQ .e{display:none!important}
+.qaI.open .qaQ{color:var(--acc)!important}
+.qaA,.qaA p,.rd p,.rdSec,#askOut p{font-size:18px;line-height:1.75}
+/* 도깨비 영감: 그림 대신 글자 도장 */
+.dkAv,.bub .av{font-size:0!important;display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;flex:0 0 44px;border-radius:50%;background:var(--acc);}
+.dkAv::after,.bub .av::after{content:"영감";font-family:"Noto Serif KR",serif;font-size:15px;font-weight:700;color:#fff}
+@media(prefers-color-scheme:dark){.dkAv::after,.bub .av::after{color:#16171a}}
+.dkHead b{font-size:22px;font-family:"Noto Serif KR",serif}
+.bub{border-radius:14px!important;box-shadow:none!important;border:1px solid var(--line)}
+.ansV{font-size:20px;line-height:1.7}
+.askChips button,#askChips button,.askChips3 button{background:var(--bg)!important;color:var(--ink)!important;border:1.5px solid var(--line)!important;border-radius:10px!important;font-size:17px;min-height:50px}
+.askFree input{font-size:18px}
+/* 더 보기 메뉴 */
+.mnH{font-size:22px}
+#mnGrid button{background:var(--bg)!important;color:var(--ink)!important;border:1.5px solid var(--line)!important;border-radius:12px!important;min-height:60px}
+#mnGrid button .mi{display:none}
+#mnGrid button b{font-size:18px}
+#mnGrid button.on{background:var(--acc)!important;color:#fff!important;border-color:var(--acc)!important}
+@media(prefers-color-scheme:dark){#mnGrid button.on{color:#16171a!important}}
+/* 아래 탭 줄 */
+.bnav{background:var(--card)!important;border-top:1px solid var(--line)}
+.bnav button{background:transparent!important;color:var(--mute)!important;font-size:15px}
+.bnav button.on{color:var(--acc)!important;font-weight:700}
+.rd h2,.rd h4{font-family:"Noto Serif KR",serif}
+.rdSec,.rdSec.top,.rdSec.lucky,.today,.rdHL,.lkT{background:var(--card)!important;border-color:var(--line)!important;box-shadow:none!important}
+.tdTitle{font-size:22px}
+#go{font-size:20px;min-height:60px}
+#whoBar{font-size:17px}
+.bnav{background:var(--card)!important;padding-top:0}
+.bnav .in{border-radius:0;box-shadow:none;border:0;background:transparent;padding:4px 0}
+.bnav button{min-height:52px;font-size:16px!important;white-space:nowrap}
+/* 대화: 말풍선을 화면 폭 가득, 글씨 크게 */
+.bub{font-size:18px}
+.bub.dk{display:block;border:0!important}
+.bub.dk .av{margin:0 0 8px}
+.bub.dk>div{background:var(--card)!important;border:1.5px solid var(--line)!important;border-radius:12px!important;padding:16px!important}
+.bub.me{background:var(--acc)!important;color:#fff;font-size:18px;border-radius:12px!important;padding:12px 16px!important}
+@media(prefers-color-scheme:dark){.bub.me{color:#16171a}}
+#askOut p{font-size:18px;line-height:1.8;margin:10px 0}
+#askOut .ansV,.ansV{font-size:20px;line-height:1.7}
+.askMore summary{color:var(--acc)!important;font-size:18px;padding:8px 0}
+.askFollow{gap:8px}
+.askFollow button{background:var(--bg)!important;color:var(--ink)!important;border:1.5px solid var(--line)!important;border-radius:10px!important;font-size:17px!important;padding:10px 14px!important;min-height:48px}
+#askOut h4{font-family:"Noto Serif KR",serif;font-weight:700;background:none;font-size:19px}
+.abOpt{border-radius:12px}.abOpt.win{border-color:var(--acc)}
+.dkOpen{color:var(--acc)!important}.qaA .card{border:0;padding:6px 0}

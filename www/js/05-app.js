@@ -209,7 +209,7 @@ function wbHtml(r,x,age){
   const w=Haeseok.wonbi(r,age,x.strong);const GL={2:['좋음','g2'],1:['무난·좋음','g1'],0:['보통','g0'],'-1':['주의','gm1']};const lab=g=>GL[g]||GL[0];
   const dir=p=>{const m=/\((.+)\)/.exec(PK[p]);return m?m[1]:'가운데';};
   let h='<p class="wbHead"><b>'+age+'세</b>는 홍국수 <b>'+NUM[w.X]+'</b>의 나이예요. '+(w.heav?'46세부터는 <b>천반</b>':'45세까지는 <b>지반</b>')+'에서 찾아요.</p>';
-  h+='<p>'+(w.pals.length?'자리: '+w.pals.map(p=>PK[p]).join(', '):'⚠️ 이 판의 '+(w.heav?'천반':'지반')+'에 '+NUM[w.X]+'이(가) 없어요. 수의 기운만으로 봤어요.')+'</p>';
+  h+='<p>'+(w.pals.length?'자리: '+w.pals.map(p=>PK[p]).join(', '):'이 판의 '+(w.heav?'천반':'지반')+'에 '+NUM[w.X]+'이(가) 없어요. 수의 기운만으로 봤어요.')+'</p>';
   const c=lab(w.g);h+='<p><span class="lp '+c[1]+'">'+c[0]+'</span> '+w.j.txt+'</p>';
   if(w.rels.length)h+='<p class="wbRel">작용 순서 (삼합 → 반합 → 육합 → 생 → 충극): '+w.rels.map(q=>q.type+' '+q.with.map(n=>NUM[n]).join('·')).join(' → ')+'</p>';
   h+='<table class="runs wbT"><tr><th>달</th><th>수</th><th>작용</th><th>흐름</th></tr>'+w.months.map(m=>{const c=lab(m.g);return '<tr><td>'+m.m+'월'+(m.which==='first'?'<small>선</small>':m.which==='second'?'<small>후</small>':'')+'</td><td>'+NUM[m.n]+'</td><td>'+m.txt.replace(/^\S+\s*/,'')+'</td><td class="'+c[1]+'">'+c[0]+'</td></tr>';}).join('')+'</table>';
@@ -598,7 +598,7 @@ alDraw();
     while((n=w.nextNode())){const v=n.nodeValue;let t=v.replace(HZRE,c=>HZ[c]);if(t!==v){t=t.replace(/([가-힣]+)\(\1\)/g,'$1');n.nodeValue=t;}}
   }
   const KW={世:['🙋','나의 자리'],財:['💰','재물·사업'],官:['🏢','직장·명예'],鬼:['⚡','시련·압박'],孫:['🌱','자녀·재능'],父:['📜','문서·도움'],兄:['🤝','친구·경쟁']};
-  const DOOR={休門:'🍀 좋은 문',生門:'🍀 좋은 문',開門:'🍀 좋은 문',景門:'✨ 드러나는 문',傷門:'⚠️ 조심',杜門:'⚠️ 조심',驚門:'⚠️ 조심',死門:'⚠️ 조심'};
+  const DOOR={休門:'🍀 좋은 문',生門:'🍀 좋은 문',開門:'🍀 좋은 문',景門:'✨ 드러나는 문',傷門:'조심',杜門:'조심',驚門:'조심',死門:'조심'};
   const dirOf=p=>{const m=/\((.+)\)/.exec(PK[p]);return m?m[1]+'쪽':'가운데';};
   const kw=r=>p=>KW[r.lqH[p]]||['🔮',r.lqH[p]];
   function curPalOf(r){const age=ageNow(r);return [1,2,3,4,5,6,7,8,9].find(p=>{const [a,b]=age<=45?r.ageE[p]:r.ageH[p];return age>=a&&age<=b;});}
@@ -672,10 +672,10 @@ alDraw();
   const shift=n=>{const v=ild.value?new Date(ild.value+'T12:00:00'):new Date();v.setDate(v.getDate()+n);ild.value=v.getFullYear()+'-'+P(v.getMonth()+1)+'-'+P(v.getDate());fire(ild);};
   stepper(ild,[{t:'‹',f:()=>shift(-1)},{t:'›',f:()=>shift(1)},{t:'오늘',c:'tx',f:()=>{const n=new Date();ild.value=n.getFullYear()+'-'+P(n.getMonth()+1)+'-'+P(n.getDate());fire(ild);}}]);
   $('yrWrap').querySelector('label').textContent='🎊 몇 년 운세를 볼까요?';
-  $('ilWrap').querySelector('label').textContent='📅 어느 날 운세를 볼까요?';
+  $('ilWrap').querySelector('label').textContent='어느 날 운세를 볼까요?';
   // 아래 고정 메뉴
   const nav=document.createElement('nav');nav.className='bnav';nav.setAttribute('aria-label','운세 종류');
-  nav.innerHTML='<div class="in"><button type="button" data-v="won">🔮 명국</button><button type="button" data-v="sin">🎊 신수</button><button type="button" data-v="il">☀️ 일진</button><button type="button" data-v="gh">💞 궁합</button><button type="button" data-v="jm">✍️ 작명</button><button type="button" data-v="dm">🌙 해몽</button></div>';nav.classList.add('six');
+  nav.innerHTML='<div class="in"><button type="button" data-v="won">명국</button><button type="button" data-v="sin">신수</button><button type="button" data-v="il">일진</button><button type="button" data-v="gh">궁합</button><button type="button" data-v="jm">작명</button><button type="button" data-v="dm">해몽</button></div>';nav.classList.add('six');
   document.body.appendChild(nav);
   const sync=()=>{[...nav.querySelectorAll('button')].forEach(b=>b.classList.toggle('on',b.dataset.v===mode));[...$('mode').children].forEach(b=>b.setAttribute('aria-pressed',b.dataset.v===mode?'true':'false'));};
   nav.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const t=$('mode').querySelector('button[data-v="'+b.dataset.v+'"]');if(t)t.click();});
@@ -956,7 +956,7 @@ alDraw();
       (withPick?'<button type="button" class="jmPkBtn'+(on?' on':'')+'" data-k="'+key+'">'+(on?'✅ 증서에 넣음':'📜 증서에 넣기')+'</button>':'')+'</div>'+
       '<p class="jmHun">'+esc(e.ha[1])+' '+e.ha[2]+' <small>'+e.ha[0]+'획</small> · '+esc(e.hb[1])+' '+e.hb[2]+' <small>'+e.hb[0]+'획</small></p>'+
       gyLine(e)+badges(e)+'<p class="jmTx">'+esc(nameText(e))+'</p>'+
-      (e.warn.length?'<p class="jmWarn">'+e.warn.map(w=>'⚠️ '+w[0]+': '+esc(w[1])).join('<br>')+'</p>':'')+
+      (e.warn.length?'<p class="jmWarn">'+e.warn.map(w=>''+w[0]+': '+esc(w[1])).join('<br>')+'</p>':'')+
       (e.alts&&e.alts.length>1?'<p class="jmAlt">같은 소리 다른 한자: '+e.alts.slice(1,5).map(x=>'<button type="button" class="jmAltB" data-i="'+i+'" data-ab="'+x.a+x.b+'">'+x.a+x.b+'</button>').join(' ')+'</p>':'')+
       '<details><summary>수리 풀이 자세히 보기</summary>'+detail(e)+'</details></div>';
   }
@@ -1546,7 +1546,7 @@ alDraw();
     if(K.days&&K.days.length)s+=pv([' 날을 딱 집어 달라면 ',' 가까운 날로는 ',' 달력에 표시해 두게. '])+'<b>'+K.days.slice(0,3).map(md).join(', ')+'</b>'+pv(['일세.','이 좋네.','이 길하네.']);
     if(K.badC&&K.badC.length)s+=pv([' 대신 '+K.badC.join(', ')+'은 손대지 말고 쉬어 가게.',' '+K.badC.join(', ')+'은 피하게. 그때 벌이면 고생일세.']);
     if(K.best)s+=' 길게 보면 앞으로 10년 중엔 <b>'+K.best.join('·')+'년</b>이 자네 해일세.';
-    return '📅 '+s;}
+    return ''+s;}
   const SCEN=['지금 움직이면 1년 뒤에 “그때 하길 참 잘했다” 할 걸세.','준비한 만큼 1년 뒤 손에 쥐는 게 있을 걸세.','서두르면 반쯤 만족이고, 석 달만 더 다지고 하면 훨씬 낫네.','지금 밀어붙이면 1년 뒤에 후회가 남기 쉽네. 대신 지금 준비해 두면 다음 좋은 때에 크게 쓰일 걸세.'];
   function talk(t,D,gi,K){
     const kind=qkind(lastQ),act=ACT[t],sp=D.special==='caution'||D.special==='samjae',emo=EMO.test(lastQ||'');
@@ -1606,13 +1606,13 @@ alDraw();
   function scoreOf(t,Y){const r=base;const rs=sinsu(yearGZ(Y));const yi=Haeseok.yearly(rs,r.input.sex,Y-r.input.y+1);
     const [lq]=topicLq(t);let ys=chartScore(rs,t).s;if(yi.out.hangPal&&lq.includes(rs.lqH[yi.out.hangPal]))ys+=0.6;return chartScore(r,t).s*0.35+ys*0.65;}
   function follow(t,D){const b=[];
-    if(!abQ&&D.special!=='caution'&&D.special!=='samjae')b.push(['when','📅 언제가 제일 좋아요?']);
-    b.push(yrOff===0?['next','⏭️ 내년은요?']:['now','⏮️ 올해는요?']);
-    if(t!=='caution')b.push(['caution','⚠️ 올해 조심할 건요?']);
-    if(!abQ&&ACT[t]&&!(t==='gen'&&EMO.test(lastQ||'')))b.push(['ab','⚖️ 할까, 말까?']);
-    b.push(['home','💬 다른 얘기 할래요']);
+    if(!abQ&&D.special!=='caution'&&D.special!=='samjae')b.push(['when','언제가 제일 좋아요?']);
+    b.push(yrOff===0?['next','내년은요?']:['now','올해는요?']);
+    if(t!=='caution')b.push(['caution','올해 조심할 건요?']);
+    if(!abQ&&ACT[t]&&!(t==='gen'&&EMO.test(lastQ||'')))b.push(['ab','할까, 말까?']);
+    b.push(['home','다른 얘기 할래요']);
     return '<div class="askFollow">'+b.map(([k,l])=>'<button type="button" data-f="'+k+'">'+l+'</button>').join('')+'</div>';}
-  const QUICK=[['money','💰 돈 얘기','요즘 돈 문제가 궁금해요'],['love','💕 사람·인연 얘기','사람·인연 운은 어때요?'],['promo','💼 일 얘기','일은 잘 풀릴까요?'],['health','🏥 몸 얘기','건강은 괜찮을까요?'],['caution','⚠️ 올해 조심할 것','올해 조심할 건 뭐예요?'],['ab','⚖️ 고민 골라 주게',''],['talk','🙋 그냥 털어놓기','']];
+  const QUICK=[['money','💰 돈 얘기','요즘 돈 문제가 궁금해요'],['love','💕 사람·인연 얘기','사람·인연 운은 어때요?'],['promo','💼 일 얘기','일은 잘 풀릴까요?'],['health','🏥 몸 얘기','건강은 괜찮을까요?'],['caution','올해 조심할 것','올해 조심할 건 뭐예요?'],['ab','고민 골라 주게',''],['talk','🙋 그냥 털어놓기','']];
   function greetHtml(){
     const age=ageNow(base);let L=['어이, 왔는가. 나는 이 집 기와 위에서 오백 년을 산 도깨비 영감일세. 자네 사주를 슬쩍 들여다봤네.'];
     try{const x=Haeseok.interpret(base,base.input.sex,age),cr=x.curRun;
@@ -1752,7 +1752,7 @@ alDraw();
     h+='<p class="note">기문둔갑 원명국과 '+Y+'년 신수국의 육친·문·괘로 계산한 참고용 풀이예요. 점수, 좋은 날·달, 방위는 앱이 정한 참고용 규칙이라 전통 해단과 다를 수 있어요. 중요한 결정은 상황을 함께 살펴서 하세요.</p>';
     if(histBase!==base){hist=[];histBase=base;}
     const sp=D.special==='caution'||D.special==='samjae';
-    const ans=abQ?decide(abQ,K):talk(t,D,gi,K);
+    const ans=(abQ?decide(abQ,K):talk(t,D,gi,K)).replace(/(<p[^>]*>)\s*(?:\p{Extended_Pictographic}\uFE0F?\s*)+/gu,'$1'); // 문단 앞 그림 글자는 빼고 글로만
     curHtml='<div class="bub me">'+escH(lastQ)+'</div><div class="bub dk"><span class="av">👹</span><div>'+ans+'<details class="askMore"'+(sp?' open':'')+'><summary>📜 자세한 풀이 보기</summary>'+hage(h)+'</details>'+follow(t,D)+'</div></div>';
     showAll();
   }
