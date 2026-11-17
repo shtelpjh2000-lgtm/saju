@@ -32,7 +32,7 @@
     const x=Q.find(q=>q.k===k),A=list.querySelector('.qaI[data-k="'+k+'"] .qaA');A.innerHTML='';
     if(x.move){const el=$(x.move);if(!el)return;if(!ph[x.move]){ph[x.move]=document.createComment(x.move);el.before(ph[x.move]);}A.appendChild(el);}
     else{const n=x.get();if(n.length)n.forEach(c=>A.appendChild(c));else A.innerHTML='<p class="note">이 명국에서는 따로 풀 내용이 없네.</p>';}
-    const QART={sum:'ssireum',char:'seohwa',money:'jangteo',job:'daejang',love:'sinhaeng',health:'jeomsim',lucky:'hojak'};
+    const QART={sum:'ssireum',char:'seohwa',money:'jangteo',job:'daejang',love:'sinhaeng',health:'jeomsim',lucky:'mudong'};
     if(QART[k])A.insertAdjacentHTML('afterbegin',artFig(QART[k]));
   }
   function setOpen(k){

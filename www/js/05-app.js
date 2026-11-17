@@ -1600,7 +1600,7 @@ alDraw();
     if(K.best)s+=' 길게 보면 앞으로 10년 중엔 <b>'+K.best.join('·')+'년</b>이 자네 해일세.';
     return ''+s;}
   const SCEN=['지금 움직이면 1년 뒤에 “그때 하길 참 잘했다” 할 걸세.','준비한 만큼 1년 뒤 손에 쥐는 게 있을 걸세.','서두르면 반쯤 만족이고, 석 달만 더 다지고 하면 훨씬 낫네.','지금 밀어붙이면 1년 뒤에 후회가 남기 쉽네. 대신 지금 준비해 두면 다음 좋은 때에 크게 쓰일 걸세.'];
-const TART={exam:['seodang','chaek'],jobget:['daejang','hojak'],jobmove:['haengsang','yeonso'],promo:['nongali','moran'],career:['daejang','munja'],invest:['tajak','moran'],money:['jangteo','moran'],estate:['giwa'],biz:['jumak','jusa'],partner:['jumak','cheonggeum'],loan:['jangteo'],love:['umulga','wolha'],reunion:['bbalrae','nojung'],marry:['sinhaeng','hwajo'],couple:['gilssam','hwajo'],people:['jumak','cheonggeum','nojung'],child:['gilssam','baekja'],health:['jeomsim','jangsaeng','sasum'],move:['naruteo','yeonso'],travel:['haengsang','yeonso'],law:['geom','jeomgwae'],gen:['ssireum','hojak'],caution:['nongali','munyeo','yeon'],samjae:['munyeo','sansin']};
+const TART={exam:['seodang','chaek'],jobget:['daejang'],jobmove:['haengsang','yeonso'],promo:['nongali'],career:['daejang'],invest:['tajak'],money:['jangteo'],estate:['giwa'],biz:['jumak','jusa'],partner:['jumak','cheonggeum'],loan:['jangteo'],love:['umulga','wolha'],reunion:['bbalrae','nojung'],marry:['sinhaeng','hwajo'],couple:['gilssam','hwajo'],people:['jumak','cheonggeum','nojung'],child:['gilssam','baekja'],health:['jeomsim','sasum'],move:['naruteo','yeonso'],travel:['haengsang','yeonso'],law:['geom','jeomgwae'],gen:['ssireum'],caution:['nongali','munyeo'],samjae:['munyeo']};
   const artOf=t=>{const L=TART[t];return L?L[hsh((lastQ||'')+t)%L.length]:null;};
   function talk(t,D,gi,K){
     const kind=qkind(lastQ),act=ACT[t],sp=D.special==='caution'||D.special==='samjae',emo=EMO.test(lastQ||'');
