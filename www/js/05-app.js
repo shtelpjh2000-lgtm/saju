@@ -678,7 +678,8 @@ alDraw();
     if(!base||mode==='il'||mode==='gh'||mode==='jm'||mode==='dm'){el.style.display='none';return;}
     try{el.innerHTML=html(base,base.input.name,false);el.style.display='block';}catch(e){el.style.display='none';}
   }
-  function drawTop(){
+  function drawTop(){ // 사주를 넣기 전에는 아무 운세도 보여 주지 않아요(지난번 사람 카드도 숨김)
+    {const el=$('todayTop');if(el)el.style.display='none';return;}
     const el=$('todayTop');const pr=loadLast()||(typeof alLoad==='function'&&alLoad()&&alLoad().profile);
     if(!pr){el.style.display='none';return;}
     try{el.innerHTML=html(baseFromProfile(pr),pr.name,true);el.style.display='block';el._pr=pr;}catch(e){el.style.display='none';}
