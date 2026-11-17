@@ -149,6 +149,30 @@ const hage=(function(){
   };
 })();
 
+// ── 옛 그림(김홍도 단원풍속도첩, 18세기·저작권 만료)으로 풀이에 느낌 더하기 ──
+const ART={
+  ssireum:['씨름','판 한가운데서 힘을 겨루는 사람처럼, 자네도 제 힘으로 판을 뒤집는 때가 오네.'],
+  seohwa:['서화감상','그림 한 폭을 두고도 보는 눈이 저마다 다르듯, 사람 속은 겉만 봐선 모르는 법일세.'],
+  jangteo:['장터길','장에 다녀오는 길, 짐이 무거울수록 셈이 넉넉하지. 돈은 발로 버는 걸세.'],
+  daejang:['대장간','쇠는 달궜을 때 두드려야 모양이 잡히네. 일도 때를 맞춰 쳐야 하지.'],
+  seodang:['서당','훈장 앞에서 훌쩍이던 아이도 결국 글을 깨치네. 공부는 버틴 사람 몫일세.'],
+  sinhaeng:['신행','가마 타고 시집가는 길처럼, 인연은 제때에 맞춰 찾아오네.'],
+  gilssam:['길쌈','한 올 한 올 베를 짜듯, 집안 일과 자식 일은 꾸준함이 전부일세.'],
+  jeomsim:['점심','일하다 둘러앉아 먹는 밥 한 그릇이 보약일세. 몸은 쉬어야 버티네.'],
+  naruteo:['나룻배','강을 건너려면 배 떠나는 때를 알아야 하네. 옮기는 데도 때가 있지.'],
+  giwa:['기와이기','기와를 한 장씩 올려야 집이 서듯, 집과 땅 일은 차근차근 쌓아야 하네.'],
+  mudong:['무동','장단이 맞으면 춤이 절로 나오지. 운이 맞는 달엔 몸을 움직이게.'],
+  jeomgwae:['점괘','옛사람들도 갈림길에선 괘를 뽑아 봤네. 오늘 하루 길도 한번 짚어 보세.'],
+  nongali:['논갈이','봄에 논을 갈아야 가을에 거두네. 지금 애쓴 게 다음 해 밥이 되지.'],
+  tajak:['벼타작','거둘 땐 거둬야 하네. 땀 흘린 만큼 곳간이 차는 법일세.'],
+  jumak:['주막','길 가다 주막에 들르듯, 사람 사이도 쉬어 가며 정이 드는 법일세.'],
+  umulga:['우물가','우물가에서 물 한 바가지 청하다 인연이 닿기도 하지. 먼저 말을 건네게.'],
+  haengsang:['행상','등짐 지고 길 떠나는 장사꾼처럼, 밖으로 나가야 길이 열리는 운일세.'],
+  bbalrae:['빨래터','묵은 때는 빨아야 빠지네. 묵은 감정도 털어 내야 다시 이어지지.']
+};
+function artFig(k){const a=ART[k];if(!a)return '';
+  return '<figure class="art"><img src="img/art/'+k+'.jpg" alt="김홍도 「'+a[0]+'」" loading="lazy" onerror="this.parentNode.remove()"><figcaption><b>김홍도 「'+a[0]+'」</b>'+a[1]+'</figcaption></figure>';}
+
 // ── 항목별 평생 나이 흐름 ──
 function lifeHtml(x,k,sex,age){
   const W=x.strong==='weak',SPK=sex==='F'?['官','鬼']:['財'];
@@ -1548,6 +1572,7 @@ alDraw();
     if(K.best)s+=' 길게 보면 앞으로 10년 중엔 <b>'+K.best.join('·')+'년</b>이 자네 해일세.';
     return ''+s;}
   const SCEN=['지금 움직이면 1년 뒤에 “그때 하길 참 잘했다” 할 걸세.','준비한 만큼 1년 뒤 손에 쥐는 게 있을 걸세.','서두르면 반쯤 만족이고, 석 달만 더 다지고 하면 훨씬 낫네.','지금 밀어붙이면 1년 뒤에 후회가 남기 쉽네. 대신 지금 준비해 두면 다음 좋은 때에 크게 쓰일 걸세.'];
+const TART={exam:'seodang',jobget:'daejang',jobmove:'haengsang',promo:'nongali',career:'daejang',invest:'tajak',money:'jangteo',estate:'giwa',biz:'jumak',partner:'jumak',loan:'jangteo',love:'umulga',reunion:'bbalrae',marry:'sinhaeng',couple:'gilssam',people:'jumak',child:'gilssam',health:'jeomsim',move:'naruteo',travel:'haengsang',law:'jeomgwae',gen:'ssireum',caution:'nongali',samjae:'jeomgwae'};
   function talk(t,D,gi,K){
     const kind=qkind(lastQ),act=ACT[t],sp=D.special==='caution'||D.special==='samjae',emo=EMO.test(lastQ||'');
     seed=hsh((lastQ||'')+t);
@@ -1559,10 +1584,11 @@ alDraw();
       v=['👍','🙆','🤔','✋'][gi]+' <b>'+hage(D.v[gi]).replace(/아래 /g,'')+'</b>';}
     else v=D.e+' <b>'+K.Y+'년 '+(t==='gen'?'자네 운':unOf(D))+jo(t==='gen'?'운':unOf(D),'은','는')+' '+['아주 좋네','좋네','그저 그렇네','조심할 때일세'][gi]+'.</b> '+hage(D.v[gi].replace(/아래 /g,''));
     let h='<p class="dkOpen">'+link+opener(lastQ||'',kind)+'</p><p class="ansV">'+v+'</p>';
+    const fig=artFig(TART[(T[t]&&T[t].base)||t]||TART[t]);h+=fig;
     const W=whenOf(K);
     if(kind==='where'&&!sp&&K.dir){const dd=K.dir.length?'🧭 <b>'+K.dir.join(', ')+'이 좋네.</b>'+(K.badDir&&K.badDir.length?' '+K.badDir.join(', ')+'은 피하게.':''):'🧭 <b>올해는 뚜렷하게 좋은 방향이 없네.</b> 방향보다 집 조건을 보게.';
       return '<p class="dkOpen">'+link+'방향을 묻는구먼. 어디 보자…</p><p class="ansV">'+dd+'</p><p>'+v+'</p><p>'+W+'</p><p>'+pv(['그리고 ','하나 더 일러두자면, '])+hage(plainTip(D.tips[0]))+'</p>';}
-    if(kind==='when'&&!sp)h='<p class="dkOpen">'+link+opener(lastQ||'',kind)+'</p><p class="ansV">'+D.e+' <b>'+(K.bestC?D.n+jo(D.n,'은','는')+' '+K.bestC+'일세.':D.n+jo(D.n,'은','는')+' 앞으로 몇 달은 센 때가 없네.')+'</b></p><p>'+whenOf(K,1)+'</p><p>'+v+'</p>';
+    if(kind==='when'&&!sp)h='<p class="dkOpen">'+link+opener(lastQ||'',kind)+'</p><p class="ansV">'+D.e+' <b>'+(K.bestC?D.n+jo(D.n,'은','는')+' '+K.bestC+'일세.':D.n+jo(D.n,'은','는')+' 앞으로 몇 달은 센 때가 없네.')+'</b></p>'+fig+'<p>'+whenOf(K,1)+'</p><p>'+v+'</p>';
     if(/이자|대출|빚|원리금/.test(lastQ||'')&&/estate|money|biz|invest|loan/.test(t))h+='<p>💸 이자 걱정 말인데, '+(K.bestC&&!/^내년/.test(K.bestC)&&gi<=1?K.bestC.replace(/\(.*\)/,'')+'까지만 버티게. 그때 풀리네. 새 대출은 늘리지 말게.':(K.bestC?'풀리는 때가 '+K.bestC.replace(/\(.*\)/,'')+jo(K.bestC.replace(/\(.*\)/,''),'이라','라')+' 이자 부담이 길어지네. ':'')+'지금 바로 대출 갈아타기나 일부 상환으로 이자부터 줄이게.')+'</p>';
     if(K.qm)h+='<p>📌 자네가 짚은 <b>음력 '+K.qm.m+'월</b>은 '+(K.qm.v>=0.8?'<b>좋은 달</b>일세. 그때 움직이게.':K.qm.v<=-0.4?'<b>피할 달</b>일세. 다른 달로 미루게.':'그저 그런 달일세. 더 좋은 달이 있네.')+'</p>';
     const calm=emo&&t==='gen';

@@ -82,3 +82,18 @@ button.sec,.tline button,#whoBar button,.qaBack,.proBar button,.sheetX{backgroun
 #askOut h4{font-family:"Noto Serif KR",serif;font-weight:700;background:none;font-size:19px}
 .abOpt{border-radius:12px}.abOpt.win{border-color:var(--acc)}
 .dkOpen{color:var(--acc)!important}.qaA .card{border:0;padding:6px 0}
+/* ── 읽기 편하게: 책 글씨(바탕체), 넉넉한 줄 간격, 금빛 제목 ── */
+:root{--paper:#fbf7ef;--goldT:#8a5a12}
+@media(prefers-color-scheme:dark){:root{--paper:#221b17;--goldT:#e2bf74}}
+#askOut p,.qaA p,.rd p,.rdSec p,.bub.dk>div,.sheet .detail p{font-family:"Gowun Batang","Noto Serif KR",serif;font-size:19px;line-height:1.95;word-break:keep-all;letter-spacing:-.005em}
+#askOut .ansV,.ansV,.qaA .ansV{font-family:"Gowun Batang","Noto Serif KR",serif;font-size:21px;font-weight:700;line-height:1.75;color:var(--goldT)}
+.dkOpen{color:var(--goldT)!important;font-weight:700}
+.bub.dk>div,.qaA .rdSec,.qaA .card,.today{background:var(--paper)!important}
+.bub.dk>div{border-left:3px solid var(--goldT)!important;padding:18px 18px 18px 20px!important}
+#askOut p+p,.qaA p+p{margin-top:14px}
+.qaA h4,.rd h4,#askOut h4{color:var(--goldT)!important;font-family:"Gowun Batang","Noto Serif KR",serif!important;font-weight:700;font-size:20px!important;background:none!important}
+/* 옛 그림 */
+figure.art{margin:18px 0 16px;padding:0}
+figure.art img{display:block;width:100%;height:auto;border-radius:10px;border:1px solid var(--line);filter:sepia(.18) contrast(1.02);box-shadow:0 2px 10px rgba(0,0,0,.18)}
+figure.art figcaption{font-family:"Gowun Batang","Noto Serif KR",serif;font-size:17px;line-height:1.8;color:var(--mute);margin-top:10px;word-break:keep-all}
+figure.art figcaption b{display:block;color:var(--goldT);font-size:15px;letter-spacing:.04em;margin-bottom:2px}
