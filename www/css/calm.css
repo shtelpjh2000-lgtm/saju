@@ -39,9 +39,9 @@ button.sec,.tline button,#whoBar button,.qaBack,.proBar button,.sheetX{backgroun
 .qaQ .e{display:none!important}
 .qaI.open .qaQ{color:var(--acc)!important}
 .qaA,.qaA p,.rd p,.rdSec,#askOut p{font-size:18px;line-height:1.75}
-/* 도깨비 영감: 그림 대신 글자 도장 */
+/* 도깨비: 그림 대신 글자 도장 */
 .dkAv,.bub .av{font-size:0!important;display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;flex:0 0 44px;border-radius:50%;background:var(--acc);}
-.dkAv::after,.bub .av::after{content:"영감";font-family:"Noto Serif KR",serif;font-size:15px;font-weight:700;color:#fff}
+.dkAv::after,.bub .av::after{content:"도깨비";font-family:"Noto Serif KR",serif;font-size:12.5px;letter-spacing:-.04em;font-weight:700;color:#fff}
 @media(prefers-color-scheme:dark){.dkAv::after,.bub .av::after{color:#16171a}}
 .dkHead b{font-size:22px;font-family:"Noto Serif KR",serif}
 .bub{border-radius:14px!important;box-shadow:none!important;border:1px solid var(--line)}

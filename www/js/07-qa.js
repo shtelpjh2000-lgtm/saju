@@ -21,7 +21,7 @@
     {k:'health',e:'🏥',q:'건강은 뭘 조심해야 해?',get:()=>copy(sec('health'))},
     {k:'lucky',e:'🍀',q:'운을 좋게 하려면 어떻게 해?',get:()=>copy(sec('lucky'))},
     {k:'today',e:'☀️',q:'오늘 나는 어때?',move:'todayOut'},
-    {k:'ask',e:'🙋',q:'도깨비 영감한테 직접 물어볼래',move:'askCard'},
+    {k:'ask',e:'🙋',q:'도깨비한테 직접 물어볼래',move:'askCard'},
     {k:'alarm',e:'🔔',q:'매일 아침 운세 알림 받을래',move:'alarmCard'},
   ];
   const list=card.querySelector('#qaList'),ph={};

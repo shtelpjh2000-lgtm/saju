@@ -368,7 +368,7 @@ function renderReading(r){
     if(HL.money)L.push('💰 <b>돈</b> · '+st(HL.money));if(HL.job)L.push('💼 <b>일</b> · '+st(HL.job));
     if(cr)L.push('⏳ <b>지금('+cr.from+(cr.to>cr.from?'~'+cr.to:'')+'세)</b> · '+cr.theme+'의 시기고, 흐름은 <b>'+(cr.g>=2?'좋네':cr.g>=1?'괜찮은 편일세':cr.g<=-1?'조심할 때일세':'보통일세')+'</b>');
     if(HL.luck)L.push('🧭 <b>지금 할 일</b> · '+st(HL.luck));
-    if(L.length)h+='<div data-sec="sum" class="bub dk rdTalk"><span class="av">👹</span><div><p class="ansV"><b>허허, 한마디로 정리해 주겠네.</b></p>'+L.map(t=>'<p>'+t+'</p>').join('')+'<p class="note">궁금한 게 있으면 위에서 이 영감한테 그냥 물어보게.</p></div></div>';}catch(e){console.error(e);}
+    if(L.length)h+='<div data-sec="sum" class="bub dk rdTalk"><span class="av">👹</span><div><p class="ansV"><b>허허, 한마디로 정리해 주겠네.</b></p>'+L.map(t=>'<p>'+t+'</p>').join('')+'<p class="note">궁금한 게 있으면 위에서 이 도깨비한테 그냥 물어보게.</p></div></div>';}catch(e){console.error(e);}
   const sec=k=>'<div data-sec="'+k+'" class="rdSec'+(k==='total'?' top':k==='lucky'?' lucky':'')+'"><h4>'+T[k]+'</h4>'+star(x.SC&&x.SC[k])+(x.HL&&x.HL[k]?'<p class="rdHL">'+x.HL[k]+'</p>':'')+(x.SH&&x.SH[k]&&x.SH[k].length?'<div class="sh">'+x.SH[k].map(s=>'<p>'+s+'</p>').join('')+'</div>':'')+lifeHtml(x,k,r.input.sex,ageNow(r))+x.S[k].map(t=>'<p'+(/^📌/.test(t)?' class="note"':'')+'>'+t+'</p>').join('')+'</div>';
   for(const k of Object.keys(T)){if(k==='lucky'||!x.S[k]||!x.S[k].length)continue;h+=sec(k);}
   const gc=g=>g>=2?['g2','좋음']:g>=1?['g1','무난·좋음']:g<=-1?['gm1','주의']:['g0','보통'];
@@ -656,7 +656,7 @@ alDraw();
     if(g<=-1)return {t:'주의',c:'g0',e:'🧐',w:'한 번 더 조심하면 괜찮은 날'};
     return {t:'보통',c:'g1',e:'😌',w:'평소처럼 지내면 좋은 날'};
   }
-  // 오늘의 그림: 그날 일진 지지가 나에게 어떤 육친인지로 고르는 그림과 영감 한마디
+  // 오늘의 그림: 그날 일진 지지가 나에게 어떤 육친인지로 고르는 그림과 도깨비 한마디
   const DAYART={財:['jangteo','오늘은 <em class="k">장터길</em> 날일세. 셈이 오가는 날이니 지갑은 단단히, 기회는 놓치지 말게.'],官:['daejang','오늘은 <em class="k">대장간</em> 날일세. 일이 몰려오니 쇠뿔도 단김에 빼게.'],
     父:['seodang','오늘은 <em class="k">서당</em> 날일세. 서류·공부·계약은 오늘 손대면 잘 풀리네.'],孫:['mudong','오늘은 <em class="k">무동</em> 날일세. 새 일 벌이고 즐기는 데 기운이 실리네.'],
     兄:['ssireum','오늘은 <em class="k">씨름</em> 날일세. 겨룰 일이 생기니 말다툼은 한 발 물러서게.'],鬼:['nongali','오늘은 <em class="k">논갈이</em> 날일세. 몸이 무거우니 무리 말고 묵묵히 하게.'],
@@ -1583,7 +1583,7 @@ alDraw();
     return s;
   }
   let prevT=null,curT=null,yrOff=0,lastQ='',abQ=null,hist=[],curHtml='',histBase=null;
-  // ── 대화형 답변: 기와 도깨비 영감 말투(하게체), 결론 먼저 ──
+  // ── 대화형 답변: 도깨비 말투(하게체), 결론 먼저 ──
   const escH=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
   const PLQ={父:'문서·도움',官:'직장·명예',財:'돈',孫:'재능·즐거움',兄:'경쟁·친구',鬼:'압박',世:'자네'};
   const PDOOR={休門:['쉬면서 도움을 받는 문',1],生門:['돈과 일이 자라는 문',1],開門:['새 길이 열리는 문',1],景門:['이름이 드러나는 문',0.5],杜門:['꽉 막힌 문',-1],傷門:['다툼이 생기는 문',-1],驚門:['놀랄 일이 생기는 문',-1],死門:['멈춰 서는 문',-1]};
@@ -1699,7 +1699,7 @@ const TART={exam:[['seodang','chaek'],['gamchal']],jobget:[['daejang','hojak'],[
     h+=fig;
     const priceTip=t==='estate_sell'&&/값|가격|내려|낮춰|깎/.test(lastQ||'')?'값을 더 내리지 말게. 내놓는 곳·조건을 바꾸고, 좋은 달에 다시 걸게.':null;
     h+='<p>💡 '+pv(['그러니 ','내 당부 하나 하지. ','딱 하나만 기억하게. '])+(priceTip?priceTip:emo&&t==='gen'?'오늘은 따뜻한 밥 한 끼 먹고 일찍 자게. 그리고 믿는 사람 한 명한테 털어놓게. 그게 제일 큰 부적일세. 많이 힘들면 혼자 참지 말고 꼭 도움을 청하게.':hage(plainTip(D.tips[0])))+'</p>';
-    h+='<p class="dkEnd">'+(emo?'혼자 끙끙 앓지 말고, 답답하면 또 오게. 내 여기 있네.':pv(['또 궁금한 게 있으면 언제든 물어보게. 허허.','걱정은 반만 하고, 나머진 이 영감한테 맡기게.','내 말 한 귀에 담아 두게. 또 오게나.']))+'</p>';
+    h+='<p class="dkEnd">'+(emo?'혼자 끙끙 앓지 말고, 답답하면 또 오게. 내 여기 있네.':pv(['또 궁금한 게 있으면 언제든 물어보게. 허허.','걱정은 반만 하고, 나머진 이 도깨비한테 맡기게.','내 말 한 귀에 담아 두게. 또 오게나.']))+'</p>';
     return h;}
   function labelOf(p){p=p.replace(/[?？!.~]+$/,'').trim();if(/^(그냥 )?말까|^안 ?할까|^말기/.test(p)||!p)return '안 하기';return p;}
   function decide(q,K){
@@ -1800,7 +1800,7 @@ const TART={exam:[['seodang','chaek'],['gamchal']],jobget:[['daejang','hojak'],[
     return c;}
   function wrap(g,t,x,y,mw,lh){const w=[...t];let line='',yy=y;for(const ch of w){if(g.measureText(line+ch).width>mw&&line){g.fillText(line,x,yy);line=ch;yy+=lh;}else line+=ch;}g.fillText(line,x,yy);}
   async function heroShare(){
-    const c=await heroImage();if(!c)return;const txt='도깨비 영감이 그러는데 올해 나는 「'+heroData.nick+'」래. 너는? https://shtelpjh2000-lgtm.github.io/saju/';
+    const c=await heroImage();if(!c)return;const txt='도깨비가 그러는데 올해 나는 「'+heroData.nick+'」래. 너는? https://shtelpjh2000-lgtm.github.io/saju/';
     const C=window.Capacitor;
     try{
       if(C&&C.isNativePlatform&&C.isNativePlatform()){const FS=(C.Plugins&&C.Plugins.Filesystem)||C.registerPlugin('Filesystem');const SH=(C.Plugins&&C.Plugins.Share)||C.registerPlugin('Share');
@@ -1813,7 +1813,7 @@ const TART={exam:[['seodang','chaek'],['gamchal']],jobget:[['daejang','hojak'],[
   }
   document.addEventListener('click',e=>{if(e.target.closest('.heroShare'))heroShare();});
   function greetHtml(){
-    const age=ageNow(base);let L=['어이, 왔는가. 오백 년 산 도깨비 영감 눈은 못 속이네.'];
+    const age=ageNow(base);let L=['어이, 왔는가. 오백 년 산 도깨비 눈은 못 속이네.'];
     try{const x=Haeseok.interpret(base,base.input.sex,age),cr=x.curRun;
       if(cr){if(cr.g>=1.5)L.push('요즘 <b>'+cr.theme+'</b> 쪽으로 기운이 차오르는 때라, 해 보고 싶은 게 많을 걸세. 이럴 땐 망설이지 말고 한 발 내디뎌 보게.');
         else if(cr.g>=0.5)L.push('요즘은 <b>'+cr.theme+'</b> 쪽으로 슬슬 바람이 부는 때일세. 차근차근 가면 손에 쥐는 게 있을 걸세.');
