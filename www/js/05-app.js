@@ -168,7 +168,26 @@ const ART={
   jumak:['주막','길 가다 주막에 들르듯, 사람 사이도 쉬어 가며 정이 드는 법일세.'],
   umulga:['우물가','우물가에서 물 한 바가지 청하다 인연이 닿기도 하지. 먼저 말을 건네게.'],
   haengsang:['행상','등짐 지고 길 떠나는 장사꾼처럼, 밖으로 나가야 길이 열리는 운일세.'],
-  bbalrae:['빨래터','묵은 때는 빨아야 빠지네. 묵은 감정도 털어 내야 다시 이어지지.']
+  bbalrae:['빨래터','묵은 때는 빨아야 빠지네. 묵은 감정도 털어 내야 다시 이어지지.'],
+  // 신윤복 풍속화
+  wolha:['월하정인','달빛 아래 마주 선 두 사람처럼, 마음은 서로 아는 법일세. 먼저 한마디 건네게.'],
+  munyeo:['무녀신무','굿판에서 액을 털어 내듯, 묵은 걱정은 털어 내야 새 복이 들어오네.'],
+  geom:['쌍검대무','칼춤도 장단이 맞아야 아름답지. 맞설 땐 맞서되 선은 지키게.'],
+  yeonso:['연소답청','봄나들이 나선 젊은이들처럼, 밖으로 나서면 새 바람이 부네.'],
+  jusa:['주사거배','술잔이 오가는 자리에 사람도 오가지. 다만 말은 아껴 두게.'],
+  cheonggeum:['청금상련','거문고 소리 아래 모인 벗들처럼, 좋은 사람 곁에 좋은 운이 붙네.'],
+  nojung:['노중상봉','길에서 우연히 마주친 인연이 큰 인연이 되기도 하지.'],
+  // 민화
+  hojak:['까치호랑이','까치가 울면 반가운 소식이 온다 했지. 기다리던 소식이 오는 운일세.'],
+  moran:['모란도','모란은 부귀를 뜻하는 꽃일세. 쌓아 둔 복이 피어나는 때가 오네.'],
+  chaek:['책거리','책 쌓인 서가처럼, 쌓아 온 공부와 서류가 자네 밑천일세.'],
+  yeon:['연화도','연꽃은 진흙 속에서도 맑게 피지. 어지러운 때일수록 마음을 맑게 두게.'],
+  hwajo:['화조도','꽃 사이에 짝지어 앉은 새처럼, 둘이 함께 가면 길이 덜 고되네.'],
+  jangsaeng:['장생도','해·소나무·학·거북은 오래 사는 것들일세. 몸을 아끼면 복이 오래가네.'],
+  baekja:['백자도','아이들 뛰노는 그림은 집안에 웃음이 늘라는 뜻일세.'],
+  sansin:['산신도','산신령이 호랑이를 거느리듯, 큰 어른의 도움이 자네를 지켜 주네.'],
+  sasum:['녹귀도','사슴과 거북은 오래 사는 짐승일세. 서두르지 말고 길게 보게.'],
+  munja:['문자도','효·제·충·신, 옛사람이 글자로 새긴 도리일세. 기본을 지키면 탈이 없네.']
 };
 function artFig(k,cap){const a=ART[k];if(!a)return '';
   return '<figure class="art"><img src="img/art/'+k+'.jpg" alt="옛 그림 '+a[0]+'" loading="lazy" onerror="this.parentNode.remove()"><figcaption>'+(cap||a[1])+'</figcaption></figure>';}
@@ -1581,7 +1600,8 @@ alDraw();
     if(K.best)s+=' 길게 보면 앞으로 10년 중엔 <b>'+K.best.join('·')+'년</b>이 자네 해일세.';
     return ''+s;}
   const SCEN=['지금 움직이면 1년 뒤에 “그때 하길 참 잘했다” 할 걸세.','준비한 만큼 1년 뒤 손에 쥐는 게 있을 걸세.','서두르면 반쯤 만족이고, 석 달만 더 다지고 하면 훨씬 낫네.','지금 밀어붙이면 1년 뒤에 후회가 남기 쉽네. 대신 지금 준비해 두면 다음 좋은 때에 크게 쓰일 걸세.'];
-const TART={exam:'seodang',jobget:'daejang',jobmove:'haengsang',promo:'nongali',career:'daejang',invest:'tajak',money:'jangteo',estate:'giwa',biz:'jumak',partner:'jumak',loan:'jangteo',love:'umulga',reunion:'bbalrae',marry:'sinhaeng',couple:'gilssam',people:'jumak',child:'gilssam',health:'jeomsim',move:'naruteo',travel:'haengsang',law:'jeomgwae',gen:'ssireum',caution:'nongali',samjae:'jeomgwae'};
+const TART={exam:['seodang','chaek'],jobget:['daejang','hojak'],jobmove:['haengsang','yeonso'],promo:['nongali','moran'],career:['daejang','munja'],invest:['tajak','moran'],money:['jangteo','moran'],estate:['giwa'],biz:['jumak','jusa'],partner:['jumak','cheonggeum'],loan:['jangteo'],love:['umulga','wolha'],reunion:['bbalrae','nojung'],marry:['sinhaeng','hwajo'],couple:['gilssam','hwajo'],people:['jumak','cheonggeum','nojung'],child:['gilssam','baekja'],health:['jeomsim','jangsaeng','sasum'],move:['naruteo','yeonso'],travel:['haengsang','yeonso'],law:['geom','jeomgwae'],gen:['ssireum','hojak'],caution:['nongali','munyeo','yeon'],samjae:['munyeo','sansin']};
+  const artOf=t=>{const L=TART[t];return L?L[hsh((lastQ||'')+t)%L.length]:null;};
   function talk(t,D,gi,K){
     const kind=qkind(lastQ),act=ACT[t],sp=D.special==='caution'||D.special==='samjae',emo=EMO.test(lastQ||'');
     seed=hsh((lastQ||'')+t);
@@ -1593,7 +1613,7 @@ const TART={exam:'seodang',jobget:'daejang',jobmove:'haengsang',promo:'nongali',
       v=['👍','🙆','🤔','✋'][gi]+' <b>'+hage(D.v[gi]).replace(/아래 /g,'')+'</b>';}
     else v=D.e+' <b>'+K.Y+'년 '+(t==='gen'?'자네 운':unOf(D))+jo(t==='gen'?'운':unOf(D),'은','는')+' '+['아주 좋네','좋네','그저 그렇네','조심할 때일세'][gi]+'.</b> '+hage(D.v[gi].replace(/아래 /g,''));
     let h='<p class="dkOpen">'+link+opener(lastQ||'',kind)+'</p><p class="ansV">'+v+'</p>';
-    const fig=artFig(TART[(T[t]&&T[t].base)||t]||TART[t]);h+=fig;
+    const fig=artFig(artOf((T[t]&&T[t].base)||t)||artOf(t));h+=fig;
     const W=whenOf(K);
     if(kind==='where'&&!sp&&K.dir){const dd=K.dir.length?'🧭 <b>'+K.dir.join(', ')+'이 좋네.</b>'+(K.badDir&&K.badDir.length?' '+K.badDir.join(', ')+'은 피하게.':''):'🧭 <b>올해는 뚜렷하게 좋은 방향이 없네.</b> 방향보다 집 조건을 보게.';
       return '<p class="dkOpen">'+link+'방향을 묻는구먼. 어디 보자…</p><p class="ansV">'+dd+'</p><p>'+v+'</p><p>'+W+'</p><p>'+pv(['그리고 ','하나 더 일러두자면, '])+hage(plainTip(D.tips[0]))+'</p>';}
