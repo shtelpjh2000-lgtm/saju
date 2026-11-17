@@ -516,8 +516,8 @@ function buildNotifications(al,days){
       const y=at.getFullYear(),m=at.getMonth()+1,d=at.getDate(),x=dayInfo(y,m,d,cache);
       const g=x.d.g,grade=g>=1.5?'좋음':g>=0.5?'무난·좋음':g<=-1?'주의':'보통';
       const p=v=>String(v).padStart(2,'0');
-      const ds=y+'-'+p(m)+'-'+p(d),yg=YG0&&YG0.d===al.profile.d?YG0.list.filter(z=>z.s===ds):[];const pre=yg.length?'📜 영감이 예고한 그 달이 왔네! '+yg.map(z=>z.txt).join(' / ')+'\n':'';
-      out.push({id:1000+i,title:(yg.length?'예고한 달 시작 · ':'')+(al.profile.name?al.profile.name+'님 ':'')+'오늘의 일진 · '+m+'월 '+d+'일 '+x.d.gz+'일 ('+grade+')',body:pre+x.d.summary,largeBody:pre+x.d.summary,schedule:{at,allowWhileIdle:true},isExactNotification:false,extra:{date:y+'-'+p(m)+'-'+p(d)}});
+      const ds=y+'-'+p(m)+'-'+p(d),yg=YG0&&YG0.d===al.profile.d?YG0.list.filter(z=>z.s===ds):[];const pre=yg.length?'🔨 도깨비 방망이 두드릴 달이 왔네! '+yg.map(z=>z.txt).join(' / ')+'\n':'';
+      out.push({id:1000+i,title:(yg.length?'도깨비 방망이 달 · ':'')+(al.profile.name?al.profile.name+'님 ':'')+'오늘의 일진 · '+m+'월 '+d+'일 '+x.d.gz+'일 ('+grade+')',body:pre+x.d.summary,largeBody:pre+x.d.summary,schedule:{at,allowWhileIdle:true},isExactNotification:false,extra:{date:y+'-'+p(m)+'-'+p(d)}});
     }
   }finally{base=keep;}
   return out;
@@ -1781,7 +1781,7 @@ const TART={exam:[['seodang','chaek'],['gamchal']],jobget:[['daejang','hojak'],[
     heroData={k:A[0],nick,punch,line:L[0].replace(/<[^>]+>/g,''),name:r.input.name||'',Y};
     return '<p class="hPunch">'+punch+'</p><p class="hTitle"><small>'+Y+'년, 자네는</small><b>'+nick+'</b><small>일세.</small></p>'+
       L.map(x=>'<p class="hLine">'+x+'</p>').join('')+artFig(A[0])+
-      (pr.length?'<div class="yeogo"><p class="ygH">영감의 예고</p>'+pr.map(x=>'<p class="ygI"><b>'+x.n+'</b><span>'+x.c.lab+'<br><small>'+x.w+'</small></span>'+dday(x.c)+'</p>').join('')+'<p class="ygN">그 달이 오면 아침 알림으로 일러 주겠네. (알림을 켜 두게)</p></div>':'')+
+      (pr.length?'<div class="yeogo"><p class="ygH">도깨비 방망이<small>뚝딱, 복이 나오는 달</small></p>'+pr.map(x=>'<p class="ygI"><b>'+x.n+'</b><span>'+x.c.lab+'<br><small>'+x.w+'</small></span>'+dday(x.c)+'</p>').join('')+'<p class="ygN">그 달이 오면 아침 알림으로 일러 주겠네. (알림을 켜 두게)</p></div>':'')+
       '<button type="button" class="heroShare">이 풀이 카톡으로 보내기</button>';}
   window.__heroHtml=()=>{try{return heroHtml();}catch(e){console.error(e);return '';}};
   // 공유용 그림(1080×1350)
