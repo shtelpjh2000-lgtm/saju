@@ -441,10 +441,12 @@ function renderYear(r){
   h+='<h4>분야별</h4>'+(proY||!o.fieldE?o.field:o.fieldE).map(t=>{const i=t.indexOf(' · ');return '<p><b>'+t.slice(0,i)+'</b> · '+t.slice(i+3)+'</p>';}).join('');
   h+='<h4>'+(proY?'행년 (그해의 큰일)':'올해 가장 큰 일')+'</h4>'+(proY||!o.hangE?o.hang:o.hangE).map(t=>'<p>'+t+'</p>').join('');
   const gc=g=>g>=2?['g2','좋음']:g>=1?['g1','무난·좋음']:g<=-1?['gm1','주의']:['g0','보통'];
-  h+='<h4>달별 운</h4><table class="runs mon"><tr><th>달</th><th>이렇게 하게</th><th>흐름</th></tr>';
+  h+='<h4>달별 운</h4><div class="mList">';
   const proV=false;let hidM=0;
-  for(const m of o.months){if(nowM&&m.m<nowM){hidM++;continue;}const c=gc(m.g);h+='<tr'+(m.m===nowM?' class="now"':'')+'><td>'+(proV?m.m:(t=>(t.y>yearSel?'내년 ':'')+t.m)(smon(yearSel,m.m)))+'월</td><td>'+(m.say||m.theme).split(/(?<=\.)\s+/).slice(0,2).join(' ')+'</td><td class="'+c[0]+'">'+c[1]+'</td></tr>';}
-  h+='</table>'+(hidM?'<p class="note">지난 '+hidM+'달은 숨겼어요.</p>':'');
+  for(const m of o.months){if(nowM&&m.m<nowM){hidM++;continue;}const c=gc(m.g);const sents=(m.say||m.theme).split(/(?<=\.)\s+/);const act=(sents[1]||sents[0]||'').replace(/\.$/,'');
+    const em={g2:'😊',g1:'🙂',g0:'😐',gm1:'⚠️'}[c[0]]||'😐';const lab=(t=>(t.y>yearSel?'내년 ':'')+t.m)(smon(yearSel,m.m))+'월';
+    h+='<div class="mI '+c[0]+(m.m===nowM?' now':'')+'"><b class="mM">'+lab+'</b><span class="mG">'+em+' '+c[1].replace('무난·좋음','무난')+'</span><p>'+act+'</p></div>';}
+  h+='</div>'+(hidM?'<p class="note">지난 '+hidM+'달은 숨겼어요.</p>':'');
   $('reading').innerHTML=toJane(hage(fitProf(h).replace(/(<\/h2>(?:<span class="badge">[^<]*<\/span>)?)/,'$1'+'<p class="dkOpen">'+yearSel+'년 자네 운을 펼쳐 보세. 이 도깨비가 한 해를 짚어 주지.</p>')));
 }
 

@@ -47,3 +47,17 @@ body{color:var(--ink)}
 #tUnknown.on small{color:#fff}
 /* 언제나 보이는 '처음으로' 단추 */
 #homeBtn{position:fixed;top:calc(env(safe-area-inset-top) + 10px);right:10px;z-index:300;padding:8px 14px;border-radius:999px;font-size:14px;font-weight:700;background:var(--card);color:var(--ink);border:2px solid var(--pink);box-shadow:var(--shadow)}
+/* 달별 운: 한 달 한 줄 카드 */
+.mList{display:flex;flex-direction:column;gap:8px;margin:6px 0 4px}
+.mI{display:grid;grid-template-columns:auto auto 1fr;align-items:center;gap:6px 10px;padding:10px 12px;border-radius:14px;background:var(--bg);border-left:7px solid var(--line)}
+.mI .mM{font-family:"Jua",sans-serif;font-weight:400;font-size:19px;min-width:44px}
+.mI .mG{font-size:14px;font-weight:700;white-space:nowrap}
+.mI p{margin:0;font-size:15px;line-height:1.45;word-break:keep-all}
+.mI.g2{border-left-color:#3cc98a}.mI.g2 .mG{color:#1f9c66}
+.mI.g1{border-left-color:#9be3bf}.mI.g1 .mG{color:#2e9d6d}
+.mI.g0{border-left-color:var(--line)}.mI.g0 .mG{color:var(--mute)}
+.mI.gm1{border-left-color:var(--pink);background:var(--pink2)}.mI.gm1 .mG{color:var(--red)}
+.mI.now{box-shadow:0 0 0 2px var(--lav)}
+@media(prefers-color-scheme:dark){.mI.g2 .mG{color:#6fe3ad}.mI.g1 .mG{color:#9be3bf}}
+@media(max-width:380px){.mI{grid-template-columns:auto 1fr}.mI p{grid-column:1/-1}}
+.mI,.mI p,.mI .mM{color:var(--ink)!important}.mI.g2 .mM{color:#1f9c66!important}.mI.gm1 .mM{color:var(--red)!important}@media(prefers-color-scheme:dark){.mI.g2 .mM{color:#6fe3ad!important}}
