@@ -1692,14 +1692,18 @@ alDraw();
   const plainTip=s=>s.replace(/위의 /g,'').replace(/아래 /g,'').replace(/<b>좋은 (날|달|방위|해)<\/b>/g,'좋은 $1');
   const md=([dt])=>(dt.getMonth()+1)+'월 '+dt.getDate()+'일('+'일월화수목금토'[dt.getDay()]+')';
   function reasonOf(K,gi,D){const lqn=q=>D&&D.g==='love'&&(q==='財'||q==='官')?'인연·배우자':PLQ[q];
-    const n=K.nat.s;let s=n>=0.95?'자네는 타고나기를 이쪽 복이 있는 사람이고, ':n<0.37?'타고난 복보다는 제 손으로 만들어 가는 운이라, ':'';
+    const n=K.nat.s,bn=(D&&D.n?D.n.replace(/운$/,''):'이 일');let s=n>=0.95?'자네는 타고나기를 <b>'+bn+'</b> 복이 있는 사람이고, ':n<0.37?'타고난 복보다는 제 손으로 만들어 가는 운이라, ':'';
     const hs=K.yr.hits.filter(x=>x.p!==5);const dv=x=>(PDOOR[K.rs.door[x.p]]||['',0])[1]-(K.rs.kong.has(x.p)?1:0);
     const h=gi<=1?hs.slice().sort((a,b)=>dv(b)-dv(a))[0]:hs.slice().sort((a,b)=>dv(a)-dv(b))[0];
     if(h){const d=PDOOR[K.rs.door[h.p]]||['',0];
       s+=K.Y+'년에는 <b>'+lqn(h.q)+' 기운</b>이 <b>‘'+d[0]+'’</b>에 들어앉아 있어서 '+(d[1]>0?'일이 술술 풀리는 쪽일세.':d[1]<0?'애쓴 만큼 안 나올 수 있네.':'드러나긴 하는데 힘은 보통일세.');
       if(K.rs.kong.has(h.p))s+=(d[1]<0?' 게다가':' 다만')+' 그 자리가 비어 있어서 기대보다 작게 올 수 있네.';
       if(gi>=2&&d[1]>0&&!K.rs.kong.has(h.p))s+=' 좋은 낌새는 있네만, 통틀어 보면 아직 힘이 모자라네.';
-      if(gi<=1&&d[1]<0)s+=' 그래도 다른 자리에서 받쳐 주는 힘이 더 크다네.';}
+      if(gi<=1&&d[1]<0)s+=' 그래도 다른 자리에서 받쳐 주는 힘이 더 크다네.';
+      {const est=D&&(D===T.estate||D.base==='estate'),sell=D&&D===T.estate_sell,rent=D&&D===T.estate_rent;const EFF=sell?['살 사람이 나타나고 값이 맞춰지기 쉽네','살 사람이 잘 안 나서서 값을 깎자는 말이 나오기 쉽네']:rent?['좋은 집·세입자를 만나고 계약이 순조롭기 쉽네','보증금·조건에서 실랑이가 생기기 쉽네']:est?['좋은 매물이 걸리고 계약이 순조롭기 쉽네','계약·값에서 막히기 쉬워서 서두르면 손해일세']:
+        ({money:['돈 들어올 길이 열려서 거래·매매가 잘 풀리기 쉽네','돈길이 막혀서 애쓴 만큼 돈이 안 붙기 쉽네'],work:['자리와 기회가 열려서 지원·이동이 잘 풀리기 쉽네','윗선·조직에서 막혀 결과가 더디게 나오기 쉽네'],
+          love:['사람 만날 길이 열려서 인연이 잘 닿기 쉽네','마음이 엇갈리기 쉬워서 서두르면 틀어지네'],life:['집안·몸 일이 순하게 풀리기 쉽네','집안·몸 일로 신경 쓸 게 생기기 쉽네'],flow:['막혔던 일이 하나씩 풀리기 쉽네','일이 한 번에 안 풀리고 돌아가기 쉽네']})[D&&D.g]||null;
+        if(EFF)s+=' 그래서 '+(K.Y===new Date().getFullYear()?'올해는':K.Y+'년에는')+' <b>'+(gi<=1?EFF[0]:EFF[1])+'</b>.';}}
     else s+=K.Y+'년에는 이 일의 기운이 뚜렷하지 않네. 운보다 자네 준비가 결과를 정할 걸세.';
     return s;}
   function whenOf(K,again){ // 시기는 꼭 필요한 만큼만: 제일 좋은 달 1, 가까운 날 2, 피할 달 1, (해를 고르는 질문만) 좋은 해 2
@@ -1707,7 +1711,8 @@ alDraw();
     if(K.bestC&&again)s+='그 달을 놓치지 말게.';
     else if(K.bestC)s+=pv(['때로 치면 ','날을 고르자면 ','시기는 말일세, '])+'<b>'+K.bestC+'</b>이 제일 좋네.';
     else s+='앞으로 몇 달은 딱히 센 달이 없네. 그럴 땐 날이라도 골라 쓰면 되네.';
-    if(K.days&&K.days.length)s+=pv([' 날을 딱 집어 달라면 ',' 가까운 날로는 ',' 달력에 표시해 두게. '])+'<b>'+K.days.slice(0,2).map(md).join(', ')+'</b>'+pv(['일세.','이 좋네.','이 길하네.']);
+    if(K.bestC&&K.bestDays&&K.bestDays.length)s+=pv([' 그 달 안에서 날을 딱 집자면 ',' 그 달 중에서도 ',' 달력에 표시해 두게. 그 달 '])+'<b>'+K.bestDays.map(md).join(', ')+'</b>'+pv(['일세.','이 좋네.','이 길하네.']);
+    else if(!K.bestC&&K.days&&K.days.length)s+=pv([' 날을 딱 집어 달라면 ',' 가까운 날로는 '])+'<b>'+K.days.slice(0,2).map(md).join(', ')+'</b>'+pv(['일세.','이 좋네.']);
     if(K.badC&&K.badC.length)s+=pv([' 대신 '+noR(K.badC[0])+'은 손대지 말고 쉬어 가게.',' '+noR(K.badC[0])+'은 피하게. 그때 벌이면 고생일세.']);
     if(K.best)s+=' 길게 보면 <b>'+K.best.slice(0,2).join('·')+'년</b>이 자네 해일세.';
     return ''+s;}
@@ -1720,6 +1725,8 @@ const TART={exam:[['seodang','chaek'],['gamchal']],jobget:[['daejang','hojak'],[
   const artOf=(t,gi)=>{const L=TART[t];return L?pickArt(gi<=1?L[0]:L[1],(lastQ||'')+t):null;};
   function talk(t,D,gi,K){
     const kind=qkind(lastQ),act=ACT[t],sp=D.special==='caution'||D.special==='samjae',emo=EMO.test(lastQ||'');
+    let flowP='';if(emo&&t!=='gen'&&base){try{const x=Haeseok.interpret(base,base.input.sex,ageNow(base)),age=ageNow(base),cr=x.curRun,nx=x.runs.find(u=>u.from>age&&u.g>=1),gm=monthsFor('gen').best;
+      flowP='<p>먼저 지친 흐름 얘기부터 하세. '+(cr&&cr.g<=-1?'지금은 <b>'+PLQ[cr.k]+'</b> 쪽 짐이 무거운 때라 지치는 게 당연하네. ':'크게 나쁜 흐름은 아니니 너무 걱정 말게. ')+(gm?'올해 안에선 <b>'+gm.lab+'</b>부터 숨통이 트이고, ':'')+(nx?'큰 흐름은 <b>'+nx.from+'세</b>부터 확 바뀌네.':'조금씩 나아지는 흐름일세.')+' 그다음 물은 일을 보세.</p>';}catch(e){}}
     seed=hsh((lastQ||'')+t);
     const link=prevT&&T[prevT]&&prevT!==t&&T[prevT].n!==D.n?pv(['아까 '+T[prevT].n+' 얘기에 이어서, 이번엔 '+D.n+' 말이구먼. ','그래, '+T[prevT].n+' 다음엔 '+D.n+jo(D.n,'이','가')+' 마음에 걸렸구먼. ']):'';
     let v;
@@ -1728,12 +1735,12 @@ const TART={exam:[['seodang','chaek'],['gamchal']],jobget:[['daejang','hojak'],[
     else if(kind==='yn'||(act&&kind!=='when')){const a=act||D.n;
       v=['👍','🙆','🤔','✋'][gi]+' <b>'+hage(D.v[gi]).replace(/아래 /g,'')+'</b>';}
     else v=D.e+' <b>'+K.Y+'년 '+(t==='gen'?'자네 운':unOf(D))+jo(t==='gen'?'운':unOf(D),'은','는')+' '+['아주 좋네','좋네','그저 그렇네','조심할 때일세'][gi]+'.</b> '+hage(D.v[gi].replace(/아래 /g,''));
-    let h='<p class="dkOpen">'+link+(profNote?profNote+' ':'')+opener(lastQ||'',kind)+'</p><p class="ansV">'+v+'</p>';
+    let h='<p class="dkOpen">'+link+(profNote?profNote+' ':'')+opener(lastQ||'',kind)+'</p>'+flowP+'<p class="ansV">'+v+'</p>';
     const fig=artFig(artOf((T[t]&&T[t].base)||t,gi)||artOf(t,gi)); // 그림은 풀이 다 읽은 뒤(당부 앞)에
     const W=whenOf(K);
     if(kind==='where'&&!sp&&K.dir){const dd=K.dir.length?'🧭 <b>'+K.dir.join(', ')+'이 좋네.</b>'+(K.badDir&&K.badDir.length?' '+K.badDir.join(', ')+'은 피하게.':''):'🧭 <b>올해는 뚜렷하게 좋은 방향이 없네.</b> 방향보다 집 조건을 보게.';
       return '<p class="dkOpen">'+link+'방향을 묻는구먼. 어디 보자…</p><p class="ansV">'+dd+'</p><p>'+v+'</p><p>'+W+'</p><p>'+pv(['그리고 ','하나 더 일러두자면, '])+hage(plainTip(D.tips[0]))+'</p>';}
-    if(kind==='when'&&!sp)h='<p class="dkOpen">'+link+opener(lastQ||'',kind)+'</p><p class="ansV">'+D.e+' <b>'+(K.bestC?D.n+jo(D.n,'은','는')+' '+K.bestC+'일세.':D.n+jo(D.n,'은','는')+' 앞으로 몇 달은 센 때가 없네.')+'</b></p><p>'+whenOf(K,1)+'</p><p>'+v+'</p>';
+    if(kind==='when'&&!sp)h='<p class="dkOpen">'+link+(profNote?profNote+' ':'')+opener(lastQ||'',kind)+'</p>'+flowP+'<p class="ansV">'+D.e+' <b>'+(K.bestC?D.n+jo(D.n,'은','는')+' '+K.bestC+'일세.':D.n+jo(D.n,'은','는')+' 앞으로 몇 달은 센 때가 없네.')+'</b></p><p>'+whenOf(K,1)+'</p><p>'+v+'</p>';
     if(/이자|대출|빚|원리금/.test(lastQ||'')&&/estate|money|biz|invest|loan/.test(t))h+='<p>💸 이자 걱정 말인데, '+(K.bestC&&!/^내년/.test(K.bestC)&&gi<=1?K.bestC.replace(/\(.*\)/,'')+'까지만 버티게. 그때 풀리네. 새 대출은 늘리지 말게.':(K.bestC?'풀리는 때가 '+K.bestC.replace(/\(.*\)/,'')+jo(K.bestC.replace(/\(.*\)/,''),'이라','라')+' 이자 부담이 길어지네. ':'')+'지금 바로 대출 갈아타기나 일부 상환으로 이자부터 줄이게.')+'</p>';
     if(K.qm)h+='<p>📌 자네가 짚은 <b>'+(K.qm.lun?'음력 ':'')+K.qm.m+'월</b>은 '+(K.qm.v>=0.8?'<b>좋은 달</b>일세. 그때 움직이게.':K.qm.v<=-0.4?'<b>피할 달</b>일세. 다른 달로 미루게.':'그저 그런 달일세. 더 좋은 달이 있네.')+'</p>';
     const calm=emo&&t==='gen';
@@ -1980,11 +1987,18 @@ const TART={exam:[['seodang','chaek'],['gamchal']],jobget:[['daejang','hojak'],[
     const good=goodC.map(c=>c.m),badm=badC.map(c=>c.m);K.good=good;K.badm=badm;K.goodC=goodC.map(lab);K.badC=badC.map(lab);K.bestC=goodC.length?lab(goodC.slice().sort((a,b)=>b.v-a.v)[0]):null;
     {const mm=/(음력\s*)?(1[0-2]|[1-9])\s*월/.exec(lastQ||'');if(mm){const m0=+mm[2];let lm=m0;if(!mm[1]){const f=[1,2,3,4,5,6,7,8,9,10,11,12].find(x=>smon(Y,x).m===m0);if(f)lm=f;}K.qm={m:m0,lun:!!mm[1],v:ms[lm-1][1]};}}
     h+='<h4>🗓️ 앞으로 좋은 달 · 조심할 달</h4><p>'+(goodC.length?'<b>좋은 달: '+K.goodC.join(', ')+'</b>. 중요한 일을 이때 하세요.':'앞으로 몇 달 안에는 특별히 강한 달이 없어요. 아래 좋은 날을 활용하세요.')+(badC.length?' 조심할 달: '+K.badC.join(', ')+'.':'')+'</p>';
+    // 그날 이 일에 맞는 정도(일진 육친·그날 칸)
+    const dcache={};const dayV=dt=>{try{const x=dayInfo(dt.getFullYear(),dt.getMonth()+1,dt.getDate(),dcache);const dp=x.d.p;const li=lq.indexOf(x.rs.lqH[dp]);const dn={子:1,丑:10,寅:3,卯:8,辰:5,巳:2,午:7,未:10,申:9,酉:4,戌:5,亥:6}[x.d.gz[1]],dq=Gimun.liuqin(dn,r.se),di=lq.indexOf(dq==='鬼'&&lq.includes('官')?'官':dq);const v=(di===0?2.2:di===1?1.0:topicLq(t)[1].includes(dq)?-1.2:0)+x.d.g*0.25+(li===0?0.8:li===1?0.4:0)+pScore(x.rs,dp,t)*0.6-(topicLq(t)[1].includes(x.rs.lqH[dp])?0.6:0);return [dt,v,x.d.gz];}catch(e){return null;}};
+    // 제일 좋은 달 안에서 좋은 날 2개(그 달과 날이 어긋나지 않게)
+    {const bc=goodC.length?goodC.slice().sort((a,b)=>b.v-a.v)[0]:null;K.bestDays=[];
+      if(bc){try{const sa=Lunar.fromYmd(bc.y,bc.m,1).getSolar(),sb=(bc.m===12?Lunar.fromYmd(bc.y+1,1,1):Lunar.fromYmd(bc.y,bc.m+1,1)).getSolar();
+        const t0=new Date();t0.setHours(12,0,0,0);let d=new Date(sa.getYear(),sa.getMonth()-1,sa.getDay(),12);const end=new Date(sb.getYear(),sb.getMonth()-1,sb.getDay(),12);if(d<=t0)d=new Date(t0.getTime()+864e5);
+        const L=[];for(;d<end;d=new Date(d.getTime()+864e5)){const v=dayV(d);if(v)L.push(v);}
+        const seen=new Set();for(const x of L.sort((a,b)=>b[1]-a[1])){if(seen.has(x[2][1]))continue;seen.add(x[2][1]);K.bestDays.push(x);if(K.bestDays.length>=2)break;}K.bestDays.sort((a,b)=>a[0]-b[0]);}catch(e){}}}
     // 좋은 날 (올해일 때만, 앞으로 60일)
     if(yrOff===0){
       const now=new Date();const cache={};const days=[];
-      for(let i=1;i<=60;i++){const dt=new Date(now.getFullYear(),now.getMonth(),now.getDate()+i);
-        try{const x=dayInfo(dt.getFullYear(),dt.getMonth()+1,dt.getDate(),cache);const dp=x.d.p;const li=lq.indexOf(x.rs.lqH[dp]);const dn={子:1,丑:10,寅:3,卯:8,辰:5,巳:2,午:7,未:10,申:9,酉:4,戌:5,亥:6}[x.d.gz[1]],dq=Gimun.liuqin(dn,r.se),di=lq.indexOf(dq==='鬼'&&lq.includes('官')?'官':dq);let v=(di===0?2.2:di===1?1.0:topicLq(t)[1].includes(dq)?-1.2:0)+x.d.g*0.25+(li===0?0.8:li===1?0.4:0)+pScore(x.rs,dp,t)*0.6-(topicLq(t)[1].includes(x.rs.lqH[dp])?0.6:0);days.push([dt,v,x.d.gz]);}catch(e){}}
+      for(let i=1;i<=60;i++){const dt=new Date(now.getFullYear(),now.getMonth(),now.getDate()+i);const v=dayV(dt);if(v)days.push(v);}
       const top=[];{const seen=new Set();for(const x of days.slice().sort((a,b)=>b[1]-a[1])){if(seen.has(x[2][1]))continue;seen.add(x[2][1]);top.push(x);if(top.length>=3)break;}}top.sort((a,b)=>a[0]-b[0]);K.days=top.slice().sort((a,b)=>b[1]-a[1]).slice(0,3).sort((a,b)=>a[0]-b[0]);
       if(D.special==='caution'){const low=days.slice().sort((a,c)=>a[1]-c[1]).slice(0,3).sort((a,c)=>a[0]-c[0]);h+='<h4>🚧 앞으로 60일 중 조심할 날</h4><p>'+low.map(([dt])=>'<b>'+(dt.getMonth()+1)+'월 '+dt.getDate()+'일('+'일월화수목금토'[dt.getDay()]+')</b>').join(', ')+'</p>';}
       h+='<h4>✨ 앞으로 60일 중 좋은 날</h4><p>'+top.map(([dt,v,gz])=>'<b>'+(dt.getMonth()+1)+'월 '+dt.getDate()+'일('+'일월화수목금토'[dt.getDay()]+')</b>').join(', ')+'</p><p class="note">'+(D.special==='caution'||D.special==='samjae'?'일진과 그날 운이 드러나는 칸의 문·자리를 따져 고른 날이에요.':'일진과 그날 운이 드러나는 칸에 '+D.n+' 기운이 있는지를 함께 따져 고른 날이에요.')+'</p>';
