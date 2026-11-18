@@ -4,8 +4,8 @@ const PN={1:'坎',2:'坤',3:'震',4:'巽',5:'中',6:'乾',7:'兌',8:'艮',9:'離
 const PK={1:'감궁(북)',2:'곤궁(남서)',3:'진궁(동)',4:'손궁(남동)',5:'중궁',6:'건궁(북서)',7:'태궁(서)',8:'간궁(북동)',9:'이궁(남)'};
 const FAM={1:'중남(가운데 아들)',2:'어머니',3:'장남',4:'장녀',6:'아버지',7:'소녀(막내딸)',8:'소남(막내아들)',9:'중녀(가운데 딸)',5:'중심'};
 const LQ={世:'나 자신, 가정의 자리예요.',兄:'형제·친구·동료, 경쟁자를 뜻해요. 많으면 재물이 나뉘기 쉬워요.',父:'부모·문서·학업·자격증·집을 뜻해요.',孫:'자녀·아랫사람·재능과 표현, 의식주의 넉넉함을 뜻해요.',財:'재물·사업, 남자에게는 아내·여자를 뜻해요.',官:'직장·명예·관직, 여자에게는 남편을 뜻해요.',鬼:'나를 누르는 힘으로 질병·관재·압박, 여자에게는 남자를 뜻해요.'};
-const DM={休門:'쉼과 회복, 귀인의 도움.',生門:'생산과 재물, 일이 자라나는 문.',傷門:'다툼과 상처, 경쟁.',杜門:'막힘과 숨김, 보안과 은둔.',景門:'드러남과 문서, 명예와 구설.',死門:'끝맺음과 정지, 조문·장례.',驚門:'놀람과 송사, 말로 인한 소란.',開門:'열림과 출발, 직장과 개업.'};
-const GU={生氣:'기운이 살아나는 길한 자리.',天宜:'하늘의 도움, 의료·치유와 인연.',絶體:'몸이 끊기는 흉한 자리, 건강 주의.',遊魂:'떠도는 기운, 이동·여행·변동.',禍害:'해로움과 구설이 생기기 쉬운 자리.',福德:'복과 덕이 모이는 길한 자리.',絶命:'가장 흉한 자리, 큰 일은 피하는 게 좋아요.',歸魂:'제자리로 돌아오는 기운, 본궁.'};
+const DM={休門:'쉼과 회복, 귀인의 도움.',生門:'생산과 재물, 일이 자라나는 문.',傷門:'경쟁과 승부, 말을 아끼면 이기는 문.',杜門:'막힘과 숨김, 보안과 은둔.',景門:'드러남과 문서, 명예와 구설.',死門:'끝맺음과 정리, 마무리하기 좋은 문.',驚門:'놀람과 송사, 말로 인한 소란.',開門:'열림과 출발, 직장과 개업.'};
+const GU={生氣:'기운이 살아나는 길한 자리.',天宜:'하늘의 도움, 의료·치유와 인연.',絶體:'잠시 숨 고르며 몸을 아끼면 좋은 자리.',遊魂:'떠도는 기운, 이동·여행·변동.',禍害:'말을 아끼면 무난한 자리.',福德:'복과 덕이 모이는 길한 자리.',絶命:'큰일은 잠시 미루면 좋은 자리.',歸魂:'제자리로 돌아오는 기운, 본궁.'};
 const EL_KO={水:'수',火:'화',木:'목',金:'금',土:'토'};
 let sex='M',cal='S',cur=null,base=null,mode='won',yearSel=new Date().getFullYear(),yInfo=null,dInfo=null;
 let LEG0='';
@@ -53,6 +53,26 @@ function profLine(I,age,q,hage){const cx=lifeCtx(I,age);const j=I.job||(cx.rest?
   return {e:P.e,n:P.n,t:s};}
 function kidLine(I,age,sc,hage){const k=I.kid;if(k==='N'&&(I.mar==='S'||I.mar==='D')&&age<45)return hage?'자녀 얘기는 짝을 만난 뒤에 보세. 지금은 자네 앞길이 먼저일세':'자녀 얘기는 짝을 만난 뒤에 봐요. 지금은 내 앞길이 먼저예요';if(k==='N')return age<50?(hage?'아이 소식은 아래 나이별 흐름의 좋은 때를 보게':'아이 소식은 아래 나이별 흐름의 좋은 때를 보세요'):(hage?'자식 대신 조카·제자 같은 아랫사람 복을 보게':'자식 대신 조카·제자 같은 아랫사람 복으로 봐요');
   if(k==='Y')return sc>=4?(hage?'자식 덕을 보는 사주일세':'자식 덕을 보는 사주예요'):(hage?'자식 일은 다그치기보다 들어 주는 게 먼저일세':'자식 일은 다그치기보다 들어 주는 게 먼저예요');return null;}
+// ── 부드러운 말투: 센 말은 약하게, 결론은 희망적으로(모든 풀이 화면에 씀) ──
+const SOFT=[
+  [/구설·사고·수술 조심/g,'말·안전 살피기'],[/말다툼·사고·다칠 일(?:도|을) 조심(?:하세요|하게)/g,'말과 안전만 살짝 챙기세요'],[/손실·근심·망신살? 조심/g,'돈 관리 살피기'],[/삶에 풍파가 한 번씩 크게 와요/g,'삶에 굴곡이 한 번씩 오지만 잘 넘겨요'],[/사고·수술·과로를 조심하세요/g,'안전과 과로만 챙기세요'],[/막혀 /g,'더뎌 '],
+  [/돈 잃을 일이나 창피당할 일(?:도|을) 조심하세요/g,'돈 관리만 꼼꼼히 하세요'],[/말다툼·사고/g,'말실수'],[/손해·창피당할 일/g,'작은 손해'],
+  [/사고나 수술 운이 있어요\. 운전과 칼을 조심하세요\./g,'안전에만 조금 신경 쓰면 돼요. 운전할 땐 여유를 가지세요.'],
+  [/몸에 상처·흉터가 생기기 쉬워요/g,'몸을 조금 아끼면 좋아요'],[/체력이 갑자기 떨어지는 때가 있어요/g,'가끔 쉬어 줘야 힘이 나요'],[/체력이 갑자기 꺾일 수 있어요/g,'가끔은 푹 쉬어 줘야 해요'],
+  [/조심할 때일세/g,'한 박자 쉬어 갈 때일세'],[/조심할 때예요/g,'한 박자 쉬어 갈 때예요'],[/조심할 (달|날|때)/g,'쉬어 갈 $1'],[/조심의 날/g,'쉬어 가는 날'],
+  [/구설·다툼·사고에 주의하고 무리하지 마세요/g,'말과 안전만 챙기면 무난해요'],
+  [/압박·시련이 오는 때예요/g,'단련되며 단단해지는 때예요'],[/압박·시련/g,'단련'],[/압박과 신경 쓸 일이 생기기 쉬운 해/g,'챙길 일이 조금 많은 해'],[/스트레스와 신경 쓸 일이 생기기 쉬운 해/g,'챙길 일이 조금 많은 해'],
+  [/사람 때문에 손해 보는 때예요/g,'사람 관계를 한번 정리하면 좋은 때예요'],
+  [/돈이 새는 때예요/g,'지출을 챙길 때예요'],[/돈이 새기 쉬운 때/g,'지출을 챙길 때'],[/돈이 새기 쉬워요/g,'지출만 챙기면 괜찮아요'],[/돈이 새요/g,'지출이 늘어요'],
+  [/막히는 때예요/g,'한 템포 쉬어 가는 때예요'],[/막히기 쉬워요/g,'조금 더딜 수 있어요'],[/막히기 쉬운/g,'조금 더딘'],[/막혀요/g,'조금 더뎌요'],[/막혀서/g,'더뎌서'],
+  [/애쓴 만큼 돈이 안 붙기 쉽/g,'돈이 조금 더디게 붙'],[/애쓴 만큼 안 나올 수 있/g,'조금 더디게 올 수 있'],
+  [/틀어지기 쉬워요/g,'살짝 어긋날 수 있어요'],[/꼬이기 쉬워요/g,'조금 더딜 수 있어요'],[/꼬여요/g,'조금 더뎌요'],
+  [/부딪히는 자리라, 한바탕 힘겨루기는 각오하게/g,'부딪히는 자리라 조금 바쁘겠지만, 잘 넘기면 크게 얻네'],[/마음고생이 있/g,'신경 쓸 일이 조금 있'],
+  [/운이 버거우니 판을 줄이고 실속부터 챙기게/g,'판을 알맞게 줄이고 실속을 챙기면 오히려 남는 해일세'],[/지키기가 버거워요/g,'지키는 게 더 중요해요'],
+  [/서두르면 헐값일세/g,'서두르지 않으면 제값 받네'],[/지금은 안 팔리네/g,'조금만 기다리면 임자가 나서네'],
+  [/흉해요/g,'약해요'],[/흉한/g,'약한'],[/위험한 자리/g,'쉬어 가는 자리'],[/지치는 자리/g,'숨 고르는 자리'],[/다툼 자리/g,'말조심 자리'],
+  [/⚠️ 주의/g,'🌱 쉬어 가기'],[/>주의</g,'>쉬어 가기<'],[/>조심</g,'>쉬어 가기<'],[/오늘 주의/g,'오늘 쉬어 가기'],[/>오늘 주의</g,'>오늘 쉬어 가기<']];
+function softTone(h){if(!h)return h;for(const [a,b] of SOFT)h=h.replace(a,b);return h;}
 function compute(){
   const dv=$('d').value,tv=$('t').value;
   if(!dv||!tv)throw new Error('생년월일과 시각을 입력해 주세요.');
@@ -422,7 +442,7 @@ function renderReading(r){
   const SSr=Haeseok.salsung(r),salAt=q=>[...new Set(SSr.filter(z=>z.pal===q).map(z=>z.base==='역마'?'마궁':z.base==='도화'?'도궁':z.base==='겁살'?'겁궁':'망궁'))];
   const aR=ageNow(r);for(const u of x.runs){if(u.to<aR)continue;const uf=Math.max(u.from,aR);const c=gc(u.g);const sl=salAt(u.gp);h+='<tr'+(u===x.curRun?' class="now"':'')+'><td>'+uf+(u.to>uf?'~'+u.to:'')+'</td><td>'+PN[u.p]+(u.lv==='천반'?'(天)':'')+'</td><td>'+NUM[u.n]+' '+u.k+'</td><td>'+u.theme+'<small class="mRel">'+(DKr[u.door]||'')+(u.gua?'·'+GKr[u.gua]:'')+(u.gp!==u.p?' ('+PN[u.gp]+' 지반 기준)':'')+(sl.length?' · '+sl.join('·'):'')+'</small></td><td class="'+c[0]+'">'+c[1]+'</td></tr>';}
   h+='</table></div>'+(x.S.lucky&&x.S.lucky.length?sec('lucky'):'')+'<p class="note" data-sec="total">이 풀이는 홍국수의 생극·합충과 世의 강약을 규칙으로 판단해 자동으로 만든 참고용이에요. 실제 감정은 삼합·삼형·신살·동처 관계를 함께 봐야 해서 전문가 풀이와 다를 수 있어요.</p>';
-  $('reading').innerHTML=fitProf(h);
+  $('reading').innerHTML=softTone(fitProf(h));
   {const sel=$('wbAge');if(sel)sel.addEventListener('change',()=>{$('wbOut').innerHTML=wbHtml(r,x,+sel.value);if(window.__hangulize)window.__hangulize($('wbOut'));});
    const dd=$('wbDay');if(dd)dd.addEventListener('change',()=>{if(!dd.value)return;$('wbDayOut').innerHTML=wbDayHtml(r,x,dd.value);if(window.__hangulize)window.__hangulize($('wbDayOut'));});}
   try{document.querySelectorAll('#mnGrid .ms').forEach(el=>{const k=el.dataset.s,n=x.SC&&x.SC[k];el.textContent=n?'★'.repeat(n)+'☆'.repeat(5-n):'';});}catch(e){}
@@ -447,7 +467,7 @@ function renderYear(r){
     const em={g2:'😊',g1:'🙂',g0:'😐',gm1:'⚠️'}[c[0]]||'😐';const lab=(t=>(t.y>yearSel?'내년 ':'')+t.m)(smon(yearSel,m.m))+'월';
     h+='<div class="mI '+c[0]+(m.m===nowM?' now':'')+'"><b class="mM">'+lab+'</b><span class="mG">'+em+' '+c[1].replace('무난·좋음','무난')+'</span><p>'+act+'</p></div>';}
   h+='</div>'+(hidM?'<p class="note">지난 '+hidM+'달은 숨겼어요.</p>':'');
-  $('reading').innerHTML=toJane(hage(fitProf(h).replace(/(<\/h2>(?:<span class="badge">[^<]*<\/span>)?)/,'$1'+'<p class="dkOpen">'+yearSel+'년 자네 운을 방망이로 두드려 보세. 뚝딱! 한 해가 이렇게 나오네.</p>')));
+  $('reading').innerHTML=toJane(hage(softTone(fitProf(h)).replace(/(<\/h2>(?:<span class="badge">[^<]*<\/span>)?)/,'$1'+'<p class="dkOpen">'+yearSel+'년 자네 운을 방망이로 두드려 보세. 뚝딱! 한 해가 이렇게 나오네.</p>')));
 }
 
 function renderDay(){
@@ -465,7 +485,7 @@ function renderDay(){
   for(let dd=1;dd<=last;dd++){const z=dayInfo(y,m,dd,cache);const g=z.d.g;const cls=g>=1.5?'c2':g>=0.5?'c1':g<=-1?'cm':'';
     h+='<button class="'+cls+(dd===d?' sel':'')+'" data-d="'+dd+'">'+dd+'<small>'+z.d.gz+'</small></button>';}
   h+='</div><p class="note">진한 초록 = 좋은 날, 연한 초록 = 무난한 날, 분홍 = 조심할 날이에요. 날짜를 누르면 그날 운이 나와요.</p>';
-  $('reading').innerHTML=toJane(hage(fitProf(h).replace(/(<\/h2>(?:<span class="badge">[^<]*<\/span>)?)/,'$1'+'<p class="dkOpen">오늘 하루는 어떤가, 방망이로 한번 두드려 보세. 뚝딱!</p>')));
+  $('reading').innerHTML=toJane(hage(softTone(fitProf(h)).replace(/(<\/h2>(?:<span class="badge">[^<]*<\/span>)?)/,'$1'+'<p class="dkOpen">오늘 하루는 어떤가, 방망이로 한번 두드려 보세. 뚝딱!</p>')));
   $('reading').querySelectorAll('.cal button').forEach(b=>b.addEventListener('click',()=>{const p=v=>String(v).padStart(2,'0');$('ild').value=y+'-'+p(m)+'-'+p(+b.dataset.d);show();}));
 }
 
@@ -1649,7 +1669,7 @@ alDraw();
   // ── 대화형 답변: 도깨비 말투(하게체), 결론 먼저 ──
   const escH=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
   const PLQ={父:'문서·도움',官:'직장·명예',財:'돈',孫:'재능·즐거움',兄:'경쟁·친구',鬼:'압박',世:'자네'};
-  const PDOOR={休門:['쉬면서 도움을 받는 문',1],生門:['돈과 일이 자라는 문',1],開門:['새 길이 열리는 문',1],景門:['이름이 드러나는 문',0.5],杜門:['꽉 막힌 문',-1],傷門:['다툼이 생기는 문',-1],驚門:['놀랄 일이 생기는 문',-1],死門:['멈춰 서는 문',-1]};
+  const PDOOR={休門:['쉬면서 도움을 받는 문',1],生門:['돈과 일이 자라는 문',1],開門:['새 길이 열리는 문',1],景門:['이름이 드러나는 문',0.5],杜門:['잠시 쉬어 가는 문',-1],傷門:['승부가 갈리는 문',-1],驚門:['놀랄 일이 생기는 문',-1],死門:['정리하고 마무리하는 문',-1]};
   const ACT={exam:'시험 도전',jobget:'지원',jobmove:'옮기는 것',promo:'승진 도전',invest:'투자',estate:'사고파는 것',biz:'시작하는 것',partner:'동업·계약',loan:'돈 빌려주는 것',love:'다가가는 것',marry:'결혼 이야기',reunion:'다시 연락하는 것',move:'이사',travel:'떠나는 것',law:'맞서는 것',gen:'그 일',child:'아이 계획',health:'치료·운동 시작'};
   const EMO=/힘들|힘드|지쳐|지친|지치|우울|속상|외로|외롭|불안|걱정|답답|짜증|슬퍼|슬프|무서|괴로|눈물|화나|화가|미치겠|막막|서러|서럽|후회/;
   function qkind(q){q=q||'';
@@ -1733,7 +1753,7 @@ alDraw();
     if(K.badC&&K.badC.length)s+=pv([' 대신 '+noR(K.badC[0])+'은 손대지 말고 쉬어 가게.',' '+noR(K.badC[0])+'은 피하게. 그때 벌이면 고생일세.']);
     if(K.best)s+=' 길게 보면 <b>'+K.best.slice(0,2).join('·')+'년</b>이 자네 해일세.';
     return ''+s;}
-  const SCEN=['지금 움직이면 1년 뒤에 “그때 하길 참 잘했다” 할 걸세.','준비한 만큼 1년 뒤 손에 쥐는 게 있을 걸세.','서두르면 반쯤 만족이고, 석 달만 더 다지고 하면 훨씬 낫네.','지금 밀어붙이면 1년 뒤에 후회가 남기 쉽네. 대신 지금 준비해 두면 다음 좋은 때에 크게 쓰일 걸세.'];
+  const SCEN=['지금 움직이면 1년 뒤에 “그때 하길 참 잘했다” 할 걸세.','준비한 만큼 1년 뒤 손에 쥐는 게 있을 걸세.','석 달만 더 다지고 하면 훨씬 크게 웃을 걸세.','지금 차곡차곡 준비해 두면, 다음 좋은 때에 크게 쓰일 걸세. 자네 복은 어디 안 가네.'];
 const TART={exam:[['seodang','chaek'],['gamchal']],jobget:[['daejang','hojak'],['sanggun','gamchal']],jobmove:[['haengsang','yeonso'],['honga','gamchal']],promo:[['suryeong','moran'],['nongali','sanggun']],career:[['daejang','munja'],['gamchal']],
     invest:[['tajak','moran'],['gamchal','honga']],money:[['jangteo','moran','jeseok'],['honga','gamchal']],estate:[['giwa','bongung'],['gamchal']],biz:[['jumak','jusa','changbu'],['honga']],partner:[['cheonggeum','jumak'],['gamchal']],loan:[['jangteo'],['gamchal']],
     love:[['umulga','wolha','sangsa'],['wonmang']],reunion:[['nojung','sangsa'],['wonmang','bbalrae']],marry:[['sinhaeng','hwajo','jungjeon'],['wonmang']],couple:[['gilssam','hwajo','jungjeon'],['wonmang']],people:[['cheonggeum','nojung','jumak'],['wonmang','geom']],
@@ -1750,8 +1770,9 @@ const TART={exam:[['seodang','chaek'],['gamchal']],jobget:[['daejang','hojak'],[
     if(sp)v=D.e+' '+hage(D.v[gi]);
     else if(emo&&t==='gen')v=gi<=1?'💛 <b>그래도 올해 자네 기운은 나쁘지 않네.</b> 지금 힘든 건 지나가는 바람일세. 조금만 숨 고르면 다시 일어설 수 있네.':'💛 <b>올해가 자네한테 좀 무거운 해라 그렇다네.</b> 자네가 못나서가 아닐세. 이럴 땐 큰일 벌이지 말고, 잘 먹고 잘 자는 게 제일일세.';
     else if(kind==='yn'||(act&&kind!=='when')){const a=act||D.n;
-      v=['👍','🙆','🤔','✋'][gi]+' <b>'+hage(D.v[gi]).replace(/아래 /g,'')+'</b>';}
-    else v=D.e+' <b>'+K.Y+'년 '+(t==='gen'?'자네 운':unOf(D))+jo(t==='gen'?'운':unOf(D),'은','는')+' '+['아주 좋네','좋네','그저 그렇네','조심할 때일세'][gi]+'.</b> '+hage(D.v[gi].replace(/아래 /g,''));
+      v=['👍','🙆','🙂','🌱'][gi]+' <b>'+hage(D.v[gi]).replace(/아래 /g,'')+'</b>';}
+    else v=D.e+' <b>'+K.Y+'년 '+(t==='gen'?'자네 운':unOf(D))+jo(t==='gen'?'운':unOf(D),'은','는')+' '+['아주 좋네','좋네','무난하네','한 박자 쉬어 갈 때일세'][gi]+'.</b> '+hage(D.v[gi].replace(/아래 /g,''));
+    if(gi>=2&&!sp)v+=gi===3?' <span class="hope">그래도 걱정 말게. 때를 기다리면 길은 반드시 열리네.</span>':' <span class="hope">차근차근 가면 충분히 해볼 만하네.</span>';
     let h='<p class="dkOpen">'+link+(profNote?profNote+' ':'')+opener(lastQ||'',kind)+'</p>'+flowP+'<p class="ansV">'+v+'</p>';
     const fig=artFig(artOf((T[t]&&T[t].base)||t,gi)||artOf(t,gi)); // 그림은 풀이 다 읽은 뒤(당부 앞)에
     const W=whenOf(K);
@@ -1859,7 +1880,7 @@ const TART={exam:[['seodang','chaek'],['gamchal']],jobget:[['daejang','hojak'],[
       (pr.length?'<div class="yeogo"><p class="ygH">도깨비 방망이<small>뚝딱, 복이 나오는 달</small></p>'+pr.map(x=>'<p class="ygI"><b>'+x.n+'</b><span>'+x.c.lab+'<br><small>'+x.w+'</small></span>'+dday(x.c)+'</p>').join('')+'<p class="ygN">그 달이 오면 아침 알림으로 일러 주겠네. (알림을 켜 두게)</p></div>':'')+
       (r.input&&r.input.noTime?'<p class="ygN">⏰ 태어난 시를 몰라서 낮 12시로 봤네. 시를 알게 되면 다시 넣어 보게.</p>':'')+
       '<button type="button" class="heroShare">이 풀이 카톡으로 보내기</button>';}
-  window.__heroHtml=()=>{try{return heroHtml();}catch(e){console.error(e);return '';}};
+  window.__heroHtml=()=>{try{return softTone(heroHtml());}catch(e){console.error(e);return '';}};
   // 공유용 그림(1080×1350)
   async function heroImage(){
     const d=heroData;if(!d)return null;const W=1080,H=1350,c=document.createElement('canvas');c.width=W;c.height=H;const g=c.getContext('2d');
@@ -2035,7 +2056,7 @@ const TART={exam:[['seodang','chaek'],['gamchal']],jobget:[['daejang','hojak'],[
     if(histBase!==base){hist=[];histBase=base;}
     const sp=D.special==='caution'||D.special==='samjae';
     const ans=(abQ?decide(abQ,K):talk(t,D,gi,K)).replace(/(<p[^>]*>)\s*(?:\p{Extended_Pictographic}\uFE0F?\s*)+/gu,'$1'); // 문단 앞 그림 글자는 빼고 글로만
-    curHtml='<div class="bub me">'+escH(lastQ)+'</div><div class="bub dk"><span class="av"></span><div>'+fitProf(ans)+'<details class="askMore"'+(sp?' open':'')+'><summary>📜 자세한 풀이 보기</summary>'+hage(fitProf(h))+'</details>'+follow(t,D)+'</div></div>';
+    curHtml='<div class="bub me">'+escH(lastQ)+'</div><div class="bub dk"><span class="av"></span><div>'+softTone(fitProf(ans))+'<details class="askMore"'+(sp?' open':'')+'><summary>📜 자세한 풀이 보기</summary>'+hage(softTone(fitProf(h)))+'</details>'+follow(t,D)+'</div></div>';
     showAll();
   }
   // 화면
