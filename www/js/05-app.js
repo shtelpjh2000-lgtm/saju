@@ -1759,7 +1759,7 @@ const TART={exam:[['seodang','chaek'],['gamchal']],jobget:[['daejang','hojak'],[
     const o=[];for(let k=0;k<12;k++){const y=lm+k>12?ly+1:ly,m=(lm+k-1)%12+1;let rsX;try{rsX=sinsu(yearGZ(y));}catch(e){continue;}
       const p=MPAL[m];const lh=lq.indexOf(rsX.lqH[p]),le=lq.indexOf(rsX.lqE[p]);let v=(lh===0?1.4:lh===1?0.8:le===0?0.6:le===1?0.3:0)+pScore(rsX,p,t)*0.6;if(badq.includes(rsX.lqH[p]))v-=0.8;
       let a=null,b=null;try{a=toD(Lunar.fromYmd(y,m,1).getSolar());b=toD((m===12?Lunar.fromYmd(y+1,1,1):Lunar.fromYmd(y,m+1,1)).getSolar());b.setDate(b.getDate()-1);}catch(e){}
-      o.push({y,m,v,a,b,lab:(()=>{const t=smon(y,m),Y0=new Date().getFullYear();return (t.y>Y0?'내년 ':'')+t.m+'월';})()});}
+      o.push({y,m,v,a,b,lab:(()=>{const t=smon(y,m),n=new Date(),Y0=n.getFullYear();if(t.y===Y0&&t.m===n.getMonth()+1)return '이번 달('+t.m+'월)';return (t.y>Y0?'내년 ':'')+t.m+'월';})()});}
     return {best:o.filter(c=>c.v>=0.8).sort((x,z)=>z.v-x.v)[0]||null,bad:o.filter(c=>c.v<=-0.4).sort((x,z)=>x.v-z.v)[0]||null};}
   function dday(c){if(!c||!c.a)return '';const t0=new Date();t0.setHours(0,0,0,0);if(c.a<=t0&&t0<=c.b)return '<span class="dd now">지금이 그 달</span>';return '<span class="dd">D-'+Math.round((c.a-t0)/864e5)+'</span>';}
   const YG=[['money','돈','돈이 들어오거나 큰 셈을 치를 달'],['promo','일','일·자리에서 기회가 오는 달'],['people','사람','귀한 사람·인연이 닿는 달']];
@@ -1923,7 +1923,7 @@ const TART={exam:[['seodang','chaek'],['gamchal']],jobget:[['daejang','hojak'],[
     if(yrOff===0){ms.forEach(([m,v])=>{if(m>=nowL.m)cand.push({y:Y,m,v});});
       if(nowL.m>=7){try{const rs2=sinsu(yearGZ(Y+1));mScore(rs2).forEach((v,i)=>{if(i+1<=nowL.m+3)cand.push({y:Y+1,m:i+1,v});});}catch(e){}}}
     else ms.forEach(([m,v])=>cand.push({y:Y,m,v}));
-    const Y0=new Date().getFullYear();const lab=c=>{const t=smon(c.y,c.m);return (yrOff!==0||t.y>Y0+1?t.y+'년 ':t.y>Y0?'내년 ':'')+t.m+'월';};
+    const Y0=new Date().getFullYear(),M0=new Date().getMonth()+1;const lab=c=>{const t=smon(c.y,c.m);if(yrOff===0&&t.y===Y0&&t.m===M0)return '이번 달('+t.m+'월)';return (yrOff!==0||t.y>Y0+1?t.y+'년 ':t.y>Y0?'내년 ':'')+t.m+'월';};
     const goodC=cand.filter(c=>c.v>=0.8).sort((a,b)=>b.v-a.v).slice(0,3).sort((a,b)=>a.y-b.y||a.m-b.m);
     const badC=cand.filter(c=>c.v<=-0.4).sort((a,b)=>a.v-b.v).slice(0,2).sort((a,b)=>a.y-b.y||a.m-b.m);
     const good=goodC.map(c=>c.m),badm=badC.map(c=>c.m);K.good=good;K.badm=badm;K.goodC=goodC.map(lab);K.badC=badC.map(lab);K.bestC=goodC.length?lab(goodC.slice().sort((a,b)=>b.v-a.v)[0]):null;
