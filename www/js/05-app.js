@@ -26,7 +26,7 @@ function seg(id,cb){$(id).addEventListener('click',e=>{const b=e.target.closest(
 seg('sex',v=>sex=v);seg('cal',v=>cal=v);
 seg('mode',v=>{mode=v;$('yrWrap').style.display=v==='sin'?'block':'none';$('ilWrap').style.display=v==='il'?'block':'none';if(base)show();});
 $('ild').addEventListener('change',()=>{if(base&&$('ild').value)show();});
-$('yr').addEventListener('change',()=>{const v=+$('yr').value;if(v>=1900&&v<=2100){yearSel=v;if(base)show();}});
+$('yr').addEventListener('change',()=>{const v=+$('yr').value;const lo=document.body.classList.contains('pro')?1900:new Date().getFullYear();if(v>=1900&&v<lo){$('yr').value=lo;yearSel=lo;if(base)show();}else if(v>=1900&&v<=2100){yearSel=v;if(base)show();}});
 
 // 결혼·자녀·하는 일(선택): 풀이 문장을 나이·처지에 맞게 고르는 데만 써요
 function profGet(){const v=id=>{const b=document.querySelector('#'+id+' button.on');return b?b.dataset.v:'';};return {mar:v('mar'),kid:v('kid'),job:($('job')&&$('job').value)||''};}
@@ -34,6 +34,12 @@ function profSet(p){p=p||{};['mar','kid'].forEach(id=>{const el=$(id);if(el)[...
 ['mar','kid'].forEach(id=>{const el=document.getElementById(id);if(el)el.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const on=b.classList.contains('on');[...el.children].forEach(x=>x.classList.remove('on'));if(!on)b.classList.add('on');});});
 // 처지: 기혼으로 볼지(입력 없으면 40세부터), 자녀 나이대(50세부터 손주), 일 대신 활동(은퇴·주부·65세부터)
 function lifeCtx(I,age){I=I||{};return {married:I.mar==='M'||(!I.mar&&age>=40),single:I.mar==='S'||I.mar==='D',senior:age>=50,noKid:I.kid==='N',rest:I.job==='ret'||I.job==='home'||(!I.job&&age>=65)};}
+// 기본정보(결혼·나이)에 안 맞는 말 걸러 내기: 기혼이거나 55세 이상이면 '이성 인기·새 인연' 같은 말을 빼고 부부·집안 말로
+function fitProf(h){if(!base||!h)return h;const I=base.input||{},age=ageNow(base),cx=lifeCtx(I,age);const off=(cx.married&&!cx.single)||age>=55;if(!off)return h;
+  h=h.replace(/돈·이성 문제/g,'돈 문제').replace(/직장·남자 문제/g,'직장 일').replace(/재물·사업·이성/g,'재물·사업').replace(/직장·승진·명예·이성/g,'직장·승진·명예')
+   .replace(/\s*이성에게 인기가 많아(?:져요|지네)\./g,'').replace(/\s*이성 인기도? ?따라와요\./g,'').replace(/[,·]?\s*이성 인기/g,'');
+  if(cx.married&&!cx.single)h=h.replace(/<p>인연은 [^<]*<\/p>/g,'').replace(/짝으로는 /g,'배우자로는 ').replace(/이성 · 배우자 기운이 나와 잘 맞아 인연이 생기거나 부부 사이가 가까워지는 해예요\./g,'부부 · 배우자 기운이 나와 잘 맞아 부부 사이가 가까워지는 해예요.').replace(/<b>이성<\/b> · 배우자 기운이 나와 잘 맞아 인연이 생기거나 부부 사이가 가까워지는 해예요\./g,'<b>부부</b> · 배우자 기운이 나와 잘 맞아 부부 사이가 가까워지는 해예요.');
+  return h;}
 function compute(){
   const dv=$('d').value,tv=$('t').value;
   if(!dv||!tv)throw new Error('생년월일과 시각을 입력해 주세요.');
@@ -379,7 +385,7 @@ function renderReading(r){
   const SSr=Haeseok.salsung(r),salAt=q=>[...new Set(SSr.filter(z=>z.pal===q).map(z=>z.base==='역마'?'마궁':z.base==='도화'?'도궁':z.base==='겁살'?'겁궁':'망궁'))];
   for(const u of x.runs){const c=gc(u.g);const sl=salAt(u.gp);h+='<tr'+(u===x.curRun?' class="now"':'')+'><td>'+u.from+(u.to>u.from?'~'+u.to:'')+'</td><td>'+PN[u.p]+(u.lv==='천반'?'(天)':'')+'</td><td>'+NUM[u.n]+' '+u.k+'</td><td>'+u.theme+'<small class="mRel">'+(DKr[u.door]||'')+(u.gua?'·'+GKr[u.gua]:'')+(u.gp!==u.p?' ('+PN[u.gp]+' 지반 기준)':'')+(sl.length?' · '+sl.join('·'):'')+'</small></td><td class="'+c[0]+'">'+c[1]+'</td></tr>';}
   h+='</table></div>'+(x.S.lucky&&x.S.lucky.length?sec('lucky'):'')+'<p class="note" data-sec="total">이 풀이는 홍국수의 생극·합충과 世의 강약을 규칙으로 판단해 자동으로 만든 참고용이에요. 실제 감정은 삼합·삼형·신살·동처 관계를 함께 봐야 해서 전문가 풀이와 다를 수 있어요.</p>';
-  $('reading').innerHTML=h;
+  $('reading').innerHTML=fitProf(h);
   {const sel=$('wbAge');if(sel)sel.addEventListener('change',()=>{$('wbOut').innerHTML=wbHtml(r,x,+sel.value);if(window.__hangulize)window.__hangulize($('wbOut'));});
    const dd=$('wbDay');if(dd)dd.addEventListener('change',()=>{if(!dd.value)return;$('wbDayOut').innerHTML=wbDayHtml(r,x,dd.value);if(window.__hangulize)window.__hangulize($('wbDayOut'));});}
   try{document.querySelectorAll('#mnGrid .ms').forEach(el=>{const k=el.dataset.s,n=x.SC&&x.SC[k];el.textContent=n?'★'.repeat(n)+'☆'.repeat(5-n):'';});}catch(e){}
@@ -401,7 +407,7 @@ function renderYear(r){
   const proV=document.body.classList.contains('pro');let hidM=0;
   for(const m of o.months){if(!proV&&nowM&&m.m<nowM){hidM++;continue;}const c=gc(m.g);h+='<tr'+(m.m===nowM?' class="now"':'')+'><td>'+(proV?m.m:(t=>(t.y>yearSel?'내년 ':'')+t.m)(smon(yearSel,m.m)))+'월'+(m.which==='first'?'<small class="wbS">선</small>':m.which==='second'?'<small class="wbS">후</small>':'')+'</td><td>'+PN[m.p]+'</td><td>'+NUM[m.n]+' '+m.k+'</td><td>'+(m.say||m.theme)+(m.rtxt?'<small class="mRel proOnly">'+m.rtxt.replace(/^\S+\s*/,'')+'</small>':'')+'</td><td class="'+c[0]+'">'+c[1]+'</td></tr>';}
   h+='</table>'+(hidM?'<p class="note">지난 '+hidM+'달은 숨겼어요.</p>':'')+'<p class="note proOnly">신수국은 년주를 그해 태세로 바꾸고 생월·생일·생시는 그대로 두어 세웠어요. 월운은 달마다 해당 궁(1월·12월 간궁, 2월 진궁, 3·4월 손궁, 5월 이궁, 6·7월 곤궁, 8월 태궁, 9·10월 건궁, 11월 감궁)의 천반 홍국수로 봐요. 한 궁을 함께 쓰는 두 달은 앞 달(12·3·6·9월, 선)을 삼합·반합·육합으로(합이 없으면 생), 뒤 달(1·4·7·10월, 후)을 그다음 순서인 생으로(생이 없으면 충극) 나눠 봐요. 짝이 되는 수는 동처(사주가 놓인 궁·世궁·중궁)의 수예요. 행년은 나이 끝자리 수가 있는 궁(45세까지 지반, 46세부터 천반)의 천반 수로 봐요. 자동 판단이라 참고용이에요.</p>';
-  $('reading').innerHTML=document.body.classList.contains('pro')?h:toJane(hage(h.replace(/(<\/h2>(?:<span class="badge">[^<]*<\/span>)?)/,'$1'+'<p class="dkOpen">'+yearSel+'년 자네 운을 펼쳐 보세. 이 도깨비가 한 해를 짚어 주지.</p>')));
+  $('reading').innerHTML=document.body.classList.contains('pro')?fitProf(h):toJane(hage(fitProf(h).replace(/(<\/h2>(?:<span class="badge">[^<]*<\/span>)?)/,'$1'+'<p class="dkOpen">'+yearSel+'년 자네 운을 펼쳐 보세. 이 도깨비가 한 해를 짚어 주지.</p>')));
 }
 
 function renderDay(){
@@ -415,7 +421,7 @@ function renderDay(){
   for(let dd=1;dd<=last;dd++){const z=dayInfo(y,m,dd,cache);const g=z.d.g;const cls=g>=1.5?'c2':g>=0.5?'c1':g<=-1?'cm':'';
     h+='<button class="'+cls+(dd===d?' sel':'')+'" data-d="'+dd+'">'+dd+'<small>'+z.d.gz+'</small></button>';}
   h+='</div><p class="note">진한 초록 = 좋음, 연한 초록 = 무난·좋음, 분홍 = 주의예요. 날짜를 누르면 그날 일진이 나와요. 일진은 그날 지지를 홍국수로 바꿔 그해 신수국의 世와 비교하고(육친·합·충), 그 지지가 놓인 궁의 천반 수를 함께 봐서 자동으로 판단한 참고용이에요. 9궁도의 주황 테두리가 그날 일진 지지의 궁이에요.</p>';
-  $('reading').innerHTML=document.body.classList.contains('pro')?h:toJane(hage(h.replace(/(<\/h2>(?:<span class="badge">[^<]*<\/span>)?)/,'$1'+'<p class="dkOpen">오늘 하루, 이 도깨비가 짚어 주지.</p>')));
+  $('reading').innerHTML=document.body.classList.contains('pro')?fitProf(h):toJane(hage(fitProf(h).replace(/(<\/h2>(?:<span class="badge">[^<]*<\/span>)?)/,'$1'+'<p class="dkOpen">오늘 하루, 이 도깨비가 짚어 주지.</p>')));
   $('reading').querySelectorAll('.cal button').forEach(b=>b.addEventListener('click',()=>{const p=v=>String(v).padStart(2,'0');$('ild').value=y+'-'+p(m)+'-'+p(+b.dataset.d);show();}));
 }
 
@@ -468,7 +474,8 @@ function showDetail(p,curPal){
   if(r.kong.has(p))h+='<p><b>공망</b> · 이 궁의 육친은 힘을 제대로 쓰지 못하는 것으로 봐요(왕하면 면공).</p>';
   const [e0,e1]=r.ageE[p],[h0,h1]=r.ageH[p];
   if(yInfo){const ms=Object.keys(MPAL).filter(m=>MPAL[m]===p);if(ms.length)h+='<p><b>월운</b> · 음력 '+ms.join('·')+'월은 이 궁의 천반 '+NUM[r.heavN[p]]+'('+r.lqH[p]+')로 봐요.</p>';if(yInfo.out.hangPal===p)h+='<p><b>행년궁</b> · 올해 큰일이 이 궁에서 드러나요.</p>';}
-  else h+='<p><b>대운</b> · '+e0+'~'+e1+'세(지반), '+h0+'~'+h1+'세(천반)</p>';
+  else if(document.body.classList.contains('pro'))h+='<p><b>대운</b> · '+e0+'~'+e1+'세(지반), '+h0+'~'+h1+'세(천반)</p>';
+  else{const a0=base?ageNow(base):0,L=[[e0,e1],[h0,h1]].filter(([a,c])=>c>=a0).map(([a,c])=>(Math.max(a,a0)===c?c:Math.max(a,a0)+'~'+c)+'세');if(L.length)h+='<p><b>이 칸이 힘을 받는 나이</b> · '+L.join(', ')+'</p>';}
   if(curPal&&curPal!==p)h+='<p class="tagline">올해 '+ageNow(r)+'세 대운은 '+PN[curPal]+'궁이에요. 그 칸을 눌러 보세요.</p>';
   $('detail').innerHTML=h;
 }
@@ -788,8 +795,9 @@ alDraw();
     w.appendChild(mk(btns[0].t,'',btns[0].f));w.appendChild(input);btns.slice(1).forEach(x=>w.appendChild(mk(x.t,x.c||'',x.f)));
   }
   const yr=$('yr'),ild=$('ild');
-  stepper(yr,[{t:'‹',f:()=>{yr.value=(+yr.value||new Date().getFullYear())-1;fire(yr);}},{t:'›',f:()=>{yr.value=(+yr.value||new Date().getFullYear())+1;fire(yr);}},{t:'올해',c:'tx',f:()=>{yr.value=new Date().getFullYear();fire(yr);}}]);
-  const shift=n=>{const v=ild.value?new Date(ild.value+'T12:00:00'):new Date();v.setDate(v.getDate()+n);ild.value=v.getFullYear()+'-'+P(v.getMonth()+1)+'-'+P(v.getDate());fire(ild);};
+  const pro=()=>document.body.classList.contains('pro');
+  stepper(yr,[{t:'‹',f:()=>{const Y0=new Date().getFullYear();yr.value=Math.max(pro()?1900:Y0,(+yr.value||Y0)-1);fire(yr);}},{t:'›',f:()=>{yr.value=(+yr.value||new Date().getFullYear())+1;fire(yr);}},{t:'올해',c:'tx',f:()=>{yr.value=new Date().getFullYear();fire(yr);}}]);
+  const shift=n=>{const v=ild.value?new Date(ild.value+'T12:00:00'):new Date();v.setDate(v.getDate()+n);if(!pro()){const t=new Date();t.setHours(0,0,0,0);if(v<t)v.setTime(t.getTime()+432e5);}ild.value=v.getFullYear()+'-'+P(v.getMonth()+1)+'-'+P(v.getDate());fire(ild);};
   stepper(ild,[{t:'‹',f:()=>shift(-1)},{t:'›',f:()=>shift(1)},{t:'오늘',c:'tx',f:()=>{const n=new Date();ild.value=n.getFullYear()+'-'+P(n.getMonth()+1)+'-'+P(n.getDate());fire(ild);}}]);
   $('yrWrap').querySelector('label').textContent='몇 년 운세를 볼까요?';
   $('ilWrap').querySelector('label').textContent='어느 날 운세를 볼까요?';
@@ -1584,7 +1592,7 @@ alDraw();
     if(r.kong.has(p))s+=' 다만 공망이라 힘이 덜 실려요. 기대를 조금 낮추고 차근차근 가세요.';
     return s;
   }
-  let prevT=null,curT=null,yrOff=0,lastQ='',abQ=null,hist=[],curHtml='',histBase=null;
+  let profNote='',prevT=null,curT=null,yrOff=0,lastQ='',abQ=null,hist=[],curHtml='',histBase=null;
   // ── 대화형 답변: 도깨비 말투(하게체), 결론 먼저 ──
   const escH=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
   const PLQ={父:'문서·도움',官:'직장·명예',財:'돈',孫:'재능·즐거움',兄:'경쟁·친구',鬼:'압박',世:'자네'};
@@ -1684,7 +1692,7 @@ const TART={exam:[['seodang','chaek'],['gamchal']],jobget:[['daejang','hojak'],[
     else if(kind==='yn'||(act&&kind!=='when')){const a=act||D.n;
       v=['👍','🙆','🤔','✋'][gi]+' <b>'+hage(D.v[gi]).replace(/아래 /g,'')+'</b>';}
     else v=D.e+' <b>'+K.Y+'년 '+(t==='gen'?'자네 운':unOf(D))+jo(t==='gen'?'운':unOf(D),'은','는')+' '+['아주 좋네','좋네','그저 그렇네','조심할 때일세'][gi]+'.</b> '+hage(D.v[gi].replace(/아래 /g,''));
-    let h='<p class="dkOpen">'+link+opener(lastQ||'',kind)+'</p><p class="ansV">'+v+'</p>';
+    let h='<p class="dkOpen">'+link+(profNote?profNote+' ':'')+opener(lastQ||'',kind)+'</p><p class="ansV">'+v+'</p>';
     const fig=artFig(artOf((T[t]&&T[t].base)||t,gi)||artOf(t,gi)); // 그림은 풀이 다 읽은 뒤(당부 앞)에
     const W=whenOf(K);
     if(kind==='where'&&!sp&&K.dir){const dd=K.dir.length?'🧭 <b>'+K.dir.join(', ')+'이 좋네.</b>'+(K.badDir&&K.badDir.length?' '+K.badDir.join(', ')+'은 피하게.':''):'🧭 <b>올해는 뚜렷하게 좋은 방향이 없네.</b> 방향보다 집 조건을 보게.';
@@ -1885,7 +1893,7 @@ const TART={exam:[['seodang','chaek'],['gamchal']],jobget:[['daejang','hojak'],[
     if(!nh.length)h+='<p>원명국에서 이 주제의 기운이 뚜렷하게 드러나지 않아요. 타고난 힘보다 그해의 운과 노력이 더 크게 작용하는 편이에요.</p>';
     nh.forEach(x=>{h+='<p>'+palaceLine(r,x,t)+'</p>';});
     if(nh[0]){const p=nh[0].p,[e0,e1]=r.ageE[p],[h0,h1]=r.ageH[p],age=Y-r.input.y+1;
-      const rg=(a,c)=>a===c?a+'세':a+'~'+c+'세';h+='<p>이 칸의 운이 힘을 받는 나이는 <b>'+rg(e0,e1)+'</b>, <b>'+rg(h0,h1)+'</b>예요.'+((age>=e0&&age<=e1)||(age>=h0&&age<=h1)?' <b>바로 지금이 그 시기예요.</b>':'')+'</p>';}
+      const rg=(a,c)=>a===c?a+'세':a+'~'+c+'세';const fr=[[e0,e1],[h0,h1]].filter(([a,c])=>c>=age).map(([a,c])=>'<b>'+rg(Math.max(a,age),c)+'</b>');if(fr.length)h+='<p>이 칸의 운이 힘을 받는 나이는 '+fr.join(', ')+'예요.'+((age>=e0&&age<=e1)||(age>=h0&&age<=h1)?' <b>바로 지금이 그 시기예요.</b>':'')+'</p>';}
     }
     // 그해 흐름
     if(!skipNat){
@@ -1954,7 +1962,7 @@ const TART={exam:[['seodang','chaek'],['gamchal']],jobget:[['daejang','hojak'],[
     if(histBase!==base){hist=[];histBase=base;}
     const sp=D.special==='caution'||D.special==='samjae';
     const ans=(abQ?decide(abQ,K):talk(t,D,gi,K)).replace(/(<p[^>]*>)\s*(?:\p{Extended_Pictographic}\uFE0F?\s*)+/gu,'$1'); // 문단 앞 그림 글자는 빼고 글로만
-    curHtml='<div class="bub me">'+escH(lastQ)+'</div><div class="bub dk"><span class="av">👹</span><div>'+ans+'<details class="askMore"'+(sp?' open':'')+'><summary>📜 자세한 풀이 보기</summary>'+hage(h)+'</details>'+follow(t,D)+'</div></div>';
+    curHtml='<div class="bub me">'+escH(lastQ)+'</div><div class="bub dk"><span class="av">👹</span><div>'+fitProf(ans)+'<details class="askMore"'+(sp?' open':'')+'><summary>📜 자세한 풀이 보기</summary>'+hage(fitProf(h))+'</details>'+follow(t,D)+'</div></div>';
     showAll();
   }
   // 화면
@@ -1965,12 +1973,17 @@ const TART={exam:[['seodang','chaek'],['gamchal']],jobget:[['daejang','hojak'],[
   chips.addEventListener('click',e=>{const b=e.target.closest('button');if(b)pick(b.dataset.t,'');});
   // 질문 속 연도: '2027년'·'27년'·'내후년'·'내년'·'작년' → 올해 기준 몇 해 뒤인지(앞뒤 10년까지)
   const yearOffOf=q=>{const Y0=new Date().getFullYear();let m=/(19\d{2}|20\d{2})\s*년/.exec(q)||/(?:^|[^\d])(\d{2})\s*년(?!\s*(?:생|도생))/.exec(q);
-    if(m){let y=+m[1];if(y<100)y+=2000;const o=y-Y0;if(o>=-10&&o<=10)return o;}
-    return /내후년|다다음 ?해/.test(q)?2:/내년|다음 ?해/.test(q)?1:/작년|지난 ?해/.test(q)?-1:0;};
+    if(m){let y=+m[1];if(y<100)y+=2000;const o=y-Y0;if(o>=0&&o<=10)return o;}
+    return /내후년|다다음 ?해/.test(q)?2:/내년|다음 ?해/.test(q)?1:0;};
   const setYr=v=>{yrOff=v;[...$('askYr').children].forEach(b=>b.classList.toggle('on',+b.dataset.v===yrOff));};
   function ask(){const q=$('askQ').value.trim();if(!q)return;
     setYr(yearOffOf(q));
-    const hit0=topicOf(q)||'gen',hit=intentOf(hit0,q);
+    let hit0=topicOf(q)||'gen';const cx=lifeCtx(base&&base.input,base?ageNow(base):0);profNote='';
+    if(cx.married&&!cx.single&&['love','reunion','marry'].includes(hit0)&&!/재혼|새 ?인연|이혼/.test(q)){hit0='couple';profNote='자네는 이미 짝이 있으니, 부부 사이로 풀어 보겠네.';}
+    else if(cx.single&&hit0==='couple'){hit0='love';profNote='지금 혼자이니, 새 인연으로 풀어 보겠네.';}
+    else if(cx.rest&&['jobget','jobmove','promo','career'].includes(hit0))profNote='지금은 일을 쉬고 있으니, 새로 맡을 일·활동으로 보겠네.';
+    else if(cx.senior&&hit0==='child')profNote='자녀 일은 자녀 결혼·손주 쪽까지 함께 보겠네.';
+    const hit=intentOf(hit0,q);
     pick(hit,q,qkind(q)==='ab'?q:null);$('askQ').value='';}
   $('askOut').addEventListener('click',e=>{const b=e.target.closest('button[data-f]');if(!b||!curT)return;const D=T[curT],f=b.dataset.f;
     if(f==='when')pick(curT,D.n+', 언제가 제일 좋아요?');
