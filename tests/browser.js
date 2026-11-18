@@ -22,6 +22,8 @@ const url = 'file://' + require('path').resolve(__dirname, '../www/index.html');
   // 질문에 적은 연도로 답해야 함(2027년을 물으면 2027년 얘기)
   { const Y2 = new Date().getFullYear() + 1; const a = await askT(Y2 + '년 재물운 봐주세요'); if (!a.includes(Y2 + '년')) errs.push('연도 오답: ' + Y2 + '년 → ' + a.slice(0, 60)); const a2 = await askT(String(Y2 + 1).slice(2) + '년 이사 운은?'); if (!a2.includes((Y2 + 1) + '년')) errs.push('두 자리 연도 오답: ' + a2.slice(0, 60)); }
   for (const v of ['sin', 'gh', 'jm', 'dm', 'won']) { await pg.click('#mode button[data-v=' + v + ']'); await pg.waitForTimeout(800); }
+  // 언제나 보이는 '처음으로' 단추와 '시 모름' 단추
+  if (!(await pg.evaluate(() => { const h = document.getElementById('homeBtn'), n = document.getElementById('tUnknown'); return h && getComputedStyle(h).display !== 'none' && n; }))) errs.push('처음으로·시 모름 단추 없음');
   // 전문가 보기는 없앴으므로 늘 쉬운 보기: 스위치가 안 보여야 함
   if (await pg.evaluate(() => { const b = document.querySelector('.proBar'); return b && getComputedStyle(b).display !== 'none'; })) errs.push('전문가 보기 스위치가 보임');
   for (const k of ['deep', 'map', 'wonbi', 'four']) { await pg.evaluate(k => document.querySelector('#mnGrid button[data-k=' + k + ']').click(), k); await pg.waitForTimeout(400); }

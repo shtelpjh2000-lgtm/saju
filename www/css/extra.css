@@ -35,3 +35,15 @@ figure.art figcaption em.k{font-style:normal;font-weight:700;color:var(--pink)}
 /* 숨김 규칙 */
 .ygH small:empty{display:none}
 .proBar{display:none!important}
+/* 글씨를 더 진하게(흐린 회색·보라 글씨 진하게) */
+:root{--ink:#21172e;--mute:#5b4f72}
+@media(prefers-color-scheme:dark){:root{--ink:#ffffff;--mute:#ddd3f0}}
+body{color:var(--ink)}
+.note,.sub,.thint,.mnSub,.qaSub,small{color:var(--mute)}
+/* 태어난 시 모름 */
+#tUnknown{display:block;width:100%;margin-top:8px;padding:12px;border-radius:16px;background:var(--bg);color:var(--ink);border:2px dashed var(--line);box-shadow:none;font-size:16px;font-weight:700}
+#tUnknown small{display:block;font-weight:400;font-size:13px;margin-top:2px}
+#tUnknown.on{background:linear-gradient(135deg,var(--pink),var(--lav));color:#fff;border-color:transparent}
+#tUnknown.on small{color:#fff}
+/* 언제나 보이는 '처음으로' 단추 */
+#homeBtn{position:fixed;top:calc(env(safe-area-inset-top) + 10px);right:10px;z-index:300;padding:8px 14px;border-radius:999px;font-size:14px;font-weight:700;background:var(--card);color:var(--ink);border:2px solid var(--pink);box-shadow:var(--shadow)}

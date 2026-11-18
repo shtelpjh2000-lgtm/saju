@@ -65,7 +65,7 @@ function compute(){
   }
   const ad=$('adj').checked?autoAdjust(y,m,d):{a:0,why:[]};
   const r=Gimun.calc(Solar,y,m,d,h,mi,{adjust:ad.a});
-  r.input={y,m,d,h,mi,name:$('nm').value.trim(),sex,adj:ad,typed,...profGet()};
+  r.input={y,m,d,h,mi,name:$('nm').value.trim(),sex,adj:ad,typed,noTime:!!window.__noTime,...profGet()};
   return r;
 }
 
@@ -548,6 +548,9 @@ $('save').addEventListener('click',()=>{if(!cur)return;const I=cur.input,p=v=>St
   try{localStorage.setItem(KEY,JSON.stringify(list.slice(0,30)));$('save').textContent='저장했어요';setTimeout(()=>$('save').textContent='이 명국 저장',1500);}catch(e){$('save').textContent='저장할 수 없어요';}
   drawSaved();});
 
+// ── 언제나 보이는 '처음으로' 단추: 생일 입력 화면으로 ──
+(function(){const hb=document.createElement('button');hb.type='button';hb.id='homeBtn';hb.textContent='🏠 처음으로';document.body.appendChild(hb);
+  hb.addEventListener('click',()=>{const b=$('mode')&&$('mode').querySelector('button[data-v="won"]');if(b&&mode!=='won')b.click();document.body.classList.add('formOpen');window.scrollTo({top:0,behavior:'smooth'});});})();
 // ── 매일 일진 알림 (앱으로 설치했을 때 동작) ──
 const AL_KEY='hongmyeongguk.alarm';
 const LN=(()=>{try{const C=window.Capacitor;if(!C||!(C.isNativePlatform&&C.isNativePlatform()))return null;return (C.Plugins&&C.Plugins.LocalNotifications)||(C.registerPlugin&&C.registerPlugin('LocalNotifications'))||null;}catch(e){return null;}})();
@@ -649,12 +652,18 @@ alDraw();
   let tVal='',exact=false;
   const zw=$('zhi');
   zw.innerHTML=ZHI.map((z,i)=>'<button type="button" data-i="'+i+'"><span class="e">'+z[2]+'</span><span class="n"><b>'+z[0]+'</b>'+z[1]+'시</span><span class="r"></span></button>').join('');
+  // 태어난 시를 모를 때: 낮 12시(午시)로 봐요
+  const nt=document.createElement('button');nt.type='button';nt.id='tUnknown';nt.innerHTML='❓ 태어난 시를 몰라요 <small>낮 12시로 볼게요</small>';zw.after(nt);
+  window.__noTime=false;
+  nt.addEventListener('click',()=>{const a=adjMin();exact=false;tx.style.display='none';$('tExact').textContent='⌚ 정확한 시각 입력';tEl.value=fmt(720-a);window.__noTime=true;refresh();});
   function refresh(){
     const a=adjMin();
     [...zw.children].forEach((b,i)=>{const r=range(i,a);b.querySelector('.r').textContent=r[0]+'~'+r[1];});
     const k=zhiOf(tVal,a);
     [...zw.children].forEach((b,i)=>b.classList.toggle('on',i===k));
-    if(k<0){$('tSel').textContent='태어난 시를 골라 주세요';}
+    nt.classList.toggle('on',!!window.__noTime);if(window.__noTime){[...zw.children].forEach(b=>b.classList.remove('on'));}
+    if(window.__noTime&&k>=0){$('tSel').innerHTML='<b>❓ 시 모름</b> 낮 12시(午시)로 봐요';}
+    else if(k<0){$('tSel').textContent='태어난 시를 골라 주세요';}
     else{const r=range(k,a);$('tSel').innerHTML='<b>'+ZHI[k][2]+' '+ZHI[k][0]+ZHI[k][1]+'시</b> '+r[0]+'~'+r[1]+(exact?' · 입력 '+tVal:'');}
     const z=range(0,a);
     $('tHint').textContent=a===0?'시간대는 입력한 시각 그대로 나눠요. (보정 꺼짐)':
@@ -667,10 +676,10 @@ alDraw();
   zw.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const i=+b.dataset.i,a=adjMin();
     // 그 시의 가운데 시각으로 넣어요 (자시는 자정 이후 쪽)
     const mid=(i===0?30:i*120)-a;exact=false;tx.style.display='none';$('tExact').textContent='⌚ 정확한 시각 입력';
-    tEl.value=fmt(mid);});
+    window.__noTime=false;tEl.value=fmt(mid);});
   $('tExact').addEventListener('click',()=>{exact=tx.style.display==='none';tx.style.display=exact?'block':'none';$('tExact').textContent=exact?'12지로 고르기':'⌚ 정확한 시각 입력';if(exact){tx.value=tVal;try{tx.focus();tx.showPicker&&tx.showPicker();}catch(e){}}refresh();});
-  tx.addEventListener('change',()=>{if(tx.value){exact=true;tEl.value=tx.value;}});
-  tx.addEventListener('input',()=>{if(tx.value){exact=true;tEl.value=tx.value;}});
+  tx.addEventListener('change',()=>{if(tx.value){exact=true;window.__noTime=false;tEl.value=tx.value;}});
+  tx.addEventListener('input',()=>{if(tx.value){exact=true;window.__noTime=false;tEl.value=tx.value;}});
   $('adj').addEventListener('change',refresh);
   $('cal').addEventListener('click',()=>setTimeout(()=>{fillDays();refresh();},0));
   refresh();
@@ -1845,6 +1854,7 @@ const TART={exam:[['seodang','chaek'],['gamchal']],jobget:[['daejang','hojak'],[
     return '<p class="hPunch">'+punch+'</p><p class="hTitle"><small>'+Y+'년, 자네는</small><b>'+nick+'</b><small>일세.</small></p>'+
       L.map(x=>'<p class="hLine">'+x+'</p>').join('')+artFig(A[0])+
       (pr.length?'<div class="yeogo"><p class="ygH">도깨비 방망이<small>뚝딱, 복이 나오는 달</small></p>'+pr.map(x=>'<p class="ygI"><b>'+x.n+'</b><span>'+x.c.lab+'<br><small>'+x.w+'</small></span>'+dday(x.c)+'</p>').join('')+'<p class="ygN">그 달이 오면 아침 알림으로 일러 주겠네. (알림을 켜 두게)</p></div>':'')+
+      (r.input&&r.input.noTime?'<p class="ygN">⏰ 태어난 시를 몰라서 낮 12시로 봤네. 시를 알게 되면 다시 넣어 보게.</p>':'')+
       '<button type="button" class="heroShare">이 풀이 카톡으로 보내기</button>';}
   window.__heroHtml=()=>{try{return heroHtml();}catch(e){console.error(e);return '';}};
   // 공유용 그림(1080×1350)
