@@ -34,3 +34,4 @@ figure.art figcaption em.k{font-style:normal;font-weight:700;color:var(--pink)}
 .step input{min-width:110px;font-size:20px}
 /* 숨김 규칙 */
 .ygH small:empty{display:none}
+.proBar{display:none!important}

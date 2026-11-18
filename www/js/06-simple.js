@@ -1,7 +1,7 @@
 // ── 쉬운 보기: 메뉴 7개, 신수·일진은 '운세' 하나로, 풀이는 결론·이유·할 일만 먼저 ──
 (function(){
   const B=document.body,KEY='dkProView';
-  let pro=false;try{pro=localStorage.getItem(KEY)==='1';}catch(e){}
+  const pro=false;try{localStorage.removeItem(KEY);}catch(e){} // 전문가 보기는 없앴어요(늘 쉬운 보기)
   const LBL={sum:['한마디로','한마디·총평'],char:['성격','성격·기질'],spouse:['배우자·연애','사랑·가족']};
   // 메뉴 아래 전문가 보기 스위치
   const bar=document.createElement('div');bar.className='proBar';
@@ -47,7 +47,7 @@
     if(!pro){const e=$('viewSeg').querySelector('button[data-v="easy"]');if(e&&!e.classList.contains('on'))e.click();}
     cut($('reading'));
   }
-  bar.querySelector('button').addEventListener('click',()=>{pro=!pro;try{localStorage.setItem(KEY,pro?'1':'0');}catch(e){}
+  bar.style.display='none';bar.querySelector('button').addEventListener('click',()=>{try{localStorage.setItem(KEY,'0');}catch(e){}
     if(base){try{show();}catch(e){console.error(e);}}apply();});
   new MutationObserver(()=>cut($('reading'))).observe($('reading'),{childList:true});
   $('mode').addEventListener('click',()=>setTimeout(apply,0));
