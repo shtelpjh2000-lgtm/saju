@@ -97,37 +97,38 @@
 <div class="card today" id="todayTop" style="display:none"></div>
 
 <div class="card" id="form">
+  <div class="dkHello"><span class="dkAv">👹</span><p><b>어이, 왔는가.</b> 자네가 언제 태어났는지만 일러 주게. 이 도깨비가 사주를 펼쳐 보지.</p></div>
   <div class="row">
-    <div><label for="nm">이름 (선택)</label><input id="nm" placeholder="닉네임도 좋아요"></div>
-    <div><label>성별</label><div class="seg" id="sex"><button data-v="M" class="on">남</button><button data-v="F">여</button></div></div>
+    <div><label for="nm">자네 이름은?</label><input id="nm" placeholder="안 알려 줘도 되네"></div>
+    <div><label>사내인가, 아낙인가?</label><div class="seg" id="sex"><button data-v="M" class="on">남자</button><button data-v="F">여자</button></div></div>
   </div>
   <div class="row prof">
-    <div><label>결혼 <span style="font-weight:400">· 선택</span></label><div class="seg tog" id="mar"><button type="button" data-v="S">미혼</button><button type="button" data-v="M">기혼</button><button type="button" data-v="D">이혼·사별</button></div></div>
+    <div><label>짝은 있는가? <span>골라 주면 더 잘 맞히네</span></label><div class="seg tog" id="mar"><button type="button" data-v="S">미혼</button><button type="button" data-v="M">기혼</button><button type="button" data-v="D">이혼·사별</button></div></div>
   </div>
   <div class="row prof">
-    <div><label>자녀 <span style="font-weight:400">· 선택</span></label><div class="seg tog" id="kid"><button type="button" data-v="N">없음</button><button type="button" data-v="Y">있음</button></div></div>
-    <div><label for="job">하는 일 <span style="font-weight:400">· 선택</span></label><select id="job"><option value="">고르지 않음</option><option value="emp">직장인</option><option value="biz">자영업·사업</option><option value="home">주부</option><option value="stu">학생</option><option value="seek">구직 중</option><option value="ret">은퇴</option></select></div>
+    <div><label>자식은?</label><div class="seg tog" id="kid"><button type="button" data-v="N">없음</button><button type="button" data-v="Y">있음</button></div></div>
+    <div><label for="job">요즘 무슨 일을 하나?</label><select id="job"><option value="">말 안 할라네</option><option value="emp">직장인</option><option value="biz">자영업·사업</option><option value="home">주부</option><option value="stu">학생</option><option value="seek">구직 중</option><option value="ret">은퇴</option></select></div>
   </div>
 <div class="row">
-    <div><label>달력</label><div class="seg" id="cal"><button data-v="S" class="on">양력</button><button data-v="L">음력</button><button data-v="LL">음력 윤달</button></div></div>
+    <div><label>생일은 양력인가, 음력인가?</label><div class="seg" id="cal"><button data-v="S" class="on">양력</button><button data-v="L">음력</button><button data-v="LL">음력 윤달</button></div></div>
   </div>
   <div style="margin-bottom:12px">
-    <label>생년월일 <span style="font-weight:400">· 눌러서 골라요</span></label>
+    <label>언제 태어났나? <span>눌러서 고르게</span></label>
     <div class="ymd"><select id="dy" class="y" aria-label="태어난 해"></select><select id="dm" aria-label="태어난 달"></select><select id="dd" aria-label="태어난 날"></select></div>
     <input id="d" type="hidden">
   </div>
   <div style="margin-bottom:12px">
-    <label>태어난 시 <span style="font-weight:400">· 12지 중에서 골라요</span></label>
+    <label>몇 시쯤 태어났나? <span>모르면 낮 12시쯤 고르게</span></label>
     <div class="zhi" id="zhi"></div>
     <div class="tline"><span id="tSel">태어난 시를 골라 주세요</span><button type="button" id="tExact">정확한 시각 입력</button></div>
     <input id="tx" type="time" style="display:none" aria-label="정확한 태어난 시각">
     <p class="thint" id="tHint"></p>
     <input id="t" type="hidden">
   </div>
-  <label class="chk"><input type="checkbox" id="adj" checked> 한국 표준시·서머타임 자동 보정</label>
-  <div class="row" style="margin-top:10px"><button id="now" class="sec">지금 시각</button><button id="go" style="flex:2">내 명국 보기</button></div>
+  <label class="chk"><input type="checkbox" id="adj" checked> 옛날 시간 차이(표준시·서머타임)는 알아서 맞추기</label>
+  <div class="row" style="margin-top:10px"><button id="now" class="sec">지금 시각</button><button id="go" style="flex:2">도깨비야, 내 운 봐 주게</button></div>
   <div class="err" id="err"></div>
-  <div id="savedWrap" style="display:none;margin-top:8px"><label>💾 저장한 명국</label><div class="saved" id="saved"></div></div>
+  <div id="savedWrap" style="display:none;margin-top:8px"><label>전에 본 사람 다시 보기</label><div class="saved" id="saved"></div></div>
 </div>
 
 <div id="out" style="display:none">

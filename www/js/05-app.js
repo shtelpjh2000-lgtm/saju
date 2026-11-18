@@ -612,11 +612,11 @@ alDraw();
     [...zw.children].forEach((b,i)=>{const r=range(i,a);b.querySelector('.r').textContent=r[0]+'~'+r[1];});
     const k=zhiOf(tVal,a);
     [...zw.children].forEach((b,i)=>b.classList.toggle('on',i===k));
-    if(k<0){$('tSel').textContent='태어난 시를 골라 주세요';}
-    else{const r=range(k,a);$('tSel').innerHTML='<b>'+ZHI[k][2]+' '+ZHI[k][0]+ZHI[k][1]+'시</b> '+r[0]+'~'+r[1]+(exact?' · 입력 '+tVal:'');}
+    if(k<0){$('tSel').textContent='태어난 시를 골라 주게';}
+    else{const r=range(k,a);$('tSel').innerHTML='<b>'+ZHI[k][0]+ZHI[k][1]+'시</b> '+r[0]+'~'+r[1]+(exact?' · 입력 '+tVal:'');}
     const z=range(0,a);
-    $('tHint').textContent=a===0?'시간대는 입력한 시각 그대로 나눠요. (보정 꺼짐)':
-      ((a<=-90?'그해는 서머타임 기간이라 시간대가 1시간 늦춰져 있어요. ':'')+'밤 '+z[0]+'~자정 사이에 태어났다면 \'정확한 시각 입력\'으로 넣어 주세요.');
+    $('tHint').textContent=a===0?'시간 차이를 맞추지 않고 넣은 그대로 보겠네.':
+      ((a<=-90?'그해는 서머타임이 있던 해라 시간대를 1시간 늦춰 봤네. ':'')+'밤 '+z[0]+'~자정 사이에 태어났으면 \'정확한 시각 입력\'을 눌러 넣어 주게.');
   }
   const tEl=$('t');
   Object.defineProperty(tEl,'value',{configurable:true,

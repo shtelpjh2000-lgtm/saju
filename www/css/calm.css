@@ -167,3 +167,12 @@ figure.art{max-width:440px;margin-left:auto!important;margin-right:auto!importan
 /* 질문 단추·주제 목록: 밝은 바탕에 진한 글씨로 또렷하게 */
 .dkQuick button,#askTog,.askTog{background:var(--bg)!important;color:var(--ink)!important;border:1.5px solid var(--line)!important;font-size:17px!important;font-weight:700}
 .dkQuick button:active,#askTog:active{border-color:var(--acc)!important}
+/* 입력 화면: 도깨비가 말을 거는 느낌 */
+.dkHello{display:flex;gap:12px;align-items:flex-start;margin:0 0 18px;padding:0 0 16px;border-bottom:1px dashed var(--line)}
+.dkHello .dkAv{flex:0 0 48px;width:48px;height:48px}
+.dkHello p{margin:2px 0 0;font-family:"Gowun Batang","Noto Serif KR",serif;font-size:19px;line-height:1.7;word-break:keep-all}
+.dkHello p b{color:var(--acc)}
+#form label{font-family:"Gowun Batang","Noto Serif KR",serif;font-size:17.5px;font-weight:700;color:var(--goldT);margin:0 0 7px 2px}
+#form label span{font-family:"Noto Sans KR",sans-serif;font-size:13.5px;font-weight:400;color:var(--mute);margin-left:4px}
+#form label.chk{font-family:"Noto Sans KR",sans-serif;font-size:15px;font-weight:400;color:var(--mute)}
+#go{font-family:"Gowun Batang","Noto Serif KR",serif!important;font-weight:700}
