@@ -64,3 +64,6 @@ body{color:var(--ink)}
 /* '쉬운 그림으로 보기'는 사용자 요청으로 없앰 — 운명 지도만 */
 #mapCard .viewSeg,#mapCard #easyView{display:none!important}
 #mapCard #expert{display:block!important}
+/* 대화 칸 도깨비 얼굴: 맨 위 로고의 기와 도깨비 그림으로 */
+.dkAv,.bub .av{font-size:0!important;display:inline-block;flex:0 0 auto;width:48px;height:48px;border-radius:14px;background:url(../img/dokkaebi.svg) center/cover no-repeat;box-shadow:0 3px 10px rgba(0,0,0,.25)}
+.bub .av{width:40px;height:40px;border-radius:12px}
