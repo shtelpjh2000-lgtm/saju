@@ -385,12 +385,14 @@ function renderReading(r){
   try{document.querySelectorAll('#mnGrid .ms').forEach(el=>{const k=el.dataset.s,n=x.SC&&x.SC[k];el.textContent=n?'★'.repeat(n)+'☆'.repeat(5-n):'';});}catch(e){}
 }
 
+// 도깨비 말투에서는 '나/내'를 '자네'로
+const toJane=h=>h.replace(/(^|[\s>(·,])내 (힘|편|일|칸|기운|마음|몫|자리)/g,'$1자네 $2').replace(/(^|[\s>(·,])나와 /g,'$1자네와 ').replace(/(^|[\s>(·,])내가 /g,'$1자네가 ');
 function renderYear(r){
   const o=yInfo.out,b=yInfo.base;
   let h='<h2>'+yearSel+'년 신수</h2><span class="badge">'+r.pillars[0]+'년 · '+ageNow(base)+'세 · '+b.strongKo+'</span>';
   const proY=document.body.classList.contains('pro');
   const nowM=(()=>{try{const l=Solar.fromDate(new Date()).getLunar();return l.getYear()===yearSel?Math.abs(l.getMonth()):0;}catch(e){return 0;}})();
-  const futM=t=>{const m=/^(좋은|조심할) 달은 음력 (.+)이에요\.$/.exec(t);if(!m||proY)return t;const L=m[2].split('·').map(x=>parseInt(x)).filter(x=>!nowM||x>=nowM).map(x=>{const t=smon(yearSel,x);return (t.y>yearSel?'내년 ':'')+t.m;});return L.length?m[1]+' 달은 '+L.map(x=>x+'월').join('·')+'이에요.':'';};
+  const futM=t=>{const m=/^(좋은|조심할) 달은 음력 (.+)이에요\.$/.exec(t);if(!m||proY)return t;const L=m[2].split('·').map(x=>parseInt(x)).filter(x=>!nowM||x>=nowM).map(x=>{const t=smon(yearSel,x),n=new Date();if(t.y===n.getFullYear()&&t.m===n.getMonth()+1)return '이번 달('+t.m;return (t.y>yearSel?'내년 ':'')+t.m;});return L.length?m[1]+' 달은 '+L.map(x=>/^이번/.test(x)?x+'월)':x+'월').join('·')+'이에요.':'';};
   h+='<h4>한 해 총운</h4>'+(proY||!o.totalE?o.total:o.totalE).map(futM).filter(Boolean).map(t=>'<p>'+t+'</p>').join('');
   h+='<h4>분야별</h4>'+(proY||!o.fieldE?o.field:o.fieldE).map(t=>{const i=t.indexOf(' · ');return '<p><b>'+t.slice(0,i)+'</b> · '+t.slice(i+3)+'</p>';}).join('');
   h+='<h4>'+(proY?'행년 (그해의 큰일)':'올해 가장 큰 일')+'</h4>'+(proY||!o.hangE?o.hang:o.hangE).map(t=>'<p>'+t+'</p>').join('');
@@ -399,7 +401,7 @@ function renderYear(r){
   const proV=document.body.classList.contains('pro');let hidM=0;
   for(const m of o.months){if(!proV&&nowM&&m.m<nowM){hidM++;continue;}const c=gc(m.g);h+='<tr'+(m.m===nowM?' class="now"':'')+'><td>'+(proV?m.m:(t=>(t.y>yearSel?'내년 ':'')+t.m)(smon(yearSel,m.m)))+'월'+(m.which==='first'?'<small class="wbS">선</small>':m.which==='second'?'<small class="wbS">후</small>':'')+'</td><td>'+PN[m.p]+'</td><td>'+NUM[m.n]+' '+m.k+'</td><td>'+(m.say||m.theme)+(m.rtxt?'<small class="mRel proOnly">'+m.rtxt.replace(/^\S+\s*/,'')+'</small>':'')+'</td><td class="'+c[0]+'">'+c[1]+'</td></tr>';}
   h+='</table>'+(hidM?'<p class="note">지난 '+hidM+'달은 숨겼어요.</p>':'')+'<p class="note proOnly">신수국은 년주를 그해 태세로 바꾸고 생월·생일·생시는 그대로 두어 세웠어요. 월운은 달마다 해당 궁(1월·12월 간궁, 2월 진궁, 3·4월 손궁, 5월 이궁, 6·7월 곤궁, 8월 태궁, 9·10월 건궁, 11월 감궁)의 천반 홍국수로 봐요. 한 궁을 함께 쓰는 두 달은 앞 달(12·3·6·9월, 선)을 삼합·반합·육합으로(합이 없으면 생), 뒤 달(1·4·7·10월, 후)을 그다음 순서인 생으로(생이 없으면 충극) 나눠 봐요. 짝이 되는 수는 동처(사주가 놓인 궁·世궁·중궁)의 수예요. 행년은 나이 끝자리 수가 있는 궁(45세까지 지반, 46세부터 천반)의 천반 수로 봐요. 자동 판단이라 참고용이에요.</p>';
-  $('reading').innerHTML=h;
+  $('reading').innerHTML=document.body.classList.contains('pro')?h:toJane(hage(h.replace(/(<\/h2>(?:<span class="badge">[^<]*<\/span>)?)/,'$1'+'<p class="dkOpen">'+yearSel+'년 자네 운을 펼쳐 보세. 이 도깨비가 한 해를 짚어 주지.</p>')));
 }
 
 function renderDay(){
@@ -413,7 +415,7 @@ function renderDay(){
   for(let dd=1;dd<=last;dd++){const z=dayInfo(y,m,dd,cache);const g=z.d.g;const cls=g>=1.5?'c2':g>=0.5?'c1':g<=-1?'cm':'';
     h+='<button class="'+cls+(dd===d?' sel':'')+'" data-d="'+dd+'">'+dd+'<small>'+z.d.gz+'</small></button>';}
   h+='</div><p class="note">진한 초록 = 좋음, 연한 초록 = 무난·좋음, 분홍 = 주의예요. 날짜를 누르면 그날 일진이 나와요. 일진은 그날 지지를 홍국수로 바꿔 그해 신수국의 世와 비교하고(육친·합·충), 그 지지가 놓인 궁의 천반 수를 함께 봐서 자동으로 판단한 참고용이에요. 9궁도의 주황 테두리가 그날 일진 지지의 궁이에요.</p>';
-  $('reading').innerHTML=h;
+  $('reading').innerHTML=document.body.classList.contains('pro')?h:toJane(hage(h.replace(/(<\/h2>(?:<span class="badge">[^<]*<\/span>)?)/,'$1'+'<p class="dkOpen">오늘 하루, 이 도깨비가 짚어 주지.</p>')));
   $('reading').querySelectorAll('.cal button').forEach(b=>b.addEventListener('click',()=>{const p=v=>String(v).padStart(2,'0');$('ild').value=y+'-'+p(m)+'-'+p(+b.dataset.d);show();}));
 }
 

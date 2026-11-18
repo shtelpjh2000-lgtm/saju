@@ -52,6 +52,8 @@
       who.querySelector('small').textContent=(I.sex==='M'?'남자':'여자')+(lunar?' · 양력으로 '+I.y+'년 '+I.m+'월 '+I.d+'일':'');}
     if(!on&&B.classList.contains('qaOn')){setOpen(null);}
     B.classList.toggle('qaOn',on);
+    // 운세(올해·오늘) 화면: 운세 풀이가 먼저, 도깨비와 이야기하는 칸은 그 아래
+    {const ac=$('askCard');if(ac&&!on){if(mode==='sin'||mode==='il'){if(ac.previousElementSibling!==$('reading'))$('reading').after(ac);}else if(ac.nextElementSibling!==$('menuCard'))$('menuCard').before(ac);}}
     if(on&&base&&heroOf!==base&&window.__heroHtml){heroOf=base;hero.innerHTML=window.__heroHtml();}
     const pb=document.querySelector('.proBar');if(pb){const dst=on?card:$('menuCard');if(pb.parentNode!==dst)dst.appendChild(pb);}
     if(on&&open){const k=open;restore();fill(k);}
