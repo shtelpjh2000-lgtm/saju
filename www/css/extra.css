@@ -1,0 +1,36 @@
+/* 새로 생긴 화면 조각들 — 처음 분홍·보라 스타일(app.css 색)에 맞춤 */
+/* 첫 화면 한 장면 카드 */
+#heroCard{display:none;padding:20px 16px 18px;text-align:center}
+body.qaOn #heroCard{display:block}
+#heroCard .hPunch{font-family:"Jua",sans-serif;font-size:19px;color:var(--pink);line-height:1.5;margin:0 0 12px;word-break:keep-all}
+#heroCard .hTitle{margin:0 0 6px;line-height:1.35}
+#heroCard .hTitle small{display:block;font-size:15px;color:var(--mute)}
+#heroCard .hTitle b{display:block;font-family:"Jua",sans-serif;font-weight:400;font-size:28px;color:var(--purple);margin:4px 0;word-break:keep-all}
+#heroCard .hLine{font-size:16px;line-height:1.75;text-align:left;margin:8px 2px;word-break:keep-all}
+.dd{display:inline-block;margin-left:6px;padding:1px 10px;border-radius:999px;background:linear-gradient(135deg,var(--pink),var(--lav));color:#fff;font-weight:700;font-size:14px;vertical-align:1px}
+.dd.now{background:var(--yel);color:#3a2e4d}
+.yeogo{margin:16px 0 4px;padding:12px;border:2px dashed var(--pink2);border-radius:18px;background:var(--bg);text-align:left}
+.ygH{font-family:"Jua",sans-serif;font-size:19px;color:var(--pink);margin:0 0 6px;text-align:center}
+.ygH small{display:block;font-family:inherit;font-size:13px;color:var(--mute);margin-top:2px}
+.ygI{display:flex;align-items:center;gap:10px;margin:9px 0;font-size:16px;line-height:1.45}
+.ygI>b{flex:0 0 44px;font-family:"Jua",sans-serif;font-weight:400;font-size:17px;color:var(--purple)}
+.ygI>span{flex:1}.ygI small{color:var(--mute);font-size:13.5px}
+.ygI .dd{margin:0;flex:0 0 auto}
+.ygN{font-size:13px;color:var(--mute);margin:8px 0 0;text-align:center}
+.heroShare{width:100%;margin-top:12px}
+/* 옛 그림 */
+figure.art{margin:14px auto;padding:0;max-width:440px}
+figure.art img{display:block;width:100%;height:auto;border-radius:16px;box-shadow:var(--shadow)}
+figure.art img.sm{width:auto;max-width:78%;max-height:520px;margin:0 auto}
+figure.art figcaption{font-size:14.5px;line-height:1.7;color:var(--mute);margin-top:8px;word-break:keep-all;text-align:center}
+figure.art figcaption em.k{font-style:normal;font-weight:700;color:var(--pink)}
+/* 태어난 시: 시간 글씨 크게 */
+.zhi button .n{font-size:16px}
+.zhi button .r{font-size:14px;font-weight:700;color:var(--ink)}
+.zhi button.on .r{color:#fff}
+@media(max-width:370px){.zhi button .r{font-size:12.5px;letter-spacing:-.03em}}
+/* 연도·날짜 고르기: 한 줄 전체, 숫자 크게 */
+#yrWrap,#ilWrap{flex:1 1 100%!important;min-width:100%!important}
+.step input{min-width:110px;font-size:20px}
+/* 숨김 규칙 */
+.ygH small:empty{display:none}

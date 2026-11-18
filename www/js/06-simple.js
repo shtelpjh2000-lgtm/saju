@@ -9,7 +9,7 @@
   $('menuCard').appendChild(bar);
   // 운세 안의 올해/오늘 고르기
   const fs=document.createElement('div');fs.className='seg fortSeg';
-  fs.innerHTML='<button type="button" data-v="sin">올해 운세</button><button type="button" data-v="il">오늘 운세</button>';
+  fs.innerHTML='<button type="button" data-v="sin">🎊 올해 운세</button><button type="button" data-v="il">☀️ 오늘 운세</button>';
   $('mode').insertAdjacentElement('afterend',fs);
   fs.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const m=$('mode').querySelector('button[data-v="'+b.dataset.v+'"]');if(m)m.click();});
   function cut(root){
@@ -39,7 +39,7 @@
     if(sinB){sinB.querySelector('.tt').textContent=pro?'신수':'운세';sinB.querySelector('small').textContent=pro?'올해 1년 운세':'올해·오늘 운세';
       sinB.classList.toggle('on',mode==='sin'||(!pro&&mode==='il'));}
     B.classList.toggle('inFort',!pro&&(mode==='sin'||mode==='il'));
-    const nb=document.querySelector('.bnav button[data-v="sin"]');if(nb){nb.textContent=pro?'신수':'운세';nb.classList.toggle('on',mode==='sin'||(!pro&&mode==='il'));}
+    const nb=document.querySelector('.bnav button[data-v="sin"]');if(nb){nb.textContent=pro?'🎊 신수':'🎊 운세';nb.classList.toggle('on',mode==='sin'||(!pro&&mode==='il'));}
     fs.querySelectorAll('button').forEach(b=>b.classList.toggle('on',b.dataset.v===mode));
     // 쉬운 보기에서 숨긴 메뉴를 보고 있었으면 한마디로
     const cur=B.dataset.mn;if(!pro&&['total','type','child','luck','wonbi','four','map','deep'].includes(cur)&&window.__mn)window.__mn.set(cur==='type'?'char':cur==='child'?'spouse':cur==='total'?'sum':'sum');

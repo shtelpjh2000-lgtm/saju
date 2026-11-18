@@ -649,11 +649,11 @@ alDraw();
     [...zw.children].forEach((b,i)=>{const r=range(i,a);b.querySelector('.r').textContent=r[0]+'~'+r[1];});
     const k=zhiOf(tVal,a);
     [...zw.children].forEach((b,i)=>b.classList.toggle('on',i===k));
-    if(k<0){$('tSel').textContent='태어난 시를 골라 주게';}
-    else{const r=range(k,a);$('tSel').innerHTML='<b>'+ZHI[k][0]+ZHI[k][1]+'시</b> '+r[0]+'~'+r[1]+(exact?' · 입력 '+tVal:'');}
+    if(k<0){$('tSel').textContent='태어난 시를 골라 주세요';}
+    else{const r=range(k,a);$('tSel').innerHTML='<b>'+ZHI[k][2]+' '+ZHI[k][0]+ZHI[k][1]+'시</b> '+r[0]+'~'+r[1]+(exact?' · 입력 '+tVal:'');}
     const z=range(0,a);
-    $('tHint').textContent=a===0?'시간 차이를 맞추지 않고 넣은 그대로 보겠네.':
-      ((a<=-90?'그해는 서머타임이 있던 해라 시간대를 1시간 늦춰 봤네. ':'')+'밤 '+z[0]+'~자정 사이에 태어났으면 \'정확한 시각 입력\'을 눌러 넣어 주게.');
+    $('tHint').textContent=a===0?'시간대는 입력한 시각 그대로 나눠요. (보정 꺼짐)':
+      ((a<=-90?'그해는 서머타임 기간이라 시간대가 1시간 늦춰져 있어요. ':'')+'밤 '+z[0]+'~자정 사이에 태어났다면 \'정확한 시각 입력\'으로 넣어 주세요.');
   }
   const tEl=$('t');
   Object.defineProperty(tEl,'value',{configurable:true,
@@ -839,7 +839,7 @@ alDraw();
   $('ilWrap').querySelector('label').textContent='어느 날 운세를 볼까요?';
   // 아래 고정 메뉴
   const nav=document.createElement('nav');nav.className='bnav';nav.setAttribute('aria-label','운세 종류');
-  nav.innerHTML='<div class="in"><button type="button" data-v="won">명국</button><button type="button" data-v="sin">신수</button><button type="button" data-v="il">일진</button><button type="button" data-v="gh">궁합</button><button type="button" data-v="jm">작명</button><button type="button" data-v="dm">해몽</button></div>';nav.classList.add('six');
+  nav.innerHTML='<div class="in"><button type="button" data-v="won">🔮 명국</button><button type="button" data-v="sin">🎊 신수</button><button type="button" data-v="il">☀️ 일진</button><button type="button" data-v="gh">💞 궁합</button><button type="button" data-v="jm">✍️ 작명</button><button type="button" data-v="dm">🌙 해몽</button></div>';nav.classList.add('six');
   document.body.appendChild(nav);
   const sync=()=>{[...nav.querySelectorAll('button')].forEach(b=>b.classList.toggle('on',b.dataset.v===mode));[...$('mode').children].forEach(b=>b.setAttribute('aria-pressed',b.dataset.v===mode?'true':'false'));};
   nav.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const t=$('mode').querySelector('button[data-v="'+b.dataset.v+'"]');if(t)t.click();});
