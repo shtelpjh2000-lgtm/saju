@@ -36,10 +36,23 @@ function profSet(p){p=p||{};['mar','kid'].forEach(id=>{const el=$(id);if(el)[...
 function lifeCtx(I,age){I=I||{};return {married:I.mar==='M'||(!I.mar&&age>=40),single:I.mar==='S'||I.mar==='D',senior:age>=50,noKid:I.kid==='N',rest:I.job==='ret'||I.job==='home'||(!I.job&&age>=65)};}
 // 기본정보(결혼·나이)에 안 맞는 말 걸러 내기: 기혼이거나 55세 이상이면 '이성 인기·새 인연' 같은 말을 빼고 부부·집안 말로
 function fitProf(h){if(!base||!h)return h;const I=base.input||{},age=ageNow(base),cx=lifeCtx(I,age);const off=(cx.married&&!cx.single)||age>=55;if(!off)return h;
-  h=h.replace(/돈·이성 문제/g,'돈 문제').replace(/직장·남자 문제/g,'직장 일').replace(/재물·사업·이성/g,'재물·사업').replace(/직장·승진·명예·이성/g,'직장·승진·명예')
+  h=h.replace(/·연애(?=의 시기)/g,'').replace(/돈·이성 문제/g,'돈 문제').replace(/직장·남자 문제/g,'직장 일').replace(/재물·사업·이성/g,'재물·사업').replace(/직장·승진·명예·이성/g,'직장·승진·명예')
    .replace(/\s*이성에게 인기가 많아(?:져요|지네)\./g,'').replace(/\s*이성 인기도? ?따라와요\./g,'').replace(/[,·]?\s*이성 인기/g,'');
   if(cx.married&&!cx.single)h=h.replace(/<p>인연은 [^<]*<\/p>/g,'').replace(/짝으로는 /g,'배우자로는 ').replace(/이성 · 배우자 기운이 나와 잘 맞아 인연이 생기거나 부부 사이가 가까워지는 해예요\./g,'부부 · 배우자 기운이 나와 잘 맞아 부부 사이가 가까워지는 해예요.').replace(/<b>이성<\/b> · 배우자 기운이 나와 잘 맞아 인연이 생기거나 부부 사이가 가까워지는 해예요\./g,'<b>부부</b> · 배우자 기운이 나와 잘 맞아 부부 사이가 가까워지는 해예요.');
   return h;}
+// 하는 일·자녀·결혼에 맞춘 풀이 한 줄 (용신 육친 q 기준). 하게체(도깨비)와 해요체 둘 다
+const PROF_JOB={
+  emp:{n:'직장',e:'🏢',父:'자격·전문성을 쌓을수록 자리가 올라가',官:'조직 안에서 자리를 높여 가는 운이',孫:'기술로 인정받는 자리가 맞아',財:'실적·영업으로 크는 운이',兄:'사람을 잘 두면 크는 운이',鬼:'어려운 일을 맡아 인정받는 운이'},
+  biz:{n:'가게·사업',e:'🏪',父:'계약·인허가를 잘 챙기면 사업이 커져',官:'가게 이름·신용을 쌓으면 손님이 늘어',孫:'새 상품·기술로 승부하면 사업이 커져',財:'직접 장사·거래를 키우면 돈이 붙어',兄:'동업·거래처를 잘 두면 사업이 커져',鬼:'남이 꺼리는 일감을 맡으면 돈이 돼'},
+  stu:{n:'공부·진로',e:'📚',父:'자격증·시험 공부가 길을 열어',官:'학교·학과 이름을 보고 가면 잘 풀려',孫:'재능·실기를 살리는 진로가 맞아',財:'경영·실무를 배우는 진로가 맞아',兄:'함께하는 공부·팀 활동에서 커',鬼:'남들이 어려워하는 분야가 오히려 맞아'},
+  seek:{n:'취업',e:'🧳',父:'자격증·서류를 갖추면 붙어',官:'공채·큰 조직이 잘 맞아',孫:'기술·재능을 쓰는 자리를 찾으면 붙어',財:'영업·실적 자리가 잘 맞아',兄:'지인 소개로 길이 열려',鬼:'남들이 꺼리는 자리가 오히려 기회야'},
+  ret:{n:'요즘 할 일',e:'🌿',父:'배우고 싶던 걸 시작하면 보람이 커',官:'모임·봉사 자리를 맡으면 대접받아',孫:'취미·솜씨를 살리면 이름이 나',財:'작은 소일거리가 쏠쏠한 용돈이 돼',兄:'사람들과 어울리는 활동이 복이 돼',鬼:'남들이 꺼리는 일을 도우면 덕이 쌓여'},
+  home:{n:'살림·활동',e:'🌿',父:'배움·자격을 하나 따 두면 길이 열려',官:'모임에서 맡는 자리가 생겨',孫:'살림 솜씨를 살린 부업이 맞아',財:'알뜰한 살림이 목돈이 돼',兄:'이웃·모임 사람들이 복이 돼',鬼:'집안의 어려운 일을 풀어내는 힘이 있어'}};
+function profLine(I,age,q,hage){const cx=lifeCtx(I,age);const j=I.job||(cx.rest?'ret':'');const P=PROF_JOB[j];if(!P||!P[q])return null;let t=P[q];t=t.replace(/운이$/,'운');
+  const s=/운$/.test(t)?t+(hage?'일세':'이에요'):(hage?(t.replace(/올라가$/,'올라가네').replace(/늘어$/,'느네').replace(/커져$/,'커지네').replace(/붙어$/,'붙네').replace(/맞아$/,'맞네').replace(/풀려$/,'풀리네').replace(/열어$/,'여네').replace(/커$/,'크네').replace(/돼$/,'되네').replace(/열려$/,'열리네').replace(/기회야$/,'기회일세').replace(/나$/,'나네').replace(/생겨$/,'생기네').replace(/있어$/,'있네').replace(/쌓여$/,'쌓이네')):(t.replace(/야$/,'예요').replace(/([^요])$/,'$1요')));
+  return {e:P.e,n:P.n,t:s};}
+function kidLine(I,age,sc,hage){const k=I.kid;if(k==='N'&&(I.mar==='S'||I.mar==='D')&&age<45)return hage?'자녀 얘기는 짝을 만난 뒤에 보세. 지금은 자네 앞길이 먼저일세':'자녀 얘기는 짝을 만난 뒤에 봐요. 지금은 내 앞길이 먼저예요';if(k==='N')return age<50?(hage?'아이 소식은 아래 나이별 흐름의 좋은 때를 보게':'아이 소식은 아래 나이별 흐름의 좋은 때를 보세요'):(hage?'자식 대신 조카·제자 같은 아랫사람 복을 보게':'자식 대신 조카·제자 같은 아랫사람 복으로 봐요');
+  if(k==='Y')return sc>=4?(hage?'자식 덕을 보는 사주일세':'자식 덕을 보는 사주예요'):(hage?'자식 일은 다그치기보다 들어 주는 게 먼저일세':'자식 일은 다그치기보다 들어 주는 게 먼저예요');return null;}
 function compute(){
   const dv=$('d').value,tv=$('t').value;
   if(!dv||!tv)throw new Error('생년월일과 시각을 입력해 주세요.');
@@ -243,6 +256,7 @@ function lifeHtml(x,k,sex,age){
     health:{n:'건강운',from:1,good:[],bad:['鬼'],t:['몸이 가볍고 힘이 넘치는 때','건강한 편 — 운동 시작하기 좋아요','무리하면 티가 나요 — 잠과 식사를 챙기세요','몸을 특히 지킬 때 — 검진·안전 꼭 챙기세요']}
   };
   const C=CFG[k];if(!C||!x.runs||!x.runs.length)return '';
+  {const I1=(base&&base.input)||{};if(k==='child'&&I1.kid==='N'&&(I1.mar==='S'||I1.mar==='D')&&age<45)return '';}
   const TH={父:'문서·도움',兄:'사람·경쟁',孫:'재능·새 일',財:'재물',官:'직장·명예',鬼:'압박·시련'};
   const F=sex==='F';
   // 항목 × 그 시기 육친마다 [좋을 때, 나쁠 때] 문장 — 단계 문장 4개를 돌려 쓰지 않게
@@ -270,9 +284,24 @@ function lifeHtml(x,k,sex,age){
       財:['작은 일거리로 용돈이 생겨요 — 소일거리를 잡으세요','돈 욕심에 무리하기 쉬워요 — 감당할 만큼만'],官:['맡아 달라는 자리가 생겨요 — 봉사·모임 자리를 맡아 보세요','책임만 늘어나요 — 거절도 하세요'],鬼:['어려운 일을 맡아 인정받아요 — 끝까지 해내세요','몸과 마음이 지쳐요 — 쉬세요']};
   const PHMo={父:['집·땅으로 재산이 지켜져요 — 문서를 잘 챙기세요','계약·서류에 돈이 묶여요 — 보증·서명 조심'],兄:['자식·친지가 살뜰히 챙겨 줘요','돈이 사람 따라 나가요 — 빌려주기·보증 금지'],孫:['솜씨로 용돈이 생겨요 — 소일거리를 잡으세요','벌인 일이 많아 새요 — 일을 줄이세요'],
       財:['현금이 들어와요 — 쓸 곳에 쓰고 나머지는 지키세요','들어온 만큼 나가요 — 큰 지출은 미루세요'],官:['연금·고정 수입이 든든해요','책임질 돈이 늘어요 — 큰 지출은 미루세요'],鬼:['남이 꺼리는 일에서 돈이 나와요 — 감당할 만큼만','사고·병원비로 돈이 새요 — 보험부터 점검']};
-  const setOf=u=>k==='spouse'?((I0.mar==='M'||(!I0.mar&&u.from>=40))?PHM:(u.from>=55?PHS:null)):k==='child'?(u.from>=50?PHC:null):k==='job'?((cx.rest||u.from>=65)?PHJ:null):k==='money'?(u.from>=65?PHMo:null):null;
+  const PHKP={孫:['아이 소식이 들리기 좋은 때 — 임신·출산 계획을 세워 보세요','아이 계획이 늦어지기 쉬워요 — 몸부터 챙기세요'],父:['아이를 맞을 집과 준비가 갖춰져요','걱정이 앞서요 — 서두르지 마세요'],兄:['형제·조카와 정이 깊어져요','남의 집 아이와 비교하지 마세요'],
+      財:['아이를 위한 돈이 모여요 — 미리 모아 두세요','아이 준비에 돈이 많이 들어요 — 계획을 세우세요'],官:['부부가 마음을 모으는 때예요','책임감에 짓눌리기 쉬워요 — 부부가 나눠 지세요'],鬼:['고비를 넘기면 좋은 소식이 와요','몸이 지치기 쉬워요 — 검진부터 받으세요']};
+  const PHKJ={孫:['아끼는 아랫사람이 잘돼요 — 조카·제자를 챙기세요','아랫사람 일로 마음 쓸 때 — 들어 주세요'],父:['가르치고 이끄는 일에 보람이 있어요','아랫사람을 다그치기 쉬워요 — 한발 물러서세요'],兄:['형제·조카와 사이가 좋아요','형제 일로 돈이 나가요 — 선을 그으세요'],
+      財:['아랫사람에게 쓴 정이 복으로 돌아와요','아랫사람 일에 돈이 새요 — 빌려주지 마세요'],官:['아랫사람이 자리를 잡아 고마워해요','아랫사람 걱정이 늘어요 — 믿고 맡기세요'],鬼:['아랫사람이 고비를 넘기고 단단해져요','아랫사람 건강·안전을 챙겨 주세요']};
+  const PHKY=Object.assign({},PH.child,{孫:['자녀에게 경사가 생겨요 — 합격·상 같은 기쁜 소식이 와요','자녀 일로 마음 쓸 때 — 들어 주세요']});
+  const PHB={父:['계약·인허가가 술술 풀려요 — 큰 계약을 잡으세요','계약서에서 탈이 나요 — 도장은 천천히'],兄:['동업자·거래처가 손님을 몰고 와요','경쟁 가게에 손님을 뺏기기 쉬워요 — 단골부터 챙기세요'],孫:['새 상품·새 메뉴가 잘 팔려요 — 새로 내 보세요','일을 너무 벌여 새요 — 하나에 집중하세요'],
+      財:['매출이 쑥 올라요 — 가게를 넓혀 보세요','들어온 만큼 나가요 — 재고·지출을 줄이세요'],官:['가게 이름이 나고 단골이 늘어요','세금·관청 일로 골치 아파요 — 장부를 정리하세요'],鬼:['남이 꺼리는 일감으로 돈을 벌어요','손님 불만·사고가 생기기 쉬워요 — 꼼꼼히 챙기세요']};
+  const PHSt={父:['시험·자격증 운이 좋아요 — 큰 시험에 도전하세요','공부가 손에 안 잡혀요 — 계획표부터 다시 짜세요'],兄:['친구와 함께 공부하면 잘돼요','친구와 비교하며 지쳐요 — 내 속도대로 가세요'],孫:['재능이 드러나요 — 대회·발표에 나가 보세요','놀 거리에 마음이 쏠려요 — 폰을 멀리하세요'],
+      財:['장학금·아르바이트 운이 있어요','돈 쓸 데가 많아 공부가 밀려요'],官:['원하는 학교·학과에 붙어요','선생님·윗사람과 부딪혀요 — 말을 아끼세요'],鬼:['어려운 과목을 넘어서요 — 끝까지 버티세요','시험 압박에 지쳐요 — 잠부터 챙기세요']};
+  const PHSk={父:['서류 합격이 잘 나와요 — 지원서를 많이 내세요','서류에서 자꾸 떨어져요 — 자기소개서를 고치세요'],兄:['지인 소개로 일자리가 와요 — 주변에 알리세요','경쟁자가 많아요 — 자격증을 하나 더 따 두세요'],孫:['재능을 살릴 일이 보여요 — 전공 밖도 보세요','눈높이가 높아 놓쳐요 — 조건을 조금 낮추세요'],
+      財:['급여 좋은 자리가 와요','돈 때문에 아무 데나 가기 쉬워요 — 조건을 따져 보세요'],官:['합격 소식이 와요 — 면접에 힘을 쏟으세요','면접에서 미끄러지기 쉬워요 — 연습을 더 하세요'],鬼:['힘든 곳이지만 붙어서 버티면 커요','지쳐서 포기하고 싶어져요 — 쉬어 가며 하세요']};
+  const jobSet=u=>I0.job==='biz'&&u.from<65?PHB:I0.job==='stu'&&u.from<30?PHSt:I0.job==='seek'&&u.from<=age+5?PHSk:null;
+  const kidSet=u=>I0.kid==='N'?(u.from>=50?PHKJ:PHKP):I0.kid==='Y'&&u.from<50?PHKY:null;
+  const setOf=u=>k==='child'?(kidSet(u)||(u.from>=50?PHC:null)):k==='job'&&!cx.rest&&jobSet(u)?jobSet(u):k==='spouse'?((I0.mar==='M'||(!I0.mar&&u.from>=40))?PHM:(u.from>=55?PHS:null)):k==='child'?(u.from>=50?PHC:null):k==='job'?((cx.rest||u.from>=65)?PHJ:null):k==='money'?(u.from>=65?PHMo:null):null;
   if(k==='spouse'&&cx.married&&!cx.single){CFG.spouse.n='부부운';}
   if(k==='job'&&cx.rest)CFG.job.n='일·활동운';
+  if(k==='job'&&!cx.rest)CFG.job.n={biz:'사업운',stu:'공부·진로운',seek:'취업운'}[I0.job]||CFG.job.n;
+  if(k==='child'&&I0.kid==='N')CFG.child.n=age>=50?'아랫사람·조카운':'자녀 계획운';
   const relOfWhy=w=>{const m=/(삼합|반합|육합)/.exec(w||'');if(m)return m[1];if(/를 생|을 생/.test(w||''))return '생';if(/충극/.test(w||''))return '충극';return '';};
   const cls=v=>v>=3?0:v>=1.5?1:v>-0.5?2:3;
   const segs=[];
@@ -365,7 +394,12 @@ function renderReading(r){
     const hs=Haeseok.relations(r,r.se).filter(q=>q.type==='삼합'||q.type==='육합');
     if(hs.length)t+=' 세궁 수가 동처의 '+hs.map(q=>q.with.map(n=>NUM[n]).join('·')+'와 '+q.type).join(', ')+'을 이뤄 세기가 <b>'+[...new Set(hs.map(q=>EK[q.el]))].join('·')+'</b> 기운으로 바뀌어 작용할 수 있어요(삼합이 먼저예요).';
     x.S.total.push(t);}catch(e){console.error(e);}
+  {const I=r.input||{},a=ageNow(r),pl=profLine(I,a,x.yong,false);if(pl&&x.SH&&x.SH.job){x.SH.job[0]=pl.n+(c=>{const v=c.charCodeAt(0)-0xAC00;return v>=0&&v%28&&v%28!==8?'으로':'로';})(pl.n.slice(-1))+' 보면, '+pl.t+'.';
+      const WH={biz:'가게를 넓히거나 새로 벌이기 좋은 때는 ',stu:'진로를 정하고 크게 도전하기 좋은 때는 ',seek:'취업 운이 센 때는 ',ret:'새 활동을 시작하기 좋은 때는 ',home:'새 활동을 시작하기 좋은 때는 '}[I.job||(lifeCtx(I,a).rest?'ret':'')];
+      if(WH)x.SH.job=x.SH.job.map(t=>t.replace(/^(<b>[^<]+<\/b>)에 이직·창업·승진을 노려 보세요\.$/,WH+'$1예요.'));}
+    const kl=kidLine(I,a,x.SC&&x.SC.child,false);if(kl&&x.SH){x.SH.child=[kl+'.'].concat(I.kid==='N'?[]:(x.SH.child||[]).slice(1));}}
   const T={total:'총평',char:'성격',money:'재물',job:'직업·적성',spouse:'배우자',child:'자녀',health:'건강',luck:'대운 흐름',lucky:'🍀 행운 처방'};
+  {const I=r.input||{},cx=lifeCtx(I,ageNow(r));if(cx.married&&!cx.single)T.spouse='부부';if(I.kid==='N'&&ageNow(r)>=50)T.child='아랫사람·조카';const jn={biz:'사업',stu:'공부·진로',seek:'취업',ret:'일·활동',home:'살림·활동'}[I.job||(cx.rest?'ret':'')];if(jn)T.job=jn;}
   const star=n=>n?'<span class="rdStar">'+'★'.repeat(n)+'<i>'+'★'.repeat(5-n)+'</i></span>':'';
   let h='<h2>📜 종합 풀이</h2><span class="badge">'+x.strongKo+' · 용신 '+x.yong+'</span>';
   try{const HL=x.HL||{},cr=x.curRun,st=v=>String(v||'').replace(/^[^\s가-힣「]+\s*/,'');
@@ -373,6 +407,9 @@ function renderReading(r){
     const L=[];if(HL.char)L.push('🙂 <b>자네는</b> · '+st(HL.char)+'일세');
     if(HL.money)L.push('💰 <b>돈</b> · '+st(HL.money));if(HL.job)L.push('💼 <b>일</b> · '+st(HL.job));
     if(cr)L.push('⏳ <b>지금('+Math.max(cr.from,ageNow(r))+(cr.to>Math.max(cr.from,ageNow(r))?'~'+cr.to:'')+'세)</b> · '+cr.theme+'의 시기고, 흐름은 <b>'+(cr.g>=2?'좋네':cr.g>=1?'괜찮은 편일세':cr.g<=-1?'조심할 때일세':'보통일세')+'</b>');
+    {const I=r.input||{},a=ageNow(r),pl=profLine(I,a,x.yong,true);if(pl)L.push(pl.e+' <b>'+pl.n+'</b> · '+pl.t);
+      const cx=lifeCtx(I,a);if(cx.married&&!cx.single){const sc=x.SC&&x.SC.spouse;L.push('🏡 <b>부부</b> · '+(sc>=4?'금실이 좋은 짝일세':sc&&sc<=2?'서로 한발씩 물러서야 오래가네':'무난한 짝일세. 마음을 자주 표현하게'));}
+      const kl=kidLine(I,a,x.SC&&x.SC.child,true);if(kl)L.push('👶 <b>'+(I.kid==='N'&&a>=50?'아랫사람':'자식')+'</b> · '+kl);}
     if(HL.luck)L.push('🧭 <b>지금 할 일</b> · '+st(HL.luck));
     if(L.length)h+='<div data-sec="sum" class="bub dk rdTalk"><span class="av">👹</span><div><p class="ansV"><b>허허, 한마디로 정리해 주겠네.</b></p>'+L.map(t=>'<p>'+t+'</p>').join('')+'<p class="note">궁금한 게 있으면 위에서 이 도깨비한테 그냥 물어보게.</p></div></div>';}catch(e){console.error(e);}
   const sec=k=>'<div data-sec="'+k+'" class="rdSec'+(k==='total'?' top':k==='lucky'?' lucky':'')+'"><h4>'+T[k]+'</h4>'+star(x.SC&&x.SC[k])+(x.HL&&x.HL[k]?'<p class="rdHL">'+x.HL[k]+'</p>':'')+(x.SH&&x.SH[k]&&x.SH[k].length?'<div class="sh">'+x.SH[k].map(s=>'<p>'+s+'</p>').join('')+'</div>':'')+lifeHtml(x,k,r.input.sex,ageNow(r))+x.S[k].map(t=>'<p'+(/^📌/.test(t)?' class="note"':'')+'>'+t+'</p>').join('')+'</div>';
@@ -1784,7 +1821,12 @@ const TART={exam:[['seodang','chaek'],['gamchal']],jobget:[['daejang','hojak'],[
     const L=['올해 큰일은 <b>'+A[3]+'</b> 쪽에서 터지네.'+(chung?' 다만 자네와 부딪히는 자리라, 한바탕 힘겨루기는 각오하게.':good?' 운이 받쳐 주니 판을 크게 벌여도 되네.':' 운이 버거우니 판을 줄이고 실속부터 챙기게.'),
       M.best?'제일 센 때는 <b>'+M.best.lab+'</b>일세. '+dday(M.best):'올해는 한 방보다 꾸준함이 이기는 해일세.',
       M.bad?'<b>'+M.bad.lab+'</b>엔 큰돈·큰 결정은 쉬어 가게.':'크게 막히는 달은 없으니 겁먹지 말게.'];
-    const pr=YG.map(([t,n,w])=>{const m=monthsFor(t);return m.best?{n,w,c:m.best}:null;}).filter(Boolean).sort((x,z)=>(x.c.a||0)-(z.c.a||0));
+    {const pl=profLine(r.input||{},ageNow(r),(()=>{try{return Haeseok.interpret(r,r.input.sex,ageNow(r)).yong;}catch(e){return '';}})(),true);if(pl)L.push('<b>'+pl.n+'</b>'+jo(pl.n,'은','는')+' 말일세, '+pl.t+'.');}
+    const I=r.input||{},cxh=lifeCtx(I,ageNow(r));
+    const jobG={biz:['biz','가게','매출이 오르는 달'],stu:['exam','공부','시험·공부가 잘 풀리는 달'],seek:['jobget','취업','붙을 운이 센 달'],ret:['health','몸','몸이 가볍고 나들이하기 좋은 달'],home:['health','몸','몸이 가볍고 나들이하기 좋은 달']}[I.job||(cxh.rest?'ret':'')]||YG[1];
+    const pplG=cxh.married&&!cxh.single?['couple','부부','부부 사이가 따뜻한 달']:I.kid==='N'&&ageNow(r)<45&&cxh.married?['child','아이','아이 소식을 기다려 볼 달']:YG[2];
+    const YGp=[YG[0],jobG,pplG];
+    const pr=YGp.map(([t,n,w])=>{const m=monthsFor(t);return m.best?{n,w,c:m.best}:null;}).filter(Boolean).sort((x,z)=>(x.c.a||0)-(z.c.a||0));
     try{const P=v=>String(v).padStart(2,'0'),iso=d=>d.getFullYear()+'-'+P(d.getMonth()+1)+'-'+P(d.getDate());const I=r.input;
       localStorage.setItem('hongmyeongguk.yeogo',JSON.stringify({d:I.y+'-'+P(I.m)+'-'+P(I.d),list:pr.filter(x=>x.c.a).map(x=>({s:iso(x.c.a),e:iso(x.c.b),txt:x.n+' — '+x.c.lab+', '+x.w}))}));}catch(e){}
     heroData={k:A[0],nick,punch,line:L[0].replace(/<[^>]+>/g,''),name:r.input.name||'',Y};
