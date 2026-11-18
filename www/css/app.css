@@ -289,6 +289,5 @@ body.pro .sh{border-left:3px solid var(--pink);padding-left:8px}
 
 body:not(.pro) .proOnly{display:none}
 
-body:not(.pro) .runs.mon th:nth-child(2),body:not(.pro) .runs.mon td:nth-child(2),body:not(.pro) .runs.mon th:nth-child(3),body:not(.pro) .runs.mon td:nth-child(3),body:not(.pro) .runs.mon .wbS{display:none}
 /* 앱에서 화면을 내려도 글자가 위쪽 시계·배터리 줄 밑으로 비치지 않게 가림막 */
 body::before{content:"";position:fixed;top:0;left:0;right:0;height:env(safe-area-inset-top,0px);background:var(--bg);z-index:200;pointer-events:none}
