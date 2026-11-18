@@ -40,9 +40,13 @@
   function talkOf(k,x,nodes){const say=t=>{try{return toJane(hage(t));}catch(e){return t;}};const L=[];
     for(const nd of nodes){nd.querySelectorAll&&nd.querySelectorAll('.sh p').forEach(p=>{const t=p.innerHTML.trim();if(t&&!L.includes(t))L.push(t);});}
     if(!L.length)for(const nd of nodes){const h=nd.querySelector&&nd.querySelector('.rdHL');if(h)L.push(h.innerHTML);}
-    let when='';for(const nd of nodes){const ls=nd.querySelector&&nd.querySelector('.lifeSum');if(!ls)continue;const t=ls.textContent;
-      const b=/가장 좋은 때\s*([^⚠\n]+)/.exec(t),w=/(?:쉬어 갈 때|조심할 때)\s*([^🌟\n]+)/.exec(t);
-      if(b&&!when)when='제일 좋은 때는 <b>'+b[1].trim()+'</b>일세.'+(w?' <b>'+w[1].split(',')[0].trim()+'</b>엔 한 박자 쉬어 가게.':'');}
+    // 가까운 미래부터: 나이별 흐름 줄 중 앞으로 10년 안의 좋은 때(없으면 가장 가까운 무난한 때)
+    let when='';{const age=base?ageNow(base):0;const rows=[];for(const nd of nodes){nd.querySelectorAll&&nd.querySelectorAll('.lifeR').forEach(r=>{const m=/(\d+)(?:~(\d+))?세/.exec(r.querySelector('b')?r.querySelector('b').textContent:'');const lp=r.querySelector('.lp');if(m&&lp)rows.push({from:+m[1],to:+(m[2]||m[1]),lv:+((/lv(\d)/.exec(lp.className)||[])[1]||2),t:m[0]});});}
+      const near=rows.filter(x=>x.from<=age+10);const good=near.find(x=>x.lv<=1)||near.find(x=>x.lv===2);const rest=near.find(x=>x.lv===3);
+      const ix=['char','money','job','love','health','lucky'].indexOf(k)%3,G=x=>'<b>'+x.t+'</b>';
+      const NOW=['바로 지금('+(good?good.t:'')+')이 기회일세. 미루지 말게.','지금('+(good?good.t:'')+') 흐름이 좋으니 이때 움직이게.','지금('+(good?good.t:'')+')이 딱 좋은 때일세.'];
+      const SOON=[' 가까이는 ',' 머지않아 ',' 조금 있으면 '][ix],REST=['엔 한 박자 쉬어 가게.','엔 숨 고르며 다지게.','엔 무리 말고 지키게.'][ix];
+      if(good)when=(good.from<=age?NOW[ix].replace('('+good.t+')','(<b>'+good.t+'</b>)'):SOON.trim()+' '+G(good)+(good.lv<=1?'가 제일 좋네.':'가 무난하니 그때 차근차근 하게.'))+(rest&&rest!==good?' '+G(rest)+REST:'');}
     const art=window.__secArt?window.__secArt(k):'';
     return '<div class="bub me">'+x.q+'</div><div class="bub dk"><span class="av"></span><div><p class="dkOpen">'+(OPEN[k]||'어디 보자.')+'</p>'+
       L.slice(0,4).map((t,i)=>'<p'+(i===0?' class="ansV"':'')+'>'+say(t)+'</p>').join('')+(when?'<p>'+when+'</p>':'')+art+

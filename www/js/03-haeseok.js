@@ -360,12 +360,12 @@
     // ── 단정형 핵심 요약(SH): 섹션마다 2~3줄, 먼저 보여 줘요. 자세한 근거는 S에 그대로 ──
     const SH = {}, A = u => '<b>' + ageTxt(u) + '</b>';
     // 앞으로 올 시기를 먼저(지난 시기는 쓰지 않아요)
-    const HI = Math.min(75, Math.max(age, 20) + 30), fut = (ks, min, hi) => runs.filter(u => ks.includes(u.k) && u.g >= min && u.to >= Math.max(age, 20) && u.from <= Math.min(hi || HI, HI)).sort((a, b) => b.g - a.g || a.from - b.from)[0] || null;
+    const HI = Math.max(age, 20) + 12, fut = (ks, min, hi) => runs.filter(u => ks.includes(u.k) && u.g >= min && u.to >= Math.max(age, 20) && u.from <= Math.min(hi || HI, HI)).sort((a, b) => b.g - a.g || a.from - b.from)[0] || null;
     const futBad = ks => runs.filter(u => ks.includes(u.k) && u.g <= 0 && u.to >= Math.max(age, 20) && u.from <= HI).sort((a, b) => a.g - b.g || a.from - b.from)[0] || null;
     const ALLK = ['父', '兄', '孫', '財', '官', '鬼'];
     const fBest = fut(ALLK, -9), fWorst = futBad(ALLK);
-    const fMoney = fut(strong === 'weak' ? ['父', '兄', '財'] : ['財', '孫'], 1), fLeak = futBad(['兄', '鬼']);
-    const fJob = fut(strong === 'weak' ? ['父', '官'] : ['官', '財', '孫'], 1, 65), fLove = age <= 45 ? fut(spK, 0.5, 45) : null, fHealth = runs.filter(u => u.k === '鬼' && u.g <= -1 && u.to >= age && u.from <= HI).sort((a, b) => a.g - b.g)[0] || null;
+    const fMoney = fut(strong === 'weak' ? ['父', '兄', '財'] : ['財', '孫'], 1) || fut(strong === 'weak' ? ['父', '兄', '財'] : ['財', '孫'], 0), fLeak = futBad(['兄', '鬼']);
+    const fJob = fut(strong === 'weak' ? ['父', '官'] : ['官', '財', '孫'], 1, 65) || fut(strong === 'weak' ? ['父', '官'] : ['官', '財', '孫'], 0, 65), fLove = age <= 45 ? fut(spK, 0.5, 45) : null, fHealth = runs.filter(u => u.k === '鬼' && u.g <= -1 && u.to >= age && u.from <= HI).sort((a, b) => a.g - b.g)[0] || null;
     // 쉬운 말 요약(쉬운 보기에서 먼저 보여 줘요). 전문 용어는 '근거 보기'·전문가 보기에만
     const ye = w => w + (bat(w) ? '이에요' : '예요'), eul = w => w + (bat(w) ? '을' : '를');
     const PLQ = { 父: '문서·도움', 兄: '사람·경쟁', 孫: '재능·새 일', 財: '돈', 官: '직장·명예', 鬼: '시련' };
