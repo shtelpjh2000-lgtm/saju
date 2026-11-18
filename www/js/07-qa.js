@@ -31,9 +31,22 @@
   function fill(k){
     const x=Q.find(q=>q.k===k),A=list.querySelector('.qaI[data-k="'+k+'"] .qaA');A.innerHTML='';
     if(x.move){const el=$(x.move);if(!el)return;if(!ph[x.move]){ph[x.move]=document.createComment(x.move);el.before(ph[x.move]);}A.appendChild(el);}
-    else{const n=x.get();if(n.length)n.forEach(c=>A.appendChild(c));else A.innerHTML='<p class="note">이 명국에서는 따로 풀 내용이 없네.</p>';}
-    if(window.__secArt){const f=window.__secArt(k);if(f)A.insertAdjacentHTML('beforeend',f);} // 그림은 풀이 아래, 결과(별점)에 맞게
+    else{const n=x.get();if(!n.length){A.innerHTML='<p class="note">이 명국에서는 따로 풀 내용이 없네.</p>';}
+      else if(k==='sum'){A.insertAdjacentHTML('beforeend','<div class="bub me">'+x.q+'</div>');n.forEach(c=>A.appendChild(c));if(window.__secArt){const f=window.__secArt(k);if(f)A.insertAdjacentHTML('beforeend',f);}}
+      else{A.insertAdjacentHTML('beforeend',talkOf(k,x,n));const det=A.querySelector('details.qaMore');n.forEach(c=>det.appendChild(c));}}
   }
+  // 질문을 누르면 도깨비가 대화로 답해요: 요약(쉬운 말) + 제일 좋은 때·쉬어 갈 때 + 그림, 자세한 풀이는 접어 두기
+  const OPEN={char:'자네 성격 말인가. 내 보기엔 말일세,',money:'돈 얘기라… 어디 보자.',job:'일 얘기구먼. 자네한테 맞는 길을 짚어 보지.',love:'짝과 자식 얘기라… 잘 들어 보게.',health:'몸 얘기는 중요하지. 잘 듣게.',lucky:'운을 끌어오는 법 말인가. 방망이 비법을 일러 주지.'};
+  function talkOf(k,x,nodes){const say=t=>{try{return toJane(hage(t));}catch(e){return t;}};const L=[];
+    for(const nd of nodes){nd.querySelectorAll&&nd.querySelectorAll('.sh p').forEach(p=>{const t=p.innerHTML.trim();if(t&&!L.includes(t))L.push(t);});}
+    if(!L.length)for(const nd of nodes){const h=nd.querySelector&&nd.querySelector('.rdHL');if(h)L.push(h.innerHTML);}
+    let when='';for(const nd of nodes){const ls=nd.querySelector&&nd.querySelector('.lifeSum');if(!ls)continue;const t=ls.textContent;
+      const b=/가장 좋은 때\s*([^⚠\n]+)/.exec(t),w=/(?:쉬어 갈 때|조심할 때)\s*([^🌟\n]+)/.exec(t);
+      if(b&&!when)when='제일 좋은 때는 <b>'+b[1].trim()+'</b>일세.'+(w?' <b>'+w[1].split(',')[0].trim()+'</b>엔 한 박자 쉬어 가게.':'');}
+    const art=window.__secArt?window.__secArt(k):'';
+    return '<div class="bub me">'+x.q+'</div><div class="bub dk"><span class="av"></span><div><p class="dkOpen">'+(OPEN[k]||'어디 보자.')+'</p>'+
+      L.slice(0,4).map((t,i)=>'<p'+(i===0?' class="ansV"':'')+'>'+say(t)+'</p>').join('')+(when?'<p>'+when+'</p>':'')+art+
+      '<details class="askMore qaMore"><summary>📜 자세한 풀이 보기</summary></details></div></div>';}
   function setOpen(k){
     restore();list.querySelectorAll('.qaI').forEach(i=>{i.classList.remove('open');i.querySelector('.qaA').innerHTML='';});
     open=k;if(!k)return;
