@@ -36,7 +36,7 @@ function profSet(p){p=p||{};['mar','kid'].forEach(id=>{const el=$(id);if(el)[...
 function lifeCtx(I,age){I=I||{};return {married:I.mar==='M'||(!I.mar&&age>=40),single:I.mar==='S'||I.mar==='D',senior:age>=50,noKid:I.kid==='N',rest:I.job==='ret'||I.job==='home'||(!I.job&&age>=65)};}
 // 기본정보(결혼·나이)에 안 맞는 말 걸러 내기: 기혼이거나 55세 이상이면 '이성 인기·새 인연' 같은 말을 빼고 부부·집안 말로
 function fitProf(h){if(!base||!h)return h;const I=base.input||{},age=ageNow(base),cx=lifeCtx(I,age);const off=(cx.married&&!cx.single)||age>=55;if(!off)return h;
-  h=h.replace(/·연애(?=의 시기)/g,'').replace(/돈·이성 문제/g,'돈 문제').replace(/직장·남자 문제/g,'직장 일').replace(/재물·사업·이성/g,'재물·사업').replace(/직장·승진·명예·이성/g,'직장·승진·명예')
+  h=h.replace(/돈이 들어오고 이성 인연도 생겨요/g,'돈이 들어와요').replace(/인정받고 이성 인연도 생겨요/g,'인정받아요').replace(/·연애(?=의 시기)/g,'').replace(/돈·이성 문제/g,'돈 문제').replace(/직장·남자 문제/g,'직장 일').replace(/재물·사업·이성/g,'재물·사업').replace(/직장·승진·명예·이성/g,'직장·승진·명예')
    .replace(/\s*이성에게 인기가 많아(?:져요|지네)\./g,'').replace(/\s*이성 인기도? ?따라와요\./g,'').replace(/[,·]?\s*이성 인기/g,'');
   if(cx.married&&!cx.single)h=h.replace(/<p>인연은 [^<]*<\/p>/g,'').replace(/짝으로는 /g,'배우자로는 ').replace(/이성 · 배우자 기운이 나와 잘 맞아 인연이 생기거나 부부 사이가 가까워지는 해예요\./g,'부부 · 배우자 기운이 나와 잘 맞아 부부 사이가 가까워지는 해예요.').replace(/<b>이성<\/b> · 배우자 기운이 나와 잘 맞아 인연이 생기거나 부부 사이가 가까워지는 해예요\./g,'<b>부부</b> · 배우자 기운이 나와 잘 맞아 부부 사이가 가까워지는 해예요.');
   return h;}
@@ -429,7 +429,7 @@ function renderReading(r){
 }
 
 // 도깨비 말투에서는 '나/내'를 '자네'로
-const toJane=h=>h.replace(/(^|[\s>(·,])내 (힘|편|일|칸|기운|마음|몫|자리)/g,'$1자네 $2').replace(/(^|[\s>(·,])나와 /g,'$1자네와 ').replace(/(^|[\s>(·,])내가 /g,'$1자네가 ');
+const toJane=h=>h.replace(/(^|[\s>(·,])내 (힘|편|일|칸|기운|마음|몫|자리|계획)/g,'$1자네 $2').replace(/(^|[\s>(·,])나와 /g,'$1자네와 ').replace(/(^|[\s>(·,])내가 /g,'$1자네가 ');
 function renderYear(r){
   const o=yInfo.out,b=yInfo.base;
   let h='<h2>'+yearSel+'년 신수</h2><span class="badge">'+r.pillars[0]+'년 · '+ageNow(base)+'세 · '+b.strongKo+'</span>';
