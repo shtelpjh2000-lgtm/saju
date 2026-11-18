@@ -44,7 +44,7 @@
     // 쉬운 보기에서 숨긴 메뉴를 보고 있었으면 한마디로
     const cur=B.dataset.mn;if(!pro&&['total','type','child','luck','wonbi','four','map','deep'].includes(cur)&&window.__mn)window.__mn.set(cur==='type'?'char':cur==='child'?'spouse':cur==='total'?'sum':'sum');
     // 쉬운 보기에서는 9칸 지도를 쉬운 그림으로
-    if(!pro){const e=$('viewSeg').querySelector('button[data-v="easy"]');if(e&&!e.classList.contains('on'))e.click();}
+    {const g=$('viewSeg').querySelector('button[data-v="gg"]');if(g&&!g.classList.contains('on'))g.click();} // 쉬운 그림은 없앴어요: 늘 운명 지도
     cut($('reading'));
   }
   bar.style.display='none';bar.querySelector('button').addEventListener('click',()=>{try{localStorage.setItem(KEY,'0');}catch(e){}

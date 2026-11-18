@@ -61,3 +61,6 @@ body{color:var(--ink)}
 @media(prefers-color-scheme:dark){.mI.g2 .mG{color:#6fe3ad}.mI.g1 .mG{color:#9be3bf}}
 @media(max-width:380px){.mI{grid-template-columns:auto 1fr}.mI p{grid-column:1/-1}}
 .mI,.mI p,.mI .mM{color:var(--ink)!important}.mI.g2 .mM{color:#1f9c66!important}.mI.gm1 .mM{color:var(--red)!important}@media(prefers-color-scheme:dark){.mI.g2 .mM{color:#6fe3ad!important}}
+/* '쉬운 그림으로 보기'는 사용자 요청으로 없앰 — 운명 지도만 */
+#mapCard .viewSeg,#mapCard #easyView{display:none!important}
+#mapCard #expert{display:block!important}
