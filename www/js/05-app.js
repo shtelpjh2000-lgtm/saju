@@ -411,7 +411,7 @@ function renderReading(r){
       const cx=lifeCtx(I,a);if(cx.married&&!cx.single){const sc=x.SC&&x.SC.spouse;L.push('🏡 <b>부부</b> · '+(sc>=4?'금실이 좋은 짝일세':sc&&sc<=2?'서로 한발씩 물러서야 오래가네':'무난한 짝일세. 마음을 자주 표현하게'));}
       const kl=kidLine(I,a,x.SC&&x.SC.child,true);if(kl)L.push('👶 <b>'+(I.kid==='N'&&a>=50?'아랫사람':'자식')+'</b> · '+kl);}
     if(HL.luck)L.push('🧭 <b>지금 할 일</b> · '+st(HL.luck));
-    if(L.length)h+='<div data-sec="sum" class="bub dk rdTalk"><span class="av">👹</span><div><p class="ansV"><b>허허, 한마디로 정리해 주겠네.</b></p>'+L.map(t=>'<p>'+t+'</p>').join('')+'<p class="note">궁금한 게 있으면 위에서 이 도깨비한테 그냥 물어보게.</p></div></div>';}catch(e){console.error(e);}
+    if(L.length)h+='<div data-sec="sum" class="bub dk rdTalk"><span class="av"></span><div><p class="ansV"><b>허허, 한마디로 정리해 주겠네.</b></p>'+L.map(t=>'<p>'+t+'</p>').join('')+'<p class="note">궁금한 게 있으면 위에서 이 도깨비한테 그냥 물어보게.</p></div></div>';}catch(e){console.error(e);}
   const sec=k=>'<div data-sec="'+k+'" class="rdSec'+(k==='total'?' top':k==='lucky'?' lucky':'')+'"><h4>'+T[k]+'</h4>'+star(x.SC&&x.SC[k])+(x.HL&&x.HL[k]?'<p class="rdHL">'+x.HL[k]+'</p>':'')+(x.SH&&x.SH[k]&&x.SH[k].length?'<div class="sh">'+x.SH[k].map(s=>'<p>'+s+'</p>').join('')+'</div>':'')+lifeHtml(x,k,r.input.sex,ageNow(r))+x.S[k].map(t=>'<p'+(/^📌/.test(t)?' class="note"':'')+'>'+t+'</p>').join('')+'</div>';
   for(const k of Object.keys(T)){if(k==='lucky'||!x.S[k]||!x.S[k].length)continue;h+=sec(k);}
   const gc=g=>g>=2?['g2','좋음']:g>=1?['g1','무난·좋음']:g<=-1?['gm1','주의']:['g0','보통'];
@@ -1384,7 +1384,7 @@ alDraw();
   const APP_URL='https://shtelpjh2000-lgtm.github.io/saju/';
   const clean=t=>(t||'').replace(/\s+/g,' ').trim();
   function collect(root){
-    const h2=[...root.querySelectorAll('h2, [data-sec] h4')].find(e=>e.getClientRects().length);let title=clean(h2&&h2.textContent);if(h2&&h2.tagName==='H4')title='👹 '+title;
+    const h2=[...root.querySelectorAll('h2, [data-sec] h4')].find(e=>e.getClientRects().length);let title=clean(h2&&h2.textContent);if(h2&&h2.tagName==='H4')title='🔨 '+title;
     const sub=[];const bd=root.querySelector('.badge');if(bd)sub.push(clean(bd.textContent));
     const dh=root.querySelector('.dmHead');if(dh){title='🌙 '+clean(dh.querySelector('b').textContent);const g=dh.querySelector('i');if(g)sub.push(clean(g.textContent));}
     const lines=[];
@@ -1395,7 +1395,7 @@ alDraw();
       if(el.classList.contains('note')||el.classList.contains('jmSub')||el.classList.contains('dmCat')||el.classList.contains('err'))return;
       const t=clean(el.textContent);if(t.length<8||lines.some(l=>core(l).includes(core(t))||core(t).includes(core(l))))return;lines.push(t);
     });
-    if(!title){const t=root.querySelector('b,strong,h3,h4');title=clean(t&&t.textContent)||'👹 도깨비 사주';}
+    if(!title){const t=root.querySelector('b,strong,h3,h4');title=clean(t&&t.textContent)||'도깨비 사주';}
     return {title,sub:sub.join(' · '),lines};
   }
   function wrap(ctx,text,maxW){const out=[];let line='';
@@ -1403,12 +1403,13 @@ alDraw();
       const sp=line.lastIndexOf(' ');if(sp>line.length*0.6){out.push(line.slice(0,sp));line=line.slice(sp+1)+ch;}else{out.push(line);line=ch;}}else line=t;}
     if(line)out.push(line);return out;}
   function rr(ctx,x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath();}
+  const DKIMG=new Image();DKIMG.src='img/dokkaebi.svg'; // 공유 그림에 넣을 기와 도깨비
   function draw(d){
     const W=1080,H=1350,cv=document.createElement('canvas');cv.width=W;cv.height=H;const c=cv.getContext('2d');
     const F='"Apple SD Gothic Neo","Noto Sans KR","Malgun Gothic",sans-serif';
     const g=c.createLinearGradient(0,0,W,H);g.addColorStop(0,'#ffe3ee');g.addColorStop(.55,'#efe8ff');g.addColorStop(1,'#dff4ff');c.fillStyle=g;c.fillRect(0,0,W,H);
     c.fillStyle='rgba(255,255,255,.55)';[[120,140,90],[960,260,60],[930,1180,110],[90,1150,50]].forEach(([x,y,r])=>{c.beginPath();c.arc(x,y,r,0,7);c.fill();});
-    c.textAlign='center';c.fillStyle='#3a2e4d';c.font='96px '+F;c.fillText('👹',W/2,150);
+    c.textAlign='center';c.fillStyle='#3a2e4d';if(DKIMG.complete&&DKIMG.naturalWidth){c.drawImage(DKIMG,W/2-60,48,120,120);}else{c.font='96px '+F;c.fillText('🔨',W/2,150);}
     c.font='800 40px '+F;c.fillStyle='#ff6b9a';c.fillText('도깨비 사주',W/2,215);
     c.fillStyle='#ffffff';c.shadowColor='rgba(186,140,190,.35)';c.shadowBlur=30;rr(c,70,260,W-140,H-420,44);c.fill();c.shadowBlur=0;
     let y=350;c.fillStyle='#3a2e4d';c.font='800 58px '+F;
@@ -1422,7 +1423,7 @@ alDraw();
   }
   function b64(cv){return cv.toDataURL('image/png').split(',')[1];}
   async function share(root,btn){
-    const d=collect(root);const cv=draw(d);const text=d.title+'\n'+(d.lines[0]||'')+'\n\n👹 도깨비 사주에서 내 운세 보기\n'+APP_URL;
+    const d=collect(root);const cv=draw(d);const text=d.title+'\n'+(d.lines[0]||'')+'\n\n🔨 도깨비 사주에서 내 운세 보기\n'+APP_URL;
     const name='도깨비사주_'+Date.now()+'.png';const msg=root.querySelector('.shareMsg');const say=t=>{if(msg)msg.textContent=t;};
     const C=window.Capacitor;
     if(C&&C.isNativePlatform&&C.isNativePlatform()){
@@ -1895,7 +1896,7 @@ const TART={exam:[['seodang','chaek'],['gamchal']],jobget:[['daejang','hojak'],[
         else if(cr.g>-1)L.push('요즘은 <b>'+cr.theme+'</b> 쪽 일이 마음을 차지하는 때일세. 크게 좋지도 나쁘지도 않으니, 너무 애태우지 말고 차근차근 가게.');
         else{const nx=x.runs.find(u=>u.from>age&&u.g>=1);L.push('요즘 많이 지쳤지? 지금은 <b>'+cr.theme+'</b> 쪽 일로 짐이 무거운 때라네. 몸을 낮추고 조금만 버티게.'+(nx?' 이 고비만 넘기면 <b>'+nx.from+'세</b>부터 숨통이 트일 걸세.':''));}}}catch(e){}
     L.push('무엇이 궁금한가? 돈 얘기든 사람 얘기든, 편하게 털어놓게.');
-    return '<div class="bub dk"><span class="av">👹</span><div>'+L.map((t,i)=>'<p'+(i===0?' class="dkOpen"':'')+'>'+t+'</p>').join('')+'<div class="dkQuick">'+QUICK.map(([k,l])=>'<button type="button" data-qk="'+k+'">'+l+'</button>').join('')+'</div></div></div>';}
+    return '<div class="bub dk"><span class="av"></span><div>'+L.map((t,i)=>'<p'+(i===0?' class="dkOpen"':'')+'>'+t+'</p>').join('')+'<div class="dkQuick">'+QUICK.map(([k,l])=>'<button type="button" data-qk="'+k+'">'+l+'</button>').join('')+'</div></div></div>';}
 
   function render(){
     const out=$('askOut');if(!base){out.innerHTML='';return;}
@@ -2034,7 +2035,7 @@ const TART={exam:[['seodang','chaek'],['gamchal']],jobget:[['daejang','hojak'],[
     if(histBase!==base){hist=[];histBase=base;}
     const sp=D.special==='caution'||D.special==='samjae';
     const ans=(abQ?decide(abQ,K):talk(t,D,gi,K)).replace(/(<p[^>]*>)\s*(?:\p{Extended_Pictographic}\uFE0F?\s*)+/gu,'$1'); // 문단 앞 그림 글자는 빼고 글로만
-    curHtml='<div class="bub me">'+escH(lastQ)+'</div><div class="bub dk"><span class="av">👹</span><div>'+fitProf(ans)+'<details class="askMore"'+(sp?' open':'')+'><summary>📜 자세한 풀이 보기</summary>'+hage(fitProf(h))+'</details>'+follow(t,D)+'</div></div>';
+    curHtml='<div class="bub me">'+escH(lastQ)+'</div><div class="bub dk"><span class="av"></span><div>'+fitProf(ans)+'<details class="askMore"'+(sp?' open':'')+'><summary>📜 자세한 풀이 보기</summary>'+hage(fitProf(h))+'</details>'+follow(t,D)+'</div></div>';
     showAll();
   }
   // 화면

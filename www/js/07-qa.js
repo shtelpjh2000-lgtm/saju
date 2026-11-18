@@ -7,13 +7,13 @@
   who.querySelector('button').addEventListener('click',()=>{B.classList.add('formOpen');$('form').scrollIntoView({behavior:'smooth',block:'start'});});
   $('go').addEventListener('click',()=>setTimeout(()=>{if(base)B.classList.remove('formOpen');},0));
   const card=document.createElement('div');card.className='card';card.id='qaCard';
-  card.innerHTML='<h2 class="qaH">👹 무엇이 궁금한가?</h2><p class="qaSub">궁금한 걸 누르면 바로 아래에 풀어 주겠네. 다시 누르면 닫혀.</p><div id="qaList"></div><p class="note qaNote">※ 전통 역학 원리로 본 재미·참고용 풀이예요. 건강·돈·법률 같은 중요한 결정은 꼭 전문가와 상의하세요.</p>';
+  card.innerHTML='<h2 class="qaH"><img class="dkIco" src="img/dokkaebi.svg" alt=""> 무엇이 궁금한가?</h2><p class="qaSub">궁금한 걸 누르면 바로 아래에 풀어 주겠네. 다시 누르면 닫혀.</p><div id="qaList"></div><p class="note qaNote">※ 전통 역학 원리로 본 재미·참고용 풀이예요. 건강·돈·법률 같은 중요한 결정은 꼭 전문가와 상의하세요.</p>';
   $('ctl').insertAdjacentElement('afterend',card);
   const hero=document.createElement('div');hero.className='card';hero.id='heroCard';who.insertAdjacentElement('afterend',hero);let heroOf=null;
   const sec=k=>[...$('reading').querySelectorAll('[data-sec="'+k+'"]')].filter(e=>!e.matches('p.note'));
   const copy=els=>els.filter(Boolean).map(e=>{const c=e.cloneNode(true);c.removeAttribute('id');return c;});
   const Q=[
-    {k:'sum',e:'👹',q:'나는 한마디로 어떤 사람이야?',get:()=>copy(sec('sum')).map(c=>{c.querySelectorAll('p.note').forEach(n=>n.remove());return c;})},
+    {k:'sum',e:'<img class="dkIco" src="img/dokkaebi.svg" alt="">',q:'나는 한마디로 어떤 사람이야?',get:()=>copy(sec('sum')).map(c=>{c.querySelectorAll('p.note').forEach(n=>n.remove());return c;})},
     {k:'char',e:'🙂',q:'내 성격은 어때?',get:()=>copy([$('typecard'),...sec('char')])},
     {k:'money',e:'💰',q:'돈은 언제, 어떻게 들어와?',get:()=>copy(sec('money'))},
     {k:'job',e:'💼',q:'나한테 맞는 일은 뭐야?',get:()=>copy(sec('job'))},
