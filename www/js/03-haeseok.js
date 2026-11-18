@@ -149,7 +149,7 @@
     }
     runs.sort((a, b) => a.from - b.from);
     const curRun = runs.find(x => age >= x.from && age <= x.to);
-    const ageTxt = u => u.from + (u.to > u.from ? '~' + u.to : '') + '세';
+    const ageTxt = u => { const f = Math.max(u.from, age || 0); return f + (u.to > f ? '~' + u.to : '') + '세'; }; // 지난 나이는 빼고 지금 나이부터
     const pickRun = (ks, min, lo, hi) => runs.filter(u => ks.includes(u.k) && u.g >= min && u.to >= Math.max(lo || 20, age) && u.from <= Math.max(hi || 75, age + 10)).sort((a, b) => b.g - a.g || a.from - b.from)[0]; // 지난 나이는 고르지 않아요
     const clamp = v => Math.max(1, Math.min(5, Math.round(v)));
     const S = {}, HL = {}, SC = {};

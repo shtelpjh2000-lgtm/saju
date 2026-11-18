@@ -372,7 +372,7 @@ function renderReading(r){
     const bat=w=>{const c=String(w).replace(/[^가-힣]/g,'').slice(-1);return c&&((c.charCodeAt(0)-0xAC00)%28)?'이에요':'예요';};
     const L=[];if(HL.char)L.push('🙂 <b>자네는</b> · '+st(HL.char)+'일세');
     if(HL.money)L.push('💰 <b>돈</b> · '+st(HL.money));if(HL.job)L.push('💼 <b>일</b> · '+st(HL.job));
-    if(cr)L.push('⏳ <b>지금('+cr.from+(cr.to>cr.from?'~'+cr.to:'')+'세)</b> · '+cr.theme+'의 시기고, 흐름은 <b>'+(cr.g>=2?'좋네':cr.g>=1?'괜찮은 편일세':cr.g<=-1?'조심할 때일세':'보통일세')+'</b>');
+    if(cr)L.push('⏳ <b>지금('+Math.max(cr.from,ageNow(r))+(cr.to>Math.max(cr.from,ageNow(r))?'~'+cr.to:'')+'세)</b> · '+cr.theme+'의 시기고, 흐름은 <b>'+(cr.g>=2?'좋네':cr.g>=1?'괜찮은 편일세':cr.g<=-1?'조심할 때일세':'보통일세')+'</b>');
     if(HL.luck)L.push('🧭 <b>지금 할 일</b> · '+st(HL.luck));
     if(L.length)h+='<div data-sec="sum" class="bub dk rdTalk"><span class="av">👹</span><div><p class="ansV"><b>허허, 한마디로 정리해 주겠네.</b></p>'+L.map(t=>'<p>'+t+'</p>').join('')+'<p class="note">궁금한 게 있으면 위에서 이 도깨비한테 그냥 물어보게.</p></div></div>';}catch(e){console.error(e);}
   const sec=k=>'<div data-sec="'+k+'" class="rdSec'+(k==='total'?' top':k==='lucky'?' lucky':'')+'"><h4>'+T[k]+'</h4>'+star(x.SC&&x.SC[k])+(x.HL&&x.HL[k]?'<p class="rdHL">'+x.HL[k]+'</p>':'')+(x.SH&&x.SH[k]&&x.SH[k].length?'<div class="sh">'+x.SH[k].map(s=>'<p>'+s+'</p>').join('')+'</div>':'')+lifeHtml(x,k,r.input.sex,ageNow(r))+x.S[k].map(t=>'<p'+(/^📌/.test(t)?' class="note"':'')+'>'+t+'</p>').join('')+'</div>';
