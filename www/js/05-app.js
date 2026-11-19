@@ -1846,8 +1846,10 @@ const TART={exam:[['seodang','chaek'],['gamchal']],jobget:[['daejang','hojak'],[
     let h='<p class="dkOpen">'+opn+'</p>'+flowP+'<p class="ansV">'+v+'</p>'+(scn?'<p class="scene">🎬 <b>이런 일 생기기 쉽네</b> '+scn+'</p>':'');
     const fig=artFig(artOf((T[t]&&T[t].base)||t,gi)||artOf(t,gi)).replace(/<figcaption[\s\S]*?<\/figcaption>/,''); // 그림은 풀이 다 읽은 뒤(당부 앞)에
     const W=whenOf(K);
-    if(kind==='where'&&!sp&&K.dir){const dd=K.dir.length?'🧭 <b>'+K.dir.join(', ')+'이 좋네.</b>'+(K.badDir&&K.badDir.length?' '+K.badDir.join(', ')+'은 피하게.':''):'🧭 <b>올해는 뚜렷하게 좋은 방향이 없네.</b> 방향보다 집 조건을 보게.';
-      return '<p class="dkOpen">'+link+'방향을 묻는구먼. 어디 보자…</p><p class="ansV">'+dd+'</p><p>'+v+'</p><p>'+W+'</p><p>'+pv(['그리고 ','하나 더 일러두자면, '])+hage(plainTip(D.tips[0]))+'</p>';}
+    if(kind==='where'&&!sp&&K.dir){const PL=(lastQ||'').match(/(서울|경기|인천|부산|대구|대전|광주|울산|세종|강원|충청|전라|경상|제주|수도권|지방|시골|외국|해외|[가-힣]{2,4}(?:시|군|구|동))\s*(?:쪽|으로|로)/);
+      const dd=K.dir.length?'🧭 <b>'+K.dir.join(', ')+'이 좋네.</b>':'🧭 <b>올해는 어느 쪽이든 크게 막힌 데가 없네.</b>';
+      const pl=PL?'<p>'+PL[1]+' 쪽으로 마음먹었다면 좋네. 방향보다 <b>날</b>이 더 힘이 세니, 좋은 날에 움직이면 그쪽 기운도 자네 편이 되네.</p>':(K.badDir&&K.badDir.length?'<p>'+K.badDir[0]+'만 되도록 피하면 되네.</p>':'');
+      return '<p class="dkOpen">'+(multiI?['그리고 방향 말일세.','방향도 보세.'][multiI-1]||'방향 말일세.':'방향을 묻는구먼. 어디 보자…')+'</p><p class="ansV">'+dd+'</p>'+pl+(multiWhere?'':'<p>📅 '+W+'</p>')+'<p class="hanSu">💡 <b>도깨비의 한 수</b> '+hage(plainTip(D.tips[0]))+'</p>';}
     if(kind==='when'&&!sp){const nn=D.n.replace(/·방위/,'');h='<p class="dkOpen">'+opn+'</p>'+flowP+'<p class="ansV">'+D.e+' <b>'+(K.bestC?nn+jo(nn,'은','는')+' '+K.bestC+'일세.':nn+jo(nn,'은','는')+' 앞으로 몇 달은 센 때가 없네.')+'</b></p><p>📅 '+whenOf(K,1).replace(/^그 달을 놓치지 말게\. ?/,'')+'</p>';}
     if(/이자|대출|빚|원리금/.test(lastQ||'')&&/estate|money|biz|invest|loan/.test(t))h+='<p>💸 이자 걱정 말인데, '+(K.bestC&&!/^내년/.test(K.bestC)&&gi<=1?K.bestC.replace(/\(.*\)/,'')+'까지만 버티게. 그때 풀리네. 새 대출은 늘리지 말게.':(K.bestC?'풀리는 때가 '+K.bestC.replace(/\(.*\)/,'')+jo(K.bestC.replace(/\(.*\)/,''),'이라','라')+' 이자 부담이 길어지네. ':'')+'지금 바로 대출 갈아타기나 일부 상환으로 이자부터 줄이게.')+'</p>';
     if(K.qm)h+='<p>📌 자네가 짚은 <b>'+(K.qm.lun?'음력 ':'')+K.qm.m+'월</b>은 '+(K.qm.v>=0.8?'<b>좋은 달</b>일세. 그때 움직이게.':K.qm.v<=-0.4?'<b>피할 달</b>일세. 다른 달로 미루게.':'그저 그런 달일세. 더 좋은 달이 있네.')+'</p>';
@@ -1855,7 +1857,7 @@ const TART={exam:[['seodang','chaek'],['gamchal']],jobget:[['daejang','hojak'],[
     if(!sp&&!calm){let rz=reasonOf(K,gi,D).replace(/^[^,.]*?(?:운이라|사람이고|사람이라), /,'');const ss=rz.split(/(?<=[.!])\s+/).filter(Boolean);rz=(ss[0]||'').replace(/ 들어앉아 있어서.*$/,' 앉았네.');if(rz)h+='<p>🔍 <b>기문으로 보면</b> '+rz+'</p>';}
     const needWhen=kind==='when'||sp||(act&&!/(붙을|붙나|붙었|합격)/.test(lastQ||''))||/언제|시기|몇 ?월|때/.test(lastQ||'');
     if((kind!=='when'||sp)&&!calm&&needWhen)h+='<p>📅 '+W.replace(/ 길게 보면 <b>[^<]*<\/b>이 자네 해일세\./,'')+'</p>';
-    if(K.dir&&K.dir.length&&!sp&&/^(move|estate\w*|travel)$/.test(((T[t]&&T[t].base)||t)))h+='<p>🧭 방향은 <b>'+K.dir.join(', ')+'</b>이 좋네.'+(K.badDir&&K.badDir.length?' '+K.badDir.join(', ')+'은 피하게.':'')+'</p>';
+    if(!multiWhere&&K.dir&&K.dir.length&&!sp&&/^(move|estate\w*|travel)$/.test(((T[t]&&T[t].base)||t)))h+='<p>🧭 방향은 <b>'+K.dir.join(', ')+'</b>이 좋네.'+(K.badDir&&K.badDir.length?' '+K.badDir[0]+'만 되도록 피하면 되네.':'')+'</p>';
     if(sp)h+='<p>🔎 조심할 것이랑 좋은 날은 아래 <b>자세한 풀이</b>에 적어 뒀네.</p>';
     h+=fig;
     const priceTip=t==='estate_sell'&&/값|가격|내려|낮춰|깎/.test(lastQ||'')?'값을 더 내리지 말게. 내놓는 곳·조건을 바꾸고, 좋은 달에 다시 걸게.':null;
@@ -2277,9 +2279,9 @@ const TART={exam:[['seodang','chaek'],['gamchal']],jobget:[['daejang','hojak'],[
   const setYr=v=>{yrOff=v;[...$('askYr').children].forEach(b=>b.classList.toggle('on',+b.dataset.v===yrOff));};
   function ask(){const q0=$('askQ').value.trim();if(!q0)return;
     const parts=/vs|VS|아니면|또는|말까|중에 ?뭐|중 ?어느|뭐가 ?나을/.test(q0)?[q0]:q0.split(/(?<=[?？])\s*|\n+/).map(x=>x.trim()).filter(x=>x.length>2);
-    if(parts.length>=2){parts.slice(0,3).forEach((x,i)=>{multiI=i;askOne(x);});multiI=0;$('askQ').value='';return;}
+    if(parts.length>=2){multiWhere=parts.some(x=>qkind(x)==='where');parts.slice(0,3).forEach((x,i)=>{multiI=i;askOne(x);});multiI=0;multiWhere=false;$('askQ').value='';return;}
     askOne(q0);$('askQ').value='';}
-  let multiI=0;
+  let multiI=0,multiWhere=false;
   function askOne(q){
     setYr(yearOffOf(q));
     let hit0=topicOf(q)||'gen';const cx=lifeCtx(base&&base.input,base?ageNow(base):0);profNote='';
