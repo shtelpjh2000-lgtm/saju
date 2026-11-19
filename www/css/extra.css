@@ -108,3 +108,4 @@ body{font-size:17px}
 #askOut .bub.me::before{content:"Q. "}
 .qaA{padding:4px 12px 14px!important}
 .ansV b,#askOut .ansV b,.qaA .ansV b{color:var(--ink)!important}
+#appVer{display:inline-block;margin-left:4px;padding:0 8px;border-radius:999px;background:var(--lav2);color:var(--ink);font-size:12px;font-weight:700}

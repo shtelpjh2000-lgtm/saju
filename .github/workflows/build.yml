@@ -44,6 +44,9 @@ jobs:
       - name: 앱 재료 설치
         run: npm install --no-audit --no-fund
 
+      - name: 화면 파일에 버전 번호 붙이기 (휴대폰이 예전 화면을 다시 쓰지 않게, 화면에 버전 표시)
+        run: sed -i "s/__APPVER__/v${{ github.run_number }}/g" www/index.html
+
       - name: 안드로이드 프로젝트 만들기
         run: |
           npx cap add android
