@@ -73,6 +73,9 @@ const SOFT=[
   [/흉해요/g,'약해요'],[/흉한/g,'약한'],[/위험한 자리/g,'쉬어 가는 자리'],[/지치는 자리/g,'숨 고르는 자리'],[/다툼 자리/g,'말조심 자리'],
   [/⚠️ 주의/g,'🌱 쉬어 가기'],[/>주의</g,'>쉬어 가기<'],[/>조심</g,'>쉬어 가기<'],[/오늘 주의/g,'오늘 쉬어 가기'],[/>오늘 주의</g,'>오늘 쉬어 가기<']];
 function softTone(h){if(!h)return h;for(const [a,b] of SOFT)h=h.replace(a,b);return h;}
+// 이름을 넣으면 도깨비가 이름을 불러요: 성은 빼고 이름만('김순애'→'순애 자네'), 없으면 '자네'
+function myName(){const n=((base&&base.input&&base.input.name)||'').replace(/[^가-힣a-zA-Z]/g,'');if(!n)return '';if(/^(남궁|황보|제갈|선우|독고|사공|서문)[가-힣]{2}$/.test(n))return n.slice(2);if(/^[가-힣]{3}$/.test(n))return n.slice(1);return n;}
+function jane(){const n=myName();return n?n+' 자네':'자네';}
 function compute(){
   const dv=$('d').value,tv=$('t').value;
   if(!dv||!tv)throw new Error('생년월일과 시각을 입력해 주세요.');
@@ -431,7 +434,7 @@ function renderReading(r){
       const cx=lifeCtx(I,a);if(cx.married&&!cx.single){const sc=x.SC&&x.SC.spouse;L.push('🏡 <b>부부</b> · '+(sc>=4?'금실이 좋은 짝일세':sc&&sc<=2?'서로 한발씩 물러서야 오래가네':'무난한 짝일세. 마음을 자주 표현하게'));}
       const kl=kidLine(I,a,x.SC&&x.SC.child,true);if(kl)L.push('👶 <b>'+(I.kid==='N'&&a>=50?'아랫사람':'자식')+'</b> · '+kl);}
     if(HL.luck)L.push('🧭 <b>지금 할 일</b> · '+st(HL.luck));
-    if(L.length)h+='<div data-sec="sum" class="bub dk rdTalk"><span class="av"></span><div><p class="ansV"><b>허허, 한마디로 정리해 주겠네.</b></p>'+L.map(t=>'<p>'+t+'</p>').join('')+'<p class="note">궁금한 게 있으면 위에서 이 도깨비한테 그냥 물어보게.</p></div></div>';}catch(e){console.error(e);}
+    if(L.length)h+='<div data-sec="sum" class="bub dk rdTalk"><span class="av"></span><div><p class="ansV"><b>허허, '+(myName()?jane()+'를 ':'')+'한마디로 정리해 주겠네.</b></p>'+L.map(t=>'<p>'+t+'</p>').join('')+'<p class="note">궁금한 게 있으면 위에서 이 도깨비한테 그냥 물어보게.</p></div></div>';}catch(e){console.error(e);}
   const sec=k=>'<div data-sec="'+k+'" class="rdSec'+(k==='total'?' top':k==='lucky'?' lucky':'')+'"><h4>'+T[k]+'</h4>'+star(x.SC&&x.SC[k])+(x.HL&&x.HL[k]?'<p class="rdHL">'+x.HL[k]+'</p>':'')+(x.SH&&x.SH[k]&&x.SH[k].length?'<div class="sh">'+x.SH[k].map(s=>'<p>'+s+'</p>').join('')+'</div>':'')+lifeHtml(x,k,r.input.sex,ageNow(r))+x.S[k].map(t=>'<p'+(/^📌/.test(t)?' class="note"':'')+'>'+t+'</p>').join('')+'</div>';
   for(const k of Object.keys(T)){if(k==='lucky'||!x.S[k]||!x.S[k].length)continue;h+=sec(k);}
   const gc=g=>g>=2?['g2','좋음']:g>=1?['g1','무난·좋음']:g<=-1?['gm1','주의']:['g0','보통'];
@@ -467,7 +470,7 @@ function renderYear(r){
     const em={g2:'😊',g1:'🙂',g0:'😐',gm1:'⚠️'}[c[0]]||'😐';const lab=(t=>(t.y>yearSel?'내년 ':'')+t.m)(smon(yearSel,m.m))+'월';
     h+='<div class="mI '+c[0]+(m.m===nowM?' now':'')+'"><b class="mM">'+lab+'</b><span class="mG">'+em+' '+c[1].replace('무난·좋음','무난')+'</span><p>'+act+'</p></div>';}
   h+='</div>'+(hidM?'<p class="note">지난 '+hidM+'달은 숨겼어요.</p>':'');
-  $('reading').innerHTML=toJane(hage(softTone(fitProf(h)).replace(/(<\/h2>(?:<span class="badge">[^<]*<\/span>)?)/,'$1'+'<p class="dkOpen">'+yearSel+'년 자네 운을 방망이로 두드려 보세. 뚝딱! 한 해가 이렇게 나오네.</p>')));
+  $('reading').innerHTML=toJane(hage(softTone(fitProf(h)).replace(/(<\/h2>(?:<span class="badge">[^<]*<\/span>)?)/,'$1'+'<p class="dkOpen">'+yearSel+'년 '+jane()+' 운을 방망이로 두드려 보세. 뚝딱! 한 해가 이렇게 나오네.</p>')));
 }
 
 function renderDay(){
@@ -1678,13 +1681,14 @@ alDraw();
     if(/언제|몇 ?월|며칠|시기|때가|날짜/.test(q))return 'when';
     if(/될까|할까|해도|괜찮|좋을까|맞을까|갈까|살까|팔까|붙을까|풀릴까|되나요|돼요\?|할 수 있|가능/.test(q))return 'yn';
     return 'gen';}
-  function opener(q,kind){
+  function opener(q,kind){const o=opener0(q,kind);return myName()&&!o.includes(myName())?myName()+' 자네, '+o:o;}
+  function opener0(q,kind){
     if(/안녕|반가|하이/.test(q))return '허허, 반갑네. 이 늙은이를 찾아 줬구먼.';
     if(EMO.test(q))return '에구, 그랬는가. 속이 많이 상했겠구먼. 이리 와 앉아 보게.';
     if(/싸웠|싸워|다퉜|다투|헤어졌|헤어지/.test(q))return '저런, 마음이 편치 않겠구먼. 어디 한번 보세.';
     if(kind==='ab')return '허허, 두 갈래 길이라… 어디 한번 견줘 보세.';
     if(kind==='when')return '때를 묻는구먼. 어디 보자…';
-    return pv(['어디 보자… 자네 사주를 펴 놓고 보니,','허허, 그거 말인가. 내 한번 짚어 보지.','옳지, 마침 잘 물었네. 가만 보자…','그 얘기라면 내가 좀 알지. 들어 보게.']);}
+    return pv(['어디 보자… '+jane()+' 사주를 펴 놓고 보니,','허허, 그거 말인가. 내 한번 짚어 보지.','옳지, 마침 잘 물었네. 가만 보자…','그 얘기라면 내가 좀 알지. 들어 보게.']);}
   // 같은 질문엔 같은 말, 다른 질문엔 다른 말투가 나오게(무작위 아님)
   const hsh=s=>{let h=7;for(const c of s||'')h=(h*31+c.charCodeAt(0))>>>0;return h;};
   let seed=0;const pv=a=>a[(seed=(seed*1103515245+12345)>>>0)%a.length];
@@ -1875,7 +1879,7 @@ const TART={exam:[['seodang','chaek'],['gamchal']],jobget:[['daejang','hojak'],[
     try{const P=v=>String(v).padStart(2,'0'),iso=d=>d.getFullYear()+'-'+P(d.getMonth()+1)+'-'+P(d.getDate());const I=r.input;
       localStorage.setItem('hongmyeongguk.yeogo',JSON.stringify({d:I.y+'-'+P(I.m)+'-'+P(I.d),list:pr.filter(x=>x.c.a).map(x=>({s:iso(x.c.a),e:iso(x.c.b),txt:x.n+' — '+x.c.lab+', '+x.w}))}));}catch(e){}
     heroData={k:A[0],nick,punch,line:L[0].replace(/<[^>]+>/g,''),name:r.input.name||'',Y};
-    return '<p class="hPunch">'+punch+'</p><p class="hTitle"><small>'+Y+'년, 자네는</small><b>'+nick+'</b><small>일세.</small></p>'+
+    return '<p class="hPunch">'+punch.replace(/^자네,/,jane()+',')+'</p><p class="hTitle"><small>'+Y+'년, '+jane()+'는</small><b>'+nick+'</b><small>일세.</small></p>'+
       L.map(x=>'<p class="hLine">'+x+'</p>').join('')+artFig(A[0])+
       (pr.length?'<div class="yeogo"><p class="ygH">도깨비 방망이<small>뚝딱, 복이 나오는 달</small></p>'+pr.map(x=>'<p class="ygI"><b>'+x.n+'</b><span>'+x.c.lab+'<br><small>'+x.w+'</small></span>'+dday(x.c)+'</p>').join('')+'<p class="ygN">그 달이 오면 아침 알림으로 일러 주겠네. (알림을 켜 두게)</p></div>':'')+
       (r.input&&r.input.noTime?'<p class="ygN">⏰ 태어난 시를 몰라서 낮 12시로 봤네. 시를 알게 되면 다시 넣어 보게.</p>':'')+
@@ -1910,7 +1914,7 @@ const TART={exam:[['seodang','chaek'],['gamchal']],jobget:[['daejang','hojak'],[
   }
   document.addEventListener('click',e=>{if(e.target.closest('.heroShare'))heroShare();});
   function greetHtml(){
-    const age=ageNow(base);let L=['금 나와라 뚝딱! 어이, 왔는가. 이 방망이 도깨비가 자네 복 나오는 때를 짚어 주지.'];
+    const age=ageNow(base);let L=['금 나와라 뚝딱! 어이, '+(myName()?jane()+' ':'')+'왔는가. 이 방망이 도깨비가 자네 복 나오는 때를 짚어 주지.'];
     try{const x=Haeseok.interpret(base,base.input.sex,age),cr=x.curRun;
       if(cr){if(cr.g>=1.5)L.push('요즘 <b>'+cr.theme+'</b> 쪽으로 기운이 차오르는 때라, 해 보고 싶은 게 많을 걸세. 이럴 땐 망설이지 말고 한 발 내디뎌 보게.');
         else if(cr.g>=0.5)L.push('요즘은 <b>'+cr.theme+'</b> 쪽으로 슬슬 바람이 부는 때일세. 차근차근 가면 손에 쥐는 게 있을 걸세.');

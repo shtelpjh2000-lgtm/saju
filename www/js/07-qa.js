@@ -48,7 +48,7 @@
       const SOON=[' 가까이는 ',' 머지않아 ',' 조금 있으면 '][ix],REST=['엔 한 박자 쉬어 가게.','엔 숨 고르며 다지게.','엔 무리 말고 지키게.'][ix];
       if(good)when=(good.from<=age?NOW[ix].replace('('+good.t+')','(<b>'+good.t+'</b>)'):SOON.trim()+' '+G(good)+(good.lv<=1?'가 제일 좋네.':'가 무난하니 그때 차근차근 하게.'))+(rest&&rest!==good?' '+G(rest)+REST:'');}
     const art=window.__secArt?window.__secArt(k):'';
-    return '<div class="bub me">'+x.q+'</div><div class="bub dk"><span class="av"></span><div><p class="dkOpen">'+(OPEN[k]||'어디 보자.')+'</p>'+
+    return '<div class="bub me">'+x.q+'</div><div class="bub dk"><span class="av"></span><div><p class="dkOpen">'+(o=>/^자네/.test(o)?o.replace(/^자네/,jane()):(myName()?jane()+', '+o:o))(OPEN[k]||'어디 보자.')+'</p>'+
       L.slice(0,4).map((t,i)=>'<p'+(i===0?' class="ansV"':'')+'>'+say(t)+'</p>').join('')+(when?'<p>'+when+'</p>':'')+art+
       '<details class="askMore qaMore"><summary>📜 자세한 풀이 보기</summary></details></div></div>';}
   function setOpen(k){
