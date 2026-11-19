@@ -196,3 +196,18 @@ body:not(.pro) .bnav button[data-v=il]{display:none!important}
 .jaStep{min-height:56px;margin:22px 0 12px;font-size:19px;font-weight:700;line-height:1.45;word-break:keep-all}.jaStep.in{animation:jaIn .35s ease}
 @keyframes jaIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 .jaBar{height:8px;border-radius:99px;background:rgba(255,255,255,.15);overflow:hidden}.jaBar b{display:block;height:100%;width:0;background:linear-gradient(90deg,#ff8fb3,#ffd34d);transition:width .8s ease}
+.hanSu{padding:12px 14px;border-radius:14px;background:#fff7e6;border:2px solid #ffe2a8}.hanSu b{color:var(--hl)}
+#askMic{flex:0 0 52px;padding:0!important;font-size:24px;border-radius:16px;background:#fff!important;border:2px solid var(--line)!important;box-shadow:none!important}
+#askMic.on{background:#ff5f7e!important;border-color:#ff5f7e!important;animation:micP 1s ease infinite}
+@keyframes micP{0%,100%{box-shadow:0 0 0 0 rgba(255,95,126,.5)!important}50%{box-shadow:0 0 0 10px rgba(255,95,126,0)!important}}
+.askFree{gap:6px}
+/* 올해 운세 맨 위: 그해 성격 카드 */
+.yCard{margin:10px 0 18px;padding:18px 16px;border-radius:22px;text-align:center;background:linear-gradient(160deg,#fff0f6,#f1ecff);border:2px solid #ffc2d8}
+.ycY{margin:0;font-size:17px;font-weight:700;color:var(--mute)}.ycY small{font-weight:400}
+.ycK{margin:6px 0 0;font-size:34px;font-weight:900;color:var(--hl);letter-spacing:-.02em}
+.ycN{margin:2px 0 6px;font-size:18px;font-weight:700;color:var(--purple);word-break:keep-all}
+.ycS{margin:0 0 10px;font-size:26px;color:#ffb300;letter-spacing:2px}.ycS i{font-style:normal;color:#d9c9e8}
+.ycC{margin:0 0 12px;font-size:17px;line-height:1.65;color:var(--ink);word-break:keep-all}.ycC b{color:var(--hl)}
+.ycH{margin:8px 0 4px;font-size:15px;font-weight:700;color:var(--mute)}
+.ycR{display:flex;justify-content:space-between;margin:0;padding:9px 6px;border-top:1px dashed #f3c6d8;font-size:17.5px;color:var(--ink)}
+.ycR.up b{color:#1f9c66}.ycR.dn b{color:#e0245e}.ycR.eq b{color:var(--mute)}

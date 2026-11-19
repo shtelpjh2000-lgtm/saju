@@ -461,7 +461,7 @@ function renderReading(r){
 const toJane=h=>nameize(h.replace(/(^|[\s>(·,])내 (힘|편|일|칸|기운|마음|몫|자리|계획)/g,'$1자네 $2').replace(/(^|[\s>(·,])나와 /g,'$1자네와 ').replace(/(^|[\s>(·,])내가 /g,'$1자네가 '));
 function renderYear(r){
   const o=yInfo.out,b=yInfo.base;
-  let h='<h2>'+yearSel+'년 신수</h2><span class="badge">'+r.pillars[0]+'년 · '+ageNow(base)+'세 · '+b.strongKo+'</span>';
+  let h='<h2>'+yearSel+'년 운세</h2><span class="badge">'+r.pillars[0]+'년 · '+ageNow(base)+'세 · '+b.strongKo+'</span>';
   const proY=false; // 올해 운세는 전문가 보기여도 쉬운 말로 짧게
   const nowM=(()=>{try{const l=Solar.fromDate(new Date()).getLunar();return l.getYear()===yearSel?Math.abs(l.getMonth()):0;}catch(e){return 0;}})();
   const futM=t=>{const m=/^(좋은|조심할) 달은 음력 (.+)이에요\.$/.exec(t);if(!m)return t;const L=m[2].split('·').map(x=>parseInt(x)).filter(x=>!nowM||x>=nowM);if(!L.length)return '';if(proY)return m[1]+' 달은 음력 '+L.map(x=>x+'월').join('·')+'이에요.';const S=L.map(x=>{const t=smon(yearSel,x),n=new Date();if(t.y===n.getFullYear()&&t.m===n.getMonth()+1)return '이번 달('+t.m+'월)';return (t.y>yearSel?'내년 ':'')+t.m+'월';});return m[1]+' 달은 '+S.join('·')+'이에요.';};
@@ -476,7 +476,8 @@ function renderYear(r){
     const em={g2:'😊',g1:'🙂',g0:'😐',gm1:'⚠️'}[c[0]]||'😐';const lab=(t=>(t.y>yearSel?'내년 ':'')+t.m)(smon(yearSel,m.m))+'월';
     h+='<div class="mI '+c[0]+(m.m===nowM?' now':'')+'"><b class="mM">'+lab+'</b><span class="mG">'+em+' '+c[1].replace('무난·좋음','무난')+'</span><p>'+act+'</p></div>';}
   h+='</div>'+(hidM?'<p class="note">지난 '+hidM+'달은 숨겼어요.</p>':'');
-  $('reading').innerHTML=toJane(hage(softTone(fitProf(h)).replace(/(<\/h2>(?:<span class="badge">[^<]*<\/span>)?)/,'$1'+'<p class="dkOpen">'+yearSel+'년 '+jane()+' 운을 방망이로 두드려 보세. 뚝딱! 한 해가 이렇게 나오네.</p>')));
+  if(yearSel!==new Date().getFullYear())h=h.replace(/올해는/g,yearSel+'년은').replace(/올해가/g,yearSel+'년이').replace(/올해의/g,yearSel+'년의').replace(/올해/g,yearSel+'년');
+  $('reading').innerHTML=toJane(hage(softTone(fitProf(h)).replace(/(<\/h2>(?:<span class="badge">[^<]*<\/span>)?)/,'$1'+'<p class="dkOpen">'+yearSel+'년 '+jane()+' 운을 방망이로 두드려 보세. 뚝딱! 한 해가 이렇게 나오네.</p>'+(window.__yearCard?window.__yearCard(yearSel):''))));
 }
 
 function renderDay(){
@@ -1810,25 +1811,27 @@ const TART={exam:[['seodang','chaek'],['gamchal']],jobget:[['daejang','hojak'],[
     else if(kind==='yn'||(act&&kind!=='when')){const a=act||D.n;
       v=['👍','🙆','🙂','🌱'][gi]+' <b>'+hage(D.v[gi]).replace(/아래 /g,'')+'</b>';}
     else v=D.e+' <b>'+K.Y+'년 '+(t==='gen'?'자네 운':unOf(D))+jo(t==='gen'?'운':unOf(D),'은','는')+' '+['아주 좋네','좋네','무난하네','한 박자 쉬어 갈 때일세'][gi]+'.</b> '+hage(D.v[gi].replace(/아래 /g,''));
-    if(gi>=2&&!sp)v+=gi===3?' <span class="hope">그래도 걱정 말게. 때를 기다리면 길은 반드시 열리네.</span>':' <span class="hope">차근차근 가면 충분히 해볼 만하네.</span>';
-    let h='<p class="dkOpen">'+link+(profNote?profNote+' ':'')+opener(lastQ||'',kind)+'</p>'+flowP+'<p class="ansV">'+v+'</p>';
+    if(gi===3&&!sp)v+=' <span class="hope">그래도 때는 오네.</span>';
+    const SUBJ=(lastQ||'').match(/(아들|딸|남편|아내|와이프|신랑|엄마|어머니|아버지|아빠|자식|애들|아이|손주|동생|언니|오빠|형|누나|부모님|시어머니|며느리|사위)/);
+    const opn=SUBJ?pv([SUBJ[1]+' 일이라… 어디 보자.',SUBJ[1]+' 걱정이구먼. 내 짚어 주지.']):opener(lastQ||'',kind);
+    let h='<p class="dkOpen">'+opn+'</p>'+flowP+'<p class="ansV">'+v+'</p>';
     const fig=artFig(artOf((T[t]&&T[t].base)||t,gi)||artOf(t,gi)); // 그림은 풀이 다 읽은 뒤(당부 앞)에
     const W=whenOf(K);
     if(kind==='where'&&!sp&&K.dir){const dd=K.dir.length?'🧭 <b>'+K.dir.join(', ')+'이 좋네.</b>'+(K.badDir&&K.badDir.length?' '+K.badDir.join(', ')+'은 피하게.':''):'🧭 <b>올해는 뚜렷하게 좋은 방향이 없네.</b> 방향보다 집 조건을 보게.';
       return '<p class="dkOpen">'+link+'방향을 묻는구먼. 어디 보자…</p><p class="ansV">'+dd+'</p><p>'+v+'</p><p>'+W+'</p><p>'+pv(['그리고 ','하나 더 일러두자면, '])+hage(plainTip(D.tips[0]))+'</p>';}
-    if(kind==='when'&&!sp)h='<p class="dkOpen">'+link+(profNote?profNote+' ':'')+opener(lastQ||'',kind)+'</p>'+flowP+'<p class="ansV">'+D.e+' <b>'+(K.bestC?D.n+jo(D.n,'은','는')+' '+K.bestC+'일세.':D.n+jo(D.n,'은','는')+' 앞으로 몇 달은 센 때가 없네.')+'</b></p><p>'+whenOf(K,1)+'</p><p>'+v+'</p>';
+    if(kind==='when'&&!sp){const nn=D.n.replace(/·방위/,'');h='<p class="dkOpen">'+opn+'</p>'+flowP+'<p class="ansV">'+D.e+' <b>'+(K.bestC?nn+jo(nn,'은','는')+' '+K.bestC+'일세.':nn+jo(nn,'은','는')+' 앞으로 몇 달은 센 때가 없네.')+'</b></p><p>📅 '+whenOf(K,1).replace(/^그 달을 놓치지 말게\. ?/,'')+'</p>';}
     if(/이자|대출|빚|원리금/.test(lastQ||'')&&/estate|money|biz|invest|loan/.test(t))h+='<p>💸 이자 걱정 말인데, '+(K.bestC&&!/^내년/.test(K.bestC)&&gi<=1?K.bestC.replace(/\(.*\)/,'')+'까지만 버티게. 그때 풀리네. 새 대출은 늘리지 말게.':(K.bestC?'풀리는 때가 '+K.bestC.replace(/\(.*\)/,'')+jo(K.bestC.replace(/\(.*\)/,''),'이라','라')+' 이자 부담이 길어지네. ':'')+'지금 바로 대출 갈아타기나 일부 상환으로 이자부터 줄이게.')+'</p>';
     if(K.qm)h+='<p>📌 자네가 짚은 <b>'+(K.qm.lun?'음력 ':'')+K.qm.m+'월</b>은 '+(K.qm.v>=0.8?'<b>좋은 달</b>일세. 그때 움직이게.':K.qm.v<=-0.4?'<b>피할 달</b>일세. 다른 달로 미루게.':'그저 그런 달일세. 더 좋은 달이 있네.')+'</p>';
     const calm=emo&&t==='gen';
-    if(!sp&&!calm)h+='<p>🔍 '+pv(['왜 그런고 하니, ','내가 왜 이리 말하냐면, ','가만 들여다보니 '])+reasonOf(K,gi,D)+'</p>';
-    if((kind!=='when'||sp)&&!calm)h+='<p>'+W+'</p>';
-    if(K.dir&&K.dir.length&&!sp)h+='<p>🧭 방향으로는 <b>'+K.dir.join(', ')+'</b>이 좋네.'+(K.badDir&&K.badDir.length?' '+K.badDir.join(', ')+'은 피하게.':'')+'</p>';
-    if(act&&!sp&&!(emo&&t==='gen'))h+='<p>🔮 '+pv(['이대로 가면 말일세, ','길게 보면, ','내 보기엔 '])+SCEN[gi]+'</p>';
+    if(!sp&&!calm){let rz=reasonOf(K,gi,D).replace(/^[^,.]*?(?:운이라|사람이고|사람이라), /,'');const ss=rz.split(/(?<=[.!])\s+/).filter(Boolean);rz=ss.length>2?ss[0]+' '+ss[ss.length-1]:ss.join(' ');h+='<p>🔍 <b>왜냐면</b> '+rz+'</p>';}
+    const needWhen=kind==='when'||sp||(act&&!/(붙을|붙나|붙었|합격)/.test(lastQ||''))||/언제|시기|몇 ?월|때/.test(lastQ||'');
+    if((kind!=='when'||sp)&&!calm&&needWhen)h+='<p>📅 '+W.replace(/ 길게 보면 <b>[^<]*<\/b>이 자네 해일세\./,'')+'</p>';
+    if(K.dir&&K.dir.length&&!sp&&/^(move|estate\w*|travel)$/.test(((T[t]&&T[t].base)||t)))h+='<p>🧭 방향은 <b>'+K.dir.join(', ')+'</b>이 좋네.'+(K.badDir&&K.badDir.length?' '+K.badDir.join(', ')+'은 피하게.':'')+'</p>';
     if(sp)h+='<p>🔎 조심할 것이랑 좋은 날은 아래 <b>자세한 풀이</b>에 적어 뒀네.</p>';
     h+=fig;
     const priceTip=t==='estate_sell'&&/값|가격|내려|낮춰|깎/.test(lastQ||'')?'값을 더 내리지 말게. 내놓는 곳·조건을 바꾸고, 좋은 달에 다시 걸게.':null;
-    h+='<p>💡 '+pv(['그러니 ','내 당부 하나 하지. ','딱 하나만 기억하게. '])+(priceTip?priceTip:emo&&t==='gen'?'오늘은 따뜻한 밥 한 끼 먹고 일찍 자게. 그리고 믿는 사람 한 명한테 털어놓게. 그게 제일 큰 부적일세. 많이 힘들면 혼자 참지 말고 꼭 도움을 청하게.':hage(plainTip(D.tips[0])))+'</p>';
-    h+='<p class="dkEnd">'+(emo?'혼자 끙끙 앓지 말고, 답답하면 또 오게. 내 여기 있네.':pv(['방망이 한 번 더 두드려 줄 테니 또 오게. 뚝딱!','걱정은 반만 하고, 나머진 이 도깨비한테 맡기게.','내 말 한 귀에 담아 두게. 또 오게나.']))+'</p>';
+    h+='<p class="hanSu">💡 <b>도깨비의 한 수</b> '+(priceTip?priceTip:emo&&t==='gen'?'오늘은 따뜻한 밥 한 끼 먹고 일찍 자게. 그리고 믿는 사람 한 명한테 털어놓게. 그게 제일 큰 부적일세. 많이 힘들면 혼자 참지 말고 꼭 도움을 청하게.':hage(plainTip(D.tips[0])))+'</p>';
+    if(emo)h+='<p class="dkEnd">혼자 끙끙 앓지 말고, 답답하면 또 오게. 내 여기 있네.</p>';
     return h;}
   function labelOf(p){p=p.replace(/[?？!.~]+$/,'').trim();if(/^(그냥 )?말까|^안 ?할까|^말기/.test(p)||!p)return '안 하기';return p;}
   function decide(q,K){
@@ -1920,6 +1923,21 @@ const TART={exam:[['seodang','chaek'],['gamchal']],jobget:[['daejang','hojak'],[
       (r.input&&r.input.noTime?'<p class="ygN">⏰ 태어난 시를 몰라서 낮 12시로 봤네. 시를 알게 되면 다시 넣어 보게.</p>':'')+
       bokHtml()+'<div class="bjWrap"><button type="button" class="bjGo">🧧 나만의 도깨비 부적 받기</button><div class="bjOut"></div></div>'+famHtml()+
       '<div class="hBtns"><button type="button" class="heroShare">이 풀이 카톡으로 보내기</button><button type="button" class="withGo">💌 친구한테 궁합 링크 보내기</button></div>';}
+  // 올해 운세 맨 위: 그해만의 성격 카드(띠·한 해 별명·별점·다른 해와 달라지는 점) — 올해와 내년이 확실히 달라 보이게
+  const YKEY={財:['거두는 해','돈과 실속을 거둬들이는'],官:['올라서는 해','자리와 이름이 올라서는'],父:['다지는 해','문서·공부로 바탕을 다지는'],孫:['펼치는 해','새 일과 재능을 펼치는'],兄:['어울리는 해','사람과 어울려 판을 키우는'],鬼:['버티는 해','몸과 마음을 지키며 버티는'],世:['나를 세우는 해','내 중심을 바로 세우는']};
+  const YCOL={甲:'푸른',乙:'푸른',丙:'붉은',丁:'붉은',戊:'누런',己:'누런',庚:'흰',辛:'흰',壬:'검은',癸:'검은'},YANI={子:'쥐',丑:'소',寅:'호랑이',卯:'토끼',辰:'용',巳:'뱀',午:'말',未:'양',申:'원숭이',酉:'닭',戌:'개',亥:'돼지'};
+  function yearSum(Y){const r=base,rs=sinsu(yearGZ(Y)),yi=Haeseok.yearly(rs,r.input.sex,Y-r.input.y+1);const q=(yi.out.hangPal&&rs.lqH[yi.out.hangPal])||'世';
+    const sc=chartScore(r,'gen').s*0.35+chartScore(rs,'gen').s*0.65,gi=grade(sc);const f={};for(const t of ['money','promo','people','health'])f[t]=scoreOf(t,Y);return {Y,gz:yearGZ(Y),q,gi,sc,f,A:ARCH[q]||ARCH.世};}
+  window.__yearSum=yearSum;window.__yearCard=Y=>{try{const now=new Date().getFullYear(),o=Y===now?Y+1:Y-1,a=yearSum(Y),b=yearSum(o);
+    const FN={money:'💰 돈',promo:'💼 일',people:'🤝 사람',health:'🌿 몸'};
+    const rows=Object.keys(FN).map(t=>{const d=a.f[t]-b.f[t];const c=d>=0.25?['up','▲ '+(Y>o?'좋아지네':'더 좋네')]:d<=-0.25?['dn','▼ '+(Y>o?'한풀 꺾이네':'덜하네')]:['eq','― 비슷하네'];return '<p class="ycR '+c[0]+'"><span>'+FN[t]+'</span><b>'+c[1]+'</b></p>';}).join('');
+    const K=YKEY[a.q]||YKEY.世,KB=YKEY[b.q]||YKEY.世,st=5-a.gi;
+    const cmp=a.q===b.q?(Y>o?o+'년과 같은 쪽에 무게가 실리지만, 힘의 크기가 달라지네.':Y+'년에 다진 쪽을 '+o+'년에도 이어 가게 되네.'):
+      (Y<o?Y+'년이 <b>'+K[0]+'</b>라면, '+o+'년은 <b>'+KB[0]+'</b>일세. 무게가 '+K[1].replace(/는$/,'는 쪽')+'에서 '+KB[1].replace(/는$/,'는 쪽')+'으로 옮겨 가네.':o+'년이 <b>'+KB[0]+'</b>였다면, '+Y+'년은 <b>'+K[0]+'</b>일세. 무게가 '+K[1].replace(/는$/,'는 쪽')+'으로 확 옮겨 가네.');
+    return '<div class="yCard"><p class="ycY">'+Y+'년 · '+(YCOL[a.gz[0]]||'')+' '+(YANI[a.gz[1]]||'')+'의 해 <small>('+a.gz+')</small></p>'+
+      '<p class="ycK">'+K[0]+'</p><p class="ycN">「'+(a.gi<=1?a.A[1]:a.A[2])+'」</p>'+
+      '<p class="ycS">'+'★'.repeat(st)+'<i>'+'★'.repeat(5-st)+'</i></p>'+
+      '<p class="ycC">'+cmp+'</p><p class="ycH">'+(Y===now?'내년('+o+')':o+'년')+'과 견주면</p>'+rows+'</div>';}catch(e){console.error(e);return '';}};
   window.__heroHtml=()=>{try{return softTone(heroHtml());}catch(e){console.error(e);return '';}};
   // 공유용 그림(1080×1350)
   async function heroImage(){
@@ -2311,3 +2329,23 @@ $('go').addEventListener('click',()=>setTimeout(()=>{if(!base||!base.input.name|
     setTimeout(()=>{clearInterval(lit);cells.forEach(c=>c.classList.add('on'));ov.classList.add('done');try{ttak.chime();}catch(_){}},(steps.length-1)*T);
     setTimeout(()=>{pass=true;go.click();pass=false;ov.classList.remove('on');setTimeout(()=>ov.remove(),300);
       setTimeout(()=>{const r=$('reading');if(r)r.scrollIntoView({behavior:'smooth',block:'start'});},350);},(steps.length-1)*T+900);},true);})();
+// ── 말로 묻기: 🎤 누르고 말하면 글로 바꿔 바로 물어봄(앱은 음성 인식 플러그인, 웹은 브라우저 음성 인식) ──
+(function(){const q=$('askQ'),go=$('askGo');if(!q||!go)return;
+  const mic=document.createElement('button');mic.type='button';mic.id='askMic';mic.setAttribute('aria-label','말로 묻기');mic.innerHTML='🎤';go.before(mic);
+  const C=window.Capacitor,native=!!(C&&C.isNativePlatform&&C.isNativePlatform());
+  const W=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!native&&!W){mic.style.display='none';return;}
+  let busy=false;const ph=q.placeholder;
+  const done=t=>{busy=false;mic.classList.remove('on');q.placeholder=ph;if(t){q.value=t;go.click();}};
+  const fail=m=>{busy=false;mic.classList.remove('on');q.placeholder=m||ph;setTimeout(()=>q.placeholder=ph,3000);};
+  mic.addEventListener('click',async()=>{if(busy)return;busy=true;mic.classList.add('on');q.value='';q.placeholder='듣고 있네… 말해 보게';
+    if(native){try{const SR=(C.Plugins&&C.Plugins.SpeechRecognition)||C.registerPlugin('SpeechRecognition');
+        const av=await SR.available();if(!av||!av.available)return fail('이 휴대폰은 음성 인식을 못 쓰네. 글로 써 주게.');
+        let pm=await SR.checkPermissions();if(pm.speechRecognition!=='granted')pm=await SR.requestPermissions();
+        if(pm.speechRecognition!=='granted')return fail('마이크를 허락해야 말로 물을 수 있네.');
+        const r=await SR.start({language:'ko-KR',maxResults:1,prompt:'방망이 도깨비한테 말해 보게',partialResults:false,popup:true});
+        done(r&&r.matches&&r.matches[0]);}catch(e){fail('잘 못 알아들었네. 다시 눌러 말해 보게.');}
+      return;}
+    try{const rec=new W();rec.lang='ko-KR';rec.interimResults=true;rec.maxAlternatives=1;let last='';
+      rec.onresult=e=>{last=[...e.results].map(x=>x[0].transcript).join('');q.value=last;};
+      rec.onerror=()=>fail('잘 못 알아들었네. 다시 눌러 말해 보게.');rec.onend=()=>{if(busy)done(last);};rec.start();}catch(e){fail();}});})();

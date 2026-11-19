@@ -11,6 +11,8 @@
 - `www/js/05-app.js` 화면 동작 전부(입력, 메뉴, 궁합, 작명, 해몽, 도깨비 대화, 알림, 공유)
 - `www/js/06-simple.js` 쉬운 보기(전문가 보기는 사용자 요청으로 없앰: pro는 늘 false, 저장값 지움), `www/js/07-qa.js` "궁금한 것 누르기" 질문 목록 + 맨 위 `#heroCard`(05-app.js `heroHtml`: 올해 별명·찌르는 첫마디·예고 D-day·공유 그림, 예고는 localStorage `hongmyeongguk.yeogo` → 알림)
 - 사람 끌기(05-app.js heroHtml 근처): 지난 일 맞히기 `pastList`/`.hPast`(지난 12달 중 약했던 달, 계절로만), 오늘의 방망이 `bokHtml`(localStorage `hongmyeongguk.bok` 이어 온 날·엽전), 도깨비 부적 `bjCanvas`(올해 제일 약한 일), 우리 집 서열 `famScores`(서열 칸 안 "가족 넣기"로 바로 추가·✕로 빼기, 이름 넣고 본 사람도 저장 목록에 자동 저장, 계산 때 `base`를 잠깐 바꿈), 궁합 링크 `?with=`(받은 사람이 생일 넣으면 궁합 탭으로), 운 보기 누르면 방망이 세 번 두드리는 화면 `ttak`, 작명은 먼저 전문가 설명 `jmIntro`(이름 지으러 가기) → 좋은 이름 찾기 누르면 구궁도·오행 짓는 화면 `#jmAnim` 약 5초 뒤 결과(테스트는 둘 다 `window.__noTtak=true`로 건너뜀). 작명증서 도장은 한자 `獨脚鬼作名硏究所印`, 해석 장엔 도장 없음
+- 도깨비 대화: 🎤 `#askMic` 말로 묻기(앱은 `@capacitor-community/speech-recognition`, 마이크 권한은 build.yml에서 매니페스트에 넣음; 웹은 브라우저 음성 인식). 대답은 짧게: 첫마디(질문 속 사람 되짚기 `SUBJ`) → 결론 → 왜냐면 2문장 → 📅 때(필요할 때만) → 방향(이사·부동산·여행만) → 💡 도깨비의 한 수
+- 올해 운세 맨 위 `__yearCard`: 띠·한 해 이름(`YKEY`)·별점·다른 해와 분야별 ▲▼ 비교. 올해가 아닌 해는 '올해' 대신 'NNNN년'
 - 스크립트는 일반 `<script>`라 전역 변수(`base`, `mode`, `show`, `render`, `$`)를 서로 씀. 순서 바꾸지 말 것.
 - 규칙 근거: `docs/운곡-규칙-요약.md`, 대조 기록·미해결: `docs/참고자료.md`
 
