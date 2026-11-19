@@ -109,3 +109,10 @@ body{font-size:17px}
 .qaA{padding:4px 12px 14px!important}
 .ansV b,#askOut .ansV b,.qaA .ansV b{color:var(--ink)!important}
 #appVer{display:inline-block;margin-left:4px;padding:0 8px;border-radius:999px;background:var(--lav2);color:var(--ink);font-size:12px;font-weight:700}
+/* 글꼴: 앱 전체를 프리텐다드로(www/fonts, SIL OFL 1.1). 한자 칸만 명조 유지 */
+body{font-family:"Pretendard Variable",Pretendard,"Apple SD Gothic Neo","Noto Sans KR",sans-serif!important;letter-spacing:-.01em}
+body *:not(.saju .g):not(.st):not(.nm):not(.lq):not(.gm):not(.ages .un):not(.pl .gz):not(.ages .smk):not(.zhi button .n b){font-family:inherit!important}
+h1,h2,h3,h4,#go,.ymd select,.zhi button .n,.tdBadge,.tdTitle,.sc .kw,.shHead b,.pickQ,#mode button .tt,.bnav button,.tp2 .tyName,.ghScore .num,.ghScore .gr,.ghPair .p b,.askChips3 button,.dkHead b,.askHead b,#askOut h4,.head,.detail h3,.rd h2,.rd h4,.tp .code,#alarmCard h3,.jmCh,.jmNm b,.jmOvT,.dmHead b,.rdHL,.lkT em,#heroCard .hPunch,#heroCard .hTitle b,.ygH,.ygI>b,.mI .mM{font-weight:700!important}
+h1 b{font-weight:800!important}
+.zhi{grid-template-columns:repeat(4,minmax(0,1fr))!important}.zhi button{min-width:0;padding-left:2px!important;padding-right:2px!important}
+.zhi button .r{font-size:13.5px;letter-spacing:-.04em;white-space:nowrap}

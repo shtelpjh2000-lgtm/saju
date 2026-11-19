@@ -3,7 +3,7 @@
 한국어 사용자용 웹앱 + 안드로이드 앱(Capacitor). 사용자는 비개발자 — 답은 쉬운 한국어로, 결과 위주로.
 
 ## 구조
-- `www/index.html` 화면 뼈대, `www/css/app.css` 스타일, `www/css/extra.css` 새 화면 조각(첫 화면 카드·그림·방망이 달·큰 시간 글씨)을 처음 분홍·보라 스타일에 맞춘 것, `www/img/art/` 김홍도 풍속화 삽화(공공 저작물, `ART`/`artFig` in 05-app.js)
+- `www/index.html` 화면 뼈대, `www/css/app.css` 스타일, `www/css/extra.css` 새 화면 조각(첫 화면 카드·그림·방망이 달·큰 시간 글씨)을 처음 분홍·보라 스타일에 맞춘 것, `www/fonts/` 프리텐다드 글꼴(SIL OFL, 앱에 넣어 둠 — 전체 글씨는 이 글꼴, 한자 칸만 명조), `www/img/art/` 김홍도 풍속화 삽화(공공 저작물, `ART`/`artFig` in 05-app.js)
 - `www/js/01-lunar.js` 만세력 라이브러리(lunar-javascript, 수정 금지)
 - `www/js/02-gimun.js` **명국 계산**(국·홍국수·연국·태을·생기복덕·대운 나이·12운성) — `Gimun.calc` (칸 신살 `salE`/`salH` 포함)
 - `www/js/03-haeseok.js` **풀이**(왕쇠·용신·진용·합 순열·살·원국비기·신수·일진) — `Haeseok.*`

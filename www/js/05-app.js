@@ -1435,7 +1435,7 @@ alDraw();
   const DKIMG=new Image();DKIMG.src='img/dokkaebi.svg'; // 공유 그림에 넣을 기와 도깨비
   function draw(d){
     const W=1080,H=1350,cv=document.createElement('canvas');cv.width=W;cv.height=H;const c=cv.getContext('2d');
-    const F='"Apple SD Gothic Neo","Noto Sans KR","Malgun Gothic",sans-serif';
+    const F='"Pretendard Variable","Apple SD Gothic Neo","Noto Sans KR","Malgun Gothic",sans-serif';
     const g=c.createLinearGradient(0,0,W,H);g.addColorStop(0,'#ffe3ee');g.addColorStop(.55,'#efe8ff');g.addColorStop(1,'#dff4ff');c.fillStyle=g;c.fillRect(0,0,W,H);
     c.fillStyle='rgba(255,255,255,.55)';[[120,140,90],[960,260,60],[930,1180,110],[90,1150,50]].forEach(([x,y,r])=>{c.beginPath();c.arc(x,y,r,0,7);c.fill();});
     c.textAlign='center';c.fillStyle='#3a2e4d';if(DKIMG.complete&&DKIMG.naturalWidth){c.drawImage(DKIMG,W/2-60,48,120,120);}else{c.font='96px '+F;c.fillText('🔨',W/2,150);}
@@ -1897,7 +1897,7 @@ const TART={exam:[['seodang','chaek'],['gamchal']],jobget:[['daejang','hojak'],[
     if(document.fonts&&document.fonts.ready)await document.fonts.ready;
     g.fillStyle='#0b0b0f';g.fillRect(0,0,W,H);g.strokeStyle='#ffc93c';g.lineWidth=4;g.strokeRect(30,30,W-60,H-60);
     const img=await new Promise(res=>{const i=new Image();i.onload=()=>res(i);i.onerror=()=>res(null);i.src='img/art/'+d.k+'.jpg';});
-    const F='"Gowun Batang","Noto Serif KR",serif';g.textAlign='center';
+    const F='"Pretendard Variable","Noto Sans KR",sans-serif';g.textAlign='center';
     g.fillStyle='#ff4b3a';g.font='700 40px '+F;g.fillText('도깨비 사주 · '+d.Y+'년 운세',W/2,110);
     if(img){const k=Math.min((W-160)/img.width,580/img.height),iw=img.width*k,ih=img.height*k;g.drawImage(img,(W-iw)/2,150+(580-ih)/2,iw,ih);}
     g.fillStyle='#ffffff';g.font='400 40px '+F;g.fillText((d.name?d.name+', ':'')+d.Y+'년의 자네는',W/2,800);
