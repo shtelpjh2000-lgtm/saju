@@ -886,6 +886,9 @@ alDraw();
   const nav=document.createElement('nav');nav.className='bnav';nav.setAttribute('aria-label','운세 종류');
   nav.innerHTML='<div class="in"><button type="button" data-v="won">🔮 명국</button><button type="button" data-v="sin">🎊 신수</button><button type="button" data-v="il">☀️ 일진</button><button type="button" data-v="gh">💞 궁합</button><button type="button" data-v="jm">✍️ 작명</button><button type="button" data-v="dm">🌙 해몽</button></div>';nav.classList.add('six');
   document.body.appendChild(nav);
+  // 아래 메뉴: 그림은 위, 글자는 아래 한 줄로(‘타고난 운’이 두 줄로 꺾이지 않게)
+  const navLbl=()=>{nav.querySelectorAll('button').forEach(b=>{if(b.querySelector('.bt'))return;const t=b.textContent.trim(),i=t.indexOf(' ');if(i<0)return;b.innerHTML='<span class="bi">'+t.slice(0,i)+'</span><span class="bt">'+t.slice(i+1)+'</span>';});};
+  navLbl();new MutationObserver(navLbl).observe(nav,{childList:true,subtree:true});
   const sync=()=>{[...nav.querySelectorAll('button')].forEach(b=>b.classList.toggle('on',b.dataset.v===mode));[...$('mode').children].forEach(b=>b.setAttribute('aria-pressed',b.dataset.v===mode?'true':'false'));};
   nav.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const t=$('mode').querySelector('button[data-v="'+b.dataset.v+'"]');if(t)t.click();});
   $('mode').addEventListener('click',()=>setTimeout(sync,0));

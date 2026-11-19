@@ -116,3 +116,9 @@ h1,h2,h3,h4,#go,.ymd select,.zhi button .n,.tdBadge,.tdTitle,.sc .kw,.shHead b,.
 h1 b{font-weight:800!important}
 .zhi{grid-template-columns:repeat(4,minmax(0,1fr))!important}.zhi button{min-width:0;padding-left:2px!important;padding-right:2px!important}
 .zhi button .r{font-size:13.5px;letter-spacing:-.04em;white-space:nowrap}
+/* 아래 메뉴: 그림 위, 글자 아래 한 줄 */
+.bnav button{display:flex!important;flex-direction:column;align-items:center;justify-content:center;gap:1px;padding:6px 1px!important;line-height:1.15;min-width:0}
+.bnav button .bi{font-size:19px;line-height:1}.bnav button .bt{font-size:13.5px;white-space:nowrap;letter-spacing:-.04em}
+/* 작명 아들·딸 단추: 한 줄로 */
+#jmSex button{white-space:nowrap;padding-left:6px;padding-right:6px;letter-spacing:-.02em}
+body:not(.pro) .bnav button[data-v=il]{display:none!important}
