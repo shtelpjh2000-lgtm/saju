@@ -122,3 +122,6 @@ h1 b{font-weight:800!important}
 /* 작명 아들·딸 단추: 한 줄로 */
 #jmSex button{white-space:nowrap;padding-left:6px;padding-right:6px;letter-spacing:-.02em}
 body:not(.pro) .bnav button[data-v=il]{display:none!important}
+/* 태어난 시: 생년월일처럼 눌러서 고르는 칸 */
+.tzRow{margin-bottom:6px}.tzRow select{font-size:18px!important;font-weight:700;text-align:center;text-align-last:center}
+#go{white-space:nowrap;letter-spacing:-.03em;padding-left:6px!important;padding-right:6px!important}

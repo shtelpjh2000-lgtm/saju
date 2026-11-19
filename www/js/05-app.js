@@ -685,12 +685,19 @@ alDraw();
   zw.innerHTML=ZHI.map((z,i)=>'<button type="button" data-i="'+i+'"><span class="e">'+z[2]+'</span><span class="n"><b>'+z[0]+'</b>'+z[1]+'시</span><span class="r"></span></button>').join('');
   // 태어난 시를 모를 때: 낮 12시(午시)로 봐요
   const nt=document.createElement('button');nt.type='button';nt.id='tUnknown';nt.innerHTML='❓ 태어난 시를 몰라요 <small>낮 12시로 볼게요</small>';zw.after(nt);
+  // 생년월일처럼 눌러서 고르는 칸(12지 단추·시 모름 단추는 숨겨 두고 이 칸으로 고름)
+  const tz=document.createElement('select');tz.id='tz';tz.setAttribute('aria-label','태어난 시');
+  tz.innerHTML='<option value="">시를 골라요</option>'+ZHI.map((z,i)=>'<option value="'+i+'"></option>').join('')+'<option value="u">❓ 시를 몰라요 (낮 12시로 볼게요)</option>';
+  const tw=document.createElement('div');tw.className='ymd tzRow';tw.appendChild(tz);zw.before(tw);zw.style.display='none';nt.style.display='none';
+  tz.addEventListener('change',()=>{const v=tz.value;if(v==='u')nt.click();else if(v!=='')zw.children[+v].click();});
   window.__noTime=false;
   nt.addEventListener('click',()=>{const a=adjMin();exact=false;tx.style.display='none';$('tExact').textContent='⌚ 정확한 시각 입력';tEl.value=fmt(720-a);window.__noTime=true;refresh();});
   function refresh(){
     const a=adjMin();
     [...zw.children].forEach((b,i)=>{const r=range(i,a);b.querySelector('.r').textContent=r[0]+'~'+r[1];});
     const k=zhiOf(tVal,a);
+    [...zw.children].forEach((x,i)=>{const r=range(i,a);tz.options[i+1].textContent=ZHI[i][2]+' '+ZHI[i][1]+'시 ('+ZHI[i][0]+')  '+r[0]+'~'+r[1];});
+    tz.value=window.__noTime?'u':(k>=0?String(k):'');
     [...zw.children].forEach((b,i)=>b.classList.toggle('on',i===k));
     nt.classList.toggle('on',!!window.__noTime);if(window.__noTime){[...zw.children].forEach(b=>b.classList.remove('on'));}
     if(window.__noTime&&k>=0){$('tSel').innerHTML='<b>❓ 시 모름</b> 낮 12시(午시)로 봐요';}
