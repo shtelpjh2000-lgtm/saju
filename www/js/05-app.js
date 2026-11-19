@@ -72,10 +72,15 @@ const SOFT=[
   [/서두르면 헐값일세/g,'서두르지 않으면 제값 받네'],[/지금은 안 팔리네/g,'조금만 기다리면 임자가 나서네'],
   [/흉해요/g,'약해요'],[/흉한/g,'약한'],[/위험한 자리/g,'쉬어 가는 자리'],[/지치는 자리/g,'숨 고르는 자리'],[/다툼 자리/g,'말조심 자리'],
   [/⚠️ 주의/g,'🌱 쉬어 가기'],[/>주의</g,'>쉬어 가기<'],[/>조심</g,'>쉬어 가기<'],[/오늘 주의/g,'오늘 쉬어 가기'],[/>오늘 주의</g,'>오늘 쉬어 가기<']];
-function softTone(h){if(!h)return h;for(const [a,b] of SOFT)h=h.replace(a,b);return h;}
+function softTone(h){if(!h)return h;for(const [a,b] of SOFT)h=h.replace(a,b);return nameize(h);}
 // 이름을 넣으면 도깨비가 이름을 불러요: 성은 빼고 이름만('김순애'→'순애 자네'), 없으면 '자네'
 function myName(){const n=((base&&base.input&&base.input.name)||'').replace(/[^가-힣a-zA-Z]/g,'');if(!n)return '';if(/^(남궁|황보|제갈|선우|독고|사공|서문)[가-힣]{2}$/.test(n))return n.slice(2);if(/^[가-힣]{3}$/.test(n))return n.slice(1);return n;}
-function jane(){const n=myName();return n?n+' 자네':'자네';}
+function jane(){return '자네';}
+// 이름이 있으면 '자네'를 이름으로: 부를 땐 '순애야/지민아', 문장 속에선 '순애는·순애가·순애를…'
+function nameize(h){const n=myName();if(!n||!h)return h;const c=n.charCodeAt(n.length-1)-0xAC00,b=c>=0&&c<11172&&c%28!==0;
+  const m=b?n+'이':n; // 받침 있는 이름은 '지민이는·지민이 운'처럼 '이'를 붙여 친근하게
+  const J={'는':'는','가':'가','를':'를','와':'와','의':'의','도':'도','한테':'한테','에게':'에게','만':'만'};
+  return h.replace(/자네,/g,n+(b?'아':'야')+',').replace(/자네(한테|에게|는|가|를|와|의|도|만)/g,(x,p)=>m+J[p]).replace(/자네(?=[\s.!?<…])/g,m);}
 function compute(){
   const dv=$('d').value,tv=$('t').value;
   if(!dv||!tv)throw new Error('생년월일과 시각을 입력해 주세요.');
@@ -452,7 +457,7 @@ function renderReading(r){
 }
 
 // 도깨비 말투에서는 '나/내'를 '자네'로
-const toJane=h=>h.replace(/(^|[\s>(·,])내 (힘|편|일|칸|기운|마음|몫|자리|계획)/g,'$1자네 $2').replace(/(^|[\s>(·,])나와 /g,'$1자네와 ').replace(/(^|[\s>(·,])내가 /g,'$1자네가 ');
+const toJane=h=>nameize(h.replace(/(^|[\s>(·,])내 (힘|편|일|칸|기운|마음|몫|자리|계획)/g,'$1자네 $2').replace(/(^|[\s>(·,])나와 /g,'$1자네와 ').replace(/(^|[\s>(·,])내가 /g,'$1자네가 '));
 function renderYear(r){
   const o=yInfo.out,b=yInfo.base;
   let h='<h2>'+yearSel+'년 신수</h2><span class="badge">'+r.pillars[0]+'년 · '+ageNow(base)+'세 · '+b.strongKo+'</span>';
@@ -1681,7 +1686,7 @@ alDraw();
     if(/언제|몇 ?월|며칠|시기|때가|날짜/.test(q))return 'when';
     if(/될까|할까|해도|괜찮|좋을까|맞을까|갈까|살까|팔까|붙을까|풀릴까|되나요|돼요\?|할 수 있|가능/.test(q))return 'yn';
     return 'gen';}
-  function opener(q,kind){const o=opener0(q,kind);return myName()&&!o.includes(myName())?myName()+' 자네, '+o:o;}
+  function opener(q,kind){const o=opener0(q,kind);return myName()?'자네, '+o:o;}
   function opener0(q,kind){
     if(/안녕|반가|하이/.test(q))return '허허, 반갑네. 이 늙은이를 찾아 줬구먼.';
     if(EMO.test(q))return '에구, 그랬는가. 속이 많이 상했겠구먼. 이리 와 앉아 보게.';
@@ -1914,14 +1919,14 @@ const TART={exam:[['seodang','chaek'],['gamchal']],jobget:[['daejang','hojak'],[
   }
   document.addEventListener('click',e=>{if(e.target.closest('.heroShare'))heroShare();});
   function greetHtml(){
-    const age=ageNow(base);let L=['금 나와라 뚝딱! 어이, '+(myName()?jane()+' ':'')+'왔는가. 이 방망이 도깨비가 자네 복 나오는 때를 짚어 주지.'];
+    const age=ageNow(base);let L=['금 나와라 뚝딱! 어이, '+(myName()?'자네, ':'')+'왔는가. 이 방망이 도깨비가 자네 복 나오는 때를 짚어 주지.'];
     try{const x=Haeseok.interpret(base,base.input.sex,age),cr=x.curRun;
       if(cr){if(cr.g>=1.5)L.push('요즘 <b>'+cr.theme+'</b> 쪽으로 기운이 차오르는 때라, 해 보고 싶은 게 많을 걸세. 이럴 땐 망설이지 말고 한 발 내디뎌 보게.');
         else if(cr.g>=0.5)L.push('요즘은 <b>'+cr.theme+'</b> 쪽으로 슬슬 바람이 부는 때일세. 차근차근 가면 손에 쥐는 게 있을 걸세.');
         else if(cr.g>-1)L.push('요즘은 <b>'+cr.theme+'</b> 쪽 일이 마음을 차지하는 때일세. 크게 좋지도 나쁘지도 않으니, 너무 애태우지 말고 차근차근 가게.');
         else{const nx=x.runs.find(u=>u.from>age&&u.g>=1);L.push('요즘 많이 지쳤지? 지금은 <b>'+cr.theme+'</b> 쪽 일로 짐이 무거운 때라네. 몸을 낮추고 조금만 버티게.'+(nx?' 이 고비만 넘기면 <b>'+nx.from+'세</b>부터 숨통이 트일 걸세.':''));}}}catch(e){}
     L.push('무엇이 궁금한가? 돈 얘기든 사람 얘기든, 편하게 털어놓게.');
-    return '<div class="bub dk"><span class="av"></span><div>'+L.map((t,i)=>'<p'+(i===0?' class="dkOpen"':'')+'>'+t+'</p>').join('')+'<div class="dkQuick">'+QUICK.map(([k,l])=>'<button type="button" data-qk="'+k+'">'+l+'</button>').join('')+'</div></div></div>';}
+    return nameize('<div class="bub dk"><span class="av"></span><div>'+L.map((t,i)=>'<p'+(i===0?' class="dkOpen"':'')+'>'+t+'</p>').join('')+'<div class="dkQuick">'+QUICK.map(([k,l])=>'<button type="button" data-qk="'+k+'">'+l+'</button>').join('')+'</div></div></div>');}
 
   function render(){
     const out=$('askOut');if(!base){out.innerHTML='';return;}
