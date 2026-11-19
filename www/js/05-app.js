@@ -1895,11 +1895,13 @@ const TART={exam:[['seodang','chaek'],['gamchal']],jobget:[['daejang','hojak'],[
     try{const P=v=>String(v).padStart(2,'0'),iso=d=>d.getFullYear()+'-'+P(d.getMonth()+1)+'-'+P(d.getDate());const I=r.input;
       localStorage.setItem('hongmyeongguk.yeogo',JSON.stringify({d:I.y+'-'+P(I.m)+'-'+P(I.d),list:pr.filter(x=>x.c.a).map(x=>({s:iso(x.c.a),e:iso(x.c.b),txt:x.n+' — '+x.c.lab+', '+x.w}))}));}catch(e){}
     heroData={k:A[0],nick,punch,line:L[0].replace(/<[^>]+>/g,''),name:r.input.name||'',Y};
-    return '<p class="hPunch">'+punch.replace(/^자네,/,jane()+',')+'</p><p class="hTitle"><small>'+Y+'년, '+jane()+'는</small><b>'+nick+'</b><small>일세.</small></p>'+
+    try{pastL=pastList();}catch(e){pastL=[];}pastI=0;
+    return '<p class="hPunch">'+punch.replace(/^자네,/,jane()+',')+'</p>'+pastHtml()+'<p class="hTitle"><small>'+Y+'년, '+jane()+'는</small><b>'+nick+'</b><small>일세.</small></p>'+
       L.map(x=>'<p class="hLine">'+x+'</p>').join('')+artFig(A[0])+
       (pr.length?'<div class="yeogo"><p class="ygH">도깨비 방망이<small>뚝딱, 복이 나오는 달</small></p>'+pr.map(x=>'<p class="ygI"><b>'+x.n+'</b><span>'+x.c.lab+'<br><small>'+x.w+'</small></span>'+dday(x.c)+'</p>').join('')+'<p class="ygN">그 달이 오면 아침 알림으로 일러 주겠네. (알림을 켜 두게)</p></div>':'')+
       (r.input&&r.input.noTime?'<p class="ygN">⏰ 태어난 시를 몰라서 낮 12시로 봤네. 시를 알게 되면 다시 넣어 보게.</p>':'')+
-      '<button type="button" class="heroShare">이 풀이 카톡으로 보내기</button>';}
+      bokHtml()+'<div class="bjWrap"><button type="button" class="bjGo">🧧 나만의 도깨비 부적 받기</button><div class="bjOut"></div></div>'+famHtml()+
+      '<div class="hBtns"><button type="button" class="heroShare">이 풀이 카톡으로 보내기</button><button type="button" class="withGo">💌 친구한테 궁합 링크 보내기</button></div>';}
   window.__heroHtml=()=>{try{return softTone(heroHtml());}catch(e){console.error(e);return '';}};
   // 공유용 그림(1080×1350)
   async function heroImage(){
@@ -1917,18 +1919,115 @@ const TART={exam:[['seodang','chaek'],['gamchal']],jobget:[['daejang','hojak'],[
     return c;}
   function wrap(g,t,x,y,mw,lh){const w=[...t];let line='',yy=y;for(const ch of w){if(g.measureText(line+ch).width>mw&&line){g.fillText(line,x,yy);line=ch;yy+=lh;}else line+=ch;}g.fillText(line,x,yy);}
   async function heroShare(){
-    const c=await heroImage();if(!c)return;const txt='방망이 도깨비가 그러는데 올해 나는 「'+heroData.nick+'」래. 너는? https://shtelpjh2000-lgtm.github.io/saju/';
+    const c=await heroImage();if(!c)return;await shareCanvas(c,'방망이 도깨비가 그러는데 올해 나는 「'+heroData.nick+'」래. 너는? https://shtelpjh2000-lgtm.github.io/saju/');}
+  async function shareCanvas(c,txt,fname){fname=fname||'dokkaebi-saju.jpg';
     const C=window.Capacitor;
     try{
       if(C&&C.isNativePlatform&&C.isNativePlatform()){const FS=(C.Plugins&&C.Plugins.Filesystem)||C.registerPlugin('Filesystem');const SH=(C.Plugins&&C.Plugins.Share)||C.registerPlugin('Share');
-        const w=await FS.writeFile({path:'dokkaebi-saju.jpg',data:c.toDataURL('image/jpeg',.88).split(',')[1],directory:'CACHE'});
+        const w=await FS.writeFile({path:fname,data:c.toDataURL('image/jpeg',.88).split(',')[1],directory:'CACHE'});
         await SH.share({title:'도깨비 사주',text:txt,files:[w.uri],dialogTitle:'카톡으로 보내기'});return;}
-      const blob=await new Promise(r=>c.toBlob(r,'image/jpeg',.88));const f=new File([blob],'dokkaebi-saju.jpg',{type:'image/jpeg'});
+      const blob=await new Promise(r=>c.toBlob(r,'image/jpeg',.88));const f=new File([blob],fname,{type:'image/jpeg'});
       if(navigator.canShare&&navigator.canShare({files:[f]})){await navigator.share({files:[f],text:txt});return;}
-      const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='dokkaebi-saju.jpg';document.body.appendChild(a);a.click();a.remove();
+      const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=fname;document.body.appendChild(a);a.click();a.remove();
     }catch(e){if(e&&e.name!=='AbortError')console.warn(e);}
   }
   document.addEventListener('click',e=>{if(e.target.closest('.heroShare'))heroShare();});
+  // ── ① 도깨비가 지난 일을 맞히는 첫마디(지난 12달 중 각 일이 가장 약했던 달) ──
+  let pastL=[],pastI=0;
+  const SEASON=m=>m>=3&&m<=5?'봄':m>=6&&m<=8?'여름':m>=9&&m<=11?'가을':'겨울';
+  const PAST={money:['돈 문제로 속 끓인 일','목돈이 빠져나가 속상했던 일'],promo:['일이나 자리 문제로 마음고생한 일','하던 일이 막혀 답답했던 일'],
+    people:['가까운 사람 때문에 서운했던 일','믿었던 사람한테 마음 상한 일'],health:['몸이 무겁고 유난히 지쳤던 일','잔병치레로 고생한 일']};
+  function pastList(){const nl=Solar.fromDate(new Date()).getLunar(),ly=nl.getYear(),lm=Math.abs(nl.getMonth()),Y0=new Date().getFullYear(),cache={};const o=[];
+    for(const t of Object.keys(PAST)){const [lq,badq]=topicLq(t);let best=null;
+      for(let k=1;k<=12;k++){let m=lm-k,y=ly;if(m<=0){m+=12;y--;}let rsX;try{rsX=cache[y]||(cache[y]=sinsu(yearGZ(y)));}catch(e){continue;}
+        const p=MPAL[m];const lh=lq.indexOf(rsX.lqH[p]);let v=(lh===0?1.4:lh===1?0.8:0)+pScore(rsX,p,t)*0.6;if(badq.includes(rsX.lqH[p]))v-=0.8;
+        if(!best||v<best.v)best={t,v,y,m};}
+      if(best){const sm=smon(best.y,best.m);best.when=sm.y===Y0?(sm.m<=2?'올해 초':'올해 '+SEASON(sm.m)+'쯤'):(sm.m===12?'작년 겨울쯤':'작년 '+SEASON(sm.m)+'쯤');best.txt=PAST[t][(best.y+best.m)%2];o.push(best);}}
+    return o.sort((a,b)=>a.v-b.v);}
+  function pastHtml(){const x=pastL[pastI];if(!x)return '';
+    return '<div class="hPast"><p>🔮 '+(pastI?'그럼 이건 어떤가. ':'')+'<b>'+x.when+'</b>, '+x.txt+' 있었지?</p><div class="hpB"><button type="button" data-pa="y">😮 맞아!</button><button type="button" data-pa="n">🤔 아닌데</button></div></div>';}
+  document.addEventListener('click',e=>{const b=e.target.closest('.hPast button[data-pa]');if(!b)return;const w=b.closest('.hPast');
+    if(b.dataset.pa==='y'){w.innerHTML='<p>🔮 허허, 그럴 줄 알았네. 그 고비는 이미 넘겼으니 걱정 말게. 이제 <b>앞으로 올 복</b> 얘기를 들어 보게.</p>';}
+    else if(pastI<1&&pastL[pastI+1]){pastI++;w.outerHTML=pastHtml();}
+    else{w.innerHTML='<p>🔮 허허, 그만큼 잘 넘기고 살았다는 뜻일세. 자네 복이 그만큼 단단하다는 걸세.</p>';}
+    const n=document.querySelector('#heroCard .hPast');if(n)n.innerHTML=softTone(n.innerHTML);});
+
+  // ── ② 매일 방망이 한 번: 오늘 복(금·은·엽전) + 이어 온 날·모은 엽전 ──
+  const BOK='hongmyeongguk.bok';
+  const bokLoad=()=>{try{return JSON.parse(localStorage.getItem(BOK)||'{}')||{};}catch(e){return {};}};
+  const ymdS=d=>d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate();
+  const BOKG=[[1.5,'🥇','금덩이','오늘은 복이 넘치는 날일세!',10],[0.5,'🥈','은덩이','오늘은 일이 술술 풀리는 날일세.',5],[-0.5,'💰','엽전 꾸러미','오늘은 잔잔하게 복이 쌓이는 날일세.',3],[-9,'🪙','엽전 한 닢','오늘은 작은 복을 아껴 모으는 날일세.',1]];
+  const BOKT={財:'돈 들어올 구석을 챙겨 보게.',官:'윗사람한테 부탁하거나 일 얘기 꺼내기 좋네.',孫:'새로 시작하거나 바람 쐬러 나가기 좋네.',父:'서류·계약·공부에 손대기 좋네.',兄:'친구·동료와 함께하면 일이 커지네.',鬼:'무리하지 말고 일찍 쉬면 복이 지켜지네.'};
+  function bokToday(){const n=new Date();const x=dayInfo(n.getFullYear(),n.getMonth()+1,n.getDate(),{});const g=x.d.g;const G=BOKG.find(z=>g>=z[0]);return {G,tip:BOKT[x.d.k]||''};}
+  function bokHtml(){const st=bokLoad(),today=ymdS(new Date());const done=st.last===today&&st.res;
+    return '<div class="bokWrap"><p class="ygH">오늘의 방망이<small>하루 한 번, 두드리면 오늘 복이 나오네</small></p>'+
+      (done?bokRes(st):'<button type="button" class="bokGo"><span class="bang"></span> 방망이 두드리기 <b>뚝딱!</b></button>')+'</div>';}
+  function bokRes(st){const r=st.res;return '<div class="bokRes"><span class="bokE">'+r.e+'</span><div><b>'+r.n+'</b> 나왔네!<br>'+r.say+' '+r.tip+'</div></div><p class="bokSt">🔥 '+(st.streak||1)+'일째 두드리는 중 · 모은 엽전 <b>'+(st.coins||0)+'닢</b></p>';}
+  document.addEventListener('click',e=>{const b=e.target.closest('.bokGo');if(!b||!base)return;
+    ttak.hit();b.classList.add('swing');setTimeout(()=>{let r;try{r=bokToday();}catch(_){return;}
+      const st=bokLoad(),n=new Date(),today=ymdS(n),y=new Date(n);y.setDate(y.getDate()-1);
+      if(st.last!==today){st.streak=st.last===ymdS(y)?(st.streak||0)+1:1;st.coins=(st.coins||0)+r.G[4];st.last=today;}
+      st.res={e:r.G[1],n:r.G[2],say:r.G[3],tip:r.tip};try{localStorage.setItem(BOK,JSON.stringify(st));}catch(_){}
+      ttak.chime();const w=b.closest('.bokWrap');b.outerHTML=softTone(bokRes(st));w.classList.add('pop');},450);});
+
+  // ── ③ 나만의 도깨비 부적(올해 제일 약한 일을 메워 주는 부적, 배경화면·공유용) ──
+  const BJ={money:['招財進寶','막힌 재물 길 뚫는 부적','재물'],promo:['官運亨通','일·자리 문 여는 부적','일'],people:['人緣和合','귀인 불러오는 부적','사람'],health:['百病消滅','몸 지켜 주는 부적','건강']};
+  function bjKind(){const Y=new Date().getFullYear();let w='money',lo=1e9;for(const t of Object.keys(BJ)){let v;try{v=scoreOf(t,Y);}catch(e){continue;}if(v<lo){lo=v;w=t;}}return w;}
+  const loadImg=src=>new Promise(res=>{const i=new Image();i.onload=()=>res(i);i.onerror=()=>res(null);i.src=src;});
+  async function bjCanvas(withImg){const k=bjKind(),B=BJ[k],nm=myName()||'',Y=new Date().getFullYear();
+    const W=720,H=1280,c=document.createElement('canvas');c.width=W;c.height=H;const g=c.getContext('2d');
+    try{if(document.fonts){await document.fonts.load('700 150px "Noto Serif KR"',B[0]);await document.fonts.ready;}}catch(e){}
+    const bg=g.createLinearGradient(0,0,0,H);bg.addColorStop(0,'#f8e08a');bg.addColorStop(1,'#eec443');g.fillStyle=bg;g.fillRect(0,0,W,H);
+    const RED='#c3141b';g.strokeStyle=RED;g.lineWidth=10;g.strokeRect(34,34,W-68,H-68);g.lineWidth=3;g.strokeRect(54,54,W-108,H-108);
+    const F='"Pretendard Variable","Noto Sans KR",sans-serif',S='"Noto Serif KR","Nanum Myeongjo",serif';g.textAlign='center';g.fillStyle=RED;
+    g.font='800 38px '+F;g.fillText('도깨비 방망이 부적',W/2,130);
+    if(withImg){const im=await loadImg('img/dokkaebi.svg');if(im)g.drawImage(im,W/2-80,160,160,160);}
+    g.font='700 150px '+S;[...B[0]].forEach((ch,i)=>g.fillText(ch,W/2,470+i*165));
+    g.lineWidth=4;g.beginPath();for(let i=0;i<2;i++){const yy=400+i*360;g.moveTo(110,yy);g.bezierCurveTo(160,yy-60,200,yy+60,150,yy+120);g.moveTo(W-110,yy);g.bezierCurveTo(W-160,yy-60,W-200,yy+60,W-150,yy+120);}g.stroke();
+    g.font='800 40px '+F;g.fillText(B[1],W/2,1110);
+    g.fillStyle='#5a2a0c';g.font='600 30px '+F;g.fillText((nm?nm+' 전용 · ':'')+Y+'년',W/2,1160);
+    g.save();g.translate(W-135,1010);g.rotate(-0.12);g.strokeStyle=RED;g.lineWidth=5;g.strokeRect(-46,-46,92,92);g.fillStyle=RED;g.font='800 30px '+S;g.fillText('鬼',0,-6);g.fillText('福',0,30);g.restore();
+    g.fillStyle='#7a4a1f';g.font='500 22px '+F;g.fillText('휴대폰 배경화면으로 두면 복이 따라온다네',W/2,1212);
+    return {c,B,k};}
+  async function bjMake(){let r=await bjCanvas(true);try{r.c.toDataURL();}catch(e){r=await bjCanvas(false);}return r;}
+  let bjLast=null;
+  document.addEventListener('click',async e=>{const b=e.target.closest('.bjGo');if(!b||!base)return;b.disabled=true;b.textContent='부적 쓰는 중… 뚝딱!';
+    try{bjLast=await bjMake();const out=b.parentNode.querySelector('.bjOut');
+      out.innerHTML='<img class="bjImg" alt="도깨비 부적" src="'+bjLast.c.toDataURL('image/jpeg',.9)+'"><p class="bjSay">'+softTone('올해 자네한테 제일 필요한 건 <b>'+bjLast.B[2]+'</b> 기운이라, <b>'+bjLast.B[1]+'</b>을 써 주었네. 배경화면으로 두고 복을 불러 보게.')+'</p><button type="button" class="bjShare">💾 부적 저장·보내기</button>';
+      b.style.display='none';}catch(err){console.warn(err);b.disabled=false;b.textContent='🧧 나만의 도깨비 부적 받기';}});
+  document.addEventListener('click',e=>{if(!e.target.closest('.bjShare')||!bjLast)return;shareCanvas(bjLast.c,'방망이 도깨비가 써 준 내 부적이야 🧧 「'+bjLast.B[1]+'」 너도 받아 봐 → https://shtelpjh2000-lgtm.github.io/saju/','dokkaebi-bujeok.jpg');});
+
+  // ── ④ 우리 집 도깨비 서열(저장된 가족으로 올해 순위) ──
+  function famPeople(){const me=profileOf(base.input);const L=[me];
+    loadSaved().forEach(s=>{if(s.name&&!L.some(x=>x.d===s.d&&x.t===s.t&&x.name===s.name))L.push(s);});return L.filter(x=>x.name).slice(0,8);}
+  function famHtml(){let n=0;try{n=famPeople().length;}catch(e){}
+    return '<div class="famWrap"><p class="ygH">우리 집 도깨비 서열<small>올해 집안 돈줄은 누구, 복덩이는 누구?</small></p>'+
+      (n>=2?'<button type="button" class="famGo">👨‍👩‍👧 서열 뽑아 보기 ('+n+'명)</button><div class="famOut"></div>':
+      '<p class="ygN">가족 이름과 생일을 한 번씩 넣고 운을 보면, 여기에 우리 집 서열이 나오네. (이름을 넣은 사람만 모아 둬)</p>')+'</div>';}
+  function famScores(){const Y=new Date().getFullYear(),keep=base,o=[];
+    try{for(const p of famPeople()){try{base=baseFromProfile(p);const v={p};for(const t of ['gen','money','promo','people','health'])v[t]=scoreOf(t,Y);o.push(v);}catch(e){}}}finally{base=keep;}return o;}
+  document.addEventListener('click',e=>{const b=e.target.closest('.famGo');if(!b||!base)return;const o=famScores();if(o.length<2)return;
+    // 한 사람이 상을 다 가져가지 않게: 아직 상 없는 사람 중에서 먼저 고르기
+    const used=new Set();const pick=(t,lo)=>{const L=o.slice().sort((a,z)=>lo?a[t]-z[t]:z[t]-a[t]);const x=L.find(v=>!used.has(v))||L[0];used.add(x);if(used.size>=o.length)used.clear();return x.p.name;};
+    const R=[['💰','집안 돈줄',pick('money')],['🍀','올해 복덩이',pick('gen')],['🤝','귀인 복 받을 사람',pick('people')],['💼','일복 터질 사람',pick('promo')],['🛌','쉬엄쉬엄 챙길 사람',pick('health',1)]];
+    const M=['🥇','🥈','🥉'];const rank=o.slice().sort((a,z)=>z.gen-a.gen);
+    const out=b.parentNode.querySelector('.famOut');b.style.display='none';
+    out.innerHTML='<div class="famT">'+R.map(x=>'<p><span>'+x[0]+' '+x[1]+'</span><b>'+escH(x[2])+'</b></p>').join('')+'</div>'+
+      '<p class="famH">올해 운 순위</p><ol class="famR">'+rank.map((x,i)=>'<li>'+(M[i]||'🎖️')+' '+escH(x.p.name)+'</li>').join('')+'</ol>'+
+      '<button type="button" class="famShare">가족 단톡방에 보내기</button>';
+    out.dataset.txt='🏠 방망이 도깨비가 뽑은 우리 집 '+new Date().getFullYear()+'년 서열\n'+R.map(x=>x[0]+' '+x[1]+': '+x[2]).join('\n')+'\n\n너도 뽑아 봐 → https://shtelpjh2000-lgtm.github.io/saju/';});
+  async function shareText(txt){const C=window.Capacitor;
+    try{if(C&&C.isNativePlatform&&C.isNativePlatform()){const SH=(C.Plugins&&C.Plugins.Share)||C.registerPlugin('Share');await SH.share({title:'도깨비 사주',text:txt,dialogTitle:'보내기'});return;}
+      if(navigator.share){await navigator.share({text:txt});return;}
+      await navigator.clipboard.writeText(txt);alert('복사했어요. 카톡에 붙여 넣어 보내 주세요.');}catch(e){if(e&&e.name!=='AbortError')console.warn(e);}}
+  document.addEventListener('click',e=>{const b=e.target.closest('.famShare');if(b)shareText(b.parentNode.dataset.txt);});
+
+  // ── ⑤ 친구한테 궁합 링크: 받은 사람이 생일만 넣으면 둘의 궁합이 바로 나옴 ──
+  document.addEventListener('click',e=>{if(!e.target.closest('.withGo')||!base)return;const I=base.input,P2=v=>String(v).padStart(2,'0');
+    const o={n:I.name||'',y:I.y,m:I.m,d:I.d,t:I.noTime?'':P2(I.h)+':'+P2(I.mi),s:I.sex};
+    const code=btoa(unescape(encodeURIComponent(JSON.stringify(o)))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+    const who=I.name?I.name:'친구';
+    shareText('💌 '+who+'(이)가 우리 궁합 보재! 생일만 넣으면 방망이 도깨비가 둘 궁합을 바로 봐 줘 👉 https://shtelpjh2000-lgtm.github.io/saju/?with='+code);});
   function greetHtml(){
     const age=ageNow(base);let L=['금 나와라 뚝딱! 어이, '+(myName()?'자네, ':'')+'왔는가. 이 방망이 도깨비가 자네 복 나오는 때를 짚어 주지.'];
     try{const x=Haeseok.interpret(base,base.input.sex,age),cr=x.curRun;
@@ -2120,3 +2219,38 @@ drawSaved();
 LEG0=$('legend').textContent;
 // 예시: 처음 열면 1984-05-22 20:00
 $('d').value='1984-05-22';$('t').value='20:00';$('yr').value=yearSel;
+// ── 방망이 뚝딱: 운 보기를 누르면 방망이를 세 번 두드려야 결과가 열려요(소리·떨림) ──
+const ttak=(()=>{let ac=null;const A=()=>{try{ac=ac||new (window.AudioContext||window.webkitAudioContext)();if(ac.state==='suspended')ac.resume();}catch(e){ac=null;}return ac;};
+  const tone=(f,t0,dur,type,vol)=>{const a=A();if(!a)return;const o=a.createOscillator(),g=a.createGain();o.type=type||'sine';o.frequency.setValueAtTime(f,a.currentTime+t0);
+    if(type!=='triangle')o.frequency.exponentialRampToValueAtTime(Math.max(40,f*0.4),a.currentTime+t0+dur);g.gain.setValueAtTime(vol||0.5,a.currentTime+t0);g.gain.exponentialRampToValueAtTime(0.001,a.currentTime+t0+dur);o.connect(g);g.connect(a.destination);o.start(a.currentTime+t0);o.stop(a.currentTime+t0+dur+0.02);};
+  const buzz=ms=>{try{navigator.vibrate&&navigator.vibrate(ms);}catch(e){}};
+  const hit=()=>{tone(150,0,0.18,'sine',0.7);tone(900,0,0.05,'square',0.08);buzz(40);};
+  const chime=()=>{[784,988,1175,1568].forEach((f,i)=>tone(f,i*0.09,0.35,'triangle',0.18));buzz([30,40,30]);};
+  const BANG='<svg viewBox="0 0 70 170" class="bangSvg" aria-hidden="true"><rect x="29" y="104" width="12" height="62" rx="6" fill="#7a4a1f"/><path d="M14 26 Q35 -2 56 26 L50 108 Q35 118 20 108Z" fill="#c0702e" stroke="#5a3210" stroke-width="4"/><g fill="#ffd34d" stroke="#8a5a10" stroke-width="2"><circle cx="26" cy="40" r="6"/><circle cx="44" cy="40" r="6"/><circle cx="35" cy="62" r="6"/><circle cx="25" cy="84" r="5"/><circle cx="45" cy="84" r="5"/></g></svg>';
+  let ov=null,n=0,lastKey='';
+  function open(){if(ov)ov.remove();n=0;ov=document.createElement('div');ov.id='ttak';
+    ov.innerHTML='<div class="tkIn"><p class="tkH">방망이를 <b>세 번</b> 두드리게!</p><button type="button" class="tkBtn" aria-label="방망이 두드리기"><img src="img/dokkaebi.svg" alt="" class="tkDk">'+BANG+'</button><p class="tkDots"><i></i><i></i><i></i></p><p class="tkSay">금 나와라 뚝딱!</p><button type="button" class="tkSkip">건너뛰기</button></div>';
+    document.body.appendChild(ov);requestAnimationFrame(()=>ov.classList.add('on'));
+    ov.querySelector('.tkBtn').addEventListener('click',()=>{if(n>=3)return;n++;hit();const b=ov.querySelector('.tkBtn');b.classList.remove('swing');void b.offsetWidth;b.classList.add('swing');
+      ov.querySelectorAll('.tkDots i').forEach((d,i)=>d.classList.toggle('on',i<n));
+      for(let k=0;k<6;k++){const c=document.createElement('span');c.className='tkCoin';c.textContent=['🪙','✨','💰'][k%3];c.style.setProperty('--dx',(Math.random()*240-120)+'px');c.style.setProperty('--dy',(-80-Math.random()*160)+'px');ov.querySelector('.tkIn').appendChild(c);setTimeout(()=>c.remove(),900);}
+      ov.querySelector('.tkSay').textContent=['금 나와라 뚝딱!','은 나와라 뚝딱!','복 나와라 뚝딱!'][n-1];
+      if(n===3){setTimeout(()=>{chime();ov.querySelector('.tkH').innerHTML='🧧 <b>복주머니가 열렸네!</b>';ov.classList.add('done');},250);setTimeout(close,1300);}});
+    ov.querySelector('.tkSkip').addEventListener('click',close);}
+  function close(){if(!ov)return;const o=ov;ov=null;o.classList.remove('on');setTimeout(()=>o.remove(),300);window.scrollTo({top:0,behavior:'smooth'});}
+  $('go').addEventListener('click',()=>setTimeout(()=>{if(!base||$('err').style.display!=='none')return;const I=base.input,k=[I.name,I.y,I.m,I.d,I.h,I.mi,I.sex].join('|');
+    if(k!==lastKey&&!window.__noTtak){lastKey=k;open();}},0));
+  return {hit,chime,open};})();
+// ── 이름을 넣고 운을 본 사람은 저장해 두기(우리 집 서열에 쓰임) ──
+$('go').addEventListener('click',()=>setTimeout(()=>{if(!base||!base.input.name||$('err').style.display!=='none')return;try{const it=profileOf(base.input);
+  const list=loadSaved().filter(s=>!(s.d===it.d&&s.t===it.t&&s.name===it.name));list.unshift(it);localStorage.setItem(KEY,JSON.stringify(list.slice(0,30)));drawSaved();}catch(e){}},0));
+// ── 친구가 보낸 궁합 링크(?with=)로 들어왔을 때: 내 생일만 넣으면 둘의 궁합으로 ──
+(function(){let w=null;try{const q=new URLSearchParams(location.search).get('with');if(!q)return;
+    w=JSON.parse(decodeURIComponent(escape(atob(q.replace(/-/g,'+').replace(/_/g,'/')))));}catch(e){return;}
+  if(!w||!w.y||!w.m||!w.d)return;
+  try{localStorage.setItem('hongmyeongguk.partner',JSON.stringify({name:w.n||'',y:+w.y,m:+w.m,d:+w.d,cal:'S',t:w.t||'',sex:w.s==='F'?'F':'M'}));}catch(e){}
+  const who=(w.n||'친구').replace(/[<>&"]/g,'');
+  const bn=document.createElement('div');bn.className='withBanner';bn.innerHTML='💌 <b>'+who+'</b>님이 궁합을 보자고 했어요!<br><small>아래에 내 생일을 넣고 운 보기를 누르면 둘의 궁합이 바로 나와요.</small>';
+  $('form').insertAdjacentElement('afterbegin',bn);
+  let pend=true;$('go').addEventListener('click',()=>setTimeout(()=>{if(!pend||!base||$('err').style.display!=='none')return;pend=false;bn.remove();
+    const b=$('mode').querySelector('button[data-v="gh"]');if(b)setTimeout(()=>b.click(),1500);},0));})();

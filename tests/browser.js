@@ -4,6 +4,7 @@ const url = 'file://' + require('path').resolve(__dirname, '../www/index.html');
 (async () => {
   const b = await chromium.launch(), pg = await b.newPage({ viewport: { width: 400, height: 860 } });
   const errs = []; pg.on('pageerror', e => errs.push(e.message)); pg.on('console', m => { if (m.type() === 'error') errs.push(m.text()); });
+  await pg.addInitScript(() => { window.__noTtak = true; }); // 방망이 뚝딱 화면은 따로 확인
   await pg.goto(url); await pg.waitForTimeout(1200);
   await pg.click('#cal button[data-v=L]'); await pg.selectOption('#dy', '1975'); await pg.selectOption('#dm', '9'); await pg.selectOption('#dd', '6');
   await pg.evaluate(() => { document.getElementById('t').value = '11:00'; });
@@ -11,6 +12,14 @@ const url = 'file://' + require('path').resolve(__dirname, '../www/index.html');
   const who = await pg.evaluate(() => document.querySelector('#whoBar b').textContent);
   // 첫 화면 한 장면 카드(올해 자네는 OO) · 예고 · 공유 버튼
   if (!(await pg.evaluate(() => { const h = document.querySelector('#heroCard'); return h && h.querySelector('.hTitle b') && h.querySelector('.heroShare') && getComputedStyle(h).display !== 'none'; }))) errs.push('첫 화면 카드 없음');
+  // 사람 끌기: 지난 일 맞히기·오늘의 방망이·부적·가족 서열·궁합 링크
+  for (const c of ['.hPast', '.bokGo', '.bjGo', '.famWrap', '.withGo']) if (!(await pg.$('#heroCard ' + c))) errs.push('첫 화면 카드에 없음: ' + c);
+  await pg.click('#heroCard .hPast button[data-pa=y]'); await pg.click('#heroCard .bokGo'); await pg.waitForTimeout(700); if (!(await pg.$('#heroCard .bokRes'))) errs.push('오늘의 방망이 결과 안 나옴');
+  await pg.click('#heroCard .bjGo'); await pg.waitForTimeout(2000); if (!(await pg.$('#heroCard .bjImg'))) errs.push('부적 그림 안 나옴');
+  // 방망이 뚝딱 화면: 세 번 두드리면 닫힘
+  await pg.evaluate(() => { window.__noTtak = false; document.body.classList.add('formOpen'); }); await pg.fill('#nm', '뚝딱'); await pg.click('#go'); await pg.waitForTimeout(400);
+  if (!(await pg.$('#ttak'))) errs.push('방망이 뚝딱 화면 안 나옴'); else { for (let i = 0; i < 3; i++) { await pg.click('.tkBtn'); await pg.waitForTimeout(200); } await pg.waitForTimeout(1800); if (await pg.$('#ttak')) errs.push('세 번 두드려도 안 닫힘'); }
+  await pg.evaluate(() => { window.__noTtak = true; });
   for (const k of ['sum', 'char', 'money', 'job', 'love', 'health', 'lucky', 'today', 'ask']) { await pg.click('.qaI[data-k=' + k + '] .qaQ'); await pg.waitForTimeout(300); }
   // 도깨비 대화: 질문 뜻을 제대로 알아듣는지
   await pg.evaluate(() => { const i = document.querySelector('.qaI[data-k=ask]'); if (!i.classList.contains('open')) i.querySelector('.qaQ').click(); }); await pg.waitForTimeout(300);

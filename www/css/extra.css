@@ -125,3 +125,41 @@ body:not(.pro) .bnav button[data-v=il]{display:none!important}
 /* 태어난 시: 생년월일처럼 눌러서 고르는 칸 */
 .tzRow{margin-bottom:6px}.tzRow select{font-size:18px!important;font-weight:700;text-align:center;text-align-last:center}
 #go{white-space:nowrap;letter-spacing:-.03em;padding-left:6px!important;padding-right:6px!important}
+/* ── 사람 끌기: 지난 일 맞히기·오늘의 방망이·부적·가족 서열·궁합 링크·뚝딱 화면 ── */
+.sub b{color:var(--pink)}
+.hPast{margin:4px 0 14px;padding:14px 16px;border-radius:18px;background:linear-gradient(135deg,#fff0f6,#f3edff);border:2px solid #ffc2d8}
+.hPast p{margin:0;font-size:18.5px;line-height:1.6;color:var(--ink)}.hPast b{color:var(--hl)}
+.hpB{display:flex;gap:8px;margin-top:10px}.hpB button{flex:1;padding:11px 6px;font-size:17px;font-weight:700;border-radius:14px;background:#fff;color:var(--ink);border:2px solid var(--line);box-shadow:none}
+.hpB button[data-pa=y]{background:linear-gradient(135deg,#ff8fb3,#b9a8ff);color:#fff;border:0}
+.bokWrap,.bjWrap,.famWrap{margin:18px 0 0;padding:16px;border-radius:20px;background:#fffaf0;border:2px solid #ffe2a8}
+.bokGo,.bjGo,.famGo{width:100%;padding:16px 10px;font-size:19px;font-weight:800;border-radius:16px;background:linear-gradient(135deg,#ffb347,#ff6f91);color:#fff;border:0;display:flex;align-items:center;justify-content:center;gap:8px}
+.bokGo b{font-size:21px}.bokGo .bang{width:26px;height:26px;background:url(../img/dokkaebi.svg) center/contain no-repeat}
+.bokGo.swing,.tkBtn.swing{animation:swing .35s ease}
+@keyframes swing{0%{transform:rotate(0)}35%{transform:rotate(-18deg) scale(1.05)}70%{transform:rotate(10deg)}100%{transform:rotate(0)}}
+.bokRes{display:flex;gap:12px;align-items:center;font-size:17.5px;line-height:1.55;color:var(--ink)}.bokRes b{font-size:20px;color:var(--hl)}
+.bokE{font-size:54px;line-height:1}.bokWrap.pop .bokE{animation:pop .5s ease}
+@keyframes pop{0%{transform:scale(.2)}70%{transform:scale(1.25)}100%{transform:scale(1)}}
+.bokSt{margin:10px 0 0;font-size:15.5px;color:var(--mute);text-align:center}.bokSt b{color:var(--ink)}
+.bjGo{background:linear-gradient(135deg,#e53935,#ff8f00)}
+.bjImg{display:block;width:100%;max-width:300px;margin:4px auto 10px;border-radius:12px;box-shadow:0 8px 24px rgba(160,60,20,.3)}
+.bjSay{font-size:17px;line-height:1.6;color:var(--ink);margin:0 0 10px}.bjSay b{color:var(--hl)}
+.bjShare,.famShare,.hBtns button{width:100%;padding:13px;font-size:17px;font-weight:700;border-radius:14px}
+.famGo{background:linear-gradient(135deg,#7c4dff,#ff6f91)}
+.famT p{display:flex;justify-content:space-between;align-items:center;margin:0;padding:10px 4px;border-bottom:1px dashed #f0d9b5;font-size:17px;color:var(--ink)}.famT b{font-size:19px;color:var(--hl)}
+.famH{margin:14px 0 4px;font-weight:800;font-size:17px;color:var(--ink)}.famR{margin:0 0 12px;padding-left:4px;list-style:none;font-size:18px;line-height:1.9;color:var(--ink)}
+.hBtns{display:flex;flex-direction:column;gap:8px;margin-top:16px}.withGo{background:linear-gradient(135deg,#ff5fa2,#ff9a76)!important;color:#fff!important}
+.withBanner{margin:0 0 14px;padding:14px 16px;border-radius:16px;background:linear-gradient(135deg,#ff8fb3,#b9a8ff);color:#fff;font-size:18px;line-height:1.5}.withBanner small{font-size:15px;opacity:.95}
+#ttak{position:fixed;inset:0;z-index:100;display:flex;align-items:center;justify-content:center;background:rgba(30,16,40,.94);opacity:0;transition:opacity .3s}
+#ttak.on{opacity:1}
+.tkIn{position:relative;text-align:center;color:#fff;padding:20px;width:100%;max-width:400px}
+.tkH{font-size:24px;margin:0 0 14px}.tkH b{color:#ffd34d}
+.tkBtn{position:relative;width:230px;height:230px;border-radius:50%;background:radial-gradient(circle,#ffe9a8,#ffb347 60%,#ff7a45);border:6px solid #fff3c4;box-shadow:0 0 40px rgba(255,200,80,.6);padding:0;margin:0 auto;display:block}
+.tkDk{width:130px;height:130px;position:absolute;left:28px;top:50px;border-radius:26px}.bangSvg{position:absolute;right:22px;top:26px;width:62px;height:150px;transform:rotate(28deg);transform-origin:50% 90%}
+.tkBtn.swing .bangSvg{animation:bang .3s ease}@keyframes bang{0%{transform:rotate(28deg)}40%{transform:rotate(-40deg)}100%{transform:rotate(28deg)}}
+.tkDots{display:flex;gap:12px;justify-content:center;margin:18px 0 6px}.tkDots i{width:18px;height:18px;border-radius:50%;background:rgba(255,255,255,.3)}.tkDots i.on{background:#ffd34d;box-shadow:0 0 10px #ffd34d}
+.tkSay{font-size:26px;font-weight:800;color:#ffd34d;margin:6px 0 16px}
+.tkSkip{background:transparent!important;color:#ddd!important;box-shadow:none!important;border:0;font-size:15px;text-decoration:underline}
+.tkCoin{position:absolute;left:50%;top:45%;font-size:30px;pointer-events:none;animation:coin .9s ease-out forwards}
+@keyframes coin{to{transform:translate(var(--dx),var(--dy)) rotate(360deg);opacity:0}}
+#ttak.done .tkBtn{animation:pop .5s ease}
+.sub{word-break:keep-all}
