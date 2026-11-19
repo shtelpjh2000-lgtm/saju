@@ -188,7 +188,7 @@ body:not(.pro) .bnav button[data-v=il]{display:none!important}
 .jaRing span{position:absolute;left:50%;top:50%;width:46px;height:46px;margin:-23px;border-radius:50%;background:var(--c);color:#fff;font:700 22px "Noto Serif KR",serif;display:flex;align-items:center;justify-content:center;
   transform:rotate(calc(var(--i)*72deg)) translateY(-122px) rotate(calc(var(--i)*-72deg));box-shadow:0 0 14px var(--c)}
 @keyframes jaSpin{to{transform:rotate(360deg)}}
-.jaGrid{position:absolute;left:50%;top:50%;width:150px;height:150px;margin:-75px;display:grid;grid-template-columns:repeat(3,1fr);gap:4px}
+.jaGrid{position:absolute;left:50%;top:50%;width:176px;height:176px;margin:-88px;display:grid;grid-template-columns:repeat(3,1fr);gap:4px}
 .jaRing span em{font-style:normal;display:block;animation:jaSpin 4s linear infinite reverse}#jmAnim.done .jaRing span em{animation-play-state:paused}
 .jaGrid i{display:flex;align-items:center;justify-content:center;font-style:normal;font:800 22px "Noto Serif KR",serif;color:#ffd34d;border:2px solid rgba(255,211,77,.5);border-radius:6px;background:rgba(255,255,255,.05);transition:all .15s}
 .jaGrid i.on{background:#ffd34d;color:#3a1f00;box-shadow:0 0 16px #ffd34d}
@@ -211,3 +211,6 @@ body:not(.pro) .bnav button[data-v=il]{display:none!important}
 .ycH{margin:8px 0 4px;font-size:15px;font-weight:700;color:var(--mute)}
 .ycR{display:flex;justify-content:space-between;margin:0;padding:9px 6px;border-top:1px dashed #f3c6d8;font-size:17.5px;color:var(--ink)}
 .ycR.up b{color:#1f9c66}.ycR.dn b{color:#e0245e}.ycR.eq b{color:var(--mute)}
+
+.jaGrid i{flex-direction:column;gap:0;line-height:1}.jaGrid i small{font:400 14px sans-serif;opacity:.9}.jaGrid i b{font:800 24px "Noto Serif KR",serif;margin:1px 0}.jaGrid i em{font:600 10px "Noto Serif KR",serif;font-style:normal;opacity:.85}
+.jaStage{width:340px!important;height:340px!important}.jaRing span{transform:rotate(calc(var(--i)*72deg)) translateY(-150px) rotate(calc(var(--i)*-72deg))!important}

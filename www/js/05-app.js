@@ -1126,7 +1126,7 @@ alDraw();
     const nm=(base&&base.input.name||'').trim();const i=nm?SURS.findIndex(s=>s[0]===nm[0]):-1;sel.value=String(i>=0?i:0);setSex(base&&base.input.sex==='F'?'F':'M');}
   const segOn=(id,fn)=>$(id).addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;[...$(id).children].forEach(x=>x.classList.toggle('on',x===b));fn(b.dataset.v);});
   segOn('jmSex',v=>{jsex=v;savePref();if(jtab==='rec'&&lastList.length)run();});
-  segOn('jmTab',v=>{jtab=v;$('jmChkBox').style.display=v==='chk'?'block':'none';$('jmGo').textContent=v==='chk'?'🔍 이 이름 풀어 보기':'🌟 좋은 이름 찾기';$('jmSexRow').style.display=v==='chk'?'none':'';chkRes=null;if(mode==='jm')show();});
+  segOn('jmTab',v=>{jtab=v;$('jmChkBox').style.display=v==='chk'?'block':'none';$('jmGo').textContent=v==='chk'?'🔍 이 이름 풀어 보기':'🌟 좋은 이름 받기';$('jmSexRow').style.display=v==='chk'?'none':'';chkRes=null;if(mode==='jm')show();});
   sel.addEventListener('change',()=>{savePref();picked=[];if(mode==='jm'&&(lastList.length||chkRes))run();});
   // 이름 풀이: 글자마다 한자 고르기
   function drawPick(){
@@ -1217,7 +1217,7 @@ alDraw();
       $('jmMakeOne').addEventListener('click',()=>makeCert([e]));
       return;
     }
-    if(!lastList.length){R.innerHTML=h+'<p>위에서 <b>성씨</b>와 <b>성별</b>을 고르고 <b>좋은 이름 찾기</b>를 눌러 주세요. 명국에 넣은 생년월일시로 사주 오행까지 함께 봐 드려요.</p>'+elLine();return;}
+    if(!lastList.length){R.innerHTML=h+'<p>위에서 <b>성씨</b>와 <b>성별</b>을 고르고 <b>좋은 이름 받기</b>를 눌러 주세요. 명국에 넣은 생년월일시로 사주 오행까지 함께 봐 드려요.</p>'+elLine();return;}
     h+='<p class="jmSub"><b>'+sur[0]+'('+sur[1]+', '+sur[2]+'획)</b> 씨 '+(jsex==='M'?'남자':'여자')+' 이름 · 원형이정 네 격에 흉한 수리가 없는 이름 중 <b>가장 좋은 3개</b>를 골랐어요. 다시 누르면 같은 결과가 나오고, 한자는 <b>같은 소리 다른 한자</b>에서 바꿀 수 있어요.</p>'+elLine();
     h+=lastList.slice(0,showN).map((e,i)=>card(e,i,false)).join('');
     h+=certBar()+'<p class="note">수리 풀이는 81수리 길흉, 이름 자료와 획수는 도깨비작명연구소 작명 자료(원획법)를 따랐어요. 이름은 평생 쓰는 것이니 가족과 충분히 상의해 정해 주세요.</p>';
@@ -2312,7 +2312,7 @@ $('go').addEventListener('click',()=>setTimeout(()=>{if(!base||!base.input.name|
     const b=$('mode').querySelector('button[data-v="gh"]');if(b)setTimeout(()=>b.click(),1500);},0));})();
 // ── 작명: '좋은 이름 찾기'를 누르면 구궁도·오행이 돌며 이름을 짓는 화면을 보여 준 뒤 결과 ──
 (function(){let pass=false;const go=$('jmGo');
-  const LO=[4,9,2,3,5,7,8,1,6],EL=[['木','#3fae5a'],['火','#e8453c'],['土','#c99a2e'],['金','#9aa3ad'],['水','#3b7dd8']];
+  const LO=[4,9,2,3,5,7,8,1,6],GUNG={1:['坎','☵','一宮'],2:['坤','☷','二宮'],3:['震','☳','三宮'],4:['巽','☴','四宮'],5:['中','☯','五宮'],6:['乾','☰','六宮'],7:['兌','☱','七宮'],8:['艮','☶','八宮'],9:['離','☲','九宮']},EL=[['木','#3fae5a'],['火','#e8453c'],['土','#c99a2e'],['金','#9aa3ad'],['水','#3b7dd8']];
   go.addEventListener('click',e=>{if(pass||window.__noTtak)return;if(!base)return;e.stopImmediatePropagation();e.preventDefault();
     let I={kuk:'',weak:'',sur:'',sex:'M'};try{I=window.__jmInfo();}catch(_){}
     const chk=go.textContent.includes('풀');
@@ -2320,7 +2320,7 @@ $('go').addEventListener('click',()=>setTimeout(()=>{if(!base||!base.input.name|
       ['생년월일시로 기문둔갑 명국을 펴는 중… ('+I.kuk+')','구궁 아홉 칸에 기운을 앉히는 중…','모자란 '+(I.weak||'오행')+' 기운을 채울 소리를 고르는 중…',I.sur+'씨 획수로 81수리 원형이정을 따지는 중…','음양을 맞추고 꺼리는 글자를 거르는 중…','좋은 이름 세 개를 골랐네!'];
     const ov=document.createElement('div');ov.id='jmAnim';
     ov.innerHTML='<div class="jaIn"><p class="jaT">도깨비작명연구소</p><div class="jaStage"><div class="jaRing">'+EL.map((x,i)=>'<span style="--i:'+i+';--c:'+x[1]+'"><em>'+x[0]+'</em></span>').join('')+'</div>'+
-      '<div class="jaGrid">'+LO.map(n=>'<i>'+n+'</i>').join('')+'</div></div><p class="jaStep"></p><div class="jaBar"><b></b></div></div>';
+      '<div class="jaGrid">'+LO.map(n=>{const G=GUNG[n];return '<i><small>'+G[1]+'</small><b>'+G[0]+'</b><em>'+G[2]+'</em></i>';}).join('')+'</div></div><p class="jaStep"></p><div class="jaBar"><b></b></div></div>';
     document.body.appendChild(ov);requestAnimationFrame(()=>ov.classList.add('on'));
     const cells=[...ov.querySelectorAll('.jaGrid i')],st=ov.querySelector('.jaStep'),bar=ov.querySelector('.jaBar b');let k=0;
     const order=[7,2,3,6,4,8,1,0,5];const lit=setInterval(()=>{cells.forEach(c=>c.classList.remove('on'));cells[order[k%9]].classList.add('on');k++;},160);
