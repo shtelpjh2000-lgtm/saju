@@ -26,6 +26,8 @@ const url = 'file://' + require('path').resolve(__dirname, '../www/index.html');
   const askT = async q => { await pg.fill('#askQ', q); await pg.click('#askGo'); await pg.waitForTimeout(800); return pg.evaluate(() => { const d = document.querySelector('#askOut .cur .bub.dk').cloneNode(true); d.querySelectorAll('.dkOpen').forEach(x => x.remove()); return d.innerText; }); };
   for (const [q, want, not] of [['부동산투자 한게있는데 이자만나가고 매매도 안되는데 언제 팔릴까요?', '매도', '주식'], ['주식 투자 해도 될까요?', '투자', '부동산'], ['이사 가려는데 어느 쪽이 좋아요?', '쪽이 좋네', '두 갈래'], ['땅 투자 어때요?', '매물', '주식'], ['갭투자 해도 될까요', '매물', '코인'], ['집 언제 팔릴까요?', '매도', '그 일']]) {
     const a = await askT(q); if (!a.includes(want) || a.includes(not)) errs.push('대화 오답: ' + q + ' → ' + a.slice(0, 80)); }
+  // 질문 두 개를 한 번에 물으면 '두 갈래 길'로 견주지 말고 하나씩 답해야 함
+  { await askT('금전이 들어오는 시기는 언제일까? 서울로 가서 부동산을 하면 잘될까?'); const all = await pg.evaluate(() => document.getElementById('askOut').innerText); if (/두 갈래/.test(all) || !/두 번째 물음/.test(all)) errs.push('질문 두 개를 하나씩 못 알아들음'); }
   // 제일 좋은 달과 짚어 준 날짜가 같은 달이어야 함(내년 7월이라면서 11월 날짜를 주면 안 됨)
   for (const q of ['부동산 언제 팔릴까요?', '이직 언제 하면 좋을까요?']) { const a = await askT(q); const m1 = /(?:는|이) (?:내년 |\d{4}년 )?(?:이번 달\()?(\d{1,2})월/.exec(a), m2 = /그 달[^\d]{0,12}(\d{1,2})월 \d{1,2}일/.exec(a); if (m1 && m2 && m1[1] !== m2[1]) errs.push('좋은 달·날짜 엇갈림: ' + q + ' → ' + m1[1] + '월 / ' + m2[1] + '월'); }
   // 질문에 적은 연도로 답해야 함(2027년을 물으면 2027년 얘기)

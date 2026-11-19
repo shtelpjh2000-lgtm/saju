@@ -222,3 +222,13 @@ body.jiOpen{overflow:hidden}body.jiOpen #homeBtn,body.jiOpen .bnav{display:none!
 #jmIntroOv #jmStart{position:sticky;bottom:10px;box-shadow:0 8px 20px rgba(255,111,145,.4)}
 .scene{padding:12px 14px;border-radius:14px;background:#f3f7ff;border-left:4px solid #7c9cff;font-size:17.5px!important;line-height:1.7}.scene b{color:#3b5bdb}
 .scene2{display:block;margin-top:4px;font-size:16px;color:#3b5bdb;line-height:1.6}
+/* 운명 지도 위 기문둔갑 해설, 칸은 누르지 않음 */
+#board .cell{cursor:default}
+.mapExp{margin:4px 0 16px;padding:18px 16px;border-radius:20px;background:linear-gradient(160deg,#1f1530,#2d1f45);color:#f3ecff}
+.meTag{display:inline-block;margin:0 0 8px;padding:4px 12px;border-radius:999px;background:#ffd34d;color:#3a1f00;font-size:14px;font-weight:800}
+.mapExp h3{margin:0 0 12px;font-size:23px;line-height:1.4;color:#fff;word-break:keep-all}
+.meLead{font-size:17px;line-height:1.75;color:#e6dcf5;margin:0 0 14px;word-break:keep-all}.meLead b{color:#ffd34d}
+.meList{list-style:none;margin:0;padding:0}.meList li{display:flex;gap:12px;align-items:flex-start;padding:12px 0;border-top:1px solid rgba(255,255,255,.12)}
+.meK{flex:0 0 52px;height:52px;border-radius:12px;background:rgba(255,211,77,.15);border:1.5px solid #ffd34d;color:#ffd34d;font:800 18px "Noto Serif KR",serif;display:flex;align-items:center;justify-content:center}
+.meT{display:block;font-size:17px;color:#fff;margin-bottom:3px}.meList p{margin:0;font-size:16.5px;line-height:1.65;color:#e6dcf5;word-break:keep-all}.meList p b{color:#ffd34d}
+.meEnd{margin:12px 0 0;font-size:16px;color:#ffd34d;text-align:center;font-weight:700}
