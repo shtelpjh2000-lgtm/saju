@@ -37,7 +37,7 @@ figure.art figcaption em.k{font-style:normal;font-weight:700;color:var(--pink)}
 .proBar{display:none!important}
 /* 글씨를 더 진하게(흐린 회색·보라 글씨 진하게) */
 :root{--ink:#21172e;--mute:#5b4f72}
-@media(prefers-color-scheme:dark){:root{--ink:#ffffff;--mute:#ddd3f0}}
+@media not all{:root{--ink:#ffffff;--mute:#ddd3f0}}
 body{color:var(--ink)}
 .note,.sub,.thint,.mnSub,.qaSub,small{color:var(--mute)}
 /* 태어난 시 모름 */
@@ -58,9 +58,9 @@ body{color:var(--ink)}
 .mI.g0{border-left-color:var(--line)}.mI.g0 .mG{color:var(--mute)}
 .mI.gm1{border-left-color:var(--pink);background:var(--pink2)}.mI.gm1 .mG{color:var(--red)}
 .mI.now{box-shadow:0 0 0 2px var(--lav)}
-@media(prefers-color-scheme:dark){.mI.g2 .mG{color:#6fe3ad}.mI.g1 .mG{color:#9be3bf}}
+@media not all{.mI.g2 .mG{color:#6fe3ad}.mI.g1 .mG{color:#9be3bf}}
 @media(max-width:380px){.mI{grid-template-columns:auto 1fr}.mI p{grid-column:1/-1}}
-.mI,.mI p,.mI .mM{color:var(--ink)!important}.mI.g2 .mM{color:#1f9c66!important}.mI.gm1 .mM{color:var(--red)!important}@media(prefers-color-scheme:dark){.mI.g2 .mM{color:#6fe3ad!important}}
+.mI,.mI p,.mI .mM{color:var(--ink)!important}.mI.g2 .mM{color:#1f9c66!important}.mI.gm1 .mM{color:var(--red)!important}@media not all{.mI.g2 .mM{color:#6fe3ad!important}}
 /* '쉬운 그림으로 보기'는 사용자 요청으로 없앰 — 운명 지도만 */
 #mapCard .viewSeg,#mapCard #easyView{display:none!important}
 #mapCard #expert{display:block!important}
@@ -74,7 +74,7 @@ img.dkIco{display:inline-block;width:1.25em;height:1.25em;border-radius:22%;vert
 .hope{display:block;margin-top:6px;font-size:.92em;color:var(--purple)}
 /* ── 눈에 확 띄게: 큰 글씨·넉넉한 줄 간격·색 막대 제목·중요한 말 빨간 굵은 글씨 ── */
 :root{--hl:#e0245e}
-@media(prefers-color-scheme:dark){:root{--hl:#ff6b8f}}
+@media not all{:root{--hl:#ff6b8f}}
 body{font-size:17px}
 /* 본문 크게 */
 #askOut p,.qaA p,.rd p,.bub.dk>div p,#heroCard .hLine,.today p,.sheet .detail p{font-size:18.5px!important;line-height:1.85!important;word-break:keep-all}
