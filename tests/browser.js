@@ -15,7 +15,7 @@ const url = 'file://' + require('path').resolve(__dirname, '../www/index.html');
   // 사람 끌기: 지난 일 맞히기·오늘의 방망이·부적·가족 서열·궁합 링크
   for (const c of ['.hPast', '.bokGo', '.bjGo', '.famWrap', '.withGo']) if (!(await pg.$('#heroCard ' + c))) errs.push('첫 화면 카드에 없음: ' + c);
   await pg.click('#heroCard .hPast button[data-pa=y]'); await pg.click('#heroCard .bokGo'); await pg.waitForTimeout(700); if (!(await pg.$('#heroCard .bokRes'))) errs.push('오늘의 방망이 결과 안 나옴');
-  await pg.click('#heroCard .bjGo'); await pg.waitForTimeout(2000); if (!(await pg.$('#heroCard .bjImg'))) errs.push('부적 그림 안 나옴');
+  await pg.click('#heroCard .bjGo'); for (let i = 0; i < 16 && !(await pg.$('#heroCard .bjImg')); i++) await pg.waitForTimeout(500); if (!(await pg.$('#heroCard .bjImg'))) errs.push('부적 그림 안 나옴');
   // 방망이 뚝딱 화면: 세 번 두드리면 닫힘
   await pg.evaluate(() => { window.__noTtak = false; document.body.classList.add('formOpen'); }); await pg.fill('#nm', '뚝딱'); await pg.click('#go'); await pg.waitForTimeout(400);
   if (!(await pg.$('#ttak'))) errs.push('방망이 뚝딱 화면 안 나옴'); else { for (let i = 0; i < 3; i++) { await pg.click('.tkBtn'); await pg.waitForTimeout(200); } await pg.waitForTimeout(1800); if (await pg.$('#ttak')) errs.push('세 번 두드려도 안 닫힘'); }
@@ -30,7 +30,8 @@ const url = 'file://' + require('path').resolve(__dirname, '../www/index.html');
   for (const q of ['부동산 언제 팔릴까요?', '이직 언제 하면 좋을까요?']) { const a = await askT(q); const m1 = /(?:는|이) (?:내년 |\d{4}년 )?(?:이번 달\()?(\d{1,2})월/.exec(a), m2 = /그 달[^\d]{0,12}(\d{1,2})월 \d{1,2}일/.exec(a); if (m1 && m2 && m1[1] !== m2[1]) errs.push('좋은 달·날짜 엇갈림: ' + q + ' → ' + m1[1] + '월 / ' + m2[1] + '월'); }
   // 질문에 적은 연도로 답해야 함(2027년을 물으면 2027년 얘기)
   { const Y2 = new Date().getFullYear() + 1; const a = await askT(Y2 + '년 재물운 봐주세요'); if (!a.includes(Y2 + '년')) errs.push('연도 오답: ' + Y2 + '년 → ' + a.slice(0, 60)); const a2 = await askT(String(Y2 + 1).slice(2) + '년 이사 운은?'); if (!a2.includes((Y2 + 1) + '년')) errs.push('두 자리 연도 오답: ' + a2.slice(0, 60)); }
-  for (const v of ['sin', 'gh', 'jm', 'dm', 'won']) { await pg.click('#mode button[data-v=' + v + ']'); await pg.waitForTimeout(800); }
+  for (const v of ['sin', 'gh', 'jm', 'dm', 'won']) { await pg.click('#mode button[data-v=' + v + ']'); await pg.waitForTimeout(800);
+    if (v === 'jm') { if (!(await pg.$('#jmIntroOv #jmStart'))) errs.push('작명 설명 화면 안 나옴'); else { await pg.click('#jmStart'); await pg.waitForTimeout(300); if (await pg.$('#jmIntroOv')) errs.push('작명 설명 화면이 안 닫힘'); } } }
   // 언제나 보이는 '처음으로' 단추와 '시 모름' 단추
   if (!(await pg.evaluate(() => { const h = document.getElementById('homeBtn'), n = document.getElementById('tUnknown'); return h && getComputedStyle(h).display !== 'none' && n; }))) errs.push('처음으로·시 모름 단추 없음');
   // 전문가 보기는 없앴으므로 늘 쉬운 보기: 스위치가 안 보여야 함
