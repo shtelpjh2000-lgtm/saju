@@ -220,3 +220,5 @@ body:not(.pro) .bnav button[data-v=il]{display:none!important}
 .jiBack{background:none!important;box-shadow:none!important;border:0;color:var(--mute)!important;font-size:16px;padding:4px 0 10px!important}
 body.jiOpen{overflow:hidden}body.jiOpen #homeBtn,body.jiOpen .bnav{display:none!important}
 #jmIntroOv #jmStart{position:sticky;bottom:10px;box-shadow:0 8px 20px rgba(255,111,145,.4)}
+.scene{padding:12px 14px;border-radius:14px;background:#f3f7ff;border-left:4px solid #7c9cff;font-size:17.5px!important;line-height:1.7}.scene b{color:#3b5bdb}
+.scene2{display:block;margin-top:4px;font-size:16px;color:#3b5bdb;line-height:1.6}
