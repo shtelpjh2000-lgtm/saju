@@ -1174,8 +1174,11 @@ alDraw();
       '<p class="jiNote">흔한 작명 앱은 획수만 맞추지만, 여기선 명국으로 <b>무엇이 모자란지</b>부터 보고 짓는다네.</p>'+
       '<button type="button" id="jmStart">✍️ 이름 지으러 가기</button></div>');}
   window.__jmInfo=()=>{const r=base;return {kuk:(r.yang?'양둔 ':'음둔 ')+r.ju+'국',weak:weakEls(r).map(i=>ELN[i]).join('·'),sur:(SURS[+sel.value]||[''])[0],sex:jsex};};
-  document.addEventListener('click',e=>{if(!e.target.closest('#jmStart'))return;jmIntroDone=true;$('jmWrap').style.display='block';if(!$('jmWrap').dataset.init){guessSur();$('jmWrap').dataset.init='1';}window.renderJm();
-    setTimeout(()=>$('jmWrap').scrollIntoView({behavior:'smooth',block:'start'}),50);});
+  const jiClose=()=>{const o=$('jmIntroOv');if(o)o.remove();document.body.classList.remove('jiOpen');};
+  document.addEventListener('click',e=>{if(!e.target.closest('.jiBack'))return;jiClose();const b=$('mode').querySelector('button[data-v="won"]');if(b)b.click();window.scrollTo({top:0});});
+  $('mode').addEventListener('click',()=>setTimeout(()=>{if(mode!=='jm')jiClose();},0));
+  document.addEventListener('click',e=>{if(!e.target.closest('#jmStart'))return;jiClose();jmIntroDone=true;$('jmWrap').style.display='block';if(!$('jmWrap').dataset.init){guessSur();$('jmWrap').dataset.init='1';}window.renderJm();
+    setTimeout(()=>$('jmWrap').scrollIntoView({block:'start'}),50);});
   $('mode').addEventListener('click',()=>setTimeout(()=>{$('jmWrap').style.display=mode==='jm'&&jmIntroDone?'block':'none';
     if(mode==='jm'&&!$('jmWrap').dataset.init){guessSur();$('jmWrap').dataset.init='1';}},0));
 
@@ -1203,7 +1206,7 @@ alDraw();
   window.renderJm=function(){
     ['typecard','fourcard','mapCard'].forEach(id=>{const el=$(id);if(el)el.style.display='none';});
     const R=$('reading');const sur=SURS[+sel.value];
-    if(!jmIntroDone){R.innerHTML=jmIntro();return;}
+    if(!jmIntroDone){R.innerHTML='';if(!$('jmIntroOv')){const o=document.createElement('div');o.id='jmIntroOv';o.innerHTML='<div class="jiPage"><button type="button" class="jiBack">← 돌아가기</button>'+jmIntro()+'</div>';document.body.appendChild(o);document.body.classList.add('jiOpen');o.scrollTop=0;}return;}
     let h='<h2>✍️ 도깨비작명연구소</h2>';
     if(jtab==='chk'){
       if(!chkRes){R.innerHTML=h+'<p>위에서 <b>성</b>을 고르고 <b>이름 두 글자</b>와 한자를 넣은 다음 <b>이 이름 풀어 보기</b>를 눌러 주세요.</p>'+elLine();return;}
