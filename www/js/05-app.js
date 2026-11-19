@@ -122,6 +122,7 @@ function show(){
 
 function render(r){
   cur=r;const I=r.input,age=ageNow(r);
+  {const hs=document.querySelector('.dkHead small');if(hs)hs.textContent=nameize('금 나와라 뚝딱! 자네 복 나오는 때를 짚어 주지');}
   $('head').textContent=(I.name?I.name+' · ':'')+(dInfo?'日辰 '+dInfo.x.d.gz+'日 · 身數局('+r.pillars[0]+') , ':yInfo?'身數局 '+yearSel+'年('+r.pillars[0]+') , ':'元命局 , ')+r.jqHanja+' '+r.yuanName+' '+(r.yang?'陽':'陰')+' '+NUM[r.ju]+'局';
   $('saju').innerHTML=['時','日','月','年'].map((k,i)=>{const c=r.pillars[3-i];return '<div><div class="k">'+k+'柱</div><div class="g">'+c[0]+'<br>'+c[1]+'</div></div>';}).join('');
   const p2=v=>String(v).padStart(2,'0');
