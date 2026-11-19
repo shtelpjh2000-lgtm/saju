@@ -149,7 +149,7 @@ body:not(.pro) .bnav button[data-v=il]{display:none!important}
 .famH{margin:14px 0 4px;font-weight:800;font-size:17px;color:var(--ink)}.famR{margin:0 0 12px;padding-left:4px;list-style:none;font-size:18px;line-height:1.9;color:var(--ink)}
 .hBtns{display:flex;flex-direction:column;gap:8px;margin-top:16px}.withGo{background:linear-gradient(135deg,#ff5fa2,#ff9a76)!important;color:#fff!important}
 .withBanner{margin:0 0 14px;padding:14px 16px;border-radius:16px;background:linear-gradient(135deg,#ff8fb3,#b9a8ff);color:#fff;font-size:18px;line-height:1.5}.withBanner small{font-size:15px;opacity:.95}
-#ttak{position:fixed;inset:0;z-index:100;display:flex;align-items:center;justify-content:center;background:rgba(30,16,40,.94);opacity:0;transition:opacity .3s}
+#ttak{position:fixed;inset:0;z-index:400;display:flex;align-items:center;justify-content:center;background:rgba(30,16,40,.94);opacity:0;transition:opacity .3s}
 #ttak.on{opacity:1}
 .tkIn{position:relative;text-align:center;color:#fff;padding:20px;width:100%;max-width:400px}
 .tkH{font-size:24px;margin:0 0 14px}.tkH b{color:#ffd34d}
@@ -169,3 +169,30 @@ body:not(.pro) .bnav button[data-v=il]{display:none!important}
 .famForm{margin-top:10px;display:flex;flex-direction:column;gap:8px}.famForm[hidden]{display:none}.famForm input{font-size:17px;padding:12px}
 .famForm select{font-size:17px!important}.ffNote{margin:0;font-size:14px;color:var(--mute)}.ffErr{margin:0;color:var(--red);font-size:15px}.ffErr:empty{display:none}
 .famSave{width:100%;padding:14px;font-size:18px;font-weight:800;border-radius:14px}
+/* 작명: 먼저 나오는 전문가 설명 */
+.jmIntro{text-align:left}.jiTag{display:inline-block;margin:0 0 8px;padding:4px 12px;border-radius:999px;background:linear-gradient(135deg,#ff8fb3,#b9a8ff);color:#fff;font-size:14px;font-weight:700}
+.jmIntro h2{font-size:25px!important;line-height:1.35;margin:0 0 12px!important;word-break:keep-all}
+.jiLead{font-size:18px;line-height:1.75;color:var(--ink);padding:14px 16px;border-radius:16px;background:#fff7e6;border:2px solid #ffe2a8;word-break:keep-all}.jiLead b{color:var(--hl)}
+.jiSteps{list-style:none;padding:0;margin:16px 0}.jiSteps li{display:flex;gap:12px;align-items:flex-start;padding:12px 0;border-bottom:1px dashed var(--line)}
+.jiN{flex:0 0 30px;height:30px;border-radius:50%;background:var(--pink);color:#fff;font-weight:800;display:flex;align-items:center;justify-content:center}
+.jiSteps b{font-size:18px;color:var(--ink)}.jiSteps p{margin:4px 0 0;font-size:16.5px;line-height:1.65;color:var(--mute);word-break:keep-all}
+.jiNote{font-size:16.5px;line-height:1.6;color:var(--ink);text-align:center;word-break:keep-all}.jiNote b{color:var(--hl)}
+#jmStart{width:100%;margin-top:8px;padding:17px;font-size:20px;font-weight:800;border-radius:16px}
+/* 작명 짓는 화면: 구궁도 + 오행 고리 */
+#jmAnim{position:fixed;inset:0;z-index:400;display:flex;align-items:center;justify-content:center;background:rgba(24,14,34,.98);backdrop-filter:blur(4px);opacity:0;transition:opacity .3s}
+#jmAnim.on{opacity:1}
+.jaIn{text-align:center;color:#fff;width:100%;max-width:380px;padding:20px}
+.jaT{margin:0 0 18px;font-size:16px;letter-spacing:.2em;color:#ffd34d;font-weight:700}
+.jaStage{position:relative;width:280px;height:280px;margin:0 auto}
+.jaRing{position:absolute;inset:0;animation:jaSpin 4s linear infinite}
+.jaRing span{position:absolute;left:50%;top:50%;width:46px;height:46px;margin:-23px;border-radius:50%;background:var(--c);color:#fff;font:700 22px "Noto Serif KR",serif;display:flex;align-items:center;justify-content:center;
+  transform:rotate(calc(var(--i)*72deg)) translateY(-122px) rotate(calc(var(--i)*-72deg));box-shadow:0 0 14px var(--c)}
+@keyframes jaSpin{to{transform:rotate(360deg)}}
+.jaGrid{position:absolute;left:50%;top:50%;width:150px;height:150px;margin:-75px;display:grid;grid-template-columns:repeat(3,1fr);gap:4px}
+.jaRing span em{font-style:normal;display:block;animation:jaSpin 4s linear infinite reverse}#jmAnim.done .jaRing span em{animation-play-state:paused}
+.jaGrid i{display:flex;align-items:center;justify-content:center;font-style:normal;font:800 22px "Noto Serif KR",serif;color:#ffd34d;border:2px solid rgba(255,211,77,.5);border-radius:6px;background:rgba(255,255,255,.05);transition:all .15s}
+.jaGrid i.on{background:#ffd34d;color:#3a1f00;box-shadow:0 0 16px #ffd34d}
+#jmAnim.done .jaRing,#jmAnim.done .jaGrid{animation-play-state:paused}#jmAnim.done .jaStage{animation:pop .5s ease}
+.jaStep{min-height:56px;margin:22px 0 12px;font-size:19px;font-weight:700;line-height:1.45;word-break:keep-all}.jaStep.in{animation:jaIn .35s ease}
+@keyframes jaIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.jaBar{height:8px;border-radius:99px;background:rgba(255,255,255,.15);overflow:hidden}.jaBar b{display:block;height:100%;width:0;background:linear-gradient(90deg,#ff8fb3,#ffd34d);transition:width .8s ease}

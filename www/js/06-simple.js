@@ -94,7 +94,7 @@
     .replace(/\s?\((?:財|官|鬼|孫|父|兄|世|재|관|귀|손|부|형|세)\)/g,'');
   const SKIP=new Set(['SCRIPT','STYLE','INPUT','TEXTAREA','SELECT','OPTION']);
   function run(root){
-    const w=document.createTreeWalker(root||document.body,NodeFilter.SHOW_TEXT,{acceptNode:n=>n.parentNode&&!SKIP.has(n.parentNode.nodeName)&&!n.parentNode.closest('#board .box,#board .tags')?NodeFilter.FILTER_ACCEPT:NodeFilter.FILTER_REJECT});
+    const w=document.createTreeWalker(root||document.body,NodeFilter.SHOW_TEXT,{acceptNode:n=>n.parentNode&&!SKIP.has(n.parentNode.nodeName)&&!n.parentNode.closest('#board .box,#board .tags,.jmIntro')?NodeFilter.FILTER_ACCEPT:NodeFilter.FILTER_REJECT});
     let n;while((n=w.nextNode())){const v=n.nodeValue;if(!v||!/[가-힣世一-十]/.test(v))continue;let t=plain(v);
       // <b>떠도는 자리</b>을 처럼 굵은 글씨 뒤에 붙은 조사도 맞춰요
       const pr=n.previousSibling;if(pr&&pr.nodeType===1&&/^(B|STRONG|EM|I)$/.test(pr.nodeName)){const e=(pr.textContent||'').trim();

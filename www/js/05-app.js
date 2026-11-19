@@ -1158,7 +1158,24 @@ alDraw();
     }catch(err){e.textContent=err.message;e.style.display='block';}
   }
   $('jmGo').addEventListener('click',run);
-  $('mode').addEventListener('click',()=>setTimeout(()=>{$('jmWrap').style.display=mode==='jm'?'block':'none';
+  let jmIntroDone=false;
+  // 작명을 누르면 먼저: 기문둔갑(홍연기문) 명국으로 어떻게 이름을 짓는지 전문가 설명 → '이름 지으러 가기'를 누르면 입력 화면
+  function jmIntro(){const r=base,w=weakEls(r).map(i=>ELN[i]),nm=myName();let yong='';try{yong=Haeseok.interpret(r,r.input.sex,ageNow(r)).yong||'';}catch(e){}
+    const kuk=(r.yang?'양둔(陽遁) ':'음둔(陰遁) ')+r.ju+'국';
+    const S=[['🔮','명국 세우기','기문둔갑(홍연기문)으로 태어난 해·달·날·시의 아홉 칸 판을 펼쳐, 타고난 기운이 어디에 몰리고 어디가 비었는지 먼저 보네.'],
+      ['☯️','모자란 기운 채우기','사주에 모자란 오행을 이름의 소리(발음 오행)로 채워 넣어, 한쪽으로 쏠린 기운의 균형을 잡네.'],
+      ['🔢','81수리 원형이정','성과 이름의 획수로 초년(원)·청년(형)·중년(이)·말년(정) 네 격을 따져, 흉한 수가 하나도 없는 이름만 남기네.'],
+      ['⚖️','음양 조화','획수의 홀수·짝수가 한쪽으로 몰리지 않게 맞추고, 이름에 꺼리는 글자는 걸러 내네.'],
+      ['📜','작명증서','마음에 드는 이름은 도깨비작명연구소 작명증서와 풀이 한 장으로 만들어 주네.']];
+    return softTone('<div class="jmIntro"><p class="jiTag">도깨비작명연구소</p><h2>기문둔갑으로 사주를 풀어<br>이름을 짓네</h2>'+
+      '<p class="jiLead">자네 생년월일시로 홍연기문 명국을 세워 보니 <b>'+kuk+'</b>일세. 타고난 여덟 글자에 <b>'+w.join('·')+'</b> 기운이 모자라니, 이름으로 이 기운을 채워 주는 것부터 시작하겠네.'+(yong?' 명국에서 자네를 받쳐 주는 쓸모 있는 기운(용신)도 함께 살폈네.':'')+'</p>'+
+      '<ol class="jiSteps">'+S.map((x,i)=>'<li><span class="jiN">'+(i+1)+'</span><div><b>'+x[0]+' '+x[1]+'</b><p>'+x[2]+'</p></div></li>').join('')+'</ol>'+
+      '<p class="jiNote">흔한 작명 앱은 획수만 맞추지만, 여기선 명국으로 <b>무엇이 모자란지</b>부터 보고 짓는다네.</p>'+
+      '<button type="button" id="jmStart">✍️ 이름 지으러 가기</button></div>');}
+  window.__jmInfo=()=>{const r=base;return {kuk:(r.yang?'양둔 ':'음둔 ')+r.ju+'국',weak:weakEls(r).map(i=>ELN[i]).join('·'),sur:(SURS[+sel.value]||[''])[0],sex:jsex};};
+  document.addEventListener('click',e=>{if(!e.target.closest('#jmStart'))return;jmIntroDone=true;$('jmWrap').style.display='block';if(!$('jmWrap').dataset.init){guessSur();$('jmWrap').dataset.init='1';}window.renderJm();
+    setTimeout(()=>$('jmWrap').scrollIntoView({behavior:'smooth',block:'start'}),50);});
+  $('mode').addEventListener('click',()=>setTimeout(()=>{$('jmWrap').style.display=mode==='jm'&&jmIntroDone?'block':'none';
     if(mode==='jm'&&!$('jmWrap').dataset.init){guessSur();$('jmWrap').dataset.init='1';}},0));
 
   // ── 결과 그리기 ──
@@ -1185,6 +1202,7 @@ alDraw();
   window.renderJm=function(){
     ['typecard','fourcard','mapCard'].forEach(id=>{const el=$(id);if(el)el.style.display='none';});
     const R=$('reading');const sur=SURS[+sel.value];
+    if(!jmIntroDone){R.innerHTML=jmIntro();return;}
     let h='<h2>✍️ 도깨비작명연구소</h2>';
     if(jtab==='chk'){
       if(!chkRes){R.innerHTML=h+'<p>위에서 <b>성</b>을 고르고 <b>이름 두 글자</b>와 한자를 넣은 다음 <b>이 이름 풀어 보기</b>를 눌러 주세요.</p>'+elLine();return;}
@@ -1198,8 +1216,8 @@ alDraw();
       $('jmMakeOne').addEventListener('click',()=>makeCert([e]));
       return;
     }
-    if(!lastList.length){R.innerHTML=h+'<p>위에서 <b>성씨</b>와 <b>아들·딸</b>을 고르고 <b>좋은 이름 찾기</b>를 눌러 주세요. 명국에 넣은 생년월일시로 사주 오행까지 함께 봐 드려요.</p>'+elLine();return;}
-    h+='<p class="jmSub"><b>'+sur[0]+'('+sur[1]+', '+sur[2]+'획)</b> 씨 '+(jsex==='M'?'아들':'딸')+' 이름 · 원형이정 네 격에 흉한 수리가 없는 이름 중 <b>가장 좋은 3개</b>를 골랐어요. 다시 누르면 같은 결과가 나오고, 한자는 <b>같은 소리 다른 한자</b>에서 바꿀 수 있어요.</p>'+elLine();
+    if(!lastList.length){R.innerHTML=h+'<p>위에서 <b>성씨</b>와 <b>성별</b>을 고르고 <b>좋은 이름 찾기</b>를 눌러 주세요. 명국에 넣은 생년월일시로 사주 오행까지 함께 봐 드려요.</p>'+elLine();return;}
+    h+='<p class="jmSub"><b>'+sur[0]+'('+sur[1]+', '+sur[2]+'획)</b> 씨 '+(jsex==='M'?'남자':'여자')+' 이름 · 원형이정 네 격에 흉한 수리가 없는 이름 중 <b>가장 좋은 3개</b>를 골랐어요. 다시 누르면 같은 결과가 나오고, 한자는 <b>같은 소리 다른 한자</b>에서 바꿀 수 있어요.</p>'+elLine();
     h+=lastList.slice(0,showN).map((e,i)=>card(e,i,false)).join('');
     h+=certBar()+'<p class="note">수리 풀이는 81수리 길흉, 이름 자료와 획수는 도깨비작명연구소 작명 자료(원획법)를 따랐어요. 이름은 평생 쓰는 것이니 가족과 충분히 상의해 정해 주세요.</p>';
     R.innerHTML=h;
@@ -1240,7 +1258,7 @@ alDraw();
   function seal(x,cx,cy,sz){
     x.save();x.globalAlpha=.88;x.strokeStyle=RED;x.fillStyle=RED;x.lineWidth=sz*.06;
     const r=sz*.08,h=sz/2;x.beginPath();x.moveTo(cx-h+r,cy-h);x.arcTo(cx+h,cy-h,cx+h,cy+h,r);x.arcTo(cx+h,cy+h,cx-h,cy+h,r);x.arcTo(cx-h,cy+h,cx-h,cy-h,r);x.arcTo(cx-h,cy-h,cx+h,cy-h,r);x.closePath();x.stroke();
-    const cols=['도깨비','작명연','구소인'];const cw=sz*.82/3;x.font=f(Math.round(cw*.86),'900');x.textAlign='center';x.textBaseline='middle';
+    const cols=['獨脚鬼','作名硏','究所印'];const cw=sz*.82/3;x.font=f(Math.round(cw*.86),'900');x.textAlign='center';x.textBaseline='middle';
     cols.forEach((col,ci)=>{const colX=cx+sz*.41-cw*(ci+.5);[...col].forEach((c,ri)=>x.fillText(c,colX,cy-sz*.41+cw*(ri+.5)));});
     x.restore();x.textBaseline='alphabetic';}
   function footer(x){
@@ -1288,7 +1306,7 @@ alDraw();
       ctext(x,e.sur[1]+' '+e.a+' '+e.b,W/2,y+92,f(30),'#6b5a4a',14);
       y=wrap(x,nameText(e),210,y+160,W-420,56,f(34))+6;
       y=wrap(x,e.f.map(t=>t.n+' '+t.v+' '+t.s.gy+'('+GR[t.s.g]+')').join(' · '),210,y+10,W-420,44,f(26),'#7a2a20');});
-    footer(x);return c;
+    return c; // 해석 장에는 맨 밑 연구소 이름·도장을 넣지 않음(글과 겹침)
   }
   // ── PDF (JPEG 2장) ──
   function b64ToBytes(b){const s=atob(b);const u=new Uint8Array(s.length);for(let i=0;i<s.length;i++)u[i]=s.charCodeAt(i);return u;}
@@ -2274,3 +2292,22 @@ $('go').addEventListener('click',()=>setTimeout(()=>{if(!base||!base.input.name|
   $('form').insertAdjacentElement('afterbegin',bn);
   let pend=true;$('go').addEventListener('click',()=>setTimeout(()=>{if(!pend||!base||$('err').style.display!=='none')return;pend=false;bn.remove();
     const b=$('mode').querySelector('button[data-v="gh"]');if(b)setTimeout(()=>b.click(),1500);},0));})();
+// ── 작명: '좋은 이름 찾기'를 누르면 구궁도·오행이 돌며 이름을 짓는 화면을 보여 준 뒤 결과 ──
+(function(){let pass=false;const go=$('jmGo');
+  const LO=[4,9,2,3,5,7,8,1,6],EL=[['木','#3fae5a'],['火','#e8453c'],['土','#c99a2e'],['金','#9aa3ad'],['水','#3b7dd8']];
+  go.addEventListener('click',e=>{if(pass||window.__noTtak)return;if(!base)return;e.stopImmediatePropagation();e.preventDefault();
+    let I={kuk:'',weak:'',sur:'',sex:'M'};try{I=window.__jmInfo();}catch(_){}
+    const chk=go.textContent.includes('풀');
+    const steps=chk?['생년월일시로 기문둔갑 명국을 펴는 중…','구궁 아홉 칸에 기운을 앉히는 중…','이름 소리의 오행을 재는 중…','81수리 원형이정 네 격을 따지는 중…','획수 음양을 맞춰 보는 중…','이름 풀이를 마쳤네!']:
+      ['생년월일시로 기문둔갑 명국을 펴는 중… ('+I.kuk+')','구궁 아홉 칸에 기운을 앉히는 중…','모자란 '+(I.weak||'오행')+' 기운을 채울 소리를 고르는 중…',I.sur+'씨 획수로 81수리 원형이정을 따지는 중…','음양을 맞추고 꺼리는 글자를 거르는 중…','좋은 이름 세 개를 골랐네!'];
+    const ov=document.createElement('div');ov.id='jmAnim';
+    ov.innerHTML='<div class="jaIn"><p class="jaT">도깨비작명연구소</p><div class="jaStage"><div class="jaRing">'+EL.map((x,i)=>'<span style="--i:'+i+';--c:'+x[1]+'"><em>'+x[0]+'</em></span>').join('')+'</div>'+
+      '<div class="jaGrid">'+LO.map(n=>'<i>'+n+'</i>').join('')+'</div></div><p class="jaStep"></p><div class="jaBar"><b></b></div></div>';
+    document.body.appendChild(ov);requestAnimationFrame(()=>ov.classList.add('on'));
+    const cells=[...ov.querySelectorAll('.jaGrid i')],st=ov.querySelector('.jaStep'),bar=ov.querySelector('.jaBar b');let k=0;
+    const order=[7,2,3,6,4,8,1,0,5];const lit=setInterval(()=>{cells.forEach(c=>c.classList.remove('on'));cells[order[k%9]].classList.add('on');k++;},160);
+    const T=900;steps.forEach((t,i)=>setTimeout(()=>{st.textContent=t;st.classList.remove('in');void st.offsetWidth;st.classList.add('in');bar.style.width=Math.round((i+1)/steps.length*100)+'%';
+      try{if(typeof ttak!=='undefined')ttak.hit&&i<steps.length-1&&navigator.vibrate&&navigator.vibrate(15);}catch(_){}},i*T));
+    setTimeout(()=>{clearInterval(lit);cells.forEach(c=>c.classList.add('on'));ov.classList.add('done');try{ttak.chime();}catch(_){}},(steps.length-1)*T);
+    setTimeout(()=>{pass=true;go.click();pass=false;ov.classList.remove('on');setTimeout(()=>ov.remove(),300);
+      setTimeout(()=>{const r=$('reading');if(r)r.scrollIntoView({behavior:'smooth',block:'start'});},350);},(steps.length-1)*T+900);},true);})();
