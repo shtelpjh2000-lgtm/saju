@@ -10,7 +10,7 @@
 - `www/js/04-saju4.js` 사주 4주 풀이·기질 유형
 - `www/js/05-app.js` 화면 동작 전부(입력, 메뉴, 궁합, 작명, 해몽, 도깨비 대화, 알림, 공유)
 - `www/js/06-simple.js` 쉬운 보기(전문가 보기는 사용자 요청으로 없앰: pro는 늘 false, 저장값 지움), `www/js/07-qa.js` "궁금한 것 누르기" 질문 목록 + 맨 위 `#heroCard`(05-app.js `heroHtml`: 올해 별명·찌르는 첫마디·예고 D-day·공유 그림, 예고는 localStorage `hongmyeongguk.yeogo` → 알림)
-- 사람 끌기(05-app.js heroHtml 근처): 지난 일 맞히기 `pastList`/`.hPast`(지난 12달 중 약했던 달, 계절로만), 오늘의 방망이 `bokHtml`(localStorage `hongmyeongguk.bok` 이어 온 날·엽전), 도깨비 부적 `bjCanvas`(올해 제일 약한 일), 우리 집 서열 `famScores`(이름 넣고 본 사람은 저장 목록에 자동 저장, 계산 때 `base`를 잠깐 바꿈), 궁합 링크 `?with=`(받은 사람이 생일 넣으면 궁합 탭으로), 운 보기 누르면 방망이 세 번 두드리는 화면 `ttak`(테스트는 `window.__noTtak=true`)
+- 사람 끌기(05-app.js heroHtml 근처): 지난 일 맞히기 `pastList`/`.hPast`(지난 12달 중 약했던 달, 계절로만), 오늘의 방망이 `bokHtml`(localStorage `hongmyeongguk.bok` 이어 온 날·엽전), 도깨비 부적 `bjCanvas`(올해 제일 약한 일), 우리 집 서열 `famScores`(서열 칸 안 "가족 넣기"로 바로 추가·✕로 빼기, 이름 넣고 본 사람도 저장 목록에 자동 저장, 계산 때 `base`를 잠깐 바꿈), 궁합 링크 `?with=`(받은 사람이 생일 넣으면 궁합 탭으로), 운 보기 누르면 방망이 세 번 두드리는 화면 `ttak`(테스트는 `window.__noTtak=true`)
 - 스크립트는 일반 `<script>`라 전역 변수(`base`, `mode`, `show`, `render`, `$`)를 서로 씀. 순서 바꾸지 말 것.
 - 규칙 근거: `docs/운곡-규칙-요약.md`, 대조 기록·미해결: `docs/참고자료.md`
 

@@ -1998,12 +1998,32 @@ const TART={exam:[['seodang','chaek'],['gamchal']],jobget:[['daejang','hojak'],[
   document.addEventListener('click',e=>{if(!e.target.closest('.bjShare')||!bjLast)return;shareCanvas(bjLast.c,'방망이 도깨비가 써 준 내 부적이야 🧧 「'+bjLast.B[1]+'」 너도 받아 봐 → https://shtelpjh2000-lgtm.github.io/saju/','dokkaebi-bujeok.jpg');});
 
   // ── ④ 우리 집 도깨비 서열(저장된 가족으로 올해 순위) ──
-  function famPeople(){const me=profileOf(base.input);const L=[me];
+  function famPeople(){const me=profileOf(base.input);me.name=me.name||'나';const L=[me];
     loadSaved().forEach(s=>{if(s.name&&!L.some(x=>x.d===s.d&&x.t===s.t&&x.name===s.name))L.push(s);});return L.filter(x=>x.name).slice(0,8);}
-  function famHtml(){let n=0;try{n=famPeople().length;}catch(e){}
+  function famHtml(){let L=[];try{L=famPeople();}catch(e){}const n=L.length;
     return '<div class="famWrap"><p class="ygH">우리 집 도깨비 서열<small>올해 집안 돈줄은 누구, 복덩이는 누구?</small></p>'+
-      (n>=2?'<button type="button" class="famGo">👨‍👩‍👧 서열 뽑아 보기 ('+n+'명)</button><div class="famOut"></div>':
-      '<p class="ygN">가족 이름과 생일을 한 번씩 넣고 운을 보면, 여기에 우리 집 서열이 나오네. (이름을 넣은 사람만 모아 둬)</p>')+'</div>';}
+      '<p class="famWho">'+L.map((x,i)=>'<span>'+escH(x.name)+(i?'<button type="button" class="famDel" data-d="'+x.d+'" data-t="'+x.t+'" data-n="'+escH(x.name)+'" aria-label="빼기">✕</button>':'')+'</span>').join('')+'</p>'+
+      (n>=2?'<button type="button" class="famGo">👨‍👩‍👧 서열 뽑아 보기 ('+n+'명)</button><div class="famOut"></div>':'<p class="ygN">가족을 한 명 이상 넣으면 서열을 뽑아 주지.</p>')+
+      '<button type="button" class="famAdd">➕ 가족 넣기</button><div class="famForm" hidden>'+
+        '<input class="ffN" placeholder="이름 (예: 남편, 큰딸)" maxlength="10">'+
+        '<div class="seg ffS"><button type="button" data-v="M" class="on">🙋‍♂️ 남</button><button type="button" data-v="F">🙋‍♀️ 여</button></div>'+
+        '<div class="ymd"><select class="ffY" aria-label="태어난 해"><option value="">년</option>'+(()=>{let h='';for(let y=new Date().getFullYear();y>=1920;y--)h+='<option value="'+y+'">'+y+'년</option>';return h;})()+'</select>'+
+        '<select class="ffM" aria-label="태어난 달"><option value="">월</option>'+[...Array(12)].map((_,i)=>'<option value="'+(i+1)+'">'+(i+1)+'월</option>').join('')+'</select>'+
+        '<select class="ffD" aria-label="태어난 날"><option value="">일</option>'+[...Array(31)].map((_,i)=>'<option value="'+(i+1)+'">'+(i+1)+'일</option>').join('')+'</select></div>'+
+        '<div class="ymd"><select class="ffT" aria-label="태어난 시"><option value="u">❓ 시 모름</option>'+['🐭 자시','🐮 축시','🐯 인시','🐰 묘시','🐲 진시','🐍 사시','🐴 오시','🐑 미시','🐵 신시','🐔 유시','🐶 술시','🐷 해시'].map((z,i)=>'<option value="'+i+'">'+z+'</option>').join('')+'</select></div>'+
+        '<p class="ffNote">양력 생일로 넣어 주게.</p><p class="ffErr"></p><button type="button" class="famSave">이 가족 넣기</button></div></div>';}
+  const famRedraw=w=>{w.outerHTML=softTone(famHtml());};
+  document.addEventListener('click',e=>{const t=e.target;const w=t.closest('.famWrap');if(!w||!base)return;
+    if(t.closest('.famAdd')){const f=w.querySelector('.famForm');f.hidden=!f.hidden;if(!f.hidden)w.querySelector('.ffN').focus();return;}
+    const sb=t.closest('.ffS button');if(sb){sb.parentNode.querySelectorAll('button').forEach(b=>b.classList.toggle('on',b===sb));return;}
+    const del=t.closest('.famDel');if(del){try{const L=loadSaved().filter(s=>!(s.d===del.dataset.d&&s.t===del.dataset.t&&s.name===del.dataset.n));localStorage.setItem(KEY,JSON.stringify(L));drawSaved();}catch(_){}famRedraw(w);return;}
+    if(t.closest('.famSave')){const q=c=>w.querySelector(c),er=q('.ffErr');const nm=q('.ffN').value.trim(),y=+q('.ffY').value,m=+q('.ffM').value,d=+q('.ffD').value,tz=q('.ffT').value;
+      if(!nm){er.textContent='이름을 넣어 주게.';return;}if(!(y&&m&&d)){er.textContent='생년월일을 골라 주게.';return;}
+      const dt=new Date(y,m-1,d);if(dt.getMonth()!==m-1){er.textContent='그런 날짜는 없네. 날짜를 다시 골라 주게.';return;}
+      const a=autoAdjust(y,m,d).a,mid=tz==='u'?720:(+tz===0?30:+tz*120),mm=(((mid-a)%1440)+1440)%1440,P2=v=>String(v).padStart(2,'0');
+      const it={name:nm,d:y+'-'+P2(m)+'-'+P2(d),t:P2(Math.floor(mm/60))+':'+P2(mm%60),sex:q('.ffS button.on').dataset.v,adj:true,mar:'',kid:'',job:''};
+      try{const L=loadSaved().filter(s=>!(s.d===it.d&&s.t===it.t&&s.name===it.name));L.unshift(it);localStorage.setItem(KEY,JSON.stringify(L.slice(0,30)));drawSaved();}catch(_){er.textContent='저장할 수 없네.';return;}
+      famRedraw(w);}});
   function famScores(){const Y=new Date().getFullYear(),keep=base,o=[];
     try{for(const p of famPeople()){try{base=baseFromProfile(p);const v={p};for(const t of ['gen','money','promo','people','health'])v[t]=scoreOf(t,Y);o.push(v);}catch(e){}}}finally{base=keep;}return o;}
   document.addEventListener('click',e=>{const b=e.target.closest('.famGo');if(!b||!base)return;const o=famScores();if(o.length<2)return;

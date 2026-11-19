@@ -163,3 +163,9 @@ body:not(.pro) .bnav button[data-v=il]{display:none!important}
 @keyframes coin{to{transform:translate(var(--dx),var(--dy)) rotate(360deg);opacity:0}}
 #ttak.done .tkBtn{animation:pop .5s ease}
 .sub{word-break:keep-all}
+.famWho{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin:4px 0 12px}.famWho span{display:inline-flex;align-items:center;gap:4px;padding:6px 12px;border-radius:999px;background:#fff;border:2px solid #f3d9a6;font-size:16px;font-weight:700;color:var(--ink)}
+.famDel{padding:0 2px!important;background:none!important;box-shadow:none!important;color:var(--mute)!important;font-size:14px;border:0;min-width:0}
+.famAdd{width:100%;margin-top:10px;padding:13px;font-size:17px;font-weight:700;border-radius:14px;background:#fff!important;color:var(--ink)!important;border:2px dashed #e8b96a!important;box-shadow:none!important}
+.famForm{margin-top:10px;display:flex;flex-direction:column;gap:8px}.famForm[hidden]{display:none}.famForm input{font-size:17px;padding:12px}
+.famForm select{font-size:17px!important}.ffNote{margin:0;font-size:14px;color:var(--mute)}.ffErr{margin:0;color:var(--red);font-size:15px}.ffErr:empty{display:none}
+.famSave{width:100%;padding:14px;font-size:18px;font-weight:800;border-radius:14px}
