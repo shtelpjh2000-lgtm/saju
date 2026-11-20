@@ -495,12 +495,16 @@ function renderYear(r){
     return '<p><b>'+lab+'</b> · '+t.slice(i+3)+(sc?'<br><span class="scene2">🎬 '+sc+'</span>':'')+'</p>';}).join('');
   h+='<h4>'+(proY?'행년 (그해의 큰일)':'올해 가장 큰 일')+'</h4>'+(proY||!o.hangE?o.hang:o.hangE).map(t=>'<p>'+t+'</p>').join('');
   const gc=g=>g>=2?['g2','좋음']:g>=1?['g1','무난·좋음']:g<=-1?['gm1','주의']:['g0','보통'];
-  h+='<h4>달별 운</h4><div class="mList">';
-  const proV=false;let hidM=0;
-  for(const m of o.months){if(nowM&&m.m<nowM){hidM++;continue;}const c=gc(m.g);const sents=(m.say||m.theme).split(/(?<=\.)\s+/);const act=(sents[1]||sents[0]||'').replace(/\.$/,'');
-    const em={g2:'😊',g1:'🙂',g0:'😐',gm1:'⚠️'}[c[0]]||'😐';const lab=(t=>(t.y>yearSel?'내년 ':'')+t.m)(smon(yearSel,m.m))+'월';
-    h+='<div class="mI '+c[0]+(m.m===nowM?' now':'')+'"><b class="mM">'+lab+'</b><span class="mG">'+em+' '+c[1].replace('무난·좋음','무난')+'</span><p>'+act+'</p></div>';}
-  h+='</div>'+(hidM?'<p class="note">지난 '+hidM+'달은 숨겼어요.</p>':'');
+  // 달별 운: 앞으로 좋은 달 중 가장 센 3달만, 한두 단어로
+  {const MK={財:['💰','돈 들어옴'],官:['🏅','승진·인정'],父:['📜','계약·문서'],孫:['🌱','새 일·재능'],兄:['🤝','귀인·모임'],鬼:['🌿','건강 회복'],世:['🔥','기운 상승']};if(ageNow(base)>=60)MK.官=['🏅','인정·대접'];
+    let cand=o.months.filter(m=>!(nowM&&m.m<nowM)).map(m=>({...m,ly:yearSel,i:m.m}));
+    if(cand.length<12){try{const n1=Haeseok.yearly(sinsu(yearGZ(yearSel+1)),base.input.sex,ageNow(base)+1).out.months;cand=cand.concat(n1.slice(0,12-cand.length).map(m=>({...m,ly:yearSel+1,i:12+m.m})));}catch(e){}}
+    const pool=cand.filter(m=>m.g>=1).sort((a,b)=>b.g-a.g||a.i-b.i),top=[];
+    for(const m of pool){if(top.length>=3)break;if(!top.some(x=>x.k===m.k))top.push(m);}
+    for(const m of pool){if(top.length>=3)break;if(!top.includes(m))top.push(m);}
+    top.sort((a,b)=>a.i-b.i);
+    h+='<h4>좋은 달 BEST 3</h4>'+(top.length?'<div class="mTop">'+top.map(m=>{const k=MK[m.k]||['✨','좋은 흐름'];const t=smon(m.ly,m.m),n=new Date();const lab=(t.y===n.getFullYear()&&t.m===n.getMonth()+1)?'이번 달':(t.y>n.getFullYear()&&yearSel===n.getFullYear()?'내년 ':'')+t.m+'월';
+      return '<div class="mT"><b class="mTm">'+lab+'</b><span class="mTe">'+k[0]+'</span><b class="mTk">'+k[1]+'</b></div>';}).join('')+'</div>':'<p>올해 남은 달은 고르게 무난하네. 날을 골라 쓰면 되네.</p>');}
   if(yearSel!==new Date().getFullYear())h=h.replace(/올해는/g,yearSel+'년은').replace(/올해가/g,yearSel+'년이').replace(/올해의/g,yearSel+'년의').replace(/올해/g,yearSel+'년');
   $('reading').innerHTML=toJane(hage(softTone(fitProf(h)).replace(/(<\/h2>(?:<span class="badge">[^<]*<\/span>)?)/,'$1'+'<p class="dkOpen">'+yearSel+'년 '+jane()+' 운을 방망이로 두드려 보세. 뚝딱! 한 해가 이렇게 나오네.</p>'+(window.__yearCard?window.__yearCard(yearSel):''))));
 }
@@ -1739,7 +1743,7 @@ alDraw();
   const ACT={exam:'시험 도전',jobget:'지원',jobmove:'옮기는 것',promo:'승진 도전',invest:'투자',estate:'사고파는 것',biz:'시작하는 것',partner:'동업·계약',loan:'돈 빌려주는 것',love:'다가가는 것',marry:'결혼 이야기',reunion:'다시 연락하는 것',move:'이사',travel:'떠나는 것',law:'맞서는 것',gen:'그 일',child:'아이 계획',health:'치료·운동 시작'};
   const EMO=/힘들|힘드|지쳐|지친|지치|우울|속상|외로|외롭|불안|걱정|답답|짜증|슬퍼|슬프|무서|괴로|눈물|화나|화가|미치겠|막막|서러|서럽|후회/;
   function qkind(q){q=q||'';
-    if(/어느 ?쪽|방향|방위|어디로/.test(q)&&!/vs|VS|아니면|또는/.test(q))return 'where';
+    if((typeof whereQ!=='undefined'&&whereQ)||(/어느 ?쪽|방향|방위|어디로|(북동|북서|남동|남서|동|서|남|북)쪽/.test(q)&&!/vs|VS|아니면|또는/.test(q)))return 'where';
     const multi=q.split(/[?？]/).filter(x=>x.trim().length>2).length>=2;
     if(/vs|VS|아니면|또는|말까|중에 ?뭐|중 ?어느|뭐가 ?나을/.test(q)||(!multi&&(q.match(/까(?=[\s?？,.!~]|$)/g)||[]).length>=2))return 'ab';
     if(/언제|몇 ?월|며칠|시기|때가|날짜/.test(q))return 'when';
@@ -1835,9 +1839,10 @@ const TART={exam:[['seodang','chaek'],['gamchal']],jobget:[['daejang','hojak'],[
     if(sp)v=D.e+' '+hage(D.v[gi]);
     else if(emo&&t==='gen')v=gi<=1?'💛 <b>그래도 올해 자네 기운은 나쁘지 않네.</b> 지금 힘든 건 지나가는 바람일세. 조금만 숨 고르면 다시 일어설 수 있네.':'💛 <b>올해가 자네한테 좀 무거운 해라 그렇다네.</b> 자네가 못나서가 아닐세. 이럴 땐 큰일 벌이지 말고, 잘 먹고 잘 자는 게 제일일세.';
     else if(kind==='yn'||(act&&kind!=='when')){const a=act||D.n;
-      v=['👍','🙆','🙂','🌱'][gi]+' <b>'+hage(D.v[gi]).replace(/아래 /g,'').split(/(?<=[.!])\s+/).slice(0,2).join(' ')+'</b>';}
+      const vs=hage(D.v[gi]).replace(/아래 /g,'').split(/(?<=[.!])\s+/);
+      v=gi<=1?['👍','🙆'][gi]+' <b>'+vs.slice(0,2).join(' ')+'</b>':gi===2?'🙂 <b>해 볼 만하네.</b> '+vs.slice(0,1).join(' '):'🌱 <b>할 수 있네. 다만 때를 조금만 고르게.</b> '+vs.slice(-1).join(' ');}
     else v=D.e+' <b>'+K.Y+'년 '+(t==='gen'?'자네 운':unOf(D))+jo(t==='gen'?'운':unOf(D),'은','는')+' '+['아주 좋네','좋네','무난하네','한 박자 쉬어 갈 때일세'][gi]+'.</b> '+hage(D.v[gi].replace(/아래 /g,'')).split(/(?<=[.!])\s+/).slice(0,1).join(' ');
-    if(gi===3&&!sp)v+=' <span class="hope">그래도 때는 오네.</span>';
+
     const SUBJ=(lastQ||'').match(/(아들|딸|남편|아내|와이프|신랑|엄마|어머니|아버지|아빠|자식|애들|아이|손주|동생|언니|오빠|형|누나|부모님|시어머니|며느리|사위)/);
     const opn=multiI?['그리고 두 번째 물음 말일세.','세 번째 물음도 보세.'][multiI-1]||'다음 물음일세.':SUBJ?pv([SUBJ[1]+' 일이라… 어디 보자.',SUBJ[1]+' 걱정이구먼. 내 짚어 주지.']):opener(lastQ||'',kind);
     const kidQ=SUBJ&&/아들|딸|자식|애들|아이|손주/.test(SUBJ[1]),tb=(T[t]&&T[t].base)||t;
@@ -1847,8 +1852,14 @@ const TART={exam:[['seodang','chaek'],['gamchal']],jobget:[['daejang','hojak'],[
     const fig=artFig(artOf((T[t]&&T[t].base)||t,gi)||artOf(t,gi)).replace(/<figcaption[\s\S]*?<\/figcaption>/,''); // 그림은 풀이 다 읽은 뒤(당부 앞)에
     const W=whenOf(K);
     if(kind==='where'&&!sp&&K.dir){const PL=(lastQ||'').match(/(서울|경기|인천|부산|대구|대전|광주|울산|세종|강원|충청|전라|경상|제주|수도권|지방|시골|외국|해외|[가-힣]{2,4}(?:시|군|구|동))\s*(?:쪽|으로|로)/);
-      const dd=K.dir.length?'🧭 <b>'+K.dir.join(', ')+'이 좋네.</b>':'🧭 <b>올해는 어느 쪽이든 크게 막힌 데가 없네.</b>';
-      const pl=PL?'<p>'+PL[1]+' 쪽으로 마음먹었다면 좋네. 방향보다 <b>날</b>이 더 힘이 세니, 좋은 날에 움직이면 그쪽 기운도 자네 편이 되네.</p>':(K.badDir&&K.badDir.length?'<p>'+K.badDir[0]+'만 되도록 피하면 되네.</p>':'');
+      const PLc=placeOf(lastQ||''),DIR=PLc.dir;let dd;
+      if(DIR){const how=PLc.to&&PLc.from?PLc.from+'에서 '+PLc.to+(jo(PLc.to,'은','는'))+' <b>'+DIR+'</b>일세. ':'';
+        dd=K.dir.includes(DIR)?'🧭 '+how+'<b>'+DIR+'이면 좋은 방향일세!</b> 그쪽으로 가면 일이 잘 붙네.':
+          (K.badDir||[]).includes(DIR)?'🧭 '+how+'<b>'+DIR+'도 갈 만하네.</b> 조금 버거운 기운이 있으니 아래 좋은 날에 움직이면 충분히 괜찮네.':
+          '🧭 '+how+'<b>'+DIR+'은 무난한 방향일세.</b> 좋은 날만 골라 움직이면 더 좋네.';}
+      else dd=K.dir.length?'🧭 <b>'+K.dir.join(', ')+'이 좋네.</b>':'🧭 <b>올해는 어느 쪽이든 크게 막힌 데가 없네.</b>';
+      const needHome=PLc.to&&!PLc.from;
+      const pl=needHome?'<p>🏠 아래 <b>지금 사는 곳</b>을 골라 주면 거기서 '+PLc.to+(jo(PLc.to,'이','가'))+' 어느 쪽인지 딱 짚어 주지.</p>':DIR?'':PL?'<p>'+PL[1]+' 쪽으로 마음먹었다면 좋네. 방향보다 <b>날</b>이 더 힘이 세니, 좋은 날에 움직이면 그쪽 기운도 자네 편이 되네.</p>':(K.badDir&&K.badDir.length?'<p>'+K.badDir[0]+'만 되도록 피하면 되네.</p>':'');
       return '<p class="dkOpen">'+(multiI?['그리고 방향 말일세.','방향도 보세.'][multiI-1]||'방향 말일세.':'방향을 묻는구먼. 어디 보자…')+'</p><p class="ansV">'+dd+'</p>'+pl+(multiWhere?'':'<p>📅 '+W+'</p>')+'<p class="hanSu">💡 <b>도깨비의 한 수</b> '+hage(plainTip(D.tips[0]))+'</p>';}
     if(kind==='when'&&!sp){const nn=D.n.replace(/·방위/,'');h='<p class="dkOpen">'+opn+'</p>'+flowP+'<p class="ansV">'+D.e+' <b>'+(K.bestC?nn+jo(nn,'은','는')+' '+K.bestC+'일세.':nn+jo(nn,'은','는')+' 앞으로 몇 달은 센 때가 없네.')+'</b></p><p>📅 '+whenOf(K,1).replace(/^그 달을 놓치지 말게\. ?/,'')+'</p>';}
     if(/이자|대출|빚|원리금/.test(lastQ||'')&&/estate|money|biz|invest|loan/.test(t))h+='<p>💸 이자 걱정 말인데, '+(K.bestC&&!/^내년/.test(K.bestC)&&gi<=1?K.bestC.replace(/\(.*\)/,'')+'까지만 버티게. 그때 풀리네. 새 대출은 늘리지 말게.':(K.bestC?'풀리는 때가 '+K.bestC.replace(/\(.*\)/,'')+jo(K.bestC.replace(/\(.*\)/,''),'이라','라')+' 이자 부담이 길어지네. ':'')+'지금 바로 대출 갈아타기나 일부 상환으로 이자부터 줄이게.')+'</p>';
@@ -2278,10 +2289,25 @@ const TART={exam:[['seodang','chaek'],['gamchal']],jobget:[['daejang','hojak'],[
     return /내후년|다다음 ?해/.test(q)?2:/내년|다음 ?해/.test(q)?1:0;};
   const setYr=v=>{yrOff=v;[...$('askYr').children].forEach(b=>b.classList.toggle('on',+b.dataset.v===yrOff));};
   function ask(){const q0=$('askQ').value.trim();if(!q0)return;
-    const parts=/vs|VS|아니면|또는|말까|중에 ?뭐|중 ?어느|뭐가 ?나을/.test(q0)?[q0]:q0.split(/(?<=[?？])\s*|\n+/).map(x=>x.trim()).filter(x=>x.length>2);
+    let parts=/vs|VS|아니면|또는|말까|중에 ?뭐|중 ?어느|뭐가 ?나을/.test(q0)||(q0.match(/[?？]/g)||[]).length<2?[q0]:q0.split(/(?<=[?？])\s*/).map(x=>x.trim()).filter(x=>x.length>2);
+    if(parts.length>=2&&!/[?？]$/.test(parts[parts.length-1])){const t=parts.pop();parts[parts.length-1]+=' '+t;}
     if(parts.length>=2){multiWhere=parts.some(x=>qkind(x)==='where');parts.slice(0,3).forEach((x,i)=>{multiI=i;askOne(x);});multiI=0;multiWhere=false;$('askQ').value='';return;}
     askOne(q0);$('askQ').value='';}
-  let multiI=0,multiWhere=false;
+  let multiI=0,multiWhere=false,whereQ=false;
+  const CITY={서울:[37.57,126.98],인천:[37.46,126.71],수원:[37.26,127.03],성남:[37.42,127.13],고양:[37.66,126.83],용인:[37.24,127.18],부천:[37.5,126.77],안산:[37.32,126.83],화성:[37.2,126.83],평택:[36.99,127.11],김포:[37.62,126.72],파주:[37.76,126.78],남양주:[37.64,127.22],의정부:[37.74,127.03],춘천:[37.88,127.73],원주:[37.34,127.92],강릉:[37.75,128.88],속초:[38.21,128.59],청주:[36.64,127.49],충주:[36.99,127.93],천안:[36.82,127.11],대전:[36.35,127.38],세종:[36.48,127.29],전주:[35.82,127.15],군산:[35.97,126.74],익산:[35.95,126.96],광주:[35.16,126.85],목포:[34.81,126.39],여수:[34.76,127.66],순천:[34.95,127.49],대구:[35.87,128.6],포항:[36.02,129.34],구미:[36.12,128.34],안동:[36.57,128.73],경주:[35.86,129.22],울산:[35.54,129.31],부산:[35.18,129.08],창원:[35.23,128.68],김해:[35.23,128.89],진주:[35.18,128.11],제주:[33.5,126.53],서귀포:[33.25,126.56]};
+  const HOMEK='hongmyeongguk.home',homeGet=()=>{try{return localStorage.getItem(HOMEK)||'';}catch(e){return '';}};
+  const D8=['북쪽','북동쪽','동쪽','남동쪽','남쪽','남서쪽','서쪽','북서쪽'];
+  function bearing(a,b){const A=CITY[a],B=CITY[b];if(!A||!B||a===b)return '';const dy=B[0]-A[0],dx=(B[1]-A[1])*Math.cos(A[0]*Math.PI/180);const deg=(Math.atan2(dx,dy)*180/Math.PI+360)%360;return D8[Math.round(deg/45)%8];}
+  // 질문에서 출발지·도착지·방향 찾기: 'OO에서/OO서' = 출발지, 나머지 도시 = 가는 곳, 없으면 '지금 사는 곳'
+  function placeOf(q){q=q||'';const names=Object.keys(CITY).filter(c=>q.includes(c));let from='',to='';
+    for(const c of names){if(new RegExp(c+'\\s*(?:에서|서)\\b|'+c+'\\s*(?:에서|서)(?![가-힣])').test(q)||new RegExp(c+'(?:에서|서) ').test(q))from=c;}
+    to=names.find(c=>c!==from)||'';if(!from)from=homeGet();
+    const dm=q.match(/(북동|북서|남동|남서|동|서|남|북)쪽/);const dir=to&&from?bearing(from,to):(dm?dm[1]+'쪽':'');
+    return {from,to,dir,said:dm?dm[1]+'쪽':''};}
+  window.__placeOf=placeOf;
+  {const af=document.querySelector('.askFree');if(af&&!$('homeCity')){const d=document.createElement('div');d.className='homeRow';
+    d.innerHTML='<label for="homeCity">🏠 지금 사는 곳</label><select id="homeCity"><option value="">고르기 (이사·방향 물을 때 써요)</option>'+Object.keys(CITY).map(c=>'<option>'+c+'</option>').join('')+'</select>';
+    af.after(d);const sel=d.querySelector('select');sel.value=homeGet();sel.addEventListener('change',()=>{try{localStorage.setItem(HOMEK,sel.value);}catch(e){}});}}
   function askOne(q){
     setYr(yearOffOf(q));
     let hit0=topicOf(q)||'gen';const cx=lifeCtx(base&&base.input,base?ageNow(base):0);profNote='';
@@ -2289,8 +2315,10 @@ const TART={exam:[['seodang','chaek'],['gamchal']],jobget:[['daejang','hojak'],[
     else if(cx.single&&hit0==='couple'){hit0='love';profNote='지금 혼자이니, 새 인연으로 풀어 보겠네.';}
     else if(cx.rest&&['jobget','jobmove','promo','career'].includes(hit0))profNote='지금은 일을 쉬고 있으니, 새로 맡을 일·활동으로 보겠네.';
     else if(cx.senior&&hit0==='child')profNote='자녀 일은 자녀 결혼·손주 쪽까지 함께 보겠네.';
-    const hit=intentOf(hit0,q);
-    pick(hit,q,qkind(q)==='ab'?q:null);}
+    let hit=intentOf(hit0,q);
+    const pl=placeOf(q),goV=/가야|가려|이사|이동|옮기|옮길|갈까|가면|갈건데|간다|가는|내려가|올라가|이전/.test(q);
+    if((pl.said||(pl.to&&goV))&&!/주식|코인|투자/.test(q)){hit=T.move?'move':hit;whereQ=true;}
+    pick(hit,q,qkind(q)==='ab'&&!whereQ?q:null);whereQ=false;}
   $('askOut').addEventListener('click',e=>{const b=e.target.closest('button[data-f]');if(!b||!curT)return;const D=T[curT],f=b.dataset.f;
     if(f==='when')pick(curT,D.n+', 언제가 제일 좋아요?');
     else if(f==='next'){setYr(1);pick(curT,'내년('+(new Date().getFullYear()+1)+') '+nmOf(D)+jo(nmOf(D),'은','는')+'요?',abQ);}
