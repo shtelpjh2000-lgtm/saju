@@ -1533,7 +1533,7 @@ alDraw();
       const sp=line.lastIndexOf(' ');if(sp>line.length*0.6){out.push(line.slice(0,sp));line=line.slice(sp+1)+ch;}else{out.push(line);line=ch;}}else line=t;}
     if(line)out.push(line);return out;}
   function rr(ctx,x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath();}
-  const DKIMG=new Image();DKIMG.src='img/dokkaebi.svg'; // 공유 그림에 넣을 기와 도깨비
+  const DKIMG=new Image();DKIMG.src='img/dokkaebi.jpg'; // 공유 그림에 넣을 기와 도깨비
   function draw(d){
     const W=1080,H=1350,cv=document.createElement('canvas');cv.width=W;cv.height=H;const c=cv.getContext('2d');
     const F='"Pretendard Variable","Apple SD Gothic Neo","Noto Sans KR","Malgun Gothic",sans-serif';
@@ -2234,7 +2234,7 @@ const TART={exam:[['seodang','chaek'],['gamchal']],jobget:[['daejang','hojak'],[
     const RED='#c3141b';g.strokeStyle=RED;g.lineWidth=10;g.strokeRect(34,34,W-68,H-68);g.lineWidth=3;g.strokeRect(54,54,W-108,H-108);
     const F='"Pretendard Variable","Noto Sans KR",sans-serif',S='"Noto Serif KR","Nanum Myeongjo",serif';g.textAlign='center';g.fillStyle=RED;
     g.font='800 38px '+F;g.fillText('도깨비 방망이 부적',W/2,130);
-    if(withImg){const im=await loadImg('img/dokkaebi.svg');if(im)g.drawImage(im,W/2-80,160,160,160);}
+    if(withImg){const im=await loadImg('img/dokkaebi.jpg');if(im)g.drawImage(im,W/2-80,160,160,160);}
     g.font='700 150px '+S;[...B[0]].forEach((ch,i)=>g.fillText(ch,W/2,470+i*165));
     g.lineWidth=4;g.beginPath();for(let i=0;i<2;i++){const yy=400+i*360;g.moveTo(110,yy);g.bezierCurveTo(160,yy-60,200,yy+60,150,yy+120);g.moveTo(W-110,yy);g.bezierCurveTo(W-160,yy-60,W-200,yy+60,W-150,yy+120);}g.stroke();
     g.font='800 40px '+F;g.fillText(B[1],W/2,1110);
@@ -2524,7 +2524,7 @@ const ttak=(()=>{let ac=null;const A=()=>{try{ac=ac||new (window.AudioContext||w
   const BANG='<svg viewBox="0 0 70 170" class="bangSvg" aria-hidden="true"><rect x="29" y="104" width="12" height="62" rx="6" fill="#7a4a1f"/><path d="M14 26 Q35 -2 56 26 L50 108 Q35 118 20 108Z" fill="#c0702e" stroke="#5a3210" stroke-width="4"/><g fill="#ffd34d" stroke="#8a5a10" stroke-width="2"><circle cx="26" cy="40" r="6"/><circle cx="44" cy="40" r="6"/><circle cx="35" cy="62" r="6"/><circle cx="25" cy="84" r="5"/><circle cx="45" cy="84" r="5"/></g></svg>';
   let ov=null,n=0,lastKey='';
   function open(){if(ov)ov.remove();n=0;ov=document.createElement('div');ov.id='ttak';
-    ov.innerHTML='<div class="tkIn"><p class="tkH">방망이를 <b>세 번</b> 두드리게!</p><button type="button" class="tkBtn" aria-label="방망이 두드리기"><img src="img/dokkaebi.svg" alt="" class="tkDk">'+BANG+'</button><p class="tkDots"><i></i><i></i><i></i></p><p class="tkSay">금 나와라 뚝딱!</p><button type="button" class="tkSkip">건너뛰기</button></div>';
+    ov.innerHTML='<div class="tkIn"><p class="tkH">방망이를 <b>세 번</b> 두드리게!</p><button type="button" class="tkBtn" aria-label="방망이 두드리기"><img src="img/dokkaebi.jpg" alt="" class="tkDk">'+BANG+'</button><p class="tkDots"><i></i><i></i><i></i></p><p class="tkSay">금 나와라 뚝딱!</p><button type="button" class="tkSkip">건너뛰기</button></div>';
     document.body.appendChild(ov);requestAnimationFrame(()=>ov.classList.add('on'));
     ov.querySelector('.tkBtn').addEventListener('click',()=>{if(n>=3)return;n++;hit();const b=ov.querySelector('.tkBtn');b.classList.remove('swing');void b.offsetWidth;b.classList.add('swing');
       ov.querySelectorAll('.tkDots i').forEach((d,i)=>d.classList.toggle('on',i<n));
