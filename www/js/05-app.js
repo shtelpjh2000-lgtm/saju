@@ -505,7 +505,7 @@ function renderReading(r){
   const T={total:'총평',char:'성격',money:'재물',job:'직업·적성',spouse:'배우자',child:'자녀',health:'건강',luck:'대운 흐름',lucky:'🍀 행운 처방'};
   {const I=r.input||{},cx=lifeCtx(I,ageNow(r));if(cx.married&&!cx.single)T.spouse='부부';if(I.kid==='N'&&ageNow(r)>=50)T.child='아랫사람·조카';const jn={biz:'사업',stu:'공부·진로',seek:'취업',ret:'일·활동',home:'살림·활동'}[I.job||(cx.rest?'ret':'')];if(jn)T.job=jn;}
   const star=n=>n?'<span class="rdStar">'+'★'.repeat(n)+'<i>'+'★'.repeat(5-n)+'</i></span>':'';
-  let h='<h2>📜 종합 풀이</h2><span class="badge">'+x.strongKo+' · 용신 '+x.yong+'</span>';
+  let h='<h2>📜 종합 풀이</h2><span class="badge">'+(x.strong==='weak'?'도움받아 크는 사람':'스스로 길을 내는 사람')+' · '+({財:'돈·실속',官:'일·자리',鬼:'일·자리',父:'문서·배움',孫:'재능·새 일',兄:'사람',世:'내 힘'}[x.yong]||'')+'이 복</span>';
   try{const HL=x.HL||{},cr=x.curRun,st=v=>String(v||'').replace(/^[^\s가-힣「]+\s*/,'');
     const bat=w=>{const c=String(w).replace(/[^가-힣]/g,'').slice(-1);return c&&((c.charCodeAt(0)-0xAC00)%28)?'이에요':'예요';};
     const L=[];if(HL.char)L.push('🙂 <b>자네는</b> · '+st(HL.char)+'일세');
@@ -1245,15 +1245,15 @@ alDraw();
   // 작명을 누르면 먼저: 기문둔갑(홍연기문) 명국으로 어떻게 이름을 짓는지 전문가 설명 → '이름 지으러 가기'를 누르면 입력 화면
   function jmIntro(){const r=base,w=weakEls(r).map(i=>ELN[i]),nm=myName();let yong='';try{yong=Haeseok.interpret(r,r.input.sex,ageNow(r)).yong||'';}catch(e){}
     const kuk=(r.yang?'양둔(陽遁) ':'음둔(陰遁) ')+r.ju+'국';
-    const S=[['🔮','명국 세우기','기문둔갑(홍연기문)으로 태어난 해·달·날·시의 아홉 칸 판을 펼쳐, 타고난 기운이 어디에 몰리고 어디가 비었는지 먼저 보네.'],
-      ['☯️','모자란 기운 채우기','사주에 모자란 오행을 이름의 소리(발음 오행)로 채워 넣어, 한쪽으로 쏠린 기운의 균형을 잡네.'],
-      ['🔢','81수리 원형이정','성과 이름의 획수로 초년(원)·청년(형)·중년(이)·말년(정) 네 격을 따져, 흉한 수가 하나도 없는 이름만 남기네.'],
-      ['⚖️','음양 조화','획수의 홀수·짝수가 한쪽으로 몰리지 않게 맞추고, 이름에 꺼리는 글자는 걸러 내네.'],
+    const S=[['🔮','타고난 기운 살피기','태어난 해·달·날·시로 타고난 기운을 펼쳐, 어떤 기운이 많고 어떤 기운이 모자란지 먼저 보네.'],
+      ['☯️','모자란 기운 채우기','모자란 기운을 이름 소리로 채워 넣어, 한쪽으로 쏠린 기운의 균형을 잡네.'],
+      ['🔢','좋은 획수만 고르기','성과 이름의 획수로 어릴 때·젊을 때·중년·노년 운을 따져, 나쁜 수가 하나도 없는 이름만 남기네.'],
+      ['⚖️','짝 맞추기','획수의 홀짝이 한쪽으로 몰리지 않게 맞추고, 이름에 안 좋은 글자는 걸러 내네.'],
       ['📜','작명증서','마음에 드는 이름은 도깨비작명연구소 작명증서와 풀이 한 장으로 만들어 주네.']];
     return softTone('<div class="jmIntro"><p class="jiTag">도깨비작명연구소</p><h2>기문둔갑으로 사주를 풀어<br>이름을 짓네</h2>'+
-      '<p class="jiLead">자네 생년월일시로 홍연기문 명국을 세워 보니 <b>'+kuk+'</b>일세. 타고난 여덟 글자에 <b>'+w.join('·')+'</b> 기운이 모자라니, 이름으로 이 기운을 채워 주는 것부터 시작하겠네.'+(yong?' 명국에서 자네를 받쳐 주는 쓸모 있는 기운(용신)도 함께 살폈네.':'')+'</p>'+
+      '<p class="jiLead">자네 생년월일시로 타고난 기운을 펼쳐 보니 <b>'+w.join('·')+'</b> 기운이 모자라네. 이름으로 이 기운을 채워 주는 것부터 시작하겠네.</p>'+
       '<ol class="jiSteps">'+S.map((x,i)=>'<li><span class="jiN">'+(i+1)+'</span><div><b>'+x[0]+' '+x[1]+'</b><p>'+x[2]+'</p></div></li>').join('')+'</ol>'+
-      '<p class="jiNote">흔한 작명 앱은 획수만 맞추지만, 여기선 명국으로 <b>무엇이 모자란지</b>부터 보고 짓는다네.</p>'+
+      '<p class="jiNote">흔한 작명은 획수만 맞추지만, 여기선 <b>무엇이 모자란지</b>부터 보고 짓는다네.</p>'+
       '<button type="button" id="jmStart">✍️ 이름 지으러 가기</button></div>');}
   window.__jmInfo=()=>{const r=base;return {kuk:(r.yang?'양둔 ':'음둔 ')+r.ju+'국',weak:weakEls(r).map(i=>ELN[i]).join('·'),sur:(SURS[+sel.value]||[''])[0],sex:jsex};};
   const jiClose=()=>{const o=$('jmIntroOv');if(o)o.remove();document.body.classList.remove('jiOpen');};
@@ -1923,7 +1923,7 @@ const TART={exam:[['seodang','chaek'],['gamchal']],jobget:[['daejang','hojak'],[
     if(/이자|대출|빚|원리금/.test(lastQ||'')&&/estate|money|biz|invest|loan/.test(t))h+='<p>💸 이자 걱정 말인데, '+(K.bestC&&!/^내년/.test(K.bestC)&&gi<=1?K.bestC.replace(/\(.*\)/,'')+'까지만 버티게. 그때 풀리네. 새 대출은 늘리지 말게.':(K.bestC?'풀리는 때가 '+K.bestC.replace(/\(.*\)/,'')+jo(K.bestC.replace(/\(.*\)/,''),'이라','라')+' 이자 부담이 길어지네. ':'')+'지금 바로 대출 갈아타기나 일부 상환으로 이자부터 줄이게.')+'</p>';
     if(K.qm)h+='<p>📌 자네가 짚은 <b>'+(K.qm.lun?'음력 ':'')+K.qm.m+'월</b>은 '+(K.qm.v>=0.8?'<b>좋은 달</b>일세. 그때 움직이게.':K.qm.v<=-0.4?'<b>피할 달</b>일세. 다른 달로 미루게.':'그저 그런 달일세. 더 좋은 달이 있네.')+'</p>';
     const calm=emo&&t==='gen';
-    if(!sp&&!calm){let rz=reasonOf(K,gi,D).replace(/^[^,.]*?(?:운이라|사람이고|사람이라), /,'');const ss=rz.split(/(?<=[.!])\s+/).filter(Boolean);rz=(ss[0]||'').replace(/ 들어앉아 있어서.*$/,' 앉았네.');if(rz)h+='<p>🔍 <b>기문으로 보면</b> '+rz+'</p>';}
+    if(!sp&&!calm){let rz=reasonOf(K,gi,D).replace(/^[^,.]*?(?:운이라|사람이고|사람이라), /,'');const ss=rz.split(/(?<=[.!])\s+/).filter(Boolean);const ef=ss.find(x=>/^그래서/.test(x));rz=ef?ef.replace(/^그래서\s*/,''):(gi<=1?'올해는 이 일에 운이 받쳐 주는 해일세.':gi===2?'올해는 이 일이 크게 막히지도 크게 트이지도 않는 해일세.':'올해는 이 일이 더디게 가는 해일세.');if(rz)h+='<p>🔍 <b>왜냐면</b> '+rz+'</p>';}
     const needWhen=kind==='when'||sp||(act&&!/(붙을|붙나|붙었|합격)/.test(lastQ||''))||/언제|시기|몇 ?월|때/.test(lastQ||'');
     const cal=K.bestDays&&K.bestDays[0]&&K.bestDays[0][0]?calLink(K.bestDays[0][0],D.n):'';
     if((kind!=='when'||sp)&&!calm&&needWhen)h+=cal;if((kind!=='when'||sp)&&!calm&&needWhen)h+='<p>📅 '+W.replace(/ 길게 보면 <b>[^<]*<\/b>이 자네 해일세\./,'')+'</p>';
@@ -2018,7 +2018,7 @@ const TART={exam:[['seodang','chaek'],['gamchal']],jobget:[['daejang','hojak'],[
       localStorage.setItem('hongmyeongguk.yeogo',JSON.stringify({d:I.y+'-'+P(I.m)+'-'+P(I.d),list:pr.filter(x=>x.c.a).map(x=>({s:iso(x.c.a),e:iso(x.c.b),txt:x.n+' — '+x.c.lab+', '+x.w}))}));}catch(e){}
     heroData={k:A[0],nick,punch,line:L[0].replace(/<[^>]+>/g,''),name:r.input.name||'',Y};
     try{pastL=pastList();}catch(e){pastL=[];}pastI=0;
-    return (r.input&&r.input.noTime?'<p class="noTimeW">⏰ 태어난 시를 몰라 낮 12시로 봤네. 기문은 <b>시마다 판이 바뀌니</b>, 시를 알면 훨씬 정확해지네.</p>':'')+'<p class="hPunch">'+punch.replace(/^자네,/,jane()+',')+'</p><p class="hWhy pk">('+SP.g+'宮 · '+SP.s+' 자리에 나를 뜻하는 世가 앉았네)</p>'+pastHtml()+'<p class="hTitle"><small>'+Y+'년, '+jane()+'는</small><b>'+nick+'</b><small>일세.</small></p>'+
+    return (r.input&&r.input.noTime?'<p class="noTimeW">⏰ 태어난 시를 몰라 낮 12시로 봤네. 태어난 <b>시에 따라 풀이가 많이 달라지니</b>, 시를 알면 훨씬 정확해지네.</p>':'')+'<p class="hPunch">'+punch.replace(/^자네,/,jane()+',')+'</p>'+pastHtml()+'<p class="hTitle"><small>'+Y+'년, '+jane()+'는</small><b>'+nick+'</b><small>일세.</small></p>'+
       L.map(x=>'<p class="hLine">'+x+'</p>').join('')+(window.__mrLine&&window.__mrLine()?'<p class="hLine mrL">'+window.__mrLine()+'</p>':'')+artFig(A[0])+
       (pr.length?'<div class="yeogo"><p class="ygH">도깨비 방망이<small>뚝딱, 복이 나오는 달</small></p>'+pr.map(x=>'<p class="ygI"><b>'+x.n+'</b><span>'+x.c.lab+'<br><small>'+x.w+'</small></span>'+dday(x.c)+'</p>').join('')+'<p class="ygN">그 달이 오면 아침 알림으로 일러 주겠네. (알림을 켜 두게)</p></div>':'')+
 
@@ -2032,12 +2032,18 @@ const TART={exam:[['seodang','chaek'],['gamchal']],jobget:[['daejang','hojak'],[
   window.__yearSum=yearSum;window.__yearCard=Y=>{try{const now=new Date().getFullYear(),o=Y===now?Y+1:Y-1,a=yearSum(Y),b=yearSum(o);
     const FN={money:'💰 돈',promo:'💼 일',people:'🤝 사람',health:'🌿 몸'};
     const rows=Object.keys(FN).map(t=>{const d=a.f[t]-b.f[t];const c=d>=0.25?['up','▲ '+(Y>o?'좋아지네':'더 좋네')]:d<=-0.25?['dn','▼ '+(Y>o?'한풀 꺾이네':'덜하네')]:['eq','― 비슷하네'];return '<p class="ycR '+c[0]+'"><span>'+FN[t]+'</span><b>'+c[1]+'</b></p>';}).join('');
-    const K=YKEY[a.q]||YKEY.世,KB=YKEY[b.q]||YKEY.世,st=5-a.gi;
-    const cmp=a.q===b.q?(Y>o?o+'년과 같은 쪽에 무게가 실리지만, 힘의 크기가 달라지네.':Y+'년에 다진 쪽을 '+o+'년에도 이어 가게 되네.'):
-      (Y<o?Y+'년이 <b>'+K[0]+'</b>라면, '+o+'년은 <b>'+KB[0]+'</b>일세. 무게가 '+K[1].replace(/는$/,'는 쪽')+'에서 '+KB[1].replace(/는$/,'는 쪽')+'으로 옮겨 가네.':o+'년이 <b>'+KB[0]+'</b>였다면, '+Y+'년은 <b>'+K[0]+'</b>일세. 무게가 '+K[1].replace(/는$/,'는 쪽')+'으로 확 옮겨 가네.');
+    const K=YKEY[a.q]||YKEY.世,st=5-a.gi,FW={money:'돈',promo:'일',people:'사람',health:'몸'},ups=[],dns=[];
+    for(const t of Object.keys(FW)){const d=a.f[t]-b.f[t];if(d>=0.25)ups.push(FW[t]);else if(d<=-0.25)dns.push(FW[t]);}
+    const L=a=>a.join('·'),IG=a=>L(a)+jo(L(a),'이','가'),EN=a=>L(a)+jo(L(a),'은','는');let cmp;
+    if(Y===now){cmp=ups.length&&dns.length?'<b>올해는 내년보다 '+IG(ups)+' 낫고, '+EN(dns)+' 내년이 더 낫네.</b> '+ups[0]+' 쪽 일은 올해 해치우게.':
+      ups.length?'<b>올해는 내년보다 '+IG(ups)+' 낫네.</b> 올해 '+ups[0]+' 쪽 일은 미루지 말고 해치우게.':
+      dns.length?'<b>올해는 '+K[1].replace(/는$/,'는')+' 해일세.</b> '+EN(dns)+' 내년이 더 나으니, 그쪽 큰일은 내년으로 미루게.':'<b>올해와 내년이 큰 차이 없이 이어지네.</b> 꾸준함이 이기는 때일세.';}
+    else{cmp=ups.length&&dns.length?'<b>'+Y+'년은 '+IG(ups)+' 좋아지고, '+EN(dns)+' 한풀 꺾이는 해일세.</b> '+ups[0]+'에 힘을 싣되 '+dns[0]+jo(dns[0],'은','는')+' 무리하지 말게.':
+      ups.length?'<b>'+Y+'년은 '+IG(ups)+' 좋아지는 해일세.</b> 그해엔 '+ups[0]+' 쪽을 밀어붙이게.':
+      dns.length?'<b>'+Y+'년은 '+IG(dns)+' 한풀 꺾이는 해일세.</b> 크게 벌이기보다 '+dns[0]+'부터 지키게.':'<b>'+Y+'년은 '+o+'년과 큰 차이 없이 이어지는 해일세.</b>';}
     return '<div class="yCard"><p class="ycY">'+Y+'년 · '+(YCOL[a.gz[0]]||'')+' '+(YANI[a.gz[1]]||'')+'의 해 <small>('+a.gz+')</small></p>'+
-      '<p class="ycK">'+K[0]+'</p><p class="ycN">「'+(a.gi<=1?a.A[1]:a.A[2])+'」</p>'+
-      '<p class="ycS">'+'★'.repeat(st)+'<i>'+'★'.repeat(5-st)+'</i></p>'+
+      '<p class="ycK">'+K[0]+'</p><p class="ycN">'+K[1].replace(/는$/,'는 해')+'</p>'+
+      '<p class="ycS">'+'★'.repeat(st)+'<i>'+'☆'.repeat(5-st)+'</i></p>'+
       '<p class="ycC">'+cmp+'</p><p class="ycH">'+(Y===now?'내년('+o+')':o+'년')+'과 견주면</p>'+rows+'</div>';}catch(e){console.error(e);return '';}};
   // ── 결혼 시기·상대 바람기: 도화(桃花)·홍염(紅艶)이 드는 해로 보기(앞으로 10년) ──
   const TAOH={寅:'卯',午:'卯',戌:'卯',申:'酉',子:'酉',辰:'酉',巳:'午',酉:'午',丑:'午',亥:'子',卯:'子',未:'子'};
@@ -2046,19 +2052,19 @@ const TART={exam:[['seodang','chaek'],['gamchal']],jobget:[['daejang','hojak'],[
     const natal=r.pillars.reduce((n,p)=>n+(T.includes(p[1])?1:0)+(p[1]===H?1:0),0);const N0=new Date(),Y0=N0.getFullYear()+(N0.getMonth()>=9?1:0),years=[];
     for(let Y=Y0;Y<Y0+10;Y++){const b=yearGZ(Y)[1],tags=[];if(T.includes(b))tags.push('도화');if(b===H)tags.push('홍염');years.push({Y,age:Y-r.input.y+1,b,tags});}
     return {T,H,natal,years};}
-  const TAGW={도화:'🌸 도화(桃花)',홍염:'💋 홍염(紅艶)'};
+  const TAGW={도화:'🌸 인기 오르는 해',홍염:'💋 끌림 강한 해'};
   const wrapQA=(q,body)=>'<div class="bub me">'+q+'</div><div class="bub dk pk"><span class="av"></span><div>'+body+'</div></div>';
   const yrChips=(L,hi)=>'<div class="pyRow">'+L.map(y=>'<span class="py'+(y.tags.length?' on':'')+(hi&&hi.includes(y.Y)?' hi':'')+'"><b>'+y.Y+'</b><small>'+y.age+'세</small><i>'+(y.tags.map(t=>t==='도화'?'🌸':'💋').join('')||'·')+'</i></span>').join('')+'</div>';
   window.__marryHtml=()=>{try{const r=base,P=peach(r),age=ageNow(r),cx=lifeCtx(r.input,age),wed=cx.married&&!cx.single;
     const HC=MR.calc(r).hc;const L=P.years.map(y=>{let v=0;try{v=scoreOf('marry',y.Y);}catch(e){}const hp=HC.some(z=>z.Y===y.Y&&z.k==='합');return {...y,hap:hp,v:v+y.tags.length*0.6+(hp?0.4:0)};});
     const best=L.slice().sort((a,b)=>b.v-a.v).slice(0,2).sort((a,b)=>a.Y-b.Y),b0=best[0];
-    const why=y=>(y.hap?'나의 자리(일지)에 합(合)이 들어 짝을 맺는 기운이 있고, ':'')+(y.tags.length?y.tags.map(t=>t==='도화'?'도화(桃花)가 들어 이성 인연이 활짝 피고':'홍염(紅艶)이 들어 서로 끌림이 강해지고').join(', ')+' 결혼운이 받쳐 주네.':'결혼운(인연·문서 기운)이 받쳐 주네.');
-    let h='<p class="dkOpen">'+(wed?'짝이 있으니 부부 정이 새로 붙는 해를 짚어 보지.':'결혼 시기라… 도화·홍염이 드는 해를 짚어 보지.')+'</p>';
+    const why=y=>(y.hap?'짝을 맺는 기운이 들어오고, ':'')+(y.tags.length?y.tags.map(t=>t==='도화'?'이성 인기가 확 오르고':'서로 끌림이 강해지고').join(', ')+' 결혼운이 받쳐 주네.':'결혼운(인연·문서 기운)이 받쳐 주네.');
+    let h='<p class="dkOpen">'+(wed?'짝이 있으니 부부 정이 새로 붙는 해를 짚어 보지.':'결혼 시기라… 인연이 들어오는 해를 짚어 보지.')+'</p>';
     h+='<p class="ansV">💍 <b>'+b0.Y+'년('+b0.age+'세)</b>'+(wed?'에 부부 사이가 제일 뜨거워지네.':'이 제일 유력하네.')+(best[1]?' 다음은 <b>'+best[1].Y+'년('+best[1].age+'세)</b>일세.':'')+'</p>';
-    h+='<p>🔍 <b>기문으로 보면</b> '+b0.Y+'년엔 '+why(b0)+'</p>';
+    h+='<p>🔍 <b>왜냐면</b> '+b0.Y+'년엔 '+why(b0)+'</p>';
     if(b0.Y<=new Date().getFullYear()+1){try{const m=monthsFor('marry').best;if(m)h+='<p>📅 날로 치면 <b>'+m.lab+'</b>이 좋네.</p>';}catch(e){}}
-    h+='<p>'+(wed?(P.natal>=2?'🌸 타고난 도화가 많아 밖에서 인기가 많으니, 배우자에게 먼저 마음을 표현하면 집안이 더 화목하네.':'🌸 바깥 유혹은 적은 사주라, 집안에 정을 쏟을수록 복이 붙네.'):P.natal>=2?'🌸 타고나기를 도화·홍염이 많아 <b>인기가 많은 사주</b>일세. 사람이 많이 오니 고르는 눈이 중요하네.':P.natal===1?'🌸 타고난 도화가 하나 있어, 때가 오면 인연이 자연스럽게 닿네.':'🌸 타고난 도화는 적어 <b>소개·모임 같은 다리</b>로 인연이 오네. 그해엔 사람 모이는 자리에 꼭 나가게.')+'</p>';
-    h+='<p class="pyH">앞으로 10년 · 🌸도화 💋홍염 드는 해</p>'+yrChips(P.years,best.map(x=>x.Y));
+    h+='<p>'+(wed?(P.natal>=2?'🌸 타고나길 밖에서 인기가 많으니, 배우자에게 먼저 마음을 표현하면 집안이 더 화목하네.':'🌸 바깥 유혹은 적은 사주라, 집안에 정을 쏟을수록 복이 붙네.'):P.natal>=2?'🌸 타고나기를 <b>이성 인기가 많은 사람</b>일세. 사람이 많이 오니 고르는 눈이 중요하네.':P.natal===1?'🌸 때가 오면 인연이 자연스럽게 닿네.':'🌸 저절로 오기보다 <b>소개·모임 같은 다리</b>로 인연이 오네. 그해엔 사람 모이는 자리에 꼭 나가게.')+'</p>';
+    h+='<p class="pyH">앞으로 10년 · 🌸 인기 오르는 해 💋 끌림 강한 해</p>'+yrChips(P.years,best.map(x=>x.Y));
     h+='<p class="hanSu">💡 <b>도깨비의 한 수</b> '+(wed?'그해엔 둘만의 여행이나 기념일을 꼭 챙기게.':b0.Y+'년엔 소개 자리를 거절하지 말게. 그해 만난 사람을 눈여겨보게.')+'</p>';
     return softTone(wrapQA('나는 언제 결혼해?',h));}catch(e){console.error(e);return '<p class="note">지금은 풀 수 없네.</p>';}};
   // 상대 사주: 궁합에 넣은 상대를 같이 씀(localStorage hongmyeongguk.partner)
@@ -2075,12 +2081,12 @@ const TART={exam:[['seodang','chaek'],['gamchal']],jobget:[['daejang','hojak'],[
     if(!p||edit)return wrapQA(q,'<p class="dkOpen">상대 사주를 펴 봐야 알지. 생일을 넣어 주게.</p>'+pForm(p));
     const pr=partnerBase(p),P=peach(pr),nm=p.name||'상대',keep=base;let lv={};try{base=pr;for(const y of P.years){try{lv[y.Y]=scoreOf('love',y.Y);}catch(e){}}}finally{base=keep;}
     const R=P.years.map(y=>({...y,risk:y.tags.length+((lv[y.Y]||0)>=1.42?0.5:0)})).filter(y=>y.risk>=1).sort((a,b)=>b.risk-a.risk||a.Y-b.Y);
-    let h='<p class="dkOpen">'+escH(nm)+jo(nm,'이','가')+' 한눈팔기 쉬운 때라… 도화·홍염으로 짚어 보지.</p>';
+    let h='<p class="dkOpen">'+escH(nm)+jo(nm,'이','가')+' 한눈팔기 쉬운 때라… 어디 보자.</p>';
     if(R.length){const r0=R[0];h+='<p class="ansV">💔 <b>'+r0.Y+'년('+r0.age+'세)</b>에 유혹이 제일 많아지네.'+(R[1]?' 그다음은 <b>'+R[1].Y+'년</b>일세.':'')+'</p>';
-      h+='<p>🔍 <b>기문으로 보면</b> 그해엔 '+r0.tags.map(t=>t==='도화'?'도화(桃花)가 들어 이성이 먼저 다가오고':'홍염(紅艶)이 들어 남모르는 끌림이 생기기 쉽고').join(', ')+' 바깥 모임이 늘기 쉽네.</p>';}
+      h+='<p>🔍 <b>왜냐면</b> 그해엔 '+r0.tags.map(t=>t==='도화'?'이성이 먼저 다가오고':'남모르는 끌림이 생기기 쉽고').join(', ')+' 바깥 모임이 늘기 쉽네.</p>';}
     else h+='<p class="ansV">💚 <b>앞으로 10년은 도화·홍염이 크게 들지 않네.</b> 한눈팔 기운은 약한 편일세.</p>';
     h+='<p>'+(P.natal>=2?'🌸 '+escH(nm)+jo(nm,'은','는')+' 타고나길 <b>이성 인기가 많은 사람</b>일세. 평소 다정한 말 한마디가 제일 큰 단속일세.':'🌸 '+escH(nm)+jo(nm,'은','는')+' 본디 <b>한 사람만 보는 쪽</b>에 가깝네.')+'</p>';
-    h+='<p class="pyH">'+escH(nm)+' · 앞으로 10년 🌸도화 💋홍염 드는 해</p>'+yrChips(P.years,R.slice(0,2).map(x=>x.Y));
+    h+='<p class="pyH">'+escH(nm)+' · 앞으로 10년 🌸 인기 오르는 해 💋 끌림 강한 해</p>'+yrChips(P.years,R.slice(0,2).map(x=>x.Y));
     h+='<p class="note">※ 바람을 핀다는 뜻이 아니라, 이성 유혹과 바깥 모임이 많아지는 때라는 뜻일세. 의심보다 둘만의 시간을 늘리는 게 제일 좋은 처방일세.</p>';
     h+='<p class="hanSu">💡 <b>도깨비의 한 수</b> '+(R.length?R[0].Y+'년엔 함께하는 취미나 여행을 하나 만들게. 늦은 술자리가 잦아지면 그때가 신호일세.':'지금처럼 서로 챙기면 되네. 기념일만 잊지 말게.')+'</p><button type="button" class="pfEdit">상대 바꾸기</button>';
     return softTone(wrapQA(q,h));}catch(e){console.error(e);return '<p class="note">지금은 풀 수 없네.</p>';}};
@@ -2101,7 +2107,7 @@ const TART={exam:[['seodang','chaek'],['gamchal']],jobget:[['daejang','hojak'],[
     const gy=x&&LQG[x.yong],agreeUse=gy&&m.useful.includes(gy),agreeStr=x&&((x.strong!=='weak')===m.strong);
     const Y=new Date().getFullYear();let yq=null;try{yq=LQG[yearSum(Y).q];}catch(e){}const ym=MR.grp(m.dg,yearGZ(Y)[0]);
     return {m,x,gy,agreeUse,agreeStr,yq,ym,Y,sameYear:yq&&yq===ym};}
-  window.__mrLine=()=>{try{const c=mrCmp();return c.sameYear?'🤝 <b>기문으로도, 사주로도</b> 올해는 <b>'+GMEAN[c.ym]+'</b> 쪽일세.':c.yq?'🤝 올해 기문은 <b>'+GMEAN[c.yq]+'</b>, 사주는 <b>'+GMEAN[c.ym]+'</b> 쪽을 짚네. 둘 다 챙기면 빈틈이 없네.':'';}catch(e){return '';}};
+  window.__mrLine=()=>{try{const c=mrCmp();return c.sameYear?'🤝 어느 쪽으로 봐도 올해는 <b>'+GMEAN[c.ym]+'</b> 쪽 해일세.':'';}catch(e){return '';}};
   window.__mrHtml=()=>{try{const c=mrCmp(),m=c.m,KO=MR.KO;let h='<p class="dkOpen">기문둔갑에 더해, 사주 명리로도 한 번 더 짚어 보세.</p>';
     h+='<p class="ansV">'+({봄:'🌱',여름:'☀️',가을:'🍂',겨울:'❄️'})[m.season]+' 자네는 <b>'+m.season+'에 태어난 '+m.dg+m.de+'('+m.pers+')</b>일세.</p>';
     h+='<p>🌡️ <b>조후(寒暖燥濕)</b> '+m.need[1]+'. 그래서 <b>'+m.color+'</b> 빛과 <b>'+m.dir+'</b>이 자네를 돕네.</p>';
@@ -2122,48 +2128,46 @@ const TART={exam:[['seodang','chaek'],['gamchal']],jobget:[['daejang','hojak'],[
     const ps=[1,2,3,4,6,7,8,9].map(p=>[p,pScore(rs,p,'move')+(lq.includes(rs.lqH[p])?0.5:0)]).sort((a,b)=>b[1]-a[1]);const gd=ps.filter(x=>x[1]>0.5).slice(0,2).map(([p])=>dirOf(p));
     const home=(()=>{try{return localStorage.getItem('hongmyeongguk.home')||'';}catch(e){return '';}})();
     const W=v=>v>=1.42?'아주 좋네':v>=0.95?'좋네':v>=0.37?'무난하네':'조금 쉬어 가는 해일세';
-    let h='<p class="dkOpen">집과 터 얘기라… 기문의 방위에 사주의 기운까지 얹어 보지.</p>';
+    let h='<p class="dkOpen">집과 터 얘기라… 어디 보자.</p>';
     h+='<p class="ansV">🏡 '+Y+'년 집·이사운은 <b>'+W(yrs[0].v)+'</b>. '+(Y+1)+'년은 <b>'+W(yrs[1].v)+'</b>.</p>';
-    h+='<p>🧭 <b>기문으로 보면</b> 올해 좋은 방위는 <b>'+(gd.length?gd.join('·'):'두루 무난')+'</b>일세.';
+    h+='<p>🧭 올해 좋은 방향은 <b>'+(gd.length?gd.join('·'):'두루 무난')+'</b>일세.';
     if(home&&gd.length&&window.__placeOf){const near=Object.keys({서울:1,인천:1,수원:1,대전:1,세종:1,청주:1,천안:1,전주:1,광주:1,대구:1,부산:1,울산:1,창원:1,포항:1,강릉:1,춘천:1,원주:1,제주:1}).filter(c=>c!==home&&gd.includes((window.__placeOf(home+'에서 '+c+' 이사')||{}).dir)).slice(0,3);
       h+=' '+home+' 기준으로는 '+(near.length?'<b>'+near.join('·')+'</b> 쪽일세.':'가까운 동네 안에서 그 방향을 고르게.');}
     else if(!home)h+=' (도깨비 대화 아래 <b>지금 사는 곳</b>을 골라 두면 도시까지 짚어 주지.)';
-    h+='</p><p>🏠 <b>자네와 맞는 터</b>는 '+PAL8[sePal(r)].h+'일세. (世가 '+PAL8[sePal(r)].g+'宮에 앉았네)';
-    h+='</p><p>🌡️ <b>사주로 보면</b> '+m.dir+'과 '+m.color+' 빛이 자네 기운을 돕네. 집 안 '+m.dir.replace(/\(.*\)/,'')+' 자리에 '+m.color.split('·')[0]+' 소품을 두게.</p>';
-    const ch=m.hc.find(z=>z.k==='충');if(ch)h+='<p>🔄 나의 자리(일지)에 충이 드는 <b>'+ch.Y+'년</b>에 이사수가 크게 드네.</p>';
+    h+='</p><p>🏠 <b>자네와 맞는 터</b>는 '+PAL8[sePal(r)].h+'일세.';
+    h+='</p><p>🎨 '+m.dir+'과 '+m.color+' 빛이 자네 기운을 돕네. 집 안 '+m.dir.replace(/\(.*\)/,'')+' 자리에 '+m.color.split('·')[0]+' 소품을 두게.</p>';
+    const ch=m.hc.find(z=>z.k==='충');if(ch)h+='<p>🔄 <b>'+ch.Y+'년</b>엔 이사할 일이 생기기 쉽네.</p>';
     h+='<p class="hanSu">💡 <b>도깨비의 한 수</b> 이사 날은 손 없는 날보다 <b>자네에게 좋은 날</b>이 먼저일세. 도깨비한테 "이사 언제 가면 좋아?" 하고 물어보게.</p>';
     return softTone(wrapQA('우리 집·터 운은?',h));}catch(e){console.error(e);return '<p class="note">지금은 풀 수 없네.</p>';}};
   window.__familyHtml=()=>{try{const r=base,m=MR.calc(r),F=r.input.sex==='F',c=m.cnt,Y=new Date().getFullYear();
     const R=[['인성','👵 어머니·윗사람'],['재성',F?'👴 아버지':'👴 아버지·💑 아내'],['관성',F?'💑 남편':'👶 자식'],['식상',F?'👶 자식':'🧑‍💼 아랫사람'],['비겁','👫 형제·친구']];
     const lv=n=>n>=3?'인연이 아주 깊네. 서로 힘이 되지만 그만큼 마음도 많이 쓰네.':n===2?'정이 두텁고 서로 기대는 사이일세.':n===1?'적당한 거리에서 오래 가는 사이일세.':'각자의 길을 존중하는 사이일세. 먼저 연락하면 정이 붙네.';
-    let h='<p class="dkOpen">가족 얘기라… 사주의 십성으로 집안 자리를 짚어 보지.</p>';
+    let h='<p class="dkOpen">가족 얘기라… 타고난 가족 인연을 짚어 보지.</p>';
     const top=R.slice().sort((a,b)=>c[b[0]]-c[a[0]])[0];h+='<p class="ansV">👨‍👩‍👧 자네 집안에서 제일 끈끈한 인연은 <b>'+top[1].replace(/^\S+ /,'')+'</b>일세.</p>';
-    h+='<div class="famL">'+R.map(([g,lab])=>'<p><b>'+lab+'</b> <small>('+g+' '+c[g]+')</small><br>'+lv(c[g])+'</p>').join('')+'</div>';
+    h+='<div class="famL">'+R.map(([g,lab])=>'<p><b>'+lab+'</b><br>'+lv(c[g])+'</p>').join('')+'</div>';
     let cp=null,ck=null;try{cp=scoreOf('couple',Y);ck=scoreOf('child',Y);}catch(e){}
-    if(cp!=null)h+='<p>🔍 <b>기문으로 보면</b> 올해 '+(cp>=0.95?'부부 사이가 따뜻하고':'부부 사이는 말 한마디를 아끼면 편하고')+', '+(ck>=0.95?'자식 일엔 반가운 소식이 있네.':'자식 일은 지켜봐 주는 게 약일세.')+'</p>';
+    if(cp!=null)h+='<p>🔍 올해는 '+(cp>=0.95?'부부 사이가 따뜻하고':'부부 사이는 말 한마디를 아끼면 편하고')+', '+(ck>=0.95?'자식 일엔 반가운 소식이 있네.':'자식 일은 지켜봐 주는 게 약일세.')+'</p>';
     h+='<p class="hanSu">💡 <b>도깨비의 한 수</b> 첫 화면의 <b>우리 집 도깨비 서열</b>에 가족 생일을 넣어 보게. 올해 집안 돈줄·복덩이를 뽑아 주지.</p>';
     return softTone(wrapQA('가족 관계는 어때?',h));}catch(e){console.error(e);return '<p class="note">지금은 풀 수 없네.</p>';}};
   // 전체 풀이에 사주 명리를 녹이기: 질문마다 '📜 사주로 보면' 한두 줄
-  window.__mrWeave=k=>{try{const r=base,m=MR.calc(r),c=mrCmp(),F=r.input.sex==='F',S='📜 <b>사주로 보면</b> ';const L=[];
-    const SEAH={봄:'봄이라 간·눈이 쉽게 피로해지니 일찍 자는 게 보약일세',여름:'한여름 기운이라 열이 위로 몰리기 쉬우니 심장·혈압과 수분을 챙기게',가을:'가을 기운이라 폐·기관지와 피부가 마르기 쉬우니 물을 자주 마시게',겨울:'한겨울 기운이라 몸이 차고 순환이 느리니 손발을 따뜻하게 하게'};
-    if(k==='sum'){L.push(S+'<b>'+m.season+'에 태어난 '+m.dg+m.de+'('+m.pers+')</b>일세. '+(m.strong?'<b>신강(身强)</b>이라 스스로 길을 내는 사람일세.':'<b>신약(身弱)</b>이라 사람과 배움의 도움으로 크게 되는 사람일세.'));
-      if(m.allY)L.push('☯️ 여덟 글자가 모두 양인 <b>양팔통</b>일세. 밀어붙이는 힘이 커서 크게 이루니, 브레이크 하나만 챙기게.');
-      if(m.allN)L.push('☯️ 여덟 글자가 모두 음인 <b>음팔통</b>일세. 겉은 조용해도 마음먹은 건 끝까지 해내네.');
-      const ch=m.hc.find(z=>z.k==='충'),hp=m.hc.find(z=>z.k==='합');if(ch||hp)L.push('🔄 '+[hp&&'<b>'+hp.Y+'년</b>엔 일지에 합이 들어 인연·계약이',ch&&'<b>'+ch.Y+'년</b>엔 충이 들어 이사·자리 변화가'].filter(Boolean).join(', ')+' 찾아오네.');}
-    if(k==='char'){const gm=a=>a.map(x=>x+'('+GMEAN[x]+')').join('·');if(m.many.length)L.push(S+'<b>'+gm(m.many)+'</b>이 많아 '+m.many.map(x=>MANYW[x]).join(' '));if(m.none.length)L.push('📜 <b>'+gm(m.none)+'</b>이 없으니 '+m.none.map(x=>NONEW[x]).join(' '));
-      if(!m.many.length&&!m.none.length)L.push(S+'십성이 고루 갖춰져 어느 자리에 가도 제 몫을 하는 사람일세.');}
-    if(k==='money'){const n=m.cnt.재성;L.push(S+(n>=3?'돈 글자(재성)가 많아 돈 냄새를 잘 맡네. 다만 들어온 만큼 나가기 쉬우니 묶어 두는 통장을 만들게.':n===0?'돈 글자(재성)가 드러나지 않아 돈은 직접 쫓기보다 <b>사람과 재주</b>를 통해 들어오네. 기술·자격이 곧 돈일세.':'돈 글자(재성)가 알맞게 있어 꾸준히 모으는 재물일세.')+(m.strong?' 신강이라 큰돈을 감당할 그릇도 되네.':' 신약이라 혼자 크게 걸기보다 나눠서 굴리게.'));}
-    if(k==='love'){const sp=F?'관성':'재성',n=m.cnt[sp];L.push(S+(F?'남편 자리(관성)':'아내 자리(재성)')+(n>=3?'가 많아 이성 인연이 많으니, 한 사람에게 마음을 모으는 게 복일세.':n===0?'가 드러나지 않아 늦게 만나도 오래 가는 인연일세. 서두르지 않는 게 좋네.':'가 알맞아 한 사람과 깊이 가는 인연일세.')+' 자식 자리('+(F?'식상':'관성')+')는 '+(m.cnt[F?'식상':'관성']>=2?'두터워 자식 덕이 있네.':'알맞아 자식과 친구처럼 지내네.'));}
-    if(k==='health')L.push(S+SEAH[m.season]+'.');
-    if(k==='lucky'){L.push(S+'<b>조후(寒暖燥濕)</b>로 '+m.need[1]+'. 그래서 <b>'+m.color+'</b> 빛과 <b>'+m.dir+'</b>이 자네를 돕네.');
-      if(c.gy)L.push('🤝 <b>두 술법 견주기</b> '+(c.agreeUse?'기문의 용신과 사주 풀이가 <b>같은 말</b>을 하네. <b>'+GMEAN[c.gy]+'</b> 기운을 잡으면 운이 확 트이네.':'기문은 <b>'+GMEAN[c.gy]+'</b>, 사주는 <b>'+m.useful.map(x=>GMEAN[x]).join('·')+'</b> 기운을 짚네. 둘 다 챙기면 빈틈이 없네.'));}
-    {const sp=sePal(r),SPx=PAL8[sp],kp=palOfLQ(r,'鬼'),KP=PAL8[kp];
-      if(k==='char')L.unshift('🔍 <b>기문으로 보면</b> 나를 뜻하는 世가 <b>'+SPx.g+'宮</b>에 앉아, '+SPx.s+' 사람일세.');
-      if(k==='health'&&KP)L.unshift('🔍 <b>기문으로 보면</b> 몸의 짐을 뜻하는 鬼가 <b>'+KP.g+'宮</b>에 앉아, <b>'+KP.b+'</b>을 먼저 챙기게.');}
-    return L.map(t=>'<span class="pk">'+t+'</span>');}catch(e){return [];}};
+  window.__mrWeave=k=>{try{const r=base,m=MR.calc(r),F=r.input.sex==='F';const L=[];
+    const PERS={甲:'곧게 뻗는 큰 나무',乙:'어디서든 살아남는 풀꽃',丙:'환하게 비추는 한낮의 해',丁:'어둠을 밝히는 촛불',戊:'든든한 큰 산',己:'곡식을 키우는 논밭',庚:'단단한 바위',辛:'빛나는 보석',壬:'넓은 바다',癸:'촉촉한 단비'};
+    const SEAH={봄:'봄 기운을 타고나 눈이 쉽게 피로해지니 일찍 자는 게 보약일세',여름:'더운 기운을 타고나 열이 위로 몰리기 쉬우니 혈압과 물 마시기를 챙기게',가을:'건조한 기운을 타고나 목·피부가 마르기 쉬우니 물을 자주 마시게',겨울:'찬 기운을 타고나 손발이 차고 몸이 굳기 쉬우니 늘 따뜻하게 하게'};
+    const NEEDP={火:'따뜻하게 데워 주는 것',水:'열을 식혀 주는 것'};
+    if(k==='sum'){L.push('🌱 자네는 '+m.season+'에 태어난 <b>'+PERS[m.dg]+'</b> 같은 사람일세. '+(m.strong?'혼자서도 길을 내는 힘이 센 사람이라, 일을 벌일수록 커지네.':'사람과 배움의 도움을 받을 때 크게 되는 사람이라, 좋은 사람을 곁에 두게.'));
+      if(m.allY)L.push('🔥 타고난 기운이 밀어붙이는 쪽으로 쏠려 있어 크게 이루는 사람일세. 브레이크 하나만 챙기게.');
+      if(m.allN)L.push('🌙 겉은 조용해도 마음먹은 건 끝까지 해내는 뚝심이 있는 사람일세.');
+      const ch=m.hc.find(z=>z.k==='충'),hp=m.hc.find(z=>z.k==='합');if(ch||hp)L.push('📅 '+[hp&&'<b>'+hp.Y+'년</b>엔 좋은 인연·계약이 맺어지기 쉽고',ch&&'<b>'+ch.Y+'년</b>엔 이사나 자리 변화가 찾아오기 쉽네'].filter(Boolean).join(', ')+(ch?'.':'네.'));}
+    if(k==='char'){const SPx=PAL8[sePal(r)];L.push('🙂 '+SPx.s.replace(/는$/,'는')+' 사람일세.');
+      if(m.many.length)L.push('📈 타고나기를 '+m.many.map(x=>MANYW[x]).join(' '));if(m.none.length)L.push('📉 '+m.none.map(x=>NONEW[x]).join(' '));}
+    if(k==='money'){const n=m.cnt.재성;L.push('💰 '+(n>=3?'돈 냄새를 잘 맡는 사람일세. 다만 들어온 만큼 나가기 쉬우니 손대지 않는 통장을 하나 만들게.':n===0?'돈을 직접 쫓기보다 <b>사람과 재주</b>를 통해 돈이 들어오는 사람일세. 기술·자격이 곧 돈일세.':'꾸준히 모아 가는 재물 복일세.')+(m.strong?' 큰돈도 감당할 그릇이 되네.':' 한 번에 크게 걸기보다 나눠서 굴리게.'));}
+    if(k==='love'){const sp=F?'관성':'재성',n=m.cnt[sp];L.push('💕 '+(n>=3?'이성 인연이 많은 편이라, 한 사람에게 마음을 모으는 게 복일세.':n===0?'늦게 만나도 오래 가는 인연일세. 서두르지 않는 게 좋네.':'한 사람과 깊이 가는 인연일세.')+' 자식과는 '+(m.cnt[F?'식상':'관성']>=2?'정이 두터워 자식 덕을 보네.':'친구처럼 편하게 지내는 사이일세.'));}
+    if(k==='health'){const kp=palOfLQ(r,'鬼'),KP=PAL8[kp];if(KP)L.push('🩺 몸에서 약한 곳은 <b>'+KP.b+'</b>이니 먼저 챙기게.');L.push('🌡️ '+SEAH[m.season]+'.');}
+    if(k==='lucky')L.push('🍀 자네한테는 '+NEEDP[m.need[0]]+'이 복이 되네. <b>'+m.color+'</b> 색과 <b>'+m.dir+'</b>이 자네를 돕네.');
+    return L;}catch(e){return [];}};
   window.__jobLines=()=>{try{const r=base,J=JOBS.pick(r),age=ageNow(r),[g1,g2]=J.top;
     const SPj=PAL8[sePal(r)];
-    const L=['<span class="pk">🔍 <b>기문으로 보면</b> 世가 앉은 <b>'+SPj.g+'宮</b>은 '+SPj.j+' 자리일세.</span>','💼 <b>사주 십성으로 짚으면</b> '+J.G[g1].t+'일세. <b>'+J.G[g1].j.slice(0,5).join(', ')+'</b> 같은 일이 몸에 맞네.',
+    const L=['🔍 타고난 자리로 보면 <b>'+SPj.j+'</b>이 잘 맞네.','💼 <b>딱 맞는 일</b>은 '+J.G[g1].t+'일세. <b>'+J.G[g1].j.slice(0,5).join(', ')+'</b> 같은 일이 몸에 맞네.',
       '🧩 <b>그다음 어울리는 일</b> · '+J.G[g2].t+' — '+J.G[g2].j.slice(0,4).join(', ')+'.'];
     if(age>=55)L.push('🌿 지금 나이엔 '+J.G[g1].j.slice(0,2).join('·')+' 경험을 살린 <b>자문·강의·소일거리</b>가 제일 복되네.');
     else if(age<=25)L.push('🎓 전공·진로로는 <b>'+J.fields.slice(0,3).join('·')+'</b> 쪽을 먼저 보게.');
@@ -2216,7 +2220,7 @@ const TART={exam:[['seodang','chaek'],['gamchal']],jobget:[['daejang','hojak'],[
       const hp=yi.out.hangPal,k=hp&&rs.lqH[hp];if(!k||!PASTQ[k])continue;o.push({when:lab+'('+y+')',txt:PASTQ[k][y%2]+' 일',k,g:PAL8[hp]?PAL8[hp].g:''});}
     return o;}
   function pastHtml(){const x=pastL[pastI];if(!x)return '';
-    return '<div class="hPast"><p>🔮 '+(pastI?'그럼 이건 어떤가. ':'')+'<b>'+x.when+'</b>, '+x.txt+' 있었지?<small class="pWhy pk">그해 신수국 行年에 '+x.k+({財:'가',官:'이',鬼:'가',兄:'이',父:'가',孫:'이',世:'가'}[x.k]||'가')+' 앉았네</small></p><div class="hpB"><button type="button" data-pa="y">😮 맞아!</button><button type="button" data-pa="n">🤔 아닌데</button></div></div>';}
+    return '<div class="hPast"><p>🔮 '+(pastI?'그럼 이건 어떤가. ':'')+'<b>'+x.when+'</b>, '+x.txt+' 있었지?</p><div class="hpB"><button type="button" data-pa="y">😮 맞아!</button><button type="button" data-pa="n">🤔 아닌데</button></div></div>';}
   document.addEventListener('click',e=>{const b=e.target.closest('.hPast button[data-pa]');if(!b)return;const w=b.closest('.hPast');
     if(b.dataset.pa==='y'){w.innerHTML='<p>🔮 허허, 그럴 줄 알았네. 그 고비는 이미 넘겼으니 걱정 말게. 이제 <b>앞으로 올 복</b> 얘기를 들어 보게.</p>';}
     else if(pastI<1&&pastL[pastI+1]){pastI++;w.outerHTML=pastHtml();}
@@ -2462,7 +2466,7 @@ const TART={exam:[['seodang','chaek'],['gamchal']],jobget:[['daejang','hojak'],[
       h+='<p class="note">방위는 지금 사는 곳(또는 집·회사)을 가운데로 놓고 본 방향이에요.</p>';
     }
     h+='<h4>💡 이렇게 해 보세요</h4>'+D.tips.map(x=>'<p>· '+x+'</p>').join('');
-    h+='<p class="note">기문둔갑 원명국과 '+Y+'년 신수국의 육친·문·괘로 계산한 참고용 풀이예요. 점수, 좋은 날·달, 방위는 앱이 정한 참고용 규칙이라 전통 해단과 다를 수 있어요. 중요한 결정은 상황을 함께 살펴서 하세요.</p>';
+    h+='<p class="note">타고난 운과 '+Y+'년 운을 함께 계산한 참고용 풀이예요. 점수, 좋은 날·달, 방위는 앱이 정한 참고용 규칙이라 전통 해단과 다를 수 있어요. 중요한 결정은 상황을 함께 살펴서 하세요.</p>';
     if(histBase!==base){hist=[];histBase=base;}
     const sp=D.special==='caution'||D.special==='samjae';
     const ans=(abQ?decide(abQ,K):talk(t,D,gi,K)).replace(/(<p[^>]*>)\s*(?:\p{Extended_Pictographic}\uFE0F?\s*)+/gu,'$1'); // 문단 앞 그림 글자는 빼고 글로만
@@ -2608,44 +2612,32 @@ $('go').addEventListener('click',()=>setTimeout(()=>{if(!base||!base.input.name|
       rec.onerror=()=>fail('잘 못 알아들었네. 다시 눌러 말해 보게.');rec.onend=()=>{if(busy)done(last);};rec.start();}catch(e){fail();}});})();
 // ── 현실 장면으로 짚어 주기: 주제·좋고 나쁨·나이대(y 35 아래 / m 35~54 / s 55 이상)마다 생활 속 장면 ──
 const SCENE={
-  money:{g:{y:['월급 말고 따로 들어오는 돈이 생기거나, 미뤄 둔 적금을 채울 여유가 생기기 쉽네.','중고로 판 물건이 제값을 받거나, 작은 부업이 쏠쏠하게 굴러가기 쉽네.'],
-           m:['묵혀 둔 돈이 제자리를 찾거나, 빌려준 돈이 늦게라도 돌아오기 쉽네.','보험·대출을 정리하다 새는 돈을 막고, 통장에 남는 게 눈에 보이기 쉽네.'],
-           s:['자식 손 안 벌리고 쓸 만큼 들어오고, 묵은 땅이나 물건이 값을 받기 쉽네.','연금·이자 같은 꼬박꼬박 들어오는 돈이 든든하게 받쳐 주기 쉽네.']},
-         b:{y:['카드값이 생각보다 많이 나와 다음 달을 당겨 쓰기 쉽네.','친구 따라 투자했다가 마음만 졸이는 일이 생기기 쉽네.'],
-           m:['아이 학원비·경조사비·차 수리비가 한꺼번에 몰려 통장이 금방 비기 쉽네.','가까운 사람이 급하다며 돈 얘기를 꺼내 거절하기 어려운 일이 생기기 쉽네.'],
-           s:['병원비나 집 고칠 돈처럼 예상 못 한 지출이 생기기 쉽네.','자식이나 형제가 도와 달라는 말에 모아 둔 돈이 흔들리기 쉽네.']}},
-  biz:{g:{y:['입소문으로 새 손님이 붙고, 단골이 친구를 데려오기 쉽네.','작게 시작한 일이 생각보다 반응이 좋아 판을 키울 궁리를 하게 되네.'],
-          m:['단골이 늘고 거래처에서 먼저 연락이 오기 쉽네.','묵혀 둔 메뉴나 상품 하나가 뜻밖에 잘 팔리기 쉽네.'],
-          s:['오래 거래한 사람들이 다시 찾아와 일감을 주기 쉽네.','자식이나 가까운 사람이 일을 거들어 한결 수월해지기 쉽네.']},
-       b:{y:['손님은 오는데 남는 게 적어 재료비·월세에 쫓기기 쉽네.','동업자와 돈 나누는 문제로 말이 엇갈리기 쉽네.'],
-          m:['외상값이 안 들어오고 월세·인건비는 꼬박꼬박 나가 속이 타기 쉽네.','가게 근처에 비슷한 곳이 생겨 손님이 갈리기 쉽네.'],
-          s:['몸이 예전 같지 않아 가게를 비우는 날이 늘기 쉽네.','정리할까 버틸까 마음이 오락가락하기 쉽네.']}},
-  home:{g:{y:['마음에 드는 집이 나와 생각보다 좋은 조건으로 계약하기 쉽네.','회사나 학교 가까운 데로 옮겨 생활이 한결 편해지기 쉽네.'],
-           m:['내놓은 집을 보러 오는 사람이 늘고, 값 흥정이 순하게 풀리기 쉽네.','아이 학교·출퇴근을 다 맞춘 자리가 눈에 띄기 쉽네.'],
-           s:['넓은 집을 정리하고 살기 편한 집으로 옮길 기회가 오기 쉽네.','묵혀 둔 땅이나 집에 사겠다는 사람이 나타나기 쉽네.']},
-        b:{y:['계약 직전에 집주인이 조건을 바꾸거나 보증금 문제로 실랑이하기 쉽네.','급하게 구한 집에서 곰팡이·소음 같은 문제가 뒤늦게 보이기 쉽네.'],
-           m:['집을 보러 오는 사람은 있는데 값을 자꾸 깎자고 하기 쉽네.','대출 이자는 나가는데 매매는 안 돼 속이 타기 쉽네.'],
-           s:['집 고칠 데가 한꺼번에 생기거나, 세입자 문제로 신경 쓰이기 쉽네.','자식 집 문제에 보태 달라는 얘기가 나오기 쉽네.']}},
-  work:{g:{y:['면접 연락이 오거나, 해 보고 싶던 일에 이름이 오르기 쉽네.','윗사람 눈에 들어 맡는 일이 커지기 쉽네.'],
-           m:['인사이동에서 원하던 자리로 가거나, 경력을 알아봐 주는 곳에서 연락이 오기 쉽네.','오래 끌던 일이 마무리돼 성과로 인정받기 쉽네.'],
-           s:['그간 쌓은 경험을 찾는 곳이 있어 일을 더 이어 갈 길이 열리기 쉽네.','후배나 자식에게 일을 넘기며 대접받기 쉽네.']},
-        b:{y:['지원서를 내도 연락이 늦거나, 붙어도 조건이 생각과 다르기 쉽네.','상사와 손발이 안 맞아 출근길이 무겁기 쉽네.'],
-           m:['조직이 바뀌면서 하던 일이 줄거나 원치 않는 부서로 가기 쉽네.','일은 많은데 공은 다른 사람이 가져가는 것 같아 서운하기 쉽네.'],
-           s:['그만두라는 말은 없어도 자리가 좁아지는 느낌이 들기 쉽네.','새로 시작한 일이 몸에 부쳐 생각보다 힘들기 쉽네.']}},
-  study:{g:{y:['모의고사·중간 점수가 오르면서 자신감이 붙기 쉽네.','맞는 선생님이나 학원을 만나 공부 길이 잡히기 쉽네.'],m:['미뤄 둔 자격증이 한 번에 붙기 쉽네.','배우던 게 일로 이어지기 쉽네.'],s:['배우고 싶던 걸 시작해 즐거움을 찾기 쉽네.','손주나 자식 공부에 좋은 소식이 들리기 쉽네.']},
-         b:{y:['열심히 해도 점수가 제자리라 지치기 쉽네.','시험 날 컨디션이 흔들리기 쉽네.'],m:['일과 공부를 같이 하느라 시간이 모자라기 쉽네.','접수 날짜나 서류를 놓치기 쉽네.'],s:['시작한 공부가 생각보다 어려워 손을 놓기 쉽네.','자식 진학 문제로 마음 졸이기 쉽네.']}},
-  love:{g:{y:['소개 자리나 모임에서 말이 잘 통하는 사람을 만나기 쉽네.','연락이 끊겼던 사람에게서 먼저 안부가 오기 쉽네.'],m:['혼자 지내던 마음에 함께할 사람이 눈에 들어오기 쉽네.','주변에서 좋은 사람을 소개해 주겠다는 말이 나오기 쉽네.'],s:['말동무가 되어 줄 좋은 인연이 닿기 쉽네.','오래 알던 사람과 정이 깊어지기 쉽네.']},
-        b:{y:['연락 답장 하나에 마음이 오르락내리락하기 쉽네.','좋다가도 사소한 말 한마디로 서운함이 쌓이기 쉽네.'],m:['만나도 마음이 쉽게 열리지 않아 혼자가 편하다 싶기 쉽네.','상대 집안이나 조건 얘기로 망설이기 쉽네.'],s:['가까워질수록 자식들 눈치가 보이기 쉽네.','정을 줬다가 섭섭한 일이 생기기 쉽네.']}},
-  couple:{g:{y:['둘이 같이 계획한 일이 맞아떨어져 사이가 더 단단해지기 쉽네.','작은 여행 하나로 서운한 게 풀리기 쉽네.'],m:['아이 일·집안일을 나눠 맡으면서 웃을 일이 늘기 쉽네.','배우자 쪽에 좋은 소식이 생겨 집안 분위기가 밝아지기 쉽네.'],s:['둘이 산책하고 밥 먹는 시간이 늘며 정이 새로 붙기 쉽네.','배우자 건강이 좋아져 한시름 놓기 쉽네.']},
-          b:{y:['돈 쓰는 습관이 달라 자꾸 부딪히기 쉽네.','양가 일정·명절 문제로 말다툼이 나기 쉽네.'],m:['피곤한 밤에 꺼낸 말이 큰 싸움으로 번지기 쉽네.','시댁·처가 일로 서운한 게 쌓이기 쉽네.'],s:['같이 있는 시간이 늘면서 잔소리가 다툼이 되기 쉽네.','배우자 건강 걱정으로 서로 날이 서기 쉽네.']}},
-  child:{g:{y:['기다리던 아이 소식이나 집안 경사가 생기기 쉽네.','아이가 새 환경에 잘 적응해 한숨 돌리기 쉽네.'],m:['아이 성적이나 진로에 좋은 소식이 들리기 쉽네.','아이가 먼저 속 얘기를 꺼내며 사이가 가까워지기 쉽네.'],s:['자식 취업·결혼 같은 반가운 소식이 오기 쉽네.','손주 덕에 웃을 일이 늘기 쉽네.']},
-         b:{y:['아이가 자주 아파 병원 다니느라 지치기 쉽네.','아이 맡길 곳 문제로 마음이 바쁘기 쉽네.'],m:['아이가 말을 아끼고 방문을 닫는 날이 늘기 쉽네.','학원비·용돈 문제로 아이와 실랑이하기 쉽네.'],s:['자식이 하는 일이 잘 안 풀려 마음이 쓰이기 쉽네.','자식이 돈이나 집 문제로 손을 내밀기 쉽네.']}},
-  health:{g:{y:['운동을 시작하면 몸이 바로 반응해 가벼워지기 쉽네.','미뤄 둔 치료를 받고 개운해지기 쉽네.'],m:['검진 결과가 생각보다 좋아 한시름 놓기 쉽네.','잠이 깊어지고 아침이 한결 가벼워지기 쉽네.'],s:['걷는 게 편해지고 입맛이 돌기 쉽네.','다니던 병원에서 좋아졌다는 말을 듣기 쉽네.']},
-          b:{y:['밤늦게까지 깨어 있다 위장·피부가 먼저 탈 나기 쉽네.','무리한 운동으로 허리·발목을 삐끗하기 쉽네.'],m:['어깨·목이 뻐근하고 피로가 쉽게 안 풀리기 쉽네.','검진에서 수치 하나가 걸려 신경 쓰이기 쉽네.'],s:['무릎·허리가 날씨 따라 쑤시기 쉽네.','혈압·혈당 수치가 오르내려 약을 챙기기 쉽네.']}},
-  people:{g:{y:['선배나 윗사람이 먼저 손을 내밀어 길을 열어 주기 쉽네.','모임에서 알게 된 사람이 뜻밖의 도움이 되기 쉽네.'],m:['오래 연락 안 하던 지인이 좋은 일거리나 정보를 들고 오기 쉽네.','동네·모임에서 믿을 만한 사람을 얻기 쉽네.'],s:['오랜 친구들과 다시 모이며 기운을 얻기 쉽네.','이웃이나 친척이 든든한 힘이 되어 주기 쉽네.']},
-          b:{y:['단톡방 말 한마디가 오해로 번지기 쉽네.','부탁을 거절 못 해 내 일이 밀리기 쉽네.'],m:['돈이나 보증 얘기가 사람 사이를 틀어지게 하기 쉽네.','뒤에서 하는 말이 귀에 들어와 속상하기 쉽네.'],s:['형제·친척 사이에 재산이나 부모님 모시는 문제로 말이 오가기 쉽네.','서운한 말을 듣고 혼자 곱씹기 쉽네.']}},
-  gen:{g:{y:['미뤄 둔 일을 하나씩 해치우면서 자신감이 붙기 쉽네.','새로 시작한 일에서 좋은 사람들을 만나기 쉽네.'],m:['집안에 반가운 소식이 하나둘 들어오기 쉽네.','오래 끌던 일이 정리되며 숨통이 트이기 쉽네.'],s:['몸과 마음이 편안해지고 집안이 두루 평안하기 쉽네.','자식들 소식이 고루 좋아 웃을 일이 늘기 쉽네.']},
-       b:{y:['하는 일마다 한 번에 안 풀리고 두 번 손이 가기 쉽네.','기운이 처져 하고 싶은 일도 미루기 쉽네.'],m:['집안일·회사일이 겹쳐 내 시간이 하나도 없기 쉽네.','작은 일에도 짜증이 올라와 가족과 부딪히기 쉽네.'],s:['밤잠을 설치고 이것저것 걱정이 많아지기 쉽네.','집안 대소사에 신경 쓸 일이 늘기 쉽네.']}}};
+  money:{g:{y:['생각지 못한 데서 쏠쏠한 돈이 들어오기 쉽네.','모아 둔 돈이 조금씩 불어나는 게 눈에 보이기 쉽네.'],
+           m:['새던 돈이 막히고 통장에 남는 게 늘기 쉽네.','묵혀 둔 일이 돈이 되어 돌아오기 쉽네.'],
+           s:['들어오는 돈이 끊기지 않고 꾸준히 이어지기 쉽네.','생각지 못한 데서 쏠쏠한 돈이 들어오기 쉽네.']},
+         b:{y:['쓸 데가 한꺼번에 몰려 다음 달 돈을 당겨 쓰기 쉽네.','남 따라 돈을 넣었다가 마음만 졸이기 쉽네.'],
+           m:['나갈 돈이 한꺼번에 몰려 통장이 금방 비기 쉽네.','가까운 사람이 돈 얘기를 꺼내 거절하기 어렵기 쉽네.'],
+           s:['예상 못 한 지출이 생겨 모아 둔 돈이 줄기 쉽네.','도와 달라는 말에 지갑이 자꾸 열리기 쉽네.']}},
+  biz:{g:{y:['입소문으로 새 손님이 붙기 쉽네.','작게 시작한 일이 생각보다 반응이 좋기 쉽네.'],m:['찾아오는 사람이 늘고 먼저 연락이 오기 쉽네.','묵혀 둔 것 하나가 뜻밖에 잘 팔리기 쉽네.'],s:['오래 알던 사람들이 다시 일감을 주기 쉽네.','주변에서 일을 거들어 한결 수월해지기 쉽네.']},
+       b:{y:['바쁘긴 한데 남는 게 적기 쉽네.','같이 하는 사람과 돈 나누는 문제로 말이 엇갈리기 쉽네.'],m:['받을 돈은 늦고 나갈 돈은 꼬박꼬박 나가기 쉽네.','비슷한 경쟁자가 생겨 손님이 갈리기 쉽네.'],s:['몸이 예전 같지 않아 일손이 달리기 쉽네.','계속할지 접을지 마음이 오락가락하기 쉽네.']}},
+  home:{g:{y:['마음에 드는 집이 나와 조건이 잘 맞기 쉽네.','오가기 편한 곳으로 옮겨 생활이 한결 편해지기 쉽네.'],m:['집 문제가 생각보다 순하게 풀리기 쉽네.','바라던 조건에 맞는 자리가 눈에 띄기 쉽네.'],s:['살기 편한 집으로 옮길 기회가 오기 쉽네.','집 일로 미뤄 둔 걱정이 덜어지기 쉽네.']},
+        b:{y:['계약 직전에 조건이 바뀌어 실랑이하기 쉽네.','급하게 정한 집에서 뒤늦게 아쉬운 게 보이기 쉽네.'],m:['보러 오는 사람은 있는데 값 얘기에서 막히기 쉽네.','집 문제가 생각보다 더디게 풀리기 쉽네.'],s:['집에 손볼 데가 한꺼번에 생기기 쉽네.','집 일로 신경 쓸 게 늘기 쉽네.']}},
+  work:{g:{y:['기다리던 연락이 오거나 맡는 일이 커지기 쉽네.','윗사람 눈에 들어 기회가 생기기 쉽네.'],m:['해 온 일을 알아봐 주는 곳이 생기기 쉽네.','오래 끌던 일이 마무리돼 인정받기 쉽네.'],s:['쌓은 경험을 찾는 사람이 생기기 쉽네.','하던 일을 넘기며 대접받기 쉽네.']},
+        b:{y:['애써도 결과가 늦게 나와 지치기 쉽네.','윗사람과 손발이 안 맞아 마음이 무겁기 쉽네.'],m:['일은 많은데 공은 남이 가져가는 것 같기 쉽네.','자리가 흔들리는 느낌에 마음이 쓰이기 쉽네.'],s:['새로 맡은 일이 생각보다 몸에 부치기 쉽네.','설 자리가 좁아지는 느낌이 들기 쉽네.']}},
+  study:{g:{y:['점수가 오르면서 자신감이 붙기 쉽네.','맞는 선생이나 방법을 만나 길이 잡히기 쉽네.'],m:['미뤄 둔 시험이 한 번에 붙기 쉽네.','배우던 게 쓸모를 찾기 쉽네.'],s:['배우고 싶던 걸 시작해 재미를 붙이기 쉽네.','공부 일로 반가운 소식이 들리기 쉽네.']},
+         b:{y:['열심히 해도 점수가 제자리라 지치기 쉽네.','시험 날 컨디션이 흔들리기 쉽네.'],m:['시간이 모자라 공부가 밀리기 쉽네.','접수 날짜나 서류를 놓치기 쉽네.'],s:['생각보다 어려워 손을 놓기 쉽네.','공부 일로 마음 졸이기 쉽네.']}},
+  love:{g:{y:['말이 잘 통하는 사람을 만나기 쉽네.','연락이 끊겼던 사람에게서 먼저 안부가 오기 쉽네.'],m:['함께할 만한 사람이 눈에 들어오기 쉽네.','좋은 사람을 소개받을 일이 생기기 쉽네.'],s:['말동무가 되어 줄 인연이 닿기 쉽네.','오래 알던 사람과 정이 깊어지기 쉽네.']},
+        b:{y:['답장 하나에 마음이 오르락내리락하기 쉽네.','사소한 말 한마디로 서운함이 쌓이기 쉽네.'],m:['만나도 마음이 쉽게 안 열리기 쉽네.','조건 얘기에 망설여지기 쉽네.'],s:['가까워질수록 주변 눈치가 보이기 쉽네.','정을 줬다가 섭섭한 일이 생기기 쉽네.']}},
+  couple:{g:{y:['둘이 함께 정한 일이 맞아떨어지기 쉽네.','작은 나들이 하나로 서운한 게 풀리기 쉽네.'],m:['함께 웃을 일이 늘기 쉽네.','짝 쪽에 좋은 소식이 생겨 집안이 밝아지기 쉽네.'],s:['둘이 보내는 시간이 늘며 정이 새로 붙기 쉽네.','서로 챙기는 마음이 커지기 쉽네.']},
+          b:{y:['돈 쓰는 습관이 달라 자꾸 부딪히기 쉽네.','집안 행사 문제로 말다툼이 나기 쉽네.'],m:['피곤한 밤에 꺼낸 말이 다툼으로 번지기 쉽네.','양가 일로 서운한 게 쌓이기 쉽네.'],s:['같이 있는 시간이 늘면서 잔소리가 늘기 쉽네.','서로 건강 걱정에 날이 서기 쉽네.']}},
+  child:{g:{y:['집안에 반가운 소식이 생기기 쉽네.','아이 일로 한숨 돌리기 쉽네.'],m:['자식 일에 좋은 소식이 들리기 쉽네.','자식이 먼저 속 얘기를 꺼내기 쉽네.'],s:['자식 쪽에 반가운 소식이 오기 쉽네.','아랫사람 덕에 웃을 일이 늘기 쉽네.']},
+         b:{y:['아이 일로 몸과 마음이 바쁘기 쉽네.','아이 맡길 곳 문제로 신경 쓰이기 쉽네.'],m:['자식이 말을 아끼는 날이 늘기 쉽네.','자식과 돈 문제로 실랑이하기 쉽네.'],s:['자식 일이 잘 안 풀려 마음이 쓰이기 쉽네.','자식이 도움을 청해 오기 쉽네.']}},
+  health:{g:{y:['운동을 시작하면 몸이 바로 가벼워지기 쉽네.','미뤄 둔 치료를 받고 개운해지기 쉽네.'],m:['몸 상태가 생각보다 좋아 한시름 놓기 쉽네.','잠이 깊어지고 아침이 가벼워지기 쉽네.'],s:['걷는 게 편해지고 입맛이 돌기 쉽네.','다니던 병원에서 좋아졌다는 말을 듣기 쉽네.']},
+          b:{y:['밤늦게 자는 버릇에 위장이 먼저 탈 나기 쉽네.','무리하다 허리·발목을 삐끗하기 쉽네.'],m:['어깨·목이 뻐근하고 피로가 안 풀리기 쉽네.','건강 수치 하나가 걸려 신경 쓰이기 쉽네.'],s:['무릎·허리가 날씨 따라 쑤시기 쉽네.','혈압·혈당이 오르내려 신경 쓰이기 쉽네.']}},
+  people:{g:{y:['윗사람이 먼저 손을 내밀어 주기 쉽네.','새로 알게 된 사람이 뜻밖의 도움이 되기 쉽네.'],m:['오래 연락 안 하던 사람이 좋은 소식을 들고 오기 쉽네.','믿을 만한 사람을 얻기 쉽네.'],s:['오랜 벗들과 다시 모이며 기운을 얻기 쉽네.','가까운 사람이 든든한 힘이 되어 주기 쉽네.']},
+          b:{y:['말 한마디가 오해로 번지기 쉽네.','부탁을 거절 못 해 내 일이 밀리기 쉽네.'],m:['돈 얘기가 사람 사이를 틀어지게 하기 쉽네.','뒷말이 귀에 들어와 속상하기 쉽네.'],s:['가까운 사이에 서운한 말이 오가기 쉽네.','서운한 말을 혼자 곱씹기 쉽네.']}},
+  gen:{g:{y:['미뤄 둔 일을 하나씩 해치우며 자신감이 붙기 쉽네.','새로 시작한 일에서 좋은 사람을 만나기 쉽네.'],m:['반가운 소식이 하나둘 들어오기 쉽네.','오래 끌던 일이 정리되며 숨통이 트이기 쉽네.'],s:['몸과 마음이 편안해지기 쉽네.','주변 소식이 고루 좋아 웃을 일이 늘기 쉽네.']},
+       b:{y:['하는 일마다 두 번 손이 가기 쉽네.','기운이 처져 하고 싶은 일도 미루기 쉽네.'],m:['이 일 저 일 겹쳐 내 시간이 없기 쉽네.','작은 일에도 짜증이 올라오기 쉽네.'],s:['밤잠을 설치고 걱정이 많아지기 쉽네.','신경 쓸 일이 늘기 쉽네.']}}};
 function sceneGroup(t){t=String(t||'');return /^(biz|partner)$/.test(t)?'biz':/^(money|invest|loan)$/.test(t)?'money':/^(estate|move)/.test(t)?'home':/^exam/.test(t)?'study':/^(jobget|jobmove|promo|career|job)/.test(t)?'work':/^(couple|marry)$/.test(t)?'couple':/^(love|reunion)$/.test(t)?'love':/^child/.test(t)?'child':/^health/.test(t)?'health':/^(people|law)$/.test(t)?'people':'gen';}
 function sceneOf(t,good,seed,stg){if(!base)return '';const age=ageNow(base),cx=lifeCtx(base.input,age);let g=sceneGroup(t);if(g==='love'&&cx.married&&!cx.single)g='couple';
-  const st=stg||(age<35?'y':age<55?'m':'s'),L=((SCENE[g]||SCENE.gen)[good?'g':'b']||{})[st]||[];const pre=good===0.5?'조금만 애쓰면 ':'';if(!L.length)return '';let h=0;for(const c of String(seed||'')+t)h=(h*31+c.charCodeAt(0))|0;return pre+L[Math.abs(h)%L.length].replace(/시댁·처가/g,base.input.sex==='F'?'시댁':'처가');}
+  const st=stg||(age<35?'y':age<55?'m':'s'),L=((SCENE[g]||SCENE.gen)[good?'g':'b']||{})[st]||[];const pre=good===0.5?'조금만 애쓰면 ':'';if(!L.length)return '';let h=0;for(const c of String(seed||'')+t)h=(h*31+c.charCodeAt(0))|0;return pre+L[Math.abs(h)%L.length];}
