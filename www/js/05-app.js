@@ -34,6 +34,19 @@ function profSet(p){p=p||{};['mar','kid'].forEach(id=>{const el=$(id);if(el)[...
 ['mar','kid'].forEach(id=>{const el=document.getElementById(id);if(el)el.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const on=b.classList.contains('on');[...el.children].forEach(x=>x.classList.remove('on'));if(!on)b.classList.add('on');});});
 // 처지: 기혼으로 볼지(입력 없으면 40세부터), 자녀 나이대(50세부터 손주), 일 대신 활동(은퇴·주부·65세부터)
 function lifeCtx(I,age){I=I||{};return {married:I.mar==='M'||(!I.mar&&age>=40),single:I.mar==='S'||I.mar==='D',senior:age>=50,noKid:I.kid==='N',rest:I.job==='ret'||I.job==='home'||(!I.job&&age>=65)};}
+// ── 팔괘 인사(八卦 人事): 궁마다 괘의 성정·신체·인물·터 (「기문둔갑 구궁의 UI디자인 활용방안」 표 2-8의 팔괘 의미를 바탕으로 새로 쓴 문장) ──
+const PAL8={
+  1:{g:'坎',n:'감',s:'물처럼 아래로 스며들어 속을 잘 드러내지 않는',p:['겉은 조용한데 속으로는 생각이 끝이 없지?','남들 모르게 혼자 속을 끓이는 날이 많지?'],b:'신장·귀·피(혈액순환)',j:'물·술·밤과 이어진 일(물류·수산·음료·주점·상담)',h:'물가나 물이 가까운 집, 찻집·술집이 가까운 동네'},
+  2:{g:'坤',n:'곤',s:'땅처럼 묵묵히 품어 주는',p:['남 챙기느라 정작 제 몫은 뒤로 미루지?','싫은 소리 못 하고 다 받아 주다가 속병 나지?'],b:'위장·비장·살',j:'사람을 돌보고 땅·물건을 다루는 일(돌봄·농식품·부동산·창고·유통)',h:'평지의 시골집이나 넓은 마당이 있는 집'},
+  3:{g:'震',n:'진',s:'우레처럼 먼저 움직이는',p:['일단 저지르고 보는 편이지? 기다리는 게 제일 힘들지?','목소리가 커서 오해도 받지만 뒤끝은 없지?'],b:'발·간·목소리',j:'앞장서고 단속하는 일(관리·감독·세무·운동·음악)',h:'나무가 무성한 곳, 동쪽이 트인 집'},
+  4:{g:'巽',n:'손',s:'바람처럼 어디든 스며드는',p:['사람 사이를 잘 오가지만 정작 결정은 오래 끌지?','이것저것 손대는 건 많은데 마무리가 아쉽지?'],b:'넓적다리·팔·숨(호흡기)',j:'사람 사이를 잇고 가르치는 일(교육·무역·중개·종교·예술)',h:'과수원·숲이 가까운 조용한 집'},
+  5:{g:'中',n:'중',s:'한가운데서 판을 잡는',p:['어딜 가든 결국 중심 노릇을 떠맡지?','이쪽저쪽 다 챙기느라 내 실속은 못 차리지?'],b:'위장·비장',j:'가운데서 살림을 맡는 일(총괄·관리·경영 지원)',h:'시내 한가운데, 오가기 편한 집'},
+  6:{g:'乾',n:'건',s:'하늘처럼 굳세게 이끄는',p:['남한테 굽히는 건 죽기보다 싫지?','책임은 다 지면서 힘들다는 말은 안 하지?'],b:'머리·폐·뼈',j:'이끌고 판단하는 일(공직·법·관리직·금융)',h:'높은 곳, 전망 좋은 고층'},
+  7:{g:'兌',n:'태',s:'연못처럼 사람을 끄는',p:['말 한마디로 분위기를 바꾸지? 대신 입으로 손해도 보지?','웃고 있어도 서운한 건 오래 기억하지?'],b:'입·이·폐(가래)',j:'말로 하는 일(영업·강의·노래·변호·상담)',h:'연못·물가 가까운 서쪽 집'},
+  8:{g:'艮',n:'간',s:'산처럼 한자리를 지키는',p:['한 번 정하면 누가 뭐래도 안 움직이지?','속정은 깊은데 표현이 서툴러 오해받지?'],b:'손·손가락·코·허리',j:'한자리를 지키고 쌓는 일(부동산·건축·교관·기술·관리)',h:'산이 가까운 집, 현관이 반듯한 집'},
+  9:{g:'離',n:'이',s:'불처럼 환하게 드러나는',p:['남 눈에 띄는 건 좋은데 쉽게 달아오르고 쉽게 식지?','보기 좋은 걸 좋아해서 겉모습에 공을 많이 들이지?'],b:'눈·심장·혈압',j:'드러내고 꾸미는 일(글·디자인·방송·미용·문화)',h:'볕이 잘 드는 남향, 문화 시설이 가까운 곳'}};
+function palOfLQ(r,k){const f=o=>Object.keys(o||{}).filter(p=>o[p]===k).map(Number);return f(r.lqE)[0]||f(r.lqH)[0]||0;}
+function sePal(r){return palOfLQ(r,'世')||5;}
 // ── 사주 명리 보조(논문 분석 반영): 일간·계절(조후)·신강약·많은/없는 십성·양팔통/음팔통·일지 합충 해 ──
 const MR=(()=>{const GAN='甲乙丙丁戊己庚辛壬癸',ZHI='子丑寅卯辰巳午未申酉戌亥',GEL='木木火火土土金金水水',ZMAIN='癸己甲乙戊丙丁己庚辛戊壬';
   const ZEL={子:'水',丑:'土',寅:'木',卯:'木',辰:'土',巳:'火',午:'火',未:'土',申:'金',酉:'金',戌:'土',亥:'水'};
@@ -531,7 +544,7 @@ function renderYear(r){
     h+='<h4>한 해 총운</h4><p>'+tx.join(' ')+'</p>'+(mo.length?'<p><b>'+mo.map(t=>t.replace(/ 달은 /,' 달: ').replace(/이에요\.$/,'')).join(' · ')+'</b></p>':'');}
   const FT={재물:'money',직장:'promo',문서:'estate',건강:'health',이성:'love',배우자:'couple',부부:'couple',자녀:'child',사람:'people'};
   h+='<h4>분야별</h4>'+(proY||!o.fieldE?o.field:o.fieldE).map(t=>{const i=t.indexOf(' · '),lab=t.slice(0,i),tk=FT[lab];let sc='';
-    if(tk&&window.__scoreOf){const v=window.__scoreOf(tk,yearSel);if(v!=null)sc=sceneOf(tk,v>=0.37,yearSel+lab);}
+    if(tk&&window.__scoreOf){const v=window.__scoreOf(tk,yearSel);if(v!=null)sc=sceneOf(tk,v>=0.95?1:v>=0.37?0.5:0,yearSel+lab);}
     return '<p><b>'+lab+'</b> · '+t.slice(i+3)+(sc?'<br><span class="scene2">🎬 '+sc+'</span>':'')+'</p>';}).join('');
   h+='<h4>'+(proY?'행년 (그해의 큰일)':'올해 가장 큰 일')+'</h4>'+(proY||!o.hangE?o.hang:o.hangE).map(t=>'<p>'+t+'</p>').join('');
   const gc=g=>g>=2?['g2','좋음']:g>=1?['g1','무난·좋음']:g<=-1?['gm1','주의']:['g0','보통'];
@@ -1884,13 +1897,13 @@ const TART={exam:[['seodang','chaek'],['gamchal']],jobget:[['daejang','hojak'],[
     else if(emo&&t==='gen')v=gi<=1?'💛 <b>그래도 올해 자네 기운은 나쁘지 않네.</b> 지금 힘든 건 지나가는 바람일세. 조금만 숨 고르면 다시 일어설 수 있네.':'💛 <b>올해가 자네한테 좀 무거운 해라 그렇다네.</b> 자네가 못나서가 아닐세. 이럴 땐 큰일 벌이지 말고, 잘 먹고 잘 자는 게 제일일세.';
     else if(kind==='yn'||(act&&kind!=='when')){const a=act||D.n;
       const vs=hage(D.v[gi]).replace(/아래 /g,'').split(/(?<=[.!])\s+/);
-      v=gi<=1?['👍','🙆'][gi]+' <b>'+vs.slice(0,2).join(' ')+'</b>':gi===2?'🙂 <b>해 볼 만하네.</b> '+vs.slice(0,1).join(' '):'🌱 <b>할 수 있네. 다만 때를 조금만 고르게.</b> '+vs.slice(-1).join(' ');}
+      v=gi<=1?['👍','🙆'][gi]+' <b>'+vs.slice(0,2).join(' ')+'</b>':gi===2?'🙂 <b>해 볼 만하네.</b> '+vs.slice(0,1).join(' '):'🌱 <b>지금은 한 박자 쉬어 가는 게 낫네.</b> 때를 고르면 길은 열리네. '+vs.slice(-1).join(' ');}
     else v=D.e+' <b>'+K.Y+'년 '+(t==='gen'?'자네 운':unOf(D))+jo(t==='gen'?'운':unOf(D),'은','는')+' '+['아주 좋네','좋네','무난하네','한 박자 쉬어 갈 때일세'][gi]+'.</b> '+hage(D.v[gi].replace(/아래 /g,'')).split(/(?<=[.!])\s+/).slice(0,1).join(' ');
 
     const SUBJ=(lastQ||'').match(/(아들|딸|남편|아내|와이프|신랑|엄마|어머니|아버지|아빠|자식|애들|아이|손주|동생|언니|오빠|형|누나|부모님|시어머니|며느리|사위)/);
     const opn=multiI?['그리고 두 번째 물음 말일세.','세 번째 물음도 보세.'][multiI-1]||'다음 물음일세.':SUBJ?pv([SUBJ[1]+' 일이라… 어디 보자.',SUBJ[1]+' 걱정이구먼. 내 짚어 주지.']):opener(lastQ||'',kind);
     const kidQ=SUBJ&&/아들|딸|자식|애들|아이|손주/.test(SUBJ[1]),tb=(T[t]&&T[t].base)||t;
-    const negQ=/새요|샌다|새는|막혀|안 ?돼|안 ?되|힘들|손해|싸워|싸우|아파|떨어|못 ?해|걱정/.test(lastQ||''),okS=gi<=2&&!negQ;
+    const negQ=/새요|샌다|새는|막혀|안 ?돼|안 ?되|힘들|손해|싸워|싸우|아파|떨어|못 ?해|걱정/.test(lastQ||''),okS=negQ?0:gi<=1?1:gi===2?0.5:0;
     const scn=(!sp&&!(emo&&t==='gen'))?(kidQ&&sceneGroup(tb)==='study'?sceneOf(tb,okS,lastQ,'y').replace(/^/,SUBJ[1]+jo(SUBJ[1],'은','는')+' '):kidQ?sceneOf('child',okS,lastQ):sceneOf(tb,okS,lastQ)):'';
     const jf=window.__jobFit?window.__jobFit(lastQ||''):'',jl=!jf&&/^(career|jobget|jobmove)$/.test(((T[t]&&T[t].base)||t))&&window.__jobLines?window.__jobLines().slice(0,2):[];
     let h='<p class="dkOpen">'+opn+'</p>'+flowP+'<p class="ansV">'+v+'</p>'+(jf?'<p class="jobL">'+jf+'</p>':'')+jl.map(x=>'<p class="jobL">'+x+'</p>').join('')+(scn?'<p class="scene">🎬 <b>이런 일 생기기 쉽네</b> '+scn+'</p>':'');
@@ -1990,7 +2003,7 @@ const TART={exam:[['seodang','chaek'],['gamchal']],jobget:[['daejang','hojak'],[
     const q=(yi.out.hangPal&&rs.lqH[yi.out.hangPal])||'世',A=ARCH[q]||ARCH.世;
     const gi=grade(chartScore(r,'gen').s*0.35+chartScore(rs,'gen').s*0.65),good=gi<=1;
     let strong='strong';try{strong=Haeseok.interpret(r,r.input.sex,ageNow(r)).strong;}catch(e){}
-    const punch=PUNCH[EL5[r.pillars[2][0]]][strong==='weak'?1:0],nick=good?A[1]:A[2];
+    const SP=PAL8[sePal(r)],punch='자네, '+SP.p[strong==='weak'?1:0],nick=good?A[1]:A[2];
     const M=monthsFor(A[4]),chung=(yi.out.hang||[]).join('').includes('충');
     const L=['올해 큰일은 <b>'+A[3]+'</b> 쪽에서 터지네.'+(chung?' 다만 자네와 부딪히는 자리라, 한바탕 힘겨루기는 각오하게.':good?' 운이 받쳐 주니 판을 크게 벌여도 되네.':' 운이 버거우니 판을 줄이고 실속부터 챙기게.'),
       M.best?'제일 센 때는 <b>'+M.best.lab+'</b>일세. '+dday(M.best):'올해는 한 방보다 꾸준함이 이기는 해일세.',
@@ -2005,10 +2018,10 @@ const TART={exam:[['seodang','chaek'],['gamchal']],jobget:[['daejang','hojak'],[
       localStorage.setItem('hongmyeongguk.yeogo',JSON.stringify({d:I.y+'-'+P(I.m)+'-'+P(I.d),list:pr.filter(x=>x.c.a).map(x=>({s:iso(x.c.a),e:iso(x.c.b),txt:x.n+' — '+x.c.lab+', '+x.w}))}));}catch(e){}
     heroData={k:A[0],nick,punch,line:L[0].replace(/<[^>]+>/g,''),name:r.input.name||'',Y};
     try{pastL=pastList();}catch(e){pastL=[];}pastI=0;
-    return '<p class="hPunch">'+punch.replace(/^자네,/,jane()+',')+'</p>'+pastHtml()+'<p class="hTitle"><small>'+Y+'년, '+jane()+'는</small><b>'+nick+'</b><small>일세.</small></p>'+
+    return (r.input&&r.input.noTime?'<p class="noTimeW">⏰ 태어난 시를 몰라 낮 12시로 봤네. 기문은 <b>시마다 판이 바뀌니</b>, 시를 알면 훨씬 정확해지네.</p>':'')+'<p class="hPunch">'+punch.replace(/^자네,/,jane()+',')+'</p><p class="hWhy pk">('+SP.g+'宮 · '+SP.s+' 자리에 나를 뜻하는 世가 앉았네)</p>'+pastHtml()+'<p class="hTitle"><small>'+Y+'년, '+jane()+'는</small><b>'+nick+'</b><small>일세.</small></p>'+
       L.map(x=>'<p class="hLine">'+x+'</p>').join('')+(window.__mrLine&&window.__mrLine()?'<p class="hLine mrL">'+window.__mrLine()+'</p>':'')+artFig(A[0])+
       (pr.length?'<div class="yeogo"><p class="ygH">도깨비 방망이<small>뚝딱, 복이 나오는 달</small></p>'+pr.map(x=>'<p class="ygI"><b>'+x.n+'</b><span>'+x.c.lab+'<br><small>'+x.w+'</small></span>'+dday(x.c)+'</p>').join('')+'<p class="ygN">그 달이 오면 아침 알림으로 일러 주겠네. (알림을 켜 두게)</p></div>':'')+
-      (r.input&&r.input.noTime?'<p class="ygN">⏰ 태어난 시를 몰라서 낮 12시로 봤네. 시를 알게 되면 다시 넣어 보게.</p>':'')+
+
       bokHtml()+'<div class="bjWrap"><button type="button" class="bjGo">🧧 나만의 도깨비 부적 받기</button><div class="bjOut"></div></div>'+famHtml()+
       '<div class="hBtns"><button type="button" class="heroShare">이 풀이 카톡으로 보내기</button><button type="button" class="withGo">💌 친구한테 궁합 링크 보내기</button></div>';}
   // 올해 운세 맨 위: 그해만의 성격 카드(띠·한 해 별명·별점·다른 해와 달라지는 점) — 올해와 내년이 확실히 달라 보이게
@@ -2115,6 +2128,7 @@ const TART={exam:[['seodang','chaek'],['gamchal']],jobget:[['daejang','hojak'],[
     if(home&&gd.length&&window.__placeOf){const near=Object.keys({서울:1,인천:1,수원:1,대전:1,세종:1,청주:1,천안:1,전주:1,광주:1,대구:1,부산:1,울산:1,창원:1,포항:1,강릉:1,춘천:1,원주:1,제주:1}).filter(c=>c!==home&&gd.includes((window.__placeOf(home+'에서 '+c+' 이사')||{}).dir)).slice(0,3);
       h+=' '+home+' 기준으로는 '+(near.length?'<b>'+near.join('·')+'</b> 쪽일세.':'가까운 동네 안에서 그 방향을 고르게.');}
     else if(!home)h+=' (도깨비 대화 아래 <b>지금 사는 곳</b>을 골라 두면 도시까지 짚어 주지.)';
+    h+='</p><p>🏠 <b>자네와 맞는 터</b>는 '+PAL8[sePal(r)].h+'일세. (世가 '+PAL8[sePal(r)].g+'宮에 앉았네)';
     h+='</p><p>🌡️ <b>사주로 보면</b> '+m.dir+'과 '+m.color+' 빛이 자네 기운을 돕네. 집 안 '+m.dir.replace(/\(.*\)/,'')+' 자리에 '+m.color.split('·')[0]+' 소품을 두게.</p>';
     const ch=m.hc.find(z=>z.k==='충');if(ch)h+='<p>🔄 나의 자리(일지)에 충이 드는 <b>'+ch.Y+'년</b>에 이사수가 크게 드네.</p>';
     h+='<p class="hanSu">💡 <b>도깨비의 한 수</b> 이사 날은 손 없는 날보다 <b>자네에게 좋은 날</b>이 먼저일세. 도깨비한테 "이사 언제 가면 좋아?" 하고 물어보게.</p>';
@@ -2143,9 +2157,13 @@ const TART={exam:[['seodang','chaek'],['gamchal']],jobget:[['daejang','hojak'],[
     if(k==='health')L.push(S+SEAH[m.season]+'.');
     if(k==='lucky'){L.push(S+'<b>조후(寒暖燥濕)</b>로 '+m.need[1]+'. 그래서 <b>'+m.color+'</b> 빛과 <b>'+m.dir+'</b>이 자네를 돕네.');
       if(c.gy)L.push('🤝 <b>두 술법 견주기</b> '+(c.agreeUse?'기문의 용신과 사주 풀이가 <b>같은 말</b>을 하네. <b>'+GMEAN[c.gy]+'</b> 기운을 잡으면 운이 확 트이네.':'기문은 <b>'+GMEAN[c.gy]+'</b>, 사주는 <b>'+m.useful.map(x=>GMEAN[x]).join('·')+'</b> 기운을 짚네. 둘 다 챙기면 빈틈이 없네.'));}
+    {const sp=sePal(r),SPx=PAL8[sp],kp=palOfLQ(r,'鬼'),KP=PAL8[kp];
+      if(k==='char')L.unshift('🔍 <b>기문으로 보면</b> 나를 뜻하는 世가 <b>'+SPx.g+'宮</b>에 앉아, '+SPx.s+' 사람일세.');
+      if(k==='health'&&KP)L.unshift('🔍 <b>기문으로 보면</b> 몸의 짐을 뜻하는 鬼가 <b>'+KP.g+'宮</b>에 앉아, <b>'+KP.b+'</b>을 먼저 챙기게.');}
     return L.map(t=>'<span class="pk">'+t+'</span>');}catch(e){return [];}};
   window.__jobLines=()=>{try{const r=base,J=JOBS.pick(r),age=ageNow(r),[g1,g2]=J.top;
-    const L=['💼 <b>사주 십성으로 짚으면</b> '+J.G[g1].t+'일세. <b>'+J.G[g1].j.slice(0,5).join(', ')+'</b> 같은 일이 몸에 맞네.',
+    const SPj=PAL8[sePal(r)];
+    const L=['<span class="pk">🔍 <b>기문으로 보면</b> 世가 앉은 <b>'+SPj.g+'宮</b>은 '+SPj.j+' 자리일세.</span>','💼 <b>사주 십성으로 짚으면</b> '+J.G[g1].t+'일세. <b>'+J.G[g1].j.slice(0,5).join(', ')+'</b> 같은 일이 몸에 맞네.',
       '🧩 <b>그다음 어울리는 일</b> · '+J.G[g2].t+' — '+J.G[g2].j.slice(0,4).join(', ')+'.'];
     if(age>=55)L.push('🌿 지금 나이엔 '+J.G[g1].j.slice(0,2).join('·')+' 경험을 살린 <b>자문·강의·소일거리</b>가 제일 복되네.');
     else if(age<=25)L.push('🎓 전공·진로로는 <b>'+J.fields.slice(0,3).join('·')+'</b> 쪽을 먼저 보게.');
@@ -2190,15 +2208,15 @@ const TART={exam:[['seodang','chaek'],['gamchal']],jobget:[['daejang','hojak'],[
   const SEASON=m=>m>=3&&m<=5?'봄':m>=6&&m<=8?'여름':m>=9&&m<=11?'가을':'겨울';
   const PAST={money:['돈 문제로 속 끓인 일','목돈이 빠져나가 속상했던 일'],promo:['일이나 자리 문제로 마음고생한 일','하던 일이 막혀 답답했던 일'],
     people:['가까운 사람 때문에 서운했던 일','믿었던 사람한테 마음 상한 일'],health:['몸이 무겁고 유난히 지쳤던 일','잔병치레로 고생한 일']};
-  function pastList(){const nl=Solar.fromDate(new Date()).getLunar(),ly=nl.getYear(),lm=Math.abs(nl.getMonth()),Y0=new Date().getFullYear(),cache={};const o=[];
-    for(const t of Object.keys(PAST)){const [lq,badq]=topicLq(t);let best=null;
-      for(let k=1;k<=12;k++){let m=lm-k,y=ly;if(m<=0){m+=12;y--;}let rsX;try{rsX=cache[y]||(cache[y]=sinsu(yearGZ(y)));}catch(e){continue;}
-        const p=MPAL[m];const lh=lq.indexOf(rsX.lqH[p]);let v=(lh===0?1.4:lh===1?0.8:0)+pScore(rsX,p,t)*0.6;if(badq.includes(rsX.lqH[p]))v-=0.8;
-        if(!best||v<best.v)best={t,v,y,m};}
-      if(best){const sm=smon(best.y,best.m);best.when=sm.y===Y0?(sm.m<=2?'올해 초':'올해 '+SEASON(sm.m)+'쯤'):(sm.m===12?'작년 겨울쯤':'작년 '+SEASON(sm.m)+'쯤');best.txt=PAST[t][(best.y+best.m)%2];o.push(best);}}
-    return o.sort((a,b)=>a.v-b.v);}
+  // 지난 일: 작년·재작년 신수국의 行年(그해 큰일 자리)에 앉은 육친으로 짚기(기문 규칙)
+  const PASTQ={財:['돈이 크게 들고 나는 일로 바빴던','목돈 쓸 일이 생겨 마음 졸인'],官:['일·자리 문제로 마음고생한','윗사람·조직 일로 속 끓인'],鬼:['몸이 무겁고 압박받던','몸이나 마음이 많이 지쳤던'],
+    兄:['돈이 새거나 가까운 사람과 부딪힌','경쟁하느라 신경이 곤두섰던'],父:['문서·집·계약 일로 분주했던','집이나 서류 문제로 발품 판'],孫:['자식이나 새 일로 신경 쓴','새로 벌인 일로 정신없던'],世:['내 문제로 혼자 끙끙 앓던','스스로를 돌아보며 갈팡질팡하던']};
+  function pastList(){const Y=new Date().getFullYear(),r=base,o=[];
+    for(const [dy,lab] of [[1,'작년'],[2,'재작년']]){const y=Y-dy;if(y-r.input.y<15)continue;let rs,yi;try{rs=sinsu(yearGZ(y));yi=Haeseok.yearly(rs,r.input.sex,y-r.input.y+1);}catch(e){continue;}
+      const hp=yi.out.hangPal,k=hp&&rs.lqH[hp];if(!k||!PASTQ[k])continue;o.push({when:lab+'('+y+')',txt:PASTQ[k][y%2]+' 일',k,g:PAL8[hp]?PAL8[hp].g:''});}
+    return o;}
   function pastHtml(){const x=pastL[pastI];if(!x)return '';
-    return '<div class="hPast"><p>🔮 '+(pastI?'그럼 이건 어떤가. ':'')+'<b>'+x.when+'</b>, '+x.txt+' 있었지?</p><div class="hpB"><button type="button" data-pa="y">😮 맞아!</button><button type="button" data-pa="n">🤔 아닌데</button></div></div>';}
+    return '<div class="hPast"><p>🔮 '+(pastI?'그럼 이건 어떤가. ':'')+'<b>'+x.when+'</b>, '+x.txt+' 있었지?<small class="pWhy pk">그해 신수국 行年에 '+x.k+({財:'가',官:'이',鬼:'가',兄:'이',父:'가',孫:'이',世:'가'}[x.k]||'가')+' 앉았네</small></p><div class="hpB"><button type="button" data-pa="y">😮 맞아!</button><button type="button" data-pa="n">🤔 아닌데</button></div></div>';}
   document.addEventListener('click',e=>{const b=e.target.closest('.hPast button[data-pa]');if(!b)return;const w=b.closest('.hPast');
     if(b.dataset.pa==='y'){w.innerHTML='<p>🔮 허허, 그럴 줄 알았네. 그 고비는 이미 넘겼으니 걱정 말게. 이제 <b>앞으로 올 복</b> 얘기를 들어 보게.</p>';}
     else if(pastI<1&&pastL[pastI+1]){pastI++;w.outerHTML=pastHtml();}
@@ -2630,4 +2648,4 @@ const SCENE={
        b:{y:['하는 일마다 한 번에 안 풀리고 두 번 손이 가기 쉽네.','기운이 처져 하고 싶은 일도 미루기 쉽네.'],m:['집안일·회사일이 겹쳐 내 시간이 하나도 없기 쉽네.','작은 일에도 짜증이 올라와 가족과 부딪히기 쉽네.'],s:['밤잠을 설치고 이것저것 걱정이 많아지기 쉽네.','집안 대소사에 신경 쓸 일이 늘기 쉽네.']}}};
 function sceneGroup(t){t=String(t||'');return /^(biz|partner)$/.test(t)?'biz':/^(money|invest|loan)$/.test(t)?'money':/^(estate|move)/.test(t)?'home':/^exam/.test(t)?'study':/^(jobget|jobmove|promo|career|job)/.test(t)?'work':/^(couple|marry)$/.test(t)?'couple':/^(love|reunion)$/.test(t)?'love':/^child/.test(t)?'child':/^health/.test(t)?'health':/^(people|law)$/.test(t)?'people':'gen';}
 function sceneOf(t,good,seed,stg){if(!base)return '';const age=ageNow(base),cx=lifeCtx(base.input,age);let g=sceneGroup(t);if(g==='love'&&cx.married&&!cx.single)g='couple';
-  const st=stg||(age<35?'y':age<55?'m':'s'),L=((SCENE[g]||SCENE.gen)[good?'g':'b']||{})[st]||[];if(!L.length)return '';let h=0;for(const c of String(seed||'')+t)h=(h*31+c.charCodeAt(0))|0;return L[Math.abs(h)%L.length].replace(/시댁·처가/g,base.input.sex==='F'?'시댁':'처가');}
+  const st=stg||(age<35?'y':age<55?'m':'s'),L=((SCENE[g]||SCENE.gen)[good?'g':'b']||{})[st]||[];const pre=good===0.5?'조금만 애쓰면 ':'';if(!L.length)return '';let h=0;for(const c of String(seed||'')+t)h=(h*31+c.charCodeAt(0))|0;return pre+L[Math.abs(h)%L.length].replace(/시댁·처가/g,base.input.sex==='F'?'시댁':'처가');}

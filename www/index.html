@@ -38,6 +38,11 @@
     <p class="thint" id="tHint"></p>
     <input id="t" type="hidden">
   </div>
+  <details class="optIn"><summary>➕ 더 정확하게 보기 <span>(선택) 결혼·자녀·하는 일</span></summary>
+    <div><label>짝은 있는가? <span>골라 주면 더 잘 맞히네</span></label><div class="seg tog" id="mar"><button type="button" data-v="S">미혼</button><button type="button" data-v="M">기혼</button><button type="button" data-v="D">이혼·사별</button></div></div>
+    <div><label>자식은?</label><div class="seg tog" id="kid"><button type="button" data-v="N">없음</button><button type="button" data-v="Y">있음</button></div></div>
+    <div><label for="job">요즘 무슨 일을 하나?</label><select id="job"><option value="">말 안 할라네</option><option value="emp">직장인</option><option value="biz">자영업·사업</option><option value="home">주부</option><option value="stu">학생</option><option value="seek">구직 중</option><option value="ret">은퇴</option></select></div>
+  </details>
   <label class="chk"><input type="checkbox" id="adj" checked> 한국 표준시·서머타임 자동 보정</label>
   <div class="row" style="margin-top:10px"><button id="now" class="sec">🕒 지금 시각</button><button id="go" style="flex:2">✨ 내 명국 보기</button></div>
   <div class="err" id="err"></div>

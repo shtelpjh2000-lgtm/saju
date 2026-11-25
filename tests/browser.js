@@ -20,6 +20,9 @@ const url = 'file://' + require('path').resolve(__dirname, '../www/index.html');
   await pg.evaluate(() => { window.__noTtak = false; document.body.classList.add('formOpen'); }); await pg.fill('#nm', '뚝딱'); await pg.click('#go'); await pg.waitForTimeout(400);
   if (!(await pg.$('#ttak'))) errs.push('방망이 뚝딱 화면 안 나옴'); else { for (let i = 0; i < 3; i++) { await pg.click('.tkBtn'); await pg.waitForTimeout(200); } await pg.waitForTimeout(1800); if (await pg.$('#ttak')) errs.push('세 번 두드려도 안 닫힘'); }
   await pg.evaluate(() => { window.__noTtak = true; });
+  // 첫 화면 첫마디는 世宮 팔괘 근거, 지난 일은 行年 근거가 붙어야 함
+  { const h = await pg.evaluate(() => document.getElementById('heroCard').innerText); if (!/宮 ·.*世가 앉았네/.test(h)) errs.push('첫마디 기문 근거 없음'); if (!/行年에/.test(h)) errs.push('지난 일 기문 근거 없음'); }
+  if (!(await pg.$('details.optIn #mar'))) errs.push('결혼·자녀·하는 일 선택 칸 없음');
   // 직업: 실제 직업 이름이 나와야 함
   { await pg.click('.qaI[data-k=job] .qaQ'); await pg.waitForTimeout(300); const t = await pg.evaluate(() => document.querySelector('.qaI[data-k=job] .qaA').innerText); if (!/공무원|교사|요리사|사업가|프리랜서/.test(t)) errs.push('직업 이름이 안 나옴'); }
   // 사주 명리로 한 번 더·집과 터·가족 관계
