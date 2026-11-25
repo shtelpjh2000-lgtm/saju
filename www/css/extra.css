@@ -251,3 +251,4 @@ body.jiOpen{overflow:hidden}body.jiOpen #homeBtn,body.jiOpen .bnav{display:none!
 .mrL{padding:10px 12px;border-radius:14px;background:#f1ecff}
 .famL p{margin:0;padding:10px 4px;border-bottom:1px dashed var(--line);font-size:16.5px!important;line-height:1.6}.famL small{color:var(--mute)}
 .calP{margin:4px 0 10px}.calBtn{display:inline-block;padding:10px 14px;border-radius:12px;background:#e8f0ff;color:#2a4fb8;font-weight:800;text-decoration:none;font-size:16px}
+.jobL{padding:10px 12px;border-radius:12px;background:#f4f0ff;margin:6px 0!important}.jobL b{color:var(--purple)}

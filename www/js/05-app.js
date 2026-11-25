@@ -58,6 +58,22 @@ const MR=(()=>{const GAN='甲乙丙丁戊己庚辛壬癸',ZHI='子丑寅卯辰�
     for(let Y=Y0;Y<Y0+10;Y++){const yz=Lunar.fromYmd(Y,6,1).getYearInGanZhi()[1];if(CHUNG[dz]===yz)hc.push({Y,k:'충'});else if(HAP[dz]===yz)hc.push({Y,k:'합'});}
     return {dg,de,dz,season,need,strong,cnt,many,none,useful,allY,allN,hc,pers:GPERS[dg],color:COLOR[need[0]],dir:DIRE[need[0]],KO,GW,grp};}
   return {calc,GW,KO,grp};})();
+// ── 어울리는 직업: 사주 십성(많은 것·나를 살리는 것)+기문 용신+일간·조후 오행으로 실제 직업 이름 고르기 ──
+const JOBS=(()=>{const G={
+  관성:{t:'조직·명예형',j:['공무원','경찰','군인','소방관','교도관','공기업 직원','대기업 관리직','법무사','감사·인사 담당']},
+  인성:{t:'배움·자격형',j:['교사','교수·강사','연구원','약사','간호사','사회복지사','상담사','작가·번역가','공인중개사']},
+  식상:{t:'재능·표현형',j:['요리사','디자이너','미용사','방송인·유튜버','프로그램 개발자','학원 강사','작곡·연주가','사진가','영업 전문가']},
+  재성:{t:'돈·장사형',j:['사업가','자영업 사장','은행원','회계사·세무사','무역업','부동산 투자','유통·판매 관리','보험 설계사','재무 담당']},
+  비겁:{t:'자립·기술형',j:['프리랜서','운동선수·체육 지도자','기술자','자동차 정비사','개인 사업','현장 소장','동업 창업','스포츠 강사','보안·경호']}};
+  const EL={木:['교육','출판','조경·원예','의류·패션','가구·목재','복지'],火:['방송·연예','IT·전기','미용·화장품','광고·홍보','요식업','조명·에너지'],土:['부동산','건설','농업·식품','중개·컨설팅','공공기관','창고·물류'],金:['금융','법률','군·경찰','기계·자동차','의료기기','보석·금속'],水:['무역','물류·운송','여행·관광','수산·음료','상담·심리','유통']};
+  const ALL=Object.entries(G).flatMap(([g,v])=>v.j.flatMap(x=>x.split('·').map(n=>[n.replace(/ .*/,''),g,x])));
+  const LQG={財:'재성',官:'관성',鬼:'관성',父:'인성',孫:'식상',兄:'비겁',世:'비겁'};
+  function pick(r){const m=MR.calc(r);let yong='';try{yong=Haeseok.interpret(r,r.input.sex,ageNow(r)).yong;}catch(e){}
+    const sc={};for(const g of Object.keys(G))sc[g]=m.cnt[g]*0.8+(m.useful.includes(g)?1.2:0)+(LQG[yong]===g?2:0)+(m.cnt[g]===0?-1:0);
+    const top=Object.keys(sc).sort((a,b)=>sc[b]-sc[a]).slice(0,2);const de={木:'木',火:'火',土:'土',金:'金',水:'水'}[m.de],ne=m.need[0];
+    return {top,G,fields:[...new Set([...EL[de].slice(0,3),...EL[ne].slice(0,3)])].slice(0,5),m,yong};}
+  function find(q){q=q||'';const hit=ALL.filter(([n])=>n.length>=2&&q.includes(n));return hit.length?hit.sort((a,b)=>b[0].length-a[0].length)[0]:null;}
+  return {pick,find,G};})();
 // 기본정보(결혼·나이)에 안 맞는 말 걸러 내기: 기혼이거나 55세 이상이면 '이성 인기·새 인연' 같은 말을 빼고 부부·집안 말로
 function fitProf(h){if(!base||!h)return h;const I=base.input||{},age=ageNow(base),cx=lifeCtx(I,age);const off=(cx.married&&!cx.single)||age>=55;if(!off)return h;
   h=h.replace(/돈이 들어오고 이성 인연도 생겨요/g,'돈이 들어와요').replace(/인정받고 이성 인연도 생겨요/g,'인정받아요').replace(/·연애(?=의 시기)/g,'').replace(/돈·이성 문제/g,'돈 문제').replace(/직장·남자 문제/g,'직장 일').replace(/재물·사업·이성/g,'재물·사업').replace(/직장·승진·명예·이성/g,'직장·승진·명예')
@@ -1876,7 +1892,8 @@ const TART={exam:[['seodang','chaek'],['gamchal']],jobget:[['daejang','hojak'],[
     const kidQ=SUBJ&&/아들|딸|자식|애들|아이|손주/.test(SUBJ[1]),tb=(T[t]&&T[t].base)||t;
     const negQ=/새요|샌다|새는|막혀|안 ?돼|안 ?되|힘들|손해|싸워|싸우|아파|떨어|못 ?해|걱정/.test(lastQ||''),okS=gi<=2&&!negQ;
     const scn=(!sp&&!(emo&&t==='gen'))?(kidQ&&sceneGroup(tb)==='study'?sceneOf(tb,okS,lastQ,'y').replace(/^/,SUBJ[1]+jo(SUBJ[1],'은','는')+' '):kidQ?sceneOf('child',okS,lastQ):sceneOf(tb,okS,lastQ)):'';
-    let h='<p class="dkOpen">'+opn+'</p>'+flowP+'<p class="ansV">'+v+'</p>'+(scn?'<p class="scene">🎬 <b>이런 일 생기기 쉽네</b> '+scn+'</p>':'');
+    const jf=window.__jobFit?window.__jobFit(lastQ||''):'',jl=!jf&&/^(career|jobget|jobmove)$/.test(((T[t]&&T[t].base)||t))&&window.__jobLines?window.__jobLines().slice(0,2):[];
+    let h='<p class="dkOpen">'+opn+'</p>'+flowP+'<p class="ansV">'+v+'</p>'+(jf?'<p class="jobL">'+jf+'</p>':'')+jl.map(x=>'<p class="jobL">'+x+'</p>').join('')+(scn?'<p class="scene">🎬 <b>이런 일 생기기 쉽네</b> '+scn+'</p>':'');
     const fig=artFig(artOf((T[t]&&T[t].base)||t,gi)||artOf(t,gi)).replace(/<figcaption[\s\S]*?<\/figcaption>/,''); // 그림은 풀이 다 읽은 뒤(당부 앞)에
     const W=whenOf(K);
     if(kind==='where'&&!sp&&K.dir){const PL=(lastQ||'').match(/(서울|경기|인천|부산|대구|대전|광주|울산|세종|강원|충청|전라|경상|제주|수도권|지방|시골|외국|해외|[가-힣]{2,4}(?:시|군|구|동))\s*(?:쪽|으로|로)/);
@@ -2112,6 +2129,16 @@ const TART={exam:[['seodang','chaek'],['gamchal']],jobget:[['daejang','hojak'],[
     if(cp!=null)h+='<p>🔍 <b>기문으로 보면</b> 올해 '+(cp>=0.95?'부부 사이가 따뜻하고':'부부 사이는 말 한마디를 아끼면 편하고')+', '+(ck>=0.95?'자식 일엔 반가운 소식이 있네.':'자식 일은 지켜봐 주는 게 약일세.')+'</p>';
     h+='<p class="hanSu">💡 <b>도깨비의 한 수</b> 첫 화면의 <b>우리 집 도깨비 서열</b>에 가족 생일을 넣어 보게. 올해 집안 돈줄·복덩이를 뽑아 주지.</p>';
     return softTone(wrapQA('가족 관계는 어때?',h));}catch(e){console.error(e);return '<p class="note">지금은 풀 수 없네.</p>';}};
+  window.__jobLines=()=>{try{const r=base,J=JOBS.pick(r),age=ageNow(r),[g1,g2]=J.top;
+    const L=['💼 <b>사주 십성으로 짚으면</b> '+J.G[g1].t+'일세. <b>'+J.G[g1].j.slice(0,5).join(', ')+'</b> 같은 일이 몸에 맞네.',
+      '🧩 <b>그다음 어울리는 일</b> · '+J.G[g2].t+' — '+J.G[g2].j.slice(0,4).join(', ')+'.'];
+    if(age>=55)L.push('🌿 지금 나이엔 '+J.G[g1].j.slice(0,2).join('·')+' 경험을 살린 <b>자문·강의·소일거리</b>가 제일 복되네.');
+    else if(age<=25)L.push('🎓 전공·진로로는 <b>'+J.fields.slice(0,3).join('·')+'</b> 쪽을 먼저 보게.');
+    return L;}catch(e){return [];}};
+  window.__jobFit=q=>{try{const h=JOBS.find(q);if(!h)return '';const J=JOBS.pick(base),[n,g,full]=h,rank=J.top.indexOf(g);
+    return rank===0?'💼 <b>'+n+'</b>'+jo(n,'이라면','라면')+' 자네한테 <b>딱 맞는 일</b>일세! 타고난 '+J.G[g].t+' 결 그대로네.':
+      rank===1?'💼 <b>'+n+'</b>도 <b>잘 어울리는 일</b>일세. '+J.G[g].t+' 기운이 뒤에서 받쳐 주네.':
+      '💼 <b>'+n+'</b>도 해낼 수 있네. 다만 자네 타고난 결은 <b>'+J.G[J.top[0]].t+'</b>('+J.G[J.top[0]].j.slice(0,3).join('·')+')에 더 가깝네. 그 장점을 섞으면 더 잘되네.';}catch(e){return '';}};
   window.__scoreOf=(t,Y)=>{try{return scoreOf(t,Y);}catch(e){return null;}};
   window.__heroHtml=()=>{try{return softTone(heroHtml());}catch(e){console.error(e);return '';}};
   // 공유용 그림(1080×1350)
