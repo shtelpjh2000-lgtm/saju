@@ -153,9 +153,9 @@ body:not(.pro) .bnav button[data-v=il]{display:none!important}
 #ttak.on{opacity:1}
 .tkIn{position:relative;text-align:center;color:#fff;padding:20px;width:100%;max-width:400px}
 .tkH{font-size:24px;margin:0 0 14px}.tkH b{color:#ffd34d}
-.tkBtn{position:relative;width:230px;height:230px;border-radius:50%;background:radial-gradient(circle,#ffe9a8,#ffb347 60%,#ff7a45);border:6px solid #fff3c4;box-shadow:0 0 40px rgba(255,200,80,.6);padding:0;margin:0 auto;display:block}
-.tkDk{width:130px;height:130px;position:absolute;left:28px;top:50px;border-radius:26px}.bangSvg{position:absolute;right:22px;top:26px;width:62px;height:150px;transform:rotate(28deg);transform-origin:50% 90%}
-.tkBtn.swing .bangSvg{animation:bang .3s ease}@keyframes bang{0%{transform:rotate(28deg)}40%{transform:rotate(-40deg)}100%{transform:rotate(28deg)}}
+.tkBtn{position:relative;width:250px;height:250px;border-radius:18px;background:#2a2320;border:3px solid #8a7a5c;box-shadow:0 0 0 6px rgba(138,122,92,.25),0 18px 40px rgba(0,0,0,.7),0 0 60px rgba(255,214,120,.18);padding:0;margin:0 auto;display:block;overflow:visible}
+.tkDk{width:100%;height:100%;position:absolute;left:0;top:0;border-radius:15px;object-fit:cover;filter:contrast(1.05)}.bangSvg{position:absolute;right:-18px;top:-62px;width:70px;height:175px;transform:rotate(30deg);transform-origin:50% 92%;filter:drop-shadow(0 8px 10px rgba(0,0,0,.6))}
+.tkBtn.swing .bangSvg{animation:bang .3s ease}@keyframes bang{0%{transform:rotate(30deg)}40%{transform:rotate(-35deg)}100%{transform:rotate(30deg)}}
 .tkDots{display:flex;gap:12px;justify-content:center;margin:18px 0 6px}.tkDots i{width:18px;height:18px;border-radius:50%;background:rgba(255,255,255,.3)}.tkDots i.on{background:#ffd34d;box-shadow:0 0 10px #ffd34d}
 .tkSay{font-size:26px;font-weight:800;color:#ffd34d;margin:6px 0 16px}
 .tkSkip{background:transparent!important;color:#ddd!important;box-shadow:none!important;border:0;font-size:15px;text-decoration:underline}
@@ -253,3 +253,6 @@ body.jiOpen{overflow:hidden}body.jiOpen #homeBtn,body.jiOpen .bnav{display:none!
 .calP{margin:4px 0 10px}.calBtn{display:inline-block;padding:10px 14px;border-radius:12px;background:#e8f0ff;color:#2a4fb8;font-weight:800;text-decoration:none;font-size:16px}
 .jobL{padding:10px 12px;border-radius:12px;background:#f4f0ff;margin:6px 0!important}.jobL b{color:var(--purple)}
 .mrW{margin:10px 0;padding:12px 14px;border-radius:14px;background:#f4f0ff}.mrW p{margin:6px 0!important}
+
+.tkBtn.swing{animation:tkShake .3s ease}@keyframes tkShake{0%,100%{transform:none}35%{transform:translate(2px,3px) scale(.985)}}
+#ttak.done .tkBtn{box-shadow:0 0 0 6px rgba(255,214,120,.5),0 0 80px rgba(255,214,120,.55)}
