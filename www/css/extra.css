@@ -246,3 +246,8 @@ body.jiOpen{overflow:hidden}body.jiOpen #homeBtn,body.jiOpen .bnav{display:none!
 .pForm{display:flex;flex-direction:column;gap:8px;margin-top:6px}.pfH{margin:0;font-weight:800}.pForm input{font-size:17px;padding:12px}.pForm select{font-size:16px!important}
 .pfErr{margin:0;color:var(--red)}.pfErr:empty{display:none}.pfSave,.pfEdit{width:100%;padding:13px;font-size:17px;font-weight:800;border-radius:14px}
 .pfEdit{margin-top:8px;background:#fff!important;color:var(--ink)!important;border:2px dashed var(--line)!important;box-shadow:none!important}
+/* 사주 명리로 한 번 더·가족·달력 */
+.mrCmp{margin:12px 0;padding:14px;border-radius:16px;background:linear-gradient(160deg,#1f1530,#2d1f45);color:#f3ecff}.mrCmp>b{color:#ffd34d;font-size:17px}.mrCmp p{margin:6px 0 0;color:#e6dcf5!important;font-size:16.5px!important}.mrCmp p b{color:#ffd34d}
+.mrL{padding:10px 12px;border-radius:14px;background:#f1ecff}
+.famL p{margin:0;padding:10px 4px;border-bottom:1px dashed var(--line);font-size:16.5px!important;line-height:1.6}.famL small{color:var(--mute)}
+.calP{margin:4px 0 10px}.calBtn{display:inline-block;padding:10px 14px;border-radius:12px;background:#e8f0ff;color:#2a4fb8;font-weight:800;text-decoration:none;font-size:16px}

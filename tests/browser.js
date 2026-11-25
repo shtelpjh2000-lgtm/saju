@@ -20,6 +20,8 @@ const url = 'file://' + require('path').resolve(__dirname, '../www/index.html');
   await pg.evaluate(() => { window.__noTtak = false; document.body.classList.add('formOpen'); }); await pg.fill('#nm', '뚝딱'); await pg.click('#go'); await pg.waitForTimeout(400);
   if (!(await pg.$('#ttak'))) errs.push('방망이 뚝딱 화면 안 나옴'); else { for (let i = 0; i < 3; i++) { await pg.click('.tkBtn'); await pg.waitForTimeout(200); } await pg.waitForTimeout(1800); if (await pg.$('#ttak')) errs.push('세 번 두드려도 안 닫힘'); }
   await pg.evaluate(() => { window.__noTtak = true; });
+  // 사주 명리로 한 번 더·집과 터·가족 관계
+  for (const [k, w] of [['mr', /조후|신강|신약/], ['home', /방위|이사운/], ['family', /어머니|형제/]]) { await pg.click('.qaI[data-k=' + k + '] .qaQ'); await pg.waitForTimeout(300); const t = await pg.evaluate(k => document.querySelector('.qaI[data-k=' + k + '] .qaA').innerText, k); if (!w.test(t)) errs.push(k + ' 대답 이상: ' + t.slice(0, 50)); }
   // 결혼 시기·상대 바람기(도화·홍염)
   { await pg.click('.qaI[data-k=marry] .qaQ'); await pg.waitForTimeout(300); const m = await pg.evaluate(() => document.querySelector('.qaI[data-k=marry] .qaA').innerText); if (!/결혼|부부/.test(m) || !/도화/.test(m)) errs.push('결혼 시기 대답 이상: ' + m.slice(0, 50));
     await pg.click('.qaI[data-k=cheat] .qaQ'); await pg.waitForTimeout(300); const C = '.qaI[data-k=cheat] .qaA ';

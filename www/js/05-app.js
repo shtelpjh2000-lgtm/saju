@@ -34,6 +34,30 @@ function profSet(p){p=p||{};['mar','kid'].forEach(id=>{const el=$(id);if(el)[...
 ['mar','kid'].forEach(id=>{const el=document.getElementById(id);if(el)el.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const on=b.classList.contains('on');[...el.children].forEach(x=>x.classList.remove('on'));if(!on)b.classList.add('on');});});
 // 처지: 기혼으로 볼지(입력 없으면 40세부터), 자녀 나이대(50세부터 손주), 일 대신 활동(은퇴·주부·65세부터)
 function lifeCtx(I,age){I=I||{};return {married:I.mar==='M'||(!I.mar&&age>=40),single:I.mar==='S'||I.mar==='D',senior:age>=50,noKid:I.kid==='N',rest:I.job==='ret'||I.job==='home'||(!I.job&&age>=65)};}
+// ── 사주 명리 보조(논문 분석 반영): 일간·계절(조후)·신강약·많은/없는 십성·양팔통/음팔통·일지 합충 해 ──
+const MR=(()=>{const GAN='甲乙丙丁戊己庚辛壬癸',ZHI='子丑寅卯辰巳午未申酉戌亥',GEL='木木火火土土金金水水',ZMAIN='癸己甲乙戊丙丁己庚辛戊壬';
+  const ZEL={子:'水',丑:'土',寅:'木',卯:'木',辰:'土',巳:'火',午:'火',未:'土',申:'金',酉:'金',戌:'土',亥:'水'};
+  const SH={水:'木',木:'火',火:'土',土:'金',金:'水'},KE={水:'火',火:'金',金:'木',木:'土',土:'水'},KO={木:'목',火:'화',土:'토',金:'금',水:'수'};
+  const yangG=g=>GAN.indexOf(g)%2===0,yangZ=z=>ZHI.indexOf(z)%2===0;
+  const grp=(dg,g)=>{const a=GEL[GAN.indexOf(dg)],b=GEL[GAN.indexOf(g)];return a===b?'비겁':SH[a]===b?'식상':KE[a]===b?'재성':KE[b]===a?'관성':'인성';};
+  const CHUNG={子:'午',午:'子',丑:'未',未:'丑',寅:'申',申:'寅',卯:'酉',酉:'卯',辰:'戌',戌:'辰',巳:'亥',亥:'巳'},HAP={子:'丑',丑:'子',寅:'亥',亥:'寅',卯:'戌',戌:'卯',辰:'酉',酉:'辰',巳:'申',申:'巳',午:'未',未:'午'};
+  const SEASON=z=>'寅卯辰'.includes(z)?'봄':'巳午未'.includes(z)?'여름':'申酉戌'.includes(z)?'가을':'겨울';
+  const NEED={봄:['火','막 돋은 새싹에 햇볕이 필요하듯, 불(火) 기운이 꽃을 피워 주네'],여름:['水','한여름 뙤약볕이라, 열을 식혀 줄 물(水) 기운이 단비가 되네'],가을:['水','마른 가을 들판이라, 촉촉이 적셔 줄 물(水) 기운이 복이 되네'],겨울:['火','꽁꽁 언 한겨울이라, 몸과 마음을 데워 줄 불(火) 기운이 복이 되네']};
+  const COLOR={木:'초록',火:'빨강·분홍',土:'노랑·황토',金:'흰색·금색',水:'검정·남색'},DIRE={木:'동쪽',火:'남쪽',土:'가운데(집 안)',金:'서쪽',水:'북쪽'};
+  const GPERS={甲:'큰 나무',乙:'풀꽃·덩굴',丙:'한낮의 해',丁:'촛불·등불',戊:'큰 산',己:'기름진 논밭',庚:'무쇠·바위',辛:'보석',壬:'큰 강·바다',癸:'이슬비'};
+  const GW={비겁:['자존심·추진력','형제·동료'],식상:['말·손재주·표현','자식(여자)·아랫사람'],재성:['돈 감각·현실성','돈·아버지·아내(남자)'],관성:['책임감·명예','직장·남편(여자)·자식(남자)'],인성:['배움·생각·자격','어머니·윗사람·문서']};
+  function calc(r){const P=r.pillars,dg=P[2][0],dz=P[2][1],mz=P[1][1],de=GEL[GAN.indexOf(dg)];
+    const cnt={비겁:0,식상:0,재성:0,관성:0,인성:0};let sup=0,tot=0;
+    P.forEach((p,i)=>{if(i!==2){const g=grp(dg,p[0]);cnt[g]++;const w=1;tot+=w;if(g==='비겁'||g==='인성')sup+=w;}
+      const zg=grp(dg,ZMAIN[ZHI.indexOf(p[1])]);cnt[zg]++;const w=i===1?3:1.5;tot+=w;if(zg==='비겁'||zg==='인성')sup+=w;});
+    const strong=sup/tot>=0.45,season=SEASON(mz),need=NEED[season];
+    const allY=P.every(p=>yangG(p[0])&&yangZ(p[1])),allN=P.every(p=>!yangG(p[0])&&!yangZ(p[1]));
+    const many=Object.keys(cnt).filter(k=>cnt[k]>=3),none=Object.keys(cnt).filter(k=>cnt[k]===0);
+    const useful=strong?['식상','재성','관성']:['인성','비겁'];
+    const N0=new Date(),Y0=N0.getFullYear()+(N0.getMonth()>=9?1:0),hc=[];
+    for(let Y=Y0;Y<Y0+10;Y++){const yz=Lunar.fromYmd(Y,6,1).getYearInGanZhi()[1];if(CHUNG[dz]===yz)hc.push({Y,k:'충'});else if(HAP[dz]===yz)hc.push({Y,k:'합'});}
+    return {dg,de,dz,season,need,strong,cnt,many,none,useful,allY,allN,hc,pers:GPERS[dg],color:COLOR[need[0]],dir:DIRE[need[0]],KO,GW,grp};}
+  return {calc,GW,KO,grp};})();
 // 기본정보(결혼·나이)에 안 맞는 말 걸러 내기: 기혼이거나 55세 이상이면 '이성 인기·새 인연' 같은 말을 빼고 부부·집안 말로
 function fitProf(h){if(!base||!h)return h;const I=base.input||{},age=ageNow(base),cx=lifeCtx(I,age);const off=(cx.married&&!cx.single)||age>=55;if(!off)return h;
   h=h.replace(/돈이 들어오고 이성 인연도 생겨요/g,'돈이 들어와요').replace(/인정받고 이성 인연도 생겨요/g,'인정받아요').replace(/·연애(?=의 시기)/g,'').replace(/돈·이성 문제/g,'돈 문제').replace(/직장·남자 문제/g,'직장 일').replace(/재물·사업·이성/g,'재물·사업').replace(/직장·승진·명예·이성/g,'직장·승진·명예')
@@ -1822,6 +1846,10 @@ alDraw();
     if(K.badC&&K.badC.length)s+=' '+noR(K.badC[0])+'은 쉬어 가게.';
     if(K.best)s+=' 길게 보면 <b>'+K.best.slice(0,2).join('·')+'년</b>이 자네 해일세.';
     return s;}
+  // 다음 할 일: 좋은 날을 휴대폰 달력(구글 캘린더)에 바로 넣기
+  function calLink(dt,what){const P2=v=>String(v).padStart(2,'0'),f=d=>d.getFullYear()+P2(d.getMonth()+1)+P2(d.getDate()),e=new Date(dt.getTime()+864e5);
+    const u='https://calendar.google.com/calendar/render?action=TEMPLATE&text='+encodeURIComponent('🍀 '+what+' 좋은 날 (도깨비 사주)')+'&dates='+f(dt)+'/'+f(e)+'&details='+encodeURIComponent('방망이 도깨비가 짚어 준 좋은 날일세. 뚝딱!');
+    return '<p class="calP"><a class="calBtn" href="'+u+'" target="_blank" rel="noopener">📅 '+(dt.getMonth()+1)+'월 '+dt.getDate()+'일을 달력에 넣기</a></p>';}
   const SCEN=['지금 움직이면 1년 뒤에 “그때 하길 참 잘했다” 할 걸세.','준비한 만큼 1년 뒤 손에 쥐는 게 있을 걸세.','석 달만 더 다지고 하면 훨씬 크게 웃을 걸세.','지금 차곡차곡 준비해 두면, 다음 좋은 때에 크게 쓰일 걸세. 자네 복은 어디 안 가네.'];
 const TART={exam:[['seodang','chaek'],['gamchal']],jobget:[['daejang','hojak'],['sanggun','gamchal']],jobmove:[['haengsang','yeonso'],['honga','gamchal']],promo:[['suryeong','moran'],['nongali','sanggun']],career:[['daejang','munja'],['gamchal']],
     invest:[['tajak','moran'],['gamchal','honga']],money:[['jangteo','moran','jeseok'],['honga','gamchal']],estate:[['giwa','bongung'],['gamchal']],biz:[['jumak','jusa','changbu'],['honga']],partner:[['cheonggeum','jumak'],['gamchal']],loan:[['jangteo'],['gamchal']],
@@ -1861,13 +1889,14 @@ const TART={exam:[['seodang','chaek'],['gamchal']],jobget:[['daejang','hojak'],[
       const needHome=PLc.to&&!PLc.from;
       const pl=needHome?'<p>🏠 아래 <b>지금 사는 곳</b>을 골라 주면 거기서 '+PLc.to+(jo(PLc.to,'이','가'))+' 어느 쪽인지 딱 짚어 주지.</p>':DIR?'':PL?'<p>'+PL[1]+' 쪽으로 마음먹었다면 좋네. 방향보다 <b>날</b>이 더 힘이 세니, 좋은 날에 움직이면 그쪽 기운도 자네 편이 되네.</p>':(K.badDir&&K.badDir.length?'<p>'+K.badDir[0]+'만 되도록 피하면 되네.</p>':'');
       return '<p class="dkOpen">'+(multiI?['그리고 방향 말일세.','방향도 보세.'][multiI-1]||'방향 말일세.':'방향을 묻는구먼. 어디 보자…')+'</p><p class="ansV">'+dd+'</p>'+pl+(multiWhere?'':'<p>📅 '+W+'</p>')+'<p class="hanSu">💡 <b>도깨비의 한 수</b> '+hage(plainTip(D.tips[0]))+'</p>';}
-    if(kind==='when'&&!sp){const nn=D.n.replace(/·방위/,'');h='<p class="dkOpen">'+opn+'</p>'+flowP+'<p class="ansV">'+D.e+' <b>'+(K.bestC?nn+jo(nn,'은','는')+' '+K.bestC+'일세.':nn+jo(nn,'은','는')+' 앞으로 몇 달은 센 때가 없네.')+'</b></p><p>📅 '+whenOf(K,1).replace(/^그 달을 놓치지 말게\. ?/,'')+'</p>';}
+    if(kind==='when'&&!sp){const nn=D.n.replace(/·방위/,'');h='<p class="dkOpen">'+opn+'</p>'+flowP+'<p class="ansV">'+D.e+' <b>'+(K.bestC?nn+jo(nn,'은','는')+' '+K.bestC+'일세.':nn+jo(nn,'은','는')+' 앞으로 몇 달은 센 때가 없네.')+'</b></p><p>📅 '+whenOf(K,1).replace(/^그 달을 놓치지 말게\. ?/,'')+'</p>'+(K.bestDays&&K.bestDays[0]?calLink(K.bestDays[0][0],D.n):'');}
     if(/이자|대출|빚|원리금/.test(lastQ||'')&&/estate|money|biz|invest|loan/.test(t))h+='<p>💸 이자 걱정 말인데, '+(K.bestC&&!/^내년/.test(K.bestC)&&gi<=1?K.bestC.replace(/\(.*\)/,'')+'까지만 버티게. 그때 풀리네. 새 대출은 늘리지 말게.':(K.bestC?'풀리는 때가 '+K.bestC.replace(/\(.*\)/,'')+jo(K.bestC.replace(/\(.*\)/,''),'이라','라')+' 이자 부담이 길어지네. ':'')+'지금 바로 대출 갈아타기나 일부 상환으로 이자부터 줄이게.')+'</p>';
     if(K.qm)h+='<p>📌 자네가 짚은 <b>'+(K.qm.lun?'음력 ':'')+K.qm.m+'월</b>은 '+(K.qm.v>=0.8?'<b>좋은 달</b>일세. 그때 움직이게.':K.qm.v<=-0.4?'<b>피할 달</b>일세. 다른 달로 미루게.':'그저 그런 달일세. 더 좋은 달이 있네.')+'</p>';
     const calm=emo&&t==='gen';
     if(!sp&&!calm){let rz=reasonOf(K,gi,D).replace(/^[^,.]*?(?:운이라|사람이고|사람이라), /,'');const ss=rz.split(/(?<=[.!])\s+/).filter(Boolean);rz=(ss[0]||'').replace(/ 들어앉아 있어서.*$/,' 앉았네.');if(rz)h+='<p>🔍 <b>기문으로 보면</b> '+rz+'</p>';}
     const needWhen=kind==='when'||sp||(act&&!/(붙을|붙나|붙었|합격)/.test(lastQ||''))||/언제|시기|몇 ?월|때/.test(lastQ||'');
-    if((kind!=='when'||sp)&&!calm&&needWhen)h+='<p>📅 '+W.replace(/ 길게 보면 <b>[^<]*<\/b>이 자네 해일세\./,'')+'</p>';
+    const cal=K.bestDays&&K.bestDays[0]&&K.bestDays[0][0]?calLink(K.bestDays[0][0],D.n):'';
+    if((kind!=='when'||sp)&&!calm&&needWhen)h+=cal;if((kind!=='when'||sp)&&!calm&&needWhen)h+='<p>📅 '+W.replace(/ 길게 보면 <b>[^<]*<\/b>이 자네 해일세\./,'')+'</p>';
     if(!multiWhere&&K.dir&&K.dir.length&&!sp&&/^(move|estate\w*|travel)$/.test(((T[t]&&T[t].base)||t)))h+='<p>🧭 방향은 <b>'+K.dir.join(', ')+'</b>이 좋네.'+(K.badDir&&K.badDir.length?' '+K.badDir[0]+'만 되도록 피하면 되네.':'')+'</p>';
     if(sp)h+='<p>🔎 조심할 것이랑 좋은 날은 아래 <b>자세한 풀이</b>에 적어 뒀네.</p>';
     h+=fig;
@@ -1960,7 +1989,7 @@ const TART={exam:[['seodang','chaek'],['gamchal']],jobget:[['daejang','hojak'],[
     heroData={k:A[0],nick,punch,line:L[0].replace(/<[^>]+>/g,''),name:r.input.name||'',Y};
     try{pastL=pastList();}catch(e){pastL=[];}pastI=0;
     return '<p class="hPunch">'+punch.replace(/^자네,/,jane()+',')+'</p>'+pastHtml()+'<p class="hTitle"><small>'+Y+'년, '+jane()+'는</small><b>'+nick+'</b><small>일세.</small></p>'+
-      L.map(x=>'<p class="hLine">'+x+'</p>').join('')+artFig(A[0])+
+      L.map(x=>'<p class="hLine">'+x+'</p>').join('')+(window.__mrLine&&window.__mrLine()?'<p class="hLine mrL">'+window.__mrLine()+'</p>':'')+artFig(A[0])+
       (pr.length?'<div class="yeogo"><p class="ygH">도깨비 방망이<small>뚝딱, 복이 나오는 달</small></p>'+pr.map(x=>'<p class="ygI"><b>'+x.n+'</b><span>'+x.c.lab+'<br><small>'+x.w+'</small></span>'+dday(x.c)+'</p>').join('')+'<p class="ygN">그 달이 오면 아침 알림으로 일러 주겠네. (알림을 켜 두게)</p></div>':'')+
       (r.input&&r.input.noTime?'<p class="ygN">⏰ 태어난 시를 몰라서 낮 12시로 봤네. 시를 알게 되면 다시 넣어 보게.</p>':'')+
       bokHtml()+'<div class="bjWrap"><button type="button" class="bjGo">🧧 나만의 도깨비 부적 받기</button><div class="bjOut"></div></div>'+famHtml()+
@@ -1991,14 +2020,14 @@ const TART={exam:[['seodang','chaek'],['gamchal']],jobget:[['daejang','hojak'],[
   const wrapQA=(q,body)=>'<div class="bub me">'+q+'</div><div class="bub dk pk"><span class="av"></span><div>'+body+'</div></div>';
   const yrChips=(L,hi)=>'<div class="pyRow">'+L.map(y=>'<span class="py'+(y.tags.length?' on':'')+(hi&&hi.includes(y.Y)?' hi':'')+'"><b>'+y.Y+'</b><small>'+y.age+'세</small><i>'+(y.tags.map(t=>t==='도화'?'🌸':'💋').join('')||'·')+'</i></span>').join('')+'</div>';
   window.__marryHtml=()=>{try{const r=base,P=peach(r),age=ageNow(r),cx=lifeCtx(r.input,age),wed=cx.married&&!cx.single;
-    const L=P.years.map(y=>{let v=0;try{v=scoreOf('marry',y.Y);}catch(e){}return {...y,v:v+y.tags.length*0.6};});
+    const HC=MR.calc(r).hc;const L=P.years.map(y=>{let v=0;try{v=scoreOf('marry',y.Y);}catch(e){}const hp=HC.some(z=>z.Y===y.Y&&z.k==='합');return {...y,hap:hp,v:v+y.tags.length*0.6+(hp?0.4:0)};});
     const best=L.slice().sort((a,b)=>b.v-a.v).slice(0,2).sort((a,b)=>a.Y-b.Y),b0=best[0];
-    const why=y=>y.tags.length?y.tags.map(t=>t==='도화'?'도화(桃花)가 들어 이성 인연이 활짝 피고':'홍염(紅艶)이 들어 서로 끌림이 강해지고').join(', ')+' 결혼운이 받쳐 주네.':'도화는 없지만 결혼운(인연·문서 기운)이 받쳐 주네.';
+    const why=y=>(y.hap?'나의 자리(일지)에 합(合)이 들어 짝을 맺는 기운이 있고, ':'')+(y.tags.length?y.tags.map(t=>t==='도화'?'도화(桃花)가 들어 이성 인연이 활짝 피고':'홍염(紅艶)이 들어 서로 끌림이 강해지고').join(', ')+' 결혼운이 받쳐 주네.':'결혼운(인연·문서 기운)이 받쳐 주네.');
     let h='<p class="dkOpen">'+(wed?'짝이 있으니 부부 정이 새로 붙는 해를 짚어 보지.':'결혼 시기라… 도화·홍염이 드는 해를 짚어 보지.')+'</p>';
     h+='<p class="ansV">💍 <b>'+b0.Y+'년('+b0.age+'세)</b>'+(wed?'에 부부 사이가 제일 뜨거워지네.':'이 제일 유력하네.')+(best[1]?' 다음은 <b>'+best[1].Y+'년('+best[1].age+'세)</b>일세.':'')+'</p>';
     h+='<p>🔍 <b>기문으로 보면</b> '+b0.Y+'년엔 '+why(b0)+'</p>';
     if(b0.Y<=new Date().getFullYear()+1){try{const m=monthsFor('marry').best;if(m)h+='<p>📅 날로 치면 <b>'+m.lab+'</b>이 좋네.</p>';}catch(e){}}
-    h+='<p>'+(P.natal>=2?'🌸 타고나기를 도화·홍염이 많아 <b>인기가 많은 사주</b>일세. 사람이 많이 오니 고르는 눈이 중요하네.':P.natal===1?'🌸 타고난 도화가 하나 있어, 때가 오면 인연이 자연스럽게 닿네.':'🌸 타고난 도화는 적어 <b>소개·모임 같은 다리</b>로 인연이 오네. 그해엔 사람 모이는 자리에 꼭 나가게.')+'</p>';
+    h+='<p>'+(wed?(P.natal>=2?'🌸 타고난 도화가 많아 밖에서 인기가 많으니, 배우자에게 먼저 마음을 표현하면 집안이 더 화목하네.':'🌸 바깥 유혹은 적은 사주라, 집안에 정을 쏟을수록 복이 붙네.'):P.natal>=2?'🌸 타고나기를 도화·홍염이 많아 <b>인기가 많은 사주</b>일세. 사람이 많이 오니 고르는 눈이 중요하네.':P.natal===1?'🌸 타고난 도화가 하나 있어, 때가 오면 인연이 자연스럽게 닿네.':'🌸 타고난 도화는 적어 <b>소개·모임 같은 다리</b>로 인연이 오네. 그해엔 사람 모이는 자리에 꼭 나가게.')+'</p>';
     h+='<p class="pyH">앞으로 10년 · 🌸도화 💋홍염 드는 해</p>'+yrChips(P.years,best.map(x=>x.Y));
     h+='<p class="hanSu">💡 <b>도깨비의 한 수</b> '+(wed?'그해엔 둘만의 여행이나 기념일을 꼭 챙기게.':b0.Y+'년엔 소개 자리를 거절하지 말게. 그해 만난 사람을 눈여겨보게.')+'</p>';
     return softTone(wrapQA('나는 언제 결혼해?',h));}catch(e){console.error(e);return '<p class="note">지금은 풀 수 없네.</p>';}};
@@ -2033,6 +2062,56 @@ const TART={exam:[['seodang','chaek'],['gamchal']],jobget:[['daejang','hojak'],[
       const P2=v=>String(v).padStart(2,'0'),mid=tz===''?'':(+tz===0?30:+tz*120),a=autoAdjust(y,m,d).a,mm=mid===''?'':(((mid-a)%1440)+1440)%1440;
       const p={name:q('.pfN').value.trim(),y,m,d,cal:'S',t:mm===''?'':P2(Math.floor(mm/60))+':'+P2(mm%60),sex:q('.pfS button.on').dataset.v};
       try{localStorage.setItem(PKEY,JSON.stringify(p));}catch(_){}A.innerHTML=window.__cheatHtml();}});
+  // ── 사주 명리로 한 번 더(두 술법 비교)·집과 터·가족 관계 ──
+  const LQG={財:'재성',官:'관성',鬼:'관성',父:'인성',孫:'식상',兄:'비겁',世:'비겁'};
+  const GMEAN={비겁:'내 힘·사람',식상:'재능·새 일',재성:'돈·실속',관성:'일·자리',인성:'문서·배움'};
+  const MANYW={비겁:'자존심과 추진력이 세서 남 밑보다 내 판이 맞네.',식상:'말과 손재주가 넘쳐 표현하는 일로 먹고사네.',재성:'돈 냄새를 잘 맡아 장사·셈에 밝네.',관성:'책임감이 커서 조직에서 믿음을 얻지만 짐도 많이 지네.',인성:'생각과 배움이 깊어 자격·문서로 자리를 잡네.'};
+  const NONEW={비겁:'혼자 버티는 힘이 약하니 든든한 동료를 곁에 두게.',식상:'속마음을 잘 안 드러내니 말로 표현하는 연습이 복이 되네.',재성:'돈은 직접 쫓기보다 사람과 재주를 통해 들어오네.',관성:'얽매이는 걸 싫어하니 내 방식대로 하는 일이 맞네.',인성:'책보다 몸으로 부딪혀 배우는 쪽이 빠르네.'};
+  function mrCmp(){const r=base,m=MR.calc(r);let x=null;try{x=Haeseok.interpret(r,r.input.sex,ageNow(r));}catch(e){}
+    const gy=x&&LQG[x.yong],agreeUse=gy&&m.useful.includes(gy),agreeStr=x&&((x.strong!=='weak')===m.strong);
+    const Y=new Date().getFullYear();let yq=null;try{yq=LQG[yearSum(Y).q];}catch(e){}const ym=MR.grp(m.dg,yearGZ(Y)[0]);
+    return {m,x,gy,agreeUse,agreeStr,yq,ym,Y,sameYear:yq&&yq===ym};}
+  window.__mrLine=()=>{try{const c=mrCmp();return c.sameYear?'🤝 <b>기문으로도, 사주로도</b> 올해는 <b>'+GMEAN[c.ym]+'</b> 쪽일세.':c.yq?'🤝 올해 기문은 <b>'+GMEAN[c.yq]+'</b>, 사주는 <b>'+GMEAN[c.ym]+'</b> 쪽을 짚네. 둘 다 챙기면 빈틈이 없네.':'';}catch(e){return '';}};
+  window.__mrHtml=()=>{try{const c=mrCmp(),m=c.m,KO=MR.KO;let h='<p class="dkOpen">기문둔갑에 더해, 사주 명리로도 한 번 더 짚어 보세.</p>';
+    h+='<p class="ansV">'+({봄:'🌱',여름:'☀️',가을:'🍂',겨울:'❄️'})[m.season]+' 자네는 <b>'+m.season+'에 태어난 '+m.dg+m.de+'('+m.pers+')</b>일세.</p>';
+    h+='<p>🌡️ <b>조후(寒暖燥濕)</b> '+m.need[1]+'. 그래서 <b>'+m.color+'</b> 빛과 <b>'+m.dir+'</b>이 자네를 돕네.</p>';
+    h+='<p>⚖️ '+(m.strong?'<b>신강(身强)</b> 사주일세. 기운이 넘쳐 스스로 길을 내니, 일을 벌이고 나눠 쓸수록 커지네.':'<b>신약(身弱)</b> 사주일세. 혼자보다 사람·문서·배움의 도움을 받을 때 크게 되네.')+'</p>';
+    if(m.many.length)h+='<p>📈 <b>많은 십성 · '+m.many.join('·')+'</b> '+m.many.map(k=>MANYW[k]).join(' ')+'</p>';
+    if(m.none.length)h+='<p>📉 <b>없는 십성 · '+m.none.join('·')+'</b> '+m.none.map(k=>NONEW[k]).join(' ')+'</p>';
+    if(m.allY)h+='<p>☯️ 여덟 글자가 모두 양(陽)인 <b>양팔통(陽八通)</b>일세! 밀어붙이는 힘이 커서 크게 이루는 사주라, 브레이크 하나만 챙기게.</p>';
+    if(m.allN)h+='<p>☯️ 여덟 글자가 모두 음(陰)인 <b>음팔통(陰八通)</b>일세! 겉은 조용해도 마음먹은 건 끝까지 해내는 뚝심이 있네.</p>';
+    const ch=m.hc.find(z=>z.k==='충'),hp=m.hc.find(z=>z.k==='합');
+    if(ch||hp)h+='<p>🔄 나의 자리(일지)에 '+[hp&&'<b>합(合)</b>이 드는 <b>'+hp.Y+'년</b>은 인연·계약이 맺어지기 쉽고',ch&&'<b>충(沖)</b>이 드는 <b>'+ch.Y+'년</b>은 이사·이동·자리 변화가 생기기 쉽네'].filter(Boolean).join(', ')+(ch?'.':'네.')+'</p>';
+    h+='<div class="mrCmp"><b>🤝 두 술법 견주기</b>'+
+      (c.gy?'<p>'+(c.agreeUse?'<b>같은 말을 하네!</b> 기문의 용신('+c.x.yong+')도, 사주의 '+(m.strong?'신강':'신약')+' 풀이도 <b>'+GMEAN[c.gy]+'</b> 기운이 자네를 살린다고 하네.':'기문은 <b>'+GMEAN[c.gy]+'</b>, 사주는 <b>'+m.useful.map(k=>GMEAN[k]).join('·')+'</b> 기운을 짚네. 둘 다 챙기면 빈틈이 없네.')+'</p>':'')+
+      (c.yq?'<p>올해는 '+(c.sameYear?'<b>두 술법 모두 '+GMEAN[c.ym]+'</b> 쪽을 가리키네. 믿고 밀어도 되네.':'기문은 <b>'+GMEAN[c.yq]+'</b>, 사주는 <b>'+GMEAN[c.ym]+'</b> 쪽일세.')+'</p>':'')+'</div>';
+    h+='<p class="hanSu">💡 <b>도깨비의 한 수</b> 지갑이나 휴대폰 덮개를 <b>'+m.color.split('·')[0]+'</b>으로 바꿔 보게. 모자란 기운을 늘 몸에 지니는 셈일세.</p>';
+    return softTone(wrapQA('사주 명리로도 한 번 더 봐 줘',h));}catch(e){console.error(e);return '<p class="note">지금은 풀 수 없네.</p>';}};
+  window.__homeHtml=()=>{try{const r=base,m=MR.calc(r),Y=new Date().getFullYear(),[lq]=topicLq('move');
+    const yrs=[Y,Y+1].map(y=>{let v=0;try{v=scoreOf('move',y);}catch(e){}return {y,v};});const rs=sinsu(yearGZ(Y));
+    const ps=[1,2,3,4,6,7,8,9].map(p=>[p,pScore(rs,p,'move')+(lq.includes(rs.lqH[p])?0.5:0)]).sort((a,b)=>b[1]-a[1]);const gd=ps.filter(x=>x[1]>0.5).slice(0,2).map(([p])=>dirOf(p));
+    const home=(()=>{try{return localStorage.getItem('hongmyeongguk.home')||'';}catch(e){return '';}})();
+    const W=v=>v>=1.42?'아주 좋네':v>=0.95?'좋네':v>=0.37?'무난하네':'조금 쉬어 가는 해일세';
+    let h='<p class="dkOpen">집과 터 얘기라… 기문의 방위에 사주의 기운까지 얹어 보지.</p>';
+    h+='<p class="ansV">🏡 '+Y+'년 집·이사운은 <b>'+W(yrs[0].v)+'</b>. '+(Y+1)+'년은 <b>'+W(yrs[1].v)+'</b>.</p>';
+    h+='<p>🧭 <b>기문으로 보면</b> 올해 좋은 방위는 <b>'+(gd.length?gd.join('·'):'두루 무난')+'</b>일세.';
+    if(home&&gd.length&&window.__placeOf){const near=Object.keys({서울:1,인천:1,수원:1,대전:1,세종:1,청주:1,천안:1,전주:1,광주:1,대구:1,부산:1,울산:1,창원:1,포항:1,강릉:1,춘천:1,원주:1,제주:1}).filter(c=>c!==home&&gd.includes((window.__placeOf(home+'에서 '+c+' 이사')||{}).dir)).slice(0,3);
+      h+=' '+home+' 기준으로는 '+(near.length?'<b>'+near.join('·')+'</b> 쪽일세.':'가까운 동네 안에서 그 방향을 고르게.');}
+    else if(!home)h+=' (도깨비 대화 아래 <b>지금 사는 곳</b>을 골라 두면 도시까지 짚어 주지.)';
+    h+='</p><p>🌡️ <b>사주로 보면</b> '+m.dir+'과 '+m.color+' 빛이 자네 기운을 돕네. 집 안 '+m.dir.replace(/\(.*\)/,'')+' 자리에 '+m.color.split('·')[0]+' 소품을 두게.</p>';
+    const ch=m.hc.find(z=>z.k==='충');if(ch)h+='<p>🔄 나의 자리(일지)에 충이 드는 <b>'+ch.Y+'년</b>에 이사수가 크게 드네.</p>';
+    h+='<p class="hanSu">💡 <b>도깨비의 한 수</b> 이사 날은 손 없는 날보다 <b>자네에게 좋은 날</b>이 먼저일세. 도깨비한테 "이사 언제 가면 좋아?" 하고 물어보게.</p>';
+    return softTone(wrapQA('우리 집·터 운은?',h));}catch(e){console.error(e);return '<p class="note">지금은 풀 수 없네.</p>';}};
+  window.__familyHtml=()=>{try{const r=base,m=MR.calc(r),F=r.input.sex==='F',c=m.cnt,Y=new Date().getFullYear();
+    const R=[['인성','👵 어머니·윗사람'],['재성',F?'👴 아버지':'👴 아버지·💑 아내'],['관성',F?'💑 남편':'👶 자식'],['식상',F?'👶 자식':'🧑‍💼 아랫사람'],['비겁','👫 형제·친구']];
+    const lv=n=>n>=3?'인연이 아주 깊네. 서로 힘이 되지만 그만큼 마음도 많이 쓰네.':n===2?'정이 두텁고 서로 기대는 사이일세.':n===1?'적당한 거리에서 오래 가는 사이일세.':'각자의 길을 존중하는 사이일세. 먼저 연락하면 정이 붙네.';
+    let h='<p class="dkOpen">가족 얘기라… 사주의 십성으로 집안 자리를 짚어 보지.</p>';
+    const top=R.slice().sort((a,b)=>c[b[0]]-c[a[0]])[0];h+='<p class="ansV">👨‍👩‍👧 자네 집안에서 제일 끈끈한 인연은 <b>'+top[1].replace(/^\S+ /,'')+'</b>일세.</p>';
+    h+='<div class="famL">'+R.map(([g,lab])=>'<p><b>'+lab+'</b> <small>('+g+' '+c[g]+')</small><br>'+lv(c[g])+'</p>').join('')+'</div>';
+    let cp=null,ck=null;try{cp=scoreOf('couple',Y);ck=scoreOf('child',Y);}catch(e){}
+    if(cp!=null)h+='<p>🔍 <b>기문으로 보면</b> 올해 '+(cp>=0.95?'부부 사이가 따뜻하고':'부부 사이는 말 한마디를 아끼면 편하고')+', '+(ck>=0.95?'자식 일엔 반가운 소식이 있네.':'자식 일은 지켜봐 주는 게 약일세.')+'</p>';
+    h+='<p class="hanSu">💡 <b>도깨비의 한 수</b> 첫 화면의 <b>우리 집 도깨비 서열</b>에 가족 생일을 넣어 보게. 올해 집안 돈줄·복덩이를 뽑아 주지.</p>';
+    return softTone(wrapQA('가족 관계는 어때?',h));}catch(e){console.error(e);return '<p class="note">지금은 풀 수 없네.</p>';}};
   window.__scoreOf=(t,Y)=>{try{return scoreOf(t,Y);}catch(e){return null;}};
   window.__heroHtml=()=>{try{return softTone(heroHtml());}catch(e){console.error(e);return '';}};
   // 공유용 그림(1080×1350)
