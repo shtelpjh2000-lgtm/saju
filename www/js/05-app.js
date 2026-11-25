@@ -2083,7 +2083,7 @@ const TART={exam:[['seodang','chaek'],['gamchal']],jobget:[['daejang','hojak'],[
   const LQG={財:'재성',官:'관성',鬼:'관성',父:'인성',孫:'식상',兄:'비겁',世:'비겁'};
   const GMEAN={비겁:'내 힘·사람',식상:'재능·새 일',재성:'돈·실속',관성:'일·자리',인성:'문서·배움'};
   const MANYW={비겁:'자존심과 추진력이 세서 남 밑보다 내 판이 맞네.',식상:'말과 손재주가 넘쳐 표현하는 일로 먹고사네.',재성:'돈 냄새를 잘 맡아 장사·셈에 밝네.',관성:'책임감이 커서 조직에서 믿음을 얻지만 짐도 많이 지네.',인성:'생각과 배움이 깊어 자격·문서로 자리를 잡네.'};
-  const NONEW={비겁:'혼자 버티는 힘이 약하니 든든한 동료를 곁에 두게.',식상:'속마음을 잘 안 드러내니 말로 표현하는 연습이 복이 되네.',재성:'돈은 직접 쫓기보다 사람과 재주를 통해 들어오네.',관성:'얽매이는 걸 싫어하니 내 방식대로 하는 일이 맞네.',인성:'책보다 몸으로 부딪혀 배우는 쪽이 빠르네.'};
+  const NONEW={비겁:'혼자 버티는 힘이 약하니 든든한 동료를 곁에 두게.',식상:'속마음을 잘 안 드러내니 말로 표현하는 연습이 복이 되네.',재성:'셈보다 마음이 먼저인 사람이라, 손해를 봐도 사람을 남기네.',관성:'얽매이는 걸 싫어하니 내 방식대로 하는 일이 맞네.',인성:'책보다 몸으로 부딪혀 배우는 쪽이 빠르네.'};
   function mrCmp(){const r=base,m=MR.calc(r);let x=null;try{x=Haeseok.interpret(r,r.input.sex,ageNow(r));}catch(e){}
     const gy=x&&LQG[x.yong],agreeUse=gy&&m.useful.includes(gy),agreeStr=x&&((x.strong!=='weak')===m.strong);
     const Y=new Date().getFullYear();let yq=null;try{yq=LQG[yearSum(Y).q];}catch(e){}const ym=MR.grp(m.dg,yearGZ(Y)[0]);
@@ -2129,6 +2129,21 @@ const TART={exam:[['seodang','chaek'],['gamchal']],jobget:[['daejang','hojak'],[
     if(cp!=null)h+='<p>🔍 <b>기문으로 보면</b> 올해 '+(cp>=0.95?'부부 사이가 따뜻하고':'부부 사이는 말 한마디를 아끼면 편하고')+', '+(ck>=0.95?'자식 일엔 반가운 소식이 있네.':'자식 일은 지켜봐 주는 게 약일세.')+'</p>';
     h+='<p class="hanSu">💡 <b>도깨비의 한 수</b> 첫 화면의 <b>우리 집 도깨비 서열</b>에 가족 생일을 넣어 보게. 올해 집안 돈줄·복덩이를 뽑아 주지.</p>';
     return softTone(wrapQA('가족 관계는 어때?',h));}catch(e){console.error(e);return '<p class="note">지금은 풀 수 없네.</p>';}};
+  // 전체 풀이에 사주 명리를 녹이기: 질문마다 '📜 사주로 보면' 한두 줄
+  window.__mrWeave=k=>{try{const r=base,m=MR.calc(r),c=mrCmp(),F=r.input.sex==='F',S='📜 <b>사주로 보면</b> ';const L=[];
+    const SEAH={봄:'봄이라 간·눈이 쉽게 피로해지니 일찍 자는 게 보약일세',여름:'한여름 기운이라 열이 위로 몰리기 쉬우니 심장·혈압과 수분을 챙기게',가을:'가을 기운이라 폐·기관지와 피부가 마르기 쉬우니 물을 자주 마시게',겨울:'한겨울 기운이라 몸이 차고 순환이 느리니 손발을 따뜻하게 하게'};
+    if(k==='sum'){L.push(S+'<b>'+m.season+'에 태어난 '+m.dg+m.de+'('+m.pers+')</b>일세. '+(m.strong?'<b>신강(身强)</b>이라 스스로 길을 내는 사람일세.':'<b>신약(身弱)</b>이라 사람과 배움의 도움으로 크게 되는 사람일세.'));
+      if(m.allY)L.push('☯️ 여덟 글자가 모두 양인 <b>양팔통</b>일세. 밀어붙이는 힘이 커서 크게 이루니, 브레이크 하나만 챙기게.');
+      if(m.allN)L.push('☯️ 여덟 글자가 모두 음인 <b>음팔통</b>일세. 겉은 조용해도 마음먹은 건 끝까지 해내네.');
+      const ch=m.hc.find(z=>z.k==='충'),hp=m.hc.find(z=>z.k==='합');if(ch||hp)L.push('🔄 '+[hp&&'<b>'+hp.Y+'년</b>엔 일지에 합이 들어 인연·계약이',ch&&'<b>'+ch.Y+'년</b>엔 충이 들어 이사·자리 변화가'].filter(Boolean).join(', ')+' 찾아오네.');}
+    if(k==='char'){const gm=a=>a.map(x=>x+'('+GMEAN[x]+')').join('·');if(m.many.length)L.push(S+'<b>'+gm(m.many)+'</b>이 많아 '+m.many.map(x=>MANYW[x]).join(' '));if(m.none.length)L.push('📜 <b>'+gm(m.none)+'</b>이 없으니 '+m.none.map(x=>NONEW[x]).join(' '));
+      if(!m.many.length&&!m.none.length)L.push(S+'십성이 고루 갖춰져 어느 자리에 가도 제 몫을 하는 사람일세.');}
+    if(k==='money'){const n=m.cnt.재성;L.push(S+(n>=3?'돈 글자(재성)가 많아 돈 냄새를 잘 맡네. 다만 들어온 만큼 나가기 쉬우니 묶어 두는 통장을 만들게.':n===0?'돈 글자(재성)가 드러나지 않아 돈은 직접 쫓기보다 <b>사람과 재주</b>를 통해 들어오네. 기술·자격이 곧 돈일세.':'돈 글자(재성)가 알맞게 있어 꾸준히 모으는 재물일세.')+(m.strong?' 신강이라 큰돈을 감당할 그릇도 되네.':' 신약이라 혼자 크게 걸기보다 나눠서 굴리게.'));}
+    if(k==='love'){const sp=F?'관성':'재성',n=m.cnt[sp];L.push(S+(F?'남편 자리(관성)':'아내 자리(재성)')+(n>=3?'가 많아 이성 인연이 많으니, 한 사람에게 마음을 모으는 게 복일세.':n===0?'가 드러나지 않아 늦게 만나도 오래 가는 인연일세. 서두르지 않는 게 좋네.':'가 알맞아 한 사람과 깊이 가는 인연일세.')+' 자식 자리('+(F?'식상':'관성')+')는 '+(m.cnt[F?'식상':'관성']>=2?'두터워 자식 덕이 있네.':'알맞아 자식과 친구처럼 지내네.'));}
+    if(k==='health')L.push(S+SEAH[m.season]+'.');
+    if(k==='lucky'){L.push(S+'<b>조후(寒暖燥濕)</b>로 '+m.need[1]+'. 그래서 <b>'+m.color+'</b> 빛과 <b>'+m.dir+'</b>이 자네를 돕네.');
+      if(c.gy)L.push('🤝 <b>두 술법 견주기</b> '+(c.agreeUse?'기문의 용신과 사주 풀이가 <b>같은 말</b>을 하네. <b>'+GMEAN[c.gy]+'</b> 기운을 잡으면 운이 확 트이네.':'기문은 <b>'+GMEAN[c.gy]+'</b>, 사주는 <b>'+m.useful.map(x=>GMEAN[x]).join('·')+'</b> 기운을 짚네. 둘 다 챙기면 빈틈이 없네.'));}
+    return L.map(t=>'<span class="pk">'+t+'</span>');}catch(e){return [];}};
   window.__jobLines=()=>{try{const r=base,J=JOBS.pick(r),age=ageNow(r),[g1,g2]=J.top;
     const L=['💼 <b>사주 십성으로 짚으면</b> '+J.G[g1].t+'일세. <b>'+J.G[g1].j.slice(0,5).join(', ')+'</b> 같은 일이 몸에 맞네.',
       '🧩 <b>그다음 어울리는 일</b> · '+J.G[g2].t+' — '+J.G[g2].j.slice(0,4).join(', ')+'.'];

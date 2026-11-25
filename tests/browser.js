@@ -23,7 +23,7 @@ const url = 'file://' + require('path').resolve(__dirname, '../www/index.html');
   // 직업: 실제 직업 이름이 나와야 함
   { await pg.click('.qaI[data-k=job] .qaQ'); await pg.waitForTimeout(300); const t = await pg.evaluate(() => document.querySelector('.qaI[data-k=job] .qaA').innerText); if (!/공무원|교사|요리사|사업가|프리랜서/.test(t)) errs.push('직업 이름이 안 나옴'); }
   // 사주 명리로 한 번 더·집과 터·가족 관계
-  for (const [k, w] of [['mr', /조후|신강|신약/], ['home', /방위|이사운/], ['family', /어머니|형제/]]) { await pg.click('.qaI[data-k=' + k + '] .qaQ'); await pg.waitForTimeout(300); const t = await pg.evaluate(k => document.querySelector('.qaI[data-k=' + k + '] .qaA').innerText, k); if (!w.test(t)) errs.push(k + ' 대답 이상: ' + t.slice(0, 50)); }
+  for (const [k, w] of [['sum', /사주로 보면/], ['lucky', /조후/], ['home', /방위|이사운/], ['family', /어머니|형제/]]) { await pg.click('.qaI[data-k=' + k + '] .qaQ'); await pg.waitForTimeout(300); const t = await pg.evaluate(k => document.querySelector('.qaI[data-k=' + k + '] .qaA').innerText, k); if (!w.test(t)) errs.push(k + ' 대답 이상: ' + t.slice(0, 50)); }
   // 결혼 시기·상대 바람기(도화·홍염)
   { await pg.click('.qaI[data-k=marry] .qaQ'); await pg.waitForTimeout(300); const m = await pg.evaluate(() => document.querySelector('.qaI[data-k=marry] .qaA').innerText); if (!/결혼|부부/.test(m) || !/도화/.test(m)) errs.push('결혼 시기 대답 이상: ' + m.slice(0, 50));
     await pg.click('.qaI[data-k=cheat] .qaQ'); await pg.waitForTimeout(300); const C = '.qaI[data-k=cheat] .qaA ';

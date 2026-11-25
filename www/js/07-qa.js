@@ -18,7 +18,6 @@
     {k:'money',e:'💰',q:'돈은 언제, 어떻게 들어와?',get:()=>copy(sec('money'))},
     {k:'job',e:'💼',q:'나한테 맞는 일은 뭐야?',get:()=>copy(sec('job'))},
     {k:'love',e:'💕',q:'내 짝과 자녀 운은?',get:()=>copy([...sec('spouse'),...sec('child')])},
-    {k:'mr',e:'📜',q:'사주 명리로도 한 번 더 봐 줘',html:()=>window.__mrHtml?window.__mrHtml():''},
     {k:'home',e:'🏡',q:'우리 집·터 운은?',html:()=>window.__homeHtml?window.__homeHtml():''},
     {k:'family',e:'👨‍👩‍👧',q:'가족 관계는 어때?',html:()=>window.__familyHtml?window.__familyHtml():''},
     {k:'marry',e:'💍',q:'나는 언제 결혼해?',html:()=>window.__marryHtml?window.__marryHtml():''},
@@ -38,7 +37,7 @@
     if(x.html){A.innerHTML=x.html();return;}
     if(x.move){const el=$(x.move);if(!el)return;if(!ph[x.move]){ph[x.move]=document.createComment(x.move);el.before(ph[x.move]);}A.appendChild(el);}
     else{const n=x.get();if(!n.length){A.innerHTML='<p class="note">이 명국에서는 따로 풀 내용이 없네.</p>';}
-      else if(k==='sum'){A.insertAdjacentHTML('beforeend','<div class="bub me">'+x.q+'</div>');n.forEach(c=>A.appendChild(c));if(window.__secArt){const f=window.__secArt(k);if(f)A.insertAdjacentHTML('beforeend',f);}}
+      else if(k==='sum'){A.insertAdjacentHTML('beforeend','<div class="bub me">'+x.q+'</div>');n.forEach(c=>A.appendChild(c));if(window.__mrWeave){const W=window.__mrWeave('sum');if(W.length)A.insertAdjacentHTML('beforeend','<div class="mrW">'+W.map(t=>'<p>'+t+'</p>').join('')+'</div>');}if(window.__secArt){const f=window.__secArt(k);if(f)A.insertAdjacentHTML('beforeend',f);}}
       else{A.insertAdjacentHTML('beforeend',talkOf(k,x,n));const det=A.querySelector('details.qaMore');n.forEach(c=>det.appendChild(c));}}
   }
   // 질문을 누르면 도깨비가 대화로 답해요: 요약(쉬운 말) + 제일 좋은 때·쉬어 갈 때 + 그림, 자세한 풀이는 접어 두기
@@ -47,6 +46,7 @@
     for(const nd of nodes){nd.querySelectorAll&&nd.querySelectorAll('.sh p').forEach(p=>{const t=p.innerHTML.trim();if(t&&!L.includes(t))L.push(t);});}
     if(!L.length)for(const nd of nodes){const h=nd.querySelector&&nd.querySelector('.rdHL');if(h)L.push(h.innerHTML);}
     if(k==='job'&&window.__jobLines){const JL=window.__jobLines();L.splice(Math.min(1,L.length),0,...JL);}
+    if(window.__mrWeave){const W=window.__mrWeave(k);if(W.length)L.splice(Math.min(1,L.length),0,...W);}
     {const TK={money:'money',job:'promo',love:'couple',health:'health'}[k];if(TK&&window.__scoreOf&&typeof sceneOf==='function'){const v=window.__scoreOf(TK,new Date().getFullYear());const sc=v!=null?sceneOf(TK,v>=0.37,k):'';if(sc)L.splice(Math.min(1,L.length),0,'🎬 <b>올해 이런 일 생기기 쉽네</b> '+sc);}}
     // 가까운 미래부터: 나이별 흐름 줄 중 앞으로 10년 안의 좋은 때(없으면 가장 가까운 무난한 때)
     let when='';{const age=base?ageNow(base):0;const rows=[];for(const nd of nodes){nd.querySelectorAll&&nd.querySelectorAll('.lifeR').forEach(r=>{const m=/(\d+)(?:~(\d+))?세/.exec(r.querySelector('b')?r.querySelector('b').textContent:'');const lp=r.querySelector('.lp');if(m&&lp)rows.push({from:+m[1],to:+(m[2]||m[1]),lv:+((/lv(\d)/.exec(lp.className)||[])[1]||2),t:m[0]});});}
@@ -57,7 +57,7 @@
       if(good)when=(good.from<=age?NOW[ix].replace('('+good.t+')','(<b>'+good.t+'</b>)'):SOON.trim()+' '+G(good)+(good.lv<=1?'가 제일 좋네.':'가 무난하니 그때 차근차근 하게.'))+(rest&&rest!==good?' '+G(rest)+REST:'');}
     const art=window.__secArt?window.__secArt(k):'';
     return nameize('<div class="bub me">'+x.q+'</div><div class="bub dk"><span class="av"></span><div><p class="dkOpen">'+(o=>/^자네/.test(o)?o.replace(/^자네/,jane()):(myName()?jane()+', '+o:o))(OPEN[k]||'어디 보자.')+'</p>'+
-      L.slice(0,k==='job'?8:4).map((t,i)=>'<p'+(i===0?' class="ansV"':'')+'>'+say(t)+'</p>').join('')+(when?'<p>'+when+'</p>':'')+art+
+      L.slice(0,k==='job'?8:7).map((t,i)=>'<p'+(i===0?' class="ansV"':'')+'>'+say(t)+'</p>').join('')+(when?'<p>'+when+'</p>':'')+art+
       '<details class="askMore qaMore"><summary>📜 자세한 풀이 보기</summary></details></div></div>');}
   function setOpen(k){
     restore();list.querySelectorAll('.qaI').forEach(i=>{i.classList.remove('open');i.querySelector('.qaA').innerHTML='';});
