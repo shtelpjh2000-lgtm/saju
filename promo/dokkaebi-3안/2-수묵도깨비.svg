@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+<defs>
+  <radialGradient id="paper" cx="50%" cy="45%" r="75%"><stop offset="0" stop-color="#f6eedb"/><stop offset=".8" stop-color="#e8dcc0"/><stop offset="1" stop-color="#cdbb94"/></radialGradient>
+  <filter id="fiber" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency="1.4 .25" numOctaves="2" seed="3"/><feColorMatrix values="0 0 0 0 .45  0 0 0 0 .38  0 0 0 0 .25  0 0 0 .35 0"/><feComposite in2="SourceGraphic" operator="in"/><feBlend in2="SourceGraphic" mode="multiply"/></filter>
+  <filter id="brush" x="-10%" y="-10%" width="120%" height="120%"><feTurbulence type="fractalNoise" baseFrequency=".045" numOctaves="3" seed="11" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="7" xChannelSelector="R" yChannelSelector="G"/></filter>
+  <filter id="wash" x="-20%" y="-20%" width="140%" height="140%"><feTurbulence type="fractalNoise" baseFrequency=".03" numOctaves="2" seed="5" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="18"/><feGaussianBlur stdDeviation="2.5"/></filter>
+  <filter id="dry" x="-10%" y="-10%" width="120%" height="120%"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" seed="9" result="g"/><feColorMatrix in="g" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 -2.2 1.6" result="m"/><feComposite in="SourceGraphic" in2="m" operator="in" result="d"/><feDisplacementMap in="d" in2="g" scale="4"/></filter>
+</defs>
+<rect width="512" height="512" rx="96" fill="url(#paper)"/>
+<rect width="512" height="512" rx="96" fill="url(#paper)" filter="url(#fiber)"/>
+<!-- 먹 번짐(어깨) -->
+<g filter="url(#wash)" opacity=".42" fill="#2b2622"><path d="M96 490 Q130 380 256 372 Q382 380 416 490 Z"/></g>
+<!-- 방망이 (어깨에 멘) -->
+<g filter="url(#brush)">
+  <path d="M352 470 L408 150" stroke="#1d1915" stroke-width="16" stroke-linecap="round"/>
+  <path d="M396 210 Q382 120 418 92 Q450 118 432 214 Q416 226 396 210 Z" fill="#26201b"/>
+  <g fill="#f3ead6"><circle cx="410" cy="132" r="5"/><circle cx="424" cy="156" r="5"/><circle cx="408" cy="180" r="5"/><circle cx="426" cy="196" r="4"/></g>
+</g>
+<!-- 머리털: 먹 덩어리 -->
+<g filter="url(#brush)" fill="#15120f">
+  <path d="M140 230 C96 214 104 170 128 158 C110 130 136 98 166 104 C164 76 202 60 226 78 C240 56 280 56 292 80 C318 64 356 78 354 108 C384 108 404 140 386 164 C412 178 410 220 372 232 C366 196 350 170 330 160 C300 146 212 146 182 160 C160 172 146 196 140 230 Z"/>
+  <path d="M136 230 C118 262 124 300 146 318 L160 300 C148 280 148 254 156 236 Z"/><path d="M376 230 C394 262 388 300 366 318 L352 300 C364 280 364 254 356 236 Z"/>
+</g>
+<g filter="url(#dry)" stroke="#15120f" stroke-linecap="round" fill="none" stroke-width="6">
+  <path d="M128 158 Q96 150 80 120"/><path d="M226 78 Q216 50 196 36"/><path d="M354 108 Q384 84 402 82"/><path d="M386 164 Q420 156 436 136"/>
+</g>
+<!-- 외뿔 -->
+<g filter="url(#brush)"><path d="M236 100 Q250 40 280 18 Q282 66 278 104 Z" fill="#15120f"/></g>
+<!-- 얼굴 옅은 먹 -->
+<g filter="url(#wash)" opacity=".45"><path d="M168 200 Q256 160 344 200 Q360 300 316 350 Q256 390 196 350 Q152 300 168 200 Z" fill="#4a423a"/></g>
+<!-- 귀 -->
+<g filter="url(#brush)" fill="none" stroke="#14110e" stroke-width="6"><path d="M162 236 Q140 236 142 262 Q146 282 168 280"/><path d="M350 236 Q372 236 370 262 Q366 282 344 280"/></g>
+<!-- 얼굴 선 -->
+<g filter="url(#brush)" fill="none" stroke="#14110e" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M166 214 Q160 300 196 344 Q226 378 256 378 Q286 378 316 344 Q352 300 346 214" stroke-width="7"/>
+  <path d="M206 168 Q256 156 306 168" stroke-width="4"/><path d="M216 182 Q256 172 296 182" stroke-width="3"/>
+  <path d="M244 212 L252 230 M268 212 L260 230" stroke-width="5"/>
+  <path d="M174 296 Q184 316 202 322" stroke-width="5"/><path d="M338 296 Q328 316 310 322" stroke-width="5"/>
+</g>
+<!-- 눈썹: 굵은 먹 -->
+<g filter="url(#brush)" fill="#100d0a"><path d="M168 214 Q200 176 250 206 L244 220 Q206 198 176 228 Z"/><path d="M344 214 Q312 176 262 206 L268 220 Q306 198 336 228 Z"/></g>
+<!-- 눈: 부릅뜬 -->
+<g filter="url(#brush)" stroke="#100d0a" stroke-width="5"><ellipse cx="214" cy="240" rx="22" ry="15" fill="#f8f1df"/><ellipse cx="298" cy="240" rx="22" ry="15" fill="#f8f1df"/></g>
+<circle cx="218" cy="241" r="9" fill="#9b2a1c"/><circle cx="218" cy="241" r="4.5" fill="#0d0a08"/><circle cx="294" cy="241" r="9" fill="#9b2a1c"/><circle cx="294" cy="241" r="4.5" fill="#0d0a08"/>
+<!-- 코: 주먹코 -->
+<g filter="url(#brush)" fill="none" stroke="#100d0a" stroke-width="6" stroke-linecap="round"><path d="M248 240 Q244 268 228 280 Q236 298 256 290 Q276 298 284 280 Q268 268 264 240"/></g>
+<ellipse cx="242" cy="284" rx="6" ry="4" fill="#100d0a"/><ellipse cx="270" cy="284" rx="6" ry="4" fill="#100d0a"/>
+<!-- 입: 크게 웃으며 이를 드러냄 -->
+<g filter="url(#brush)"><path d="M186 306 Q256 296 326 306 Q316 360 256 366 Q196 360 186 306 Z" fill="#14110e"/></g>
+<g fill="#f6efdc"><path d="M198 310 Q256 302 314 310 L310 322 Q256 314 202 322 Z"/><path d="M208 346 Q256 358 304 346 L300 338 Q256 348 212 338 Z"/></g>
+<g fill="#f6efdc" stroke="#14110e" stroke-width="2"><path d="M204 312 L214 350 L226 318 Z"/><path d="M308 312 L298 350 L286 318 Z"/></g>
+<path d="M232 340 Q256 354 280 340 Q270 360 256 360 Q242 360 232 340 Z" fill="#9b2a1c" opacity=".9"/>
+<!-- 수염 -->
+<g filter="url(#dry)" stroke="#15120f" stroke-width="7" stroke-linecap="round" fill="none"><path d="M200 366 Q190 400 170 420"/><path d="M228 376 Q224 410 210 438"/><path d="M256 380 L256 446"/><path d="M284 376 Q288 410 302 438"/><path d="M312 366 Q322 400 342 420"/></g>
+<!-- 붉은 낙관 -->
+<g transform="translate(88 400) rotate(-4)">
+  <rect width="58" height="58" rx="6" fill="#b3271d" filter="url(#brush)"/>
+  <text x="29" y="42" text-anchor="middle" font-family="Noto Serif KR,serif" font-weight="900" font-size="38" fill="#f6eedb">鬼</text>
+</g>
+</svg>

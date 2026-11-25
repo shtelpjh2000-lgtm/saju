@@ -1,0 +1,78 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+<defs>
+  <radialGradient id="bg" cx="50%" cy="45%" r="75%"><stop offset="0" stop-color="#1d2a4a"/><stop offset="1" stop-color="#080c18"/></radialGradient>
+  <radialGradient id="lac" cx="42%" cy="34%" r="75%"><stop offset="0" stop-color="#e2453a"/><stop offset=".45" stop-color="#a81e1b"/><stop offset=".85" stop-color="#5e0c0c"/><stop offset="1" stop-color="#360606"/></radialGradient>
+  <radialGradient id="gold" cx="40%" cy="35%" r="70%"><stop offset="0" stop-color="#fff3b8"/><stop offset=".4" stop-color="#e9b43a"/><stop offset="1" stop-color="#7a4b06"/></radialGradient>
+  <linearGradient id="horn" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#2b2420"/><stop offset=".7" stop-color="#5a4d42"/><stop offset="1" stop-color="#e9dcc4"/></linearGradient>
+  <filter id="grain" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency=".012 .22" numOctaves="3" seed="4"/><feColorMatrix values="0 0 0 0 .2  0 0 0 0 0  0 0 0 0 0  0 0 0 .6 -.1"/><feComposite in2="SourceGraphic" operator="in"/><feBlend in2="SourceGraphic" mode="multiply"/></filter>
+  <filter id="sh" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="10" stdDeviation="10" flood-color="#000" flood-opacity=".7"/></filter>
+  <filter id="carve" x="-10%" y="-10%" width="120%" height="120%"><feDropShadow dx="-1.5" dy="-1.5" stdDeviation="1" flood-color="#ff9c8a" flood-opacity=".45"/><feDropShadow dx="2.5" dy="3.5" stdDeviation="2" flood-color="#1a0202" flood-opacity=".85"/></filter>
+</defs>
+<rect width="512" height="512" rx="96" fill="url(#bg)"/>
+<!-- 단청 테두리 -->
+<g fill="none" stroke-width="10">
+  <rect x="30" y="30" width="452" height="452" rx="74" stroke="#2f8f7a"/>
+  <rect x="44" y="44" width="424" height="424" rx="62" stroke="#c9302c" stroke-width="5"/>
+  <rect x="54" y="54" width="404" height="404" rx="54" stroke="#e8b84a" stroke-width="3" stroke-dasharray="14 10"/>
+</g>
+<!-- 말총 머리 -->
+<g stroke="#5a4a40" stroke-linecap="round" fill="none">
+  <path d="M150 210 Q110 170 120 112" stroke-width="7"/><path d="M164 168 Q138 118 160 76" stroke-width="7"/><path d="M190 140 Q176 92 204 60" stroke-width="7"/>
+  <path d="M362 210 Q402 170 392 112" stroke-width="7"/><path d="M348 168 Q374 118 352 76" stroke-width="7"/><path d="M322 140 Q336 92 308 60" stroke-width="7"/>
+  <path d="M140 250 Q98 240 84 200" stroke-width="6"/><path d="M372 250 Q414 240 428 200" stroke-width="6"/>
+  <path d="M176 156 Q150 130 146 96" stroke-width="5"/><path d="M336 156 Q362 130 366 96" stroke-width="5"/>
+</g>
+<!-- 탈 바탕 -->
+<g filter="url(#sh)">
+  <path d="M256 104 C352 104 392 170 388 250 C384 340 340 430 256 440 C172 430 128 340 124 250 C120 170 160 104 256 104 Z" fill="url(#lac)"/>
+  <path d="M256 104 C352 104 392 170 388 250 C384 340 340 430 256 440 C172 430 128 340 124 250 C120 170 160 104 256 104 Z" fill="url(#lac)" filter="url(#grain)" opacity=".85"/>
+</g>
+<path d="M238 128 Q252 70 270 50 Q278 90 276 132 Z" fill="url(#horn)" filter="url(#sh)"/>
+<g filter="url(#carve)">
+  <!-- 이마 혹·주름 -->
+  <path d="M196 150 Q256 128 316 150 Q300 164 256 158 Q212 164 196 150 Z" fill="#c6332b"/>
+  <path d="M206 176 Q256 160 306 176" stroke="#4a0808" stroke-width="4" fill="none" stroke-linecap="round"/>
+  <!-- 눈썹: 검은 칠 -->
+  <path d="M150 230 Q190 172 250 204 Q246 222 232 222 Q196 204 164 246 Z" fill="#141010"/>
+  <path d="M362 230 Q322 172 262 204 Q266 222 280 222 Q316 204 348 246 Z" fill="#141010"/>
+  <!-- 눈: 금속 박은 눈 -->
+  <path d="M168 258 Q200 226 240 248 Q216 276 180 272 Z" fill="#1a0505"/>
+  <path d="M344 258 Q312 226 272 248 Q296 276 332 272 Z" fill="#1a0505"/>
+  <circle cx="208" cy="254" r="15" fill="url(#gold)"/><circle cx="304" cy="254" r="15" fill="url(#gold)"/>
+  <circle cx="210" cy="255" r="5.5" fill="#0a0303"/><circle cx="302" cy="255" r="5.5" fill="#0a0303"/>
+  <!-- 코 -->
+  <path d="M242 238 Q256 232 270 238 L286 300 Q296 316 278 322 Q256 310 234 322 Q216 316 226 300 Z" fill="#b8271f"/>
+  <ellipse cx="240" cy="310" rx="9" ry="6" fill="#2a0404"/><ellipse cx="272" cy="310" rx="9" ry="6" fill="#2a0404"/>
+  <!-- 광대 -->
+  <path d="M152 290 Q180 318 206 318 Q190 342 166 336 Z" fill="#8c1616"/><path d="M360 290 Q332 318 306 318 Q322 342 346 336 Z" fill="#8c1616"/>
+  <!-- 입 -->
+  <path d="M184 340 Q256 322 328 340 Q318 398 256 404 Q194 398 184 340 Z" fill="#160404"/>
+  <path d="M194 344 Q256 330 318 344 L314 354 Q256 342 198 354 Z" fill="#f2e6cc"/>
+  <path d="M204 386 Q256 396 308 386 L304 376 Q256 386 208 376 Z" fill="#f2e6cc"/>
+  <path d="M198 346 L210 392 L224 350 Z" fill="#fbf3de"/><path d="M314 346 L302 392 L288 350 Z" fill="#fbf3de"/>
+  <path d="M206 384 L210 392 L214 384 Z M298 384 L302 392 L306 384 Z" fill="#e9b43a"/>
+  <path d="M232 372 Q256 388 280 372 Q270 394 256 394 Q242 394 232 372 Z" fill="#d2423a"/>
+</g>
+<!-- 수염 (검은 말총) -->
+<g stroke="#4e4038" stroke-linecap="round" fill="none">
+  <path d="M176 417 Q156 450 149 490" stroke-width="6"/>
+  <path d="M188 415 Q171 450 165 490" stroke-width="7"/>
+  <path d="M200 413 Q186 450 181 490" stroke-width="7"/>
+  <path d="M212 411 Q201 450 197 490" stroke-width="8"/>
+  <path d="M224 409 Q216 450 213 490" stroke-width="8"/>
+  <path d="M236 407 Q231 450 229 490" stroke-width="8"/>
+  <path d="M248 405 Q246 450 245 490" stroke-width="9"/>
+  <path d="M256 404 Q256 450 256 490" stroke-width="9"/>
+  <path d="M264 405 Q266 450 266 490" stroke-width="9"/>
+  <path d="M276 407 Q281 450 282 490" stroke-width="8"/>
+  <path d="M288 409 Q296 450 298 490" stroke-width="8"/>
+  <path d="M300 411 Q311 450 314 490" stroke-width="8"/>
+  <path d="M312 413 Q326 450 330 490" stroke-width="7"/>
+  <path d="M324 415 Q341 450 346 490" stroke-width="7"/>
+  <path d="M336 417 Q356 450 362 490" stroke-width="6"/>
+</g>
+<!-- 옻칠 반짝임 -->
+<path d="M186 130 Q228 112 262 114" stroke="#ffd0c4" stroke-width="8" fill="none" opacity=".5" stroke-linecap="round"/>
+<ellipse cx="232" cy="270" rx="6" ry="18" fill="#ffd0c4" opacity=".25"/>
+<ellipse cx="170" cy="250" rx="8" ry="30" fill="#ffd0c4" opacity=".18" transform="rotate(15 170 250)"/>
+</svg>
