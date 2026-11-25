@@ -18,6 +18,8 @@
     {k:'money',e:'💰',q:'돈은 언제, 어떻게 들어와?',get:()=>copy(sec('money'))},
     {k:'job',e:'💼',q:'나한테 맞는 일은 뭐야?',get:()=>copy(sec('job'))},
     {k:'love',e:'💕',q:'내 짝과 자녀 운은?',get:()=>copy([...sec('spouse'),...sec('child')])},
+    {k:'marry',e:'💍',q:'나는 언제 결혼해?',html:()=>window.__marryHtml?window.__marryHtml():''},
+    {k:'cheat',e:'💔',q:'상대 바람기, 언제 조심할까?',html:()=>window.__cheatHtml?window.__cheatHtml():''},
     {k:'health',e:'🏥',q:'건강은 뭘 조심해야 해?',get:()=>copy(sec('health'))},
     {k:'lucky',e:'🍀',q:'운을 좋게 하려면 어떻게 해?',get:()=>copy(sec('lucky'))},
     {k:'today',e:'☀️',q:'오늘 나는 어때?',move:'todayOut'},
@@ -30,6 +32,7 @@
   function restore(){Object.keys(ph).forEach(id=>{const el=$(id);if(el&&ph[id].parentNode)ph[id].after(el);});}
   function fill(k){
     const x=Q.find(q=>q.k===k),A=list.querySelector('.qaI[data-k="'+k+'"] .qaA');A.innerHTML='';
+    if(x.html){A.innerHTML=x.html();return;}
     if(x.move){const el=$(x.move);if(!el)return;if(!ph[x.move]){ph[x.move]=document.createComment(x.move);el.before(ph[x.move]);}A.appendChild(el);}
     else{const n=x.get();if(!n.length){A.innerHTML='<p class="note">이 명국에서는 따로 풀 내용이 없네.</p>';}
       else if(k==='sum'){A.insertAdjacentHTML('beforeend','<div class="bub me">'+x.q+'</div>');n.forEach(c=>A.appendChild(c));if(window.__secArt){const f=window.__secArt(k);if(f)A.insertAdjacentHTML('beforeend',f);}}

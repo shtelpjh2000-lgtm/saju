@@ -1980,6 +1980,59 @@ const TART={exam:[['seodang','chaek'],['gamchal']],jobget:[['daejang','hojak'],[
       '<p class="ycK">'+K[0]+'</p><p class="ycN">「'+(a.gi<=1?a.A[1]:a.A[2])+'」</p>'+
       '<p class="ycS">'+'★'.repeat(st)+'<i>'+'★'.repeat(5-st)+'</i></p>'+
       '<p class="ycC">'+cmp+'</p><p class="ycH">'+(Y===now?'내년('+o+')':o+'년')+'과 견주면</p>'+rows+'</div>';}catch(e){console.error(e);return '';}};
+  // ── 결혼 시기·상대 바람기: 도화(桃花)·홍염(紅艶)이 드는 해로 보기(앞으로 10년) ──
+  const TAOH={寅:'卯',午:'卯',戌:'卯',申:'酉',子:'酉',辰:'酉',巳:'午',酉:'午',丑:'午',亥:'子',卯:'子',未:'子'};
+  const HONGY={甲:'午',乙:'申',丙:'寅',丁:'未',戊:'辰',己:'辰',庚:'戌',辛:'酉',壬:'子',癸:'申'};
+  function peach(r){const yb=r.pillars[0][1],db=r.pillars[2][1],dg=r.pillars[2][0];const T=[...new Set([TAOH[yb],TAOH[db]])],H=HONGY[dg];
+    const natal=r.pillars.reduce((n,p)=>n+(T.includes(p[1])?1:0)+(p[1]===H?1:0),0);const N0=new Date(),Y0=N0.getFullYear()+(N0.getMonth()>=9?1:0),years=[];
+    for(let Y=Y0;Y<Y0+10;Y++){const b=yearGZ(Y)[1],tags=[];if(T.includes(b))tags.push('도화');if(b===H)tags.push('홍염');years.push({Y,age:Y-r.input.y+1,b,tags});}
+    return {T,H,natal,years};}
+  const TAGW={도화:'🌸 도화(桃花)',홍염:'💋 홍염(紅艶)'};
+  const wrapQA=(q,body)=>'<div class="bub me">'+q+'</div><div class="bub dk pk"><span class="av"></span><div>'+body+'</div></div>';
+  const yrChips=(L,hi)=>'<div class="pyRow">'+L.map(y=>'<span class="py'+(y.tags.length?' on':'')+(hi&&hi.includes(y.Y)?' hi':'')+'"><b>'+y.Y+'</b><small>'+y.age+'세</small><i>'+(y.tags.map(t=>t==='도화'?'🌸':'💋').join('')||'·')+'</i></span>').join('')+'</div>';
+  window.__marryHtml=()=>{try{const r=base,P=peach(r),age=ageNow(r),cx=lifeCtx(r.input,age),wed=cx.married&&!cx.single;
+    const L=P.years.map(y=>{let v=0;try{v=scoreOf('marry',y.Y);}catch(e){}return {...y,v:v+y.tags.length*0.6};});
+    const best=L.slice().sort((a,b)=>b.v-a.v).slice(0,2).sort((a,b)=>a.Y-b.Y),b0=best[0];
+    const why=y=>y.tags.length?y.tags.map(t=>t==='도화'?'도화(桃花)가 들어 이성 인연이 활짝 피고':'홍염(紅艶)이 들어 서로 끌림이 강해지고').join(', ')+' 결혼운이 받쳐 주네.':'도화는 없지만 결혼운(인연·문서 기운)이 받쳐 주네.';
+    let h='<p class="dkOpen">'+(wed?'짝이 있으니 부부 정이 새로 붙는 해를 짚어 보지.':'결혼 시기라… 도화·홍염이 드는 해를 짚어 보지.')+'</p>';
+    h+='<p class="ansV">💍 <b>'+b0.Y+'년('+b0.age+'세)</b>'+(wed?'에 부부 사이가 제일 뜨거워지네.':'이 제일 유력하네.')+(best[1]?' 다음은 <b>'+best[1].Y+'년('+best[1].age+'세)</b>일세.':'')+'</p>';
+    h+='<p>🔍 <b>기문으로 보면</b> '+b0.Y+'년엔 '+why(b0)+'</p>';
+    if(b0.Y<=new Date().getFullYear()+1){try{const m=monthsFor('marry').best;if(m)h+='<p>📅 날로 치면 <b>'+m.lab+'</b>이 좋네.</p>';}catch(e){}}
+    h+='<p>'+(P.natal>=2?'🌸 타고나기를 도화·홍염이 많아 <b>인기가 많은 사주</b>일세. 사람이 많이 오니 고르는 눈이 중요하네.':P.natal===1?'🌸 타고난 도화가 하나 있어, 때가 오면 인연이 자연스럽게 닿네.':'🌸 타고난 도화는 적어 <b>소개·모임 같은 다리</b>로 인연이 오네. 그해엔 사람 모이는 자리에 꼭 나가게.')+'</p>';
+    h+='<p class="pyH">앞으로 10년 · 🌸도화 💋홍염 드는 해</p>'+yrChips(P.years,best.map(x=>x.Y));
+    h+='<p class="hanSu">💡 <b>도깨비의 한 수</b> '+(wed?'그해엔 둘만의 여행이나 기념일을 꼭 챙기게.':b0.Y+'년엔 소개 자리를 거절하지 말게. 그해 만난 사람을 눈여겨보게.')+'</p>';
+    return softTone(wrapQA('나는 언제 결혼해?',h));}catch(e){console.error(e);return '<p class="note">지금은 풀 수 없네.</p>';}};
+  // 상대 사주: 궁합에 넣은 상대를 같이 씀(localStorage hongmyeongguk.partner)
+  const PKEY='hongmyeongguk.partner',pGet=()=>{try{return JSON.parse(localStorage.getItem(PKEY)||'null');}catch(e){return null;}};
+  function partnerBase(p){let y=p.y,m=p.m,d=p.d;if(p.cal&&p.cal!=='S'){const s=Lunar.fromYmd(y,p.cal==='LL'?-m:m,d).getSolar();y=s.getYear();m=s.getMonth();d=s.getDay();}
+    const [hh,mi]=(p.t||'12:00').split(':').map(Number),ad=autoAdjust(y,m,d),r=Gimun.calc(Solar,y,m,d,hh,mi,{adjust:ad.a});r.input={y,m,d,h:hh,mi,name:p.name||'',sex:p.sex||'F',adj:ad};return r;}
+  function pForm(p){const Y0=new Date().getFullYear();p=p||{};const o=(a,b,s)=>{let h='';for(let i=a;s>0?i<=b:i>=b;i+=s)h+='<option value="'+i+'">'+i+'</option>';return h;};
+    return '<div class="pForm"><p class="pfH">상대 생일을 넣어 주게 (양력)</p><input class="pfN" placeholder="이름·호칭 (예: 남편, 그 사람)" maxlength="10" value="'+escH(p.name||'')+'">'+
+      '<div class="seg pfS"><button type="button" data-v="M"'+(p.sex==='M'?' class="on"':'')+'>🙋‍♂️ 남</button><button type="button" data-v="F"'+(p.sex!=='M'?' class="on"':'')+'>🙋‍♀️ 여</button></div>'+
+      '<div class="ymd"><select class="pfY"><option value="">년</option>'+o(Y0,1920,-1)+'</select><select class="pfM"><option value="">월</option>'+o(1,12,1)+'</select><select class="pfD"><option value="">일</option>'+o(1,31,1)+'</select></div>'+
+      '<div class="ymd"><select class="pfT"><option value="">❓ 시 모름</option>'+['🐭 자시','🐮 축시','🐯 인시','🐰 묘시','🐲 진시','🐍 사시','🐴 오시','🐑 미시','🐵 신시','🐔 유시','🐶 술시','🐷 해시'].map((z,i)=>'<option value="'+i+'">'+z+'</option>').join('')+'</select></div>'+
+      '<p class="pfErr"></p><button type="button" class="pfSave">이 사람으로 보기</button></div>';}
+  window.__cheatHtml=(edit)=>{try{const p=pGet();const q='상대 바람기, 언제 조심할까?';
+    if(!p||edit)return wrapQA(q,'<p class="dkOpen">상대 사주를 펴 봐야 알지. 생일을 넣어 주게.</p>'+pForm(p));
+    const pr=partnerBase(p),P=peach(pr),nm=p.name||'상대',keep=base;let lv={};try{base=pr;for(const y of P.years){try{lv[y.Y]=scoreOf('love',y.Y);}catch(e){}}}finally{base=keep;}
+    const R=P.years.map(y=>({...y,risk:y.tags.length+((lv[y.Y]||0)>=1.42?0.5:0)})).filter(y=>y.risk>=1).sort((a,b)=>b.risk-a.risk||a.Y-b.Y);
+    let h='<p class="dkOpen">'+escH(nm)+jo(nm,'이','가')+' 한눈팔기 쉬운 때라… 도화·홍염으로 짚어 보지.</p>';
+    if(R.length){const r0=R[0];h+='<p class="ansV">💔 <b>'+r0.Y+'년('+r0.age+'세)</b>에 유혹이 제일 많아지네.'+(R[1]?' 그다음은 <b>'+R[1].Y+'년</b>일세.':'')+'</p>';
+      h+='<p>🔍 <b>기문으로 보면</b> 그해엔 '+r0.tags.map(t=>t==='도화'?'도화(桃花)가 들어 이성이 먼저 다가오고':'홍염(紅艶)이 들어 남모르는 끌림이 생기기 쉽고').join(', ')+' 바깥 모임이 늘기 쉽네.</p>';}
+    else h+='<p class="ansV">💚 <b>앞으로 10년은 도화·홍염이 크게 들지 않네.</b> 한눈팔 기운은 약한 편일세.</p>';
+    h+='<p>'+(P.natal>=2?'🌸 '+escH(nm)+jo(nm,'은','는')+' 타고나길 <b>이성 인기가 많은 사람</b>일세. 평소 다정한 말 한마디가 제일 큰 단속일세.':'🌸 '+escH(nm)+jo(nm,'은','는')+' 본디 <b>한 사람만 보는 쪽</b>에 가깝네.')+'</p>';
+    h+='<p class="pyH">'+escH(nm)+' · 앞으로 10년 🌸도화 💋홍염 드는 해</p>'+yrChips(P.years,R.slice(0,2).map(x=>x.Y));
+    h+='<p class="note">※ 바람을 핀다는 뜻이 아니라, 이성 유혹과 바깥 모임이 많아지는 때라는 뜻일세. 의심보다 둘만의 시간을 늘리는 게 제일 좋은 처방일세.</p>';
+    h+='<p class="hanSu">💡 <b>도깨비의 한 수</b> '+(R.length?R[0].Y+'년엔 함께하는 취미나 여행을 하나 만들게. 늦은 술자리가 잦아지면 그때가 신호일세.':'지금처럼 서로 챙기면 되네. 기념일만 잊지 말게.')+'</p><button type="button" class="pfEdit">상대 바꾸기</button>';
+    return softTone(wrapQA(q,h));}catch(e){console.error(e);return '<p class="note">지금은 풀 수 없네.</p>';}};
+  document.addEventListener('click',e=>{const t=e.target,A=t.closest('.qaA');if(!A)return;
+    const sb=t.closest('.pfS button');if(sb){sb.parentNode.querySelectorAll('button').forEach(b=>b.classList.toggle('on',b===sb));return;}
+    if(t.closest('.pfEdit')){A.innerHTML=window.__cheatHtml(true);return;}
+    if(t.closest('.pfSave')){const q=c=>A.querySelector(c),er=q('.pfErr');const y=+q('.pfY').value,m=+q('.pfM').value,d=+q('.pfD').value,tz=q('.pfT').value;
+      if(!(y&&m&&d)){er.textContent='생년월일을 골라 주게.';return;}if(new Date(y,m-1,d).getMonth()!==m-1){er.textContent='그런 날짜는 없네.';return;}
+      const P2=v=>String(v).padStart(2,'0'),mid=tz===''?'':(+tz===0?30:+tz*120),a=autoAdjust(y,m,d).a,mm=mid===''?'':(((mid-a)%1440)+1440)%1440;
+      const p={name:q('.pfN').value.trim(),y,m,d,cal:'S',t:mm===''?'':P2(Math.floor(mm/60))+':'+P2(mm%60),sex:q('.pfS button.on').dataset.v};
+      try{localStorage.setItem(PKEY,JSON.stringify(p));}catch(_){}A.innerHTML=window.__cheatHtml();}});
   window.__scoreOf=(t,Y)=>{try{return scoreOf(t,Y);}catch(e){return null;}};
   window.__heroHtml=()=>{try{return softTone(heroHtml());}catch(e){console.error(e);return '';}};
   // 공유용 그림(1080×1350)

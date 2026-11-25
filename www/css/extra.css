@@ -237,3 +237,12 @@ body.jiOpen{overflow:hidden}body.jiOpen #homeBtn,body.jiOpen .bnav{display:none!
 .mTop{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:6px 0 14px}
 .mT{display:flex;flex-direction:column;align-items:center;gap:4px;padding:14px 6px;border-radius:18px;background:linear-gradient(160deg,#fff0f6,#f1ecff);border:2px solid #ffc2d8;text-align:center}
 .mTm{font-size:20px;font-weight:900;color:var(--hl)}.mTe{font-size:30px;line-height:1}.mTk{font-size:16px;font-weight:800;color:var(--ink);word-break:keep-all}
+/* 결혼 시기·바람기: 10년 도화·홍염 칸 */
+.pyH{margin:14px 0 6px!important;font-size:15px!important;font-weight:800;color:var(--mute)}
+.pyRow{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin:0 0 12px}
+.py{display:flex;flex-direction:column;align-items:center;padding:8px 2px;border-radius:12px;background:#f6f2fa;border:2px solid transparent;font-size:14px;line-height:1.25}
+.py b{font-size:15px}.py small{color:var(--mute);font-size:12px}.py i{font-style:normal;font-size:17px;min-height:22px}
+.py.on{background:#fff0f6;border-color:#ffc2d8}.py.hi{border-color:var(--hl);box-shadow:0 0 0 2px rgba(224,36,94,.15)}
+.pForm{display:flex;flex-direction:column;gap:8px;margin-top:6px}.pfH{margin:0;font-weight:800}.pForm input{font-size:17px;padding:12px}.pForm select{font-size:16px!important}
+.pfErr{margin:0;color:var(--red)}.pfErr:empty{display:none}.pfSave,.pfEdit{width:100%;padding:13px;font-size:17px;font-weight:800;border-radius:14px}
+.pfEdit{margin-top:8px;background:#fff!important;color:var(--ink)!important;border:2px dashed var(--line)!important;box-shadow:none!important}
