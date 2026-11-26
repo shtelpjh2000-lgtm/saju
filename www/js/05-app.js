@@ -1905,7 +1905,7 @@ const TART={exam:[['seodang','chaek'],['gamchal']],jobget:[['daejang','hojak'],[
     const kidQ=SUBJ&&/아들|딸|자식|애들|아이|손주/.test(SUBJ[1]),tb=(T[t]&&T[t].base)||t;
     const negQ=/새요|샌다|새는|막혀|안 ?돼|안 ?되|힘들|손해|싸워|싸우|아파|떨어|못 ?해|걱정/.test(lastQ||''),okS=negQ?0:gi<=1?1:gi===2?0.5:0;
     const scn=(!sp&&!(emo&&t==='gen'))?(kidQ&&sceneGroup(tb)==='study'?sceneOf(tb,okS,lastQ,'y').replace(/^/,SUBJ[1]+jo(SUBJ[1],'은','는')+' '):kidQ?sceneOf('child',okS,lastQ):sceneOf(tb,okS,lastQ)):'';
-    const jf=window.__jobFit?window.__jobFit(lastQ||''):'',jl=!jf&&/^(career|jobget|jobmove)$/.test(((T[t]&&T[t].base)||t))&&window.__jobLines?window.__jobLines().slice(0,2):[];
+    const jf=window.__jobFit?window.__jobFit(lastQ||''):'',jl=!jf&&/^(career|jobget|jobmove)$/.test(((T[t]&&T[t].base)||t))&&window.__jobLines?window.__jobLines().slice(0,1):[];
     let h='<p class="dkOpen">'+opn+'</p>'+flowP+'<p class="ansV">'+v+'</p>'+(jf?'<p class="jobL">'+jf+'</p>':'')+jl.map(x=>'<p class="jobL">'+x+'</p>').join('')+(scn?'<p class="scene">🎬 <b>이런 일 생기기 쉽네</b> '+scn+'</p>':'');
     const fig=artFig(artOf((T[t]&&T[t].base)||t,gi)||artOf(t,gi)).replace(/<figcaption[\s\S]*?<\/figcaption>/,''); // 그림은 풀이 다 읽은 뒤(당부 앞)에
     const W=whenOf(K);
@@ -2165,17 +2165,19 @@ const TART={exam:[['seodang','chaek'],['gamchal']],jobget:[['daejang','hojak'],[
     if(k==='health'){const kp=palOfLQ(r,'鬼'),KP=PAL8[kp];if(KP)L.push('🩺 몸에서 약한 곳은 <b>'+KP.b+'</b>이니 먼저 챙기게.');L.push('🌡️ '+SEAH[m.season]+'.');}
     if(k==='lucky')L.push('🍀 자네한테는 '+NEEDP[m.need[0]]+'이 복이 되네. <b>'+m.color+'</b> 색과 <b>'+m.dir+'</b>이 자네를 돕네.');
     return L;}catch(e){return [];}};
-  window.__jobLines=()=>{try{const r=base,J=JOBS.pick(r),age=ageNow(r),[g1,g2]=J.top;
-    const SPj=PAL8[sePal(r)];
-    const L=['🔍 타고난 자리로 보면 <b>'+SPj.j+'</b>이 잘 맞네.','💼 <b>딱 맞는 일</b>은 '+J.G[g1].t+'일세. <b>'+J.G[g1].j.slice(0,5).join(', ')+'</b> 같은 일이 몸에 맞네.',
-      '🧩 <b>그다음 어울리는 일</b> · '+J.G[g2].t+' — '+J.G[g2].j.slice(0,4).join(', ')+'.'];
-    if(age>=55)L.push('🌿 지금 나이엔 '+J.G[g1].j.slice(0,2).join('·')+' 경험을 살린 <b>자문·강의·소일거리</b>가 제일 복되네.');
-    else if(age<=25)L.push('🎓 전공·진로로는 <b>'+J.fields.slice(0,3).join('·')+'</b> 쪽을 먼저 보게.');
+  // 직업: 가장 맞는 묶음에서 딱 3개만(타고난 자리·오행 분야와 겹치는 것 먼저) + 이유 한 줄
+  const JWHY={관성:'규칙 있는 조직에서 인정받을 때 힘이 나는 사람이라 그렇네.',인성:'배우고 가르치며 자격으로 자리 잡는 사람이라 그렇네.',식상:'손재주와 말솜씨로 먹고사는 사람이라 그렇네.',재성:'돈 흐름을 읽고 굴리는 감각이 있는 사람이라 그렇네.',비겁:'남 밑보다 내 판에서 실력으로 승부하는 사람이라 그렇네.'};
+  function jobTop3(r){const J=JOBS.pick(r),g=J.top[0],SPj=PAL8[sePal(r)],hint=SPj.j+' '+J.fields.join(' ');
+    const list=J.G[g].j.slice(),hit=list.filter(x=>x.split(/[·\s]/).some(w=>w.length>=2&&hint.includes(w.replace(/(원|사|가|자|직원)$/,'').slice(0,2))));
+    const out=[...new Set([...hit,...list])].slice(0,3);return {g,out,J};}
+  window.__jobLines=()=>{try{const r=base,age=ageNow(r),T=jobTop3(r);
+    const L=['💼 <b>딱 맞는 일</b>은 <b>'+T.out.join(' · ')+'</b>일세.','🔍 '+JWHY[T.g]];
+    if(age>=55)L.push('🌿 지금 나이엔 이 경험을 살린 <b>자문·강의·소일거리</b>가 제일 복되네.');else if(age<=25)L.push('🎓 전공도 이쪽으로 고르면 길이 빨리 트이네.');
     return L;}catch(e){return [];}};
   window.__jobFit=q=>{try{const h=JOBS.find(q);if(!h)return '';const J=JOBS.pick(base),[n,g,full]=h,rank=J.top.indexOf(g);
     return rank===0?'💼 <b>'+n+'</b>'+jo(n,'이라면','라면')+' 자네한테 <b>딱 맞는 일</b>일세! 타고난 '+J.G[g].t+' 결 그대로네.':
       rank===1?'💼 <b>'+n+'</b>도 <b>잘 어울리는 일</b>일세. '+J.G[g].t+' 기운이 뒤에서 받쳐 주네.':
-      '💼 <b>'+n+'</b>도 해낼 수 있네. 다만 자네 타고난 결은 <b>'+J.G[J.top[0]].t+'</b>('+J.G[J.top[0]].j.slice(0,3).join('·')+')에 더 가깝네. 그 장점을 섞으면 더 잘되네.';}catch(e){return '';}};
+      '💼 <b>'+n+'</b>도 해낼 수 있네. 다만 자네한테 딱 맞는 건 <b>'+jobTop3(base).out.join('·')+'</b> 쪽일세.';}catch(e){return '';}};
   window.__scoreOf=(t,Y)=>{try{return scoreOf(t,Y);}catch(e){return null;}};
   window.__heroHtml=()=>{try{return softTone(heroHtml());}catch(e){console.error(e);return '';}};
   // 공유용 그림(1080×1350)

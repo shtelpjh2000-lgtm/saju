@@ -45,9 +45,9 @@
   function talkOf(k,x,nodes){const say=t=>{try{return toJane(hage(t));}catch(e){return t;}};const L=[];
     for(const nd of nodes){nd.querySelectorAll&&nd.querySelectorAll('.sh p').forEach(p=>{const t=p.innerHTML.trim();if(t&&!L.includes(t))L.push(t);});}
     if(!L.length)for(const nd of nodes){const h=nd.querySelector&&nd.querySelector('.rdHL');if(h)L.push(h.innerHTML);}
-    if(k==='job'&&window.__jobLines){const JL=window.__jobLines();L.splice(Math.min(1,L.length),0,...JL);}
+    if(k==='job'&&window.__jobLines){for(let i=L.length-1;i>=0;i--)if(/잘 맞는 분야는|맞는 분야|이 잘 맞네|체질|노려 보/.test(L[i].replace(/<[^>]+>/g,'')))L.splice(i,1);const JL=window.__jobLines();L.splice(0,Math.min(1,L.length),...JL);}
     if(window.__mrWeave){const W=window.__mrWeave(k);if(W.length)L.splice(Math.min(1,L.length),0,...W);}
-    {const TK={money:'money',job:'promo',love:'couple',health:'health'}[k];if(TK&&window.__scoreOf&&typeof sceneOf==='function'){const v=window.__scoreOf(TK,new Date().getFullYear());const sc=v!=null?sceneOf(TK,v>=0.95?1:v>=0.37?0.5:0,k):'';if(sc)L.splice(Math.min(1,L.length),0,'🎬 <b>올해 이런 일 생기기 쉽네</b> '+sc);}}
+    {const TK={money:'money',job:'promo',love:'couple',health:'health'}[k];if(TK&&window.__scoreOf&&typeof sceneOf==='function'){const v=window.__scoreOf(TK,new Date().getFullYear());const sc=v!=null?sceneOf(TK,v>=0.95?1:v>=0.37?0.5:0,k):'';if(sc)L.splice(Math.min(k==='job'?2:1,L.length),0,'🎬 <b>올해 이런 일 생기기 쉽네</b> '+sc);}}
     // 가까운 미래부터: 나이별 흐름 줄 중 앞으로 10년 안의 좋은 때(없으면 가장 가까운 무난한 때)
     let when='';{const age=base?ageNow(base):0;const rows=[];for(const nd of nodes){nd.querySelectorAll&&nd.querySelectorAll('.lifeR').forEach(r=>{const m=/(\d+)(?:~(\d+))?세/.exec(r.querySelector('b')?r.querySelector('b').textContent:'');const lp=r.querySelector('.lp');if(m&&lp)rows.push({from:+m[1],to:+(m[2]||m[1]),lv:+((/lv(\d)/.exec(lp.className)||[])[1]||2),t:m[0]});});}
       const near=rows.filter(x=>x.from<=age+10);const good=near.find(x=>x.lv<=1)||near.find(x=>x.lv===2);const rest=near.find(x=>x.lv===3);
