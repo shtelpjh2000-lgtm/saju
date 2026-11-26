@@ -50,6 +50,14 @@ const url = 'file://' + require('path').resolve(__dirname, '../www/index.html');
   for (const q of ['부동산 언제 팔릴까요?', '이직 언제 하면 좋을까요?']) { const a = await askT(q); const m1 = /(?:는|이) (?:내년 |\d{4}년 )?(?:이번 달\()?(\d{1,2})월/.exec(a), m2 = /그 달[^\d]{0,12}(\d{1,2})월 \d{1,2}일/.exec(a); if (m1 && m2 && m1[1] !== m2[1]) errs.push('좋은 달·날짜 엇갈림: ' + q + ' → ' + m1[1] + '월 / ' + m2[1] + '월'); }
   // 질문에 적은 연도로 답해야 함(2027년을 물으면 2027년 얘기)
   { const Y2 = new Date().getFullYear() + 1; const a = await askT(Y2 + '년 재물운 봐주세요'); if (!a.includes(Y2 + '년')) errs.push('연도 오답: ' + Y2 + '년 → ' + a.slice(0, 60)); const a2 = await askT(String(Y2 + 1).slice(2) + '년 이사 운은?'); if (!a2.includes((Y2 + 1) + '년')) errs.push('두 자리 연도 오답: ' + a2.slice(0, 60)); }
+  // 삼재 '언제 끝나'엔 해(년)로 답해야 함, '남편 승진'은 승진으로
+  { await askT('삼재가 언제 끝나냐'); const a = await pg.evaluate(() => document.querySelector('#askOut .cur .ansV').innerText); if (!/삼재/.test(a) || !/\d{4}년|올해|아닐세/.test(a)) errs.push('삼재 끝 대답 이상: ' + a.slice(0, 60)); }
+  { await askT('남편 승진 언제쯤 할까?'); const a = await pg.evaluate(() => document.querySelector('#askOut .cur .ansV').innerText); if (!/승진/.test(a)) errs.push('남편 승진이 승진으로 안 감: ' + a.slice(0, 60)); }
+  // 주제 목록에서 고른 것마다 '왜냐면' 줄이 서로 달라야 함
+  { const seen = {}; for (const t of ['exam', 'jobget', 'promo', 'jobmove', 'love', 'couple', 'money', 'biz']) { await pg.evaluate(t => { const c = document.querySelector('#askChips button[data-t=' + t + ']'); if (c) c.click(); }, t); await pg.waitForTimeout(350);
+      const w = await pg.evaluate(() => { const p = [...document.querySelectorAll('#askOut .cur p')].find(x => /왜냐면/.test(x.innerText)); return p ? p.innerText : ''; });
+      if (w && seen[w]) errs.push('주제 ' + t + '·' + seen[w] + ' 대답이 같음'); if (w) seen[w] = t;
+      if (t === 'biz' && /딱 맞|잘 맞는 편|석 달만/.test(await pg.evaluate(() => document.querySelector('#askOut .cur').innerText))) errs.push('사업 주제가 직업 적합도로 답함'); } }
   for (const v of ['sin', 'gh', 'jm', 'dm', 'won']) { await pg.click('#mode button[data-v=' + v + ']'); await pg.waitForTimeout(800);
     if (v === 'jm') { if (!(await pg.$('#jmIntroOv #jmStart'))) errs.push('작명 설명 화면 안 나옴'); else { await pg.click('#jmStart'); await pg.waitForTimeout(300); if (await pg.$('#jmIntroOv')) errs.push('작명 설명 화면이 안 닫힘'); } } }
   // 언제나 보이는 '처음으로' 단추와 '시 모름' 단추
