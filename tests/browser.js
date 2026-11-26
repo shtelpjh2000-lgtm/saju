@@ -43,6 +43,9 @@ const url = 'file://' + require('path').resolve(__dirname, '../www/index.html');
   // 이사 물음에 '아까 부동산 매매' 같은 엉뚱한 되짚기가 없어야 하고, 가려는 곳은 좋게 말해 줘야 함
   { await askT('우리식구 이사운은 언제일까요? 서울쪽으로 갈건데 방향은 어디가?'); const all = await pg.evaluate(() => document.getElementById('askOut').innerText); if (/아까 .*얘기에 이어서/.test(all)) errs.push('이전 대화를 엉뚱하게 되짚음'); if (!/서울 쪽으로 마음먹었다면|지금 사는 곳|서울은 /.test(all)) errs.push('가려는 곳(서울)에 대한 말이 없음'); }
   { await pg.selectOption('#homeCity', '대전'); const a = await askT('부산으로 이사 가려는데 어때?'); if (!/대전에서 부산은 남동쪽/.test(a)) errs.push('사는 곳 기준 방향 틀림: ' + a.slice(0, 60)); await pg.selectOption('#homeCity', ''); }
+  // 내 질문이 화면에 보여야 하고, '의류소매업이 나한테 맞아?'엔 그 직업으로 답해야 함
+  { await askT('의류소매업이 나한테 맞아?'); const vis = await pg.evaluate(() => { const q = document.querySelector('#askOut .cur .bub.me'); return q && getComputedStyle(q).display !== 'none' && q.innerText; }); if (!vis || !/의류소매업/.test(vis)) errs.push('내 질문이 안 보임');
+    const a = await pg.evaluate(() => document.querySelector('#askOut .cur .ansV').innerText); if (!/의류소매업/.test(a) || !/맞/.test(a)) errs.push('직업 적합도 대답 이상: ' + a.slice(0, 60)); }
   // 제일 좋은 달과 짚어 준 날짜가 같은 달이어야 함(내년 7월이라면서 11월 날짜를 주면 안 됨)
   for (const q of ['부동산 언제 팔릴까요?', '이직 언제 하면 좋을까요?']) { const a = await askT(q); const m1 = /(?:는|이) (?:내년 |\d{4}년 )?(?:이번 달\()?(\d{1,2})월/.exec(a), m2 = /그 달[^\d]{0,12}(\d{1,2})월 \d{1,2}일/.exec(a); if (m1 && m2 && m1[1] !== m2[1]) errs.push('좋은 달·날짜 엇갈림: ' + q + ' → ' + m1[1] + '월 / ' + m2[1] + '월'); }
   // 질문에 적은 연도로 답해야 함(2027년을 물으면 2027년 얘기)

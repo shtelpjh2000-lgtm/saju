@@ -104,7 +104,7 @@ body{font-size:17px}
 .qaA .bub.dk,#askOut .bub.dk{display:block!important;margin:6px 0!important}
 .qaA .bub.dk>.av,#askOut .bub.dk>.av{display:none!important}
 .qaA .bub.dk>div,#askOut .bub.dk>div{background:none!important;border:0!important;box-shadow:none!important;padding:4px 2px!important;border-radius:0!important;max-width:none!important}
-#askOut .bub.me{display:block;background:none!important;color:var(--hl)!important;box-shadow:none!important;padding:0 2px!important;margin:18px 0 4px!important;max-width:none!important;width:auto!important;border-radius:0!important;font-size:19px!important;font-weight:800;text-align:left}
+#askOut .bub.me{display:block!important;background:none!important;color:var(--hl)!important;box-shadow:none!important;padding:0 2px!important;margin:18px 0 4px!important;max-width:none!important;width:auto!important;border-radius:0!important;font-size:19px!important;font-weight:800;text-align:left}
 #askOut .bub.me::before{content:"Q. "}
 .qaA{padding:4px 12px 14px!important}
 .ansV b,#askOut .ansV b,.qaA .ansV b{color:var(--ink)!important}

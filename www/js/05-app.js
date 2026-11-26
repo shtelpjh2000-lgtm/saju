@@ -1906,7 +1906,8 @@ const TART={exam:[['seodang','chaek'],['gamchal']],jobget:[['daejang','hojak'],[
     const negQ=/새요|샌다|새는|막혀|안 ?돼|안 ?되|힘들|손해|싸워|싸우|아파|떨어|못 ?해|걱정/.test(lastQ||''),okS=negQ?0:gi<=1?1:gi===2?0.5:0;
     const scn=(!sp&&!(emo&&t==='gen'))?(kidQ&&sceneGroup(tb)==='study'?sceneOf(tb,okS,lastQ,'y').replace(/^/,SUBJ[1]+jo(SUBJ[1],'은','는')+' '):kidQ?sceneOf('child',okS,lastQ):sceneOf(tb,okS,lastQ)):'';
     const jf=window.__jobFit?window.__jobFit(lastQ||''):'',jl=!jf&&/^(career|jobget|jobmove)$/.test(((T[t]&&T[t].base)||t))&&window.__jobLines?window.__jobLines().slice(0,1):[];
-    let h='<p class="dkOpen">'+opn+'</p>'+flowP+'<p class="ansV">'+v+'</p>'+(jf?'<p class="jobL">'+jf+'</p>':'')+jl.map(x=>'<p class="jobL">'+x+'</p>').join('')+(scn?'<p class="scene">🎬 <b>이런 일 생기기 쉽네</b> '+scn+'</p>':'');
+    const fitQ=jf&&/맞아|맞을|맞나|맞는지|어울|적성|해도 될|괜찮|어때|어떨|할까|하면/.test(lastQ||'');
+    let h='<p class="dkOpen">'+opn+'</p>'+flowP+(fitQ?'<p class="ansV">'+jf+'</p>':'<p class="ansV">'+v+'</p>')+jl.map(x=>'<p class="jobL">'+x+'</p>').join('')+(scn&&!fitQ?'<p class="scene">🎬 <b>이런 일 생기기 쉽네</b> '+scn+'</p>':'');
     const fig=artFig(artOf((T[t]&&T[t].base)||t,gi)||artOf(t,gi)).replace(/<figcaption[\s\S]*?<\/figcaption>/,''); // 그림은 풀이 다 읽은 뒤(당부 앞)에
     const W=whenOf(K);
     if(kind==='where'&&!sp&&K.dir){const PL=(lastQ||'').match(/(서울|경기|인천|부산|대구|대전|광주|울산|세종|강원|충청|전라|경상|제주|수도권|지방|시골|외국|해외|[가-힣]{2,4}(?:시|군|구|동))\s*(?:쪽|으로|로)/);
@@ -1923,7 +1924,7 @@ const TART={exam:[['seodang','chaek'],['gamchal']],jobget:[['daejang','hojak'],[
     if(/이자|대출|빚|원리금/.test(lastQ||'')&&/estate|money|biz|invest|loan/.test(t))h+='<p>💸 이자 걱정 말인데, '+(K.bestC&&!/^내년/.test(K.bestC)&&gi<=1?K.bestC.replace(/\(.*\)/,'')+'까지만 버티게. 그때 풀리네. 새 대출은 늘리지 말게.':(K.bestC?'풀리는 때가 '+K.bestC.replace(/\(.*\)/,'')+jo(K.bestC.replace(/\(.*\)/,''),'이라','라')+' 이자 부담이 길어지네. ':'')+'지금 바로 대출 갈아타기나 일부 상환으로 이자부터 줄이게.')+'</p>';
     if(K.qm)h+='<p>📌 자네가 짚은 <b>'+(K.qm.lun?'음력 ':'')+K.qm.m+'월</b>은 '+(K.qm.v>=0.8?'<b>좋은 달</b>일세. 그때 움직이게.':K.qm.v<=-0.4?'<b>피할 달</b>일세. 다른 달로 미루게.':'그저 그런 달일세. 더 좋은 달이 있네.')+'</p>';
     const calm=emo&&t==='gen';
-    if(!sp&&!calm){let rz=reasonOf(K,gi,D).replace(/^[^,.]*?(?:운이라|사람이고|사람이라), /,'');const ss=rz.split(/(?<=[.!])\s+/).filter(Boolean);const ef=ss.find(x=>/^그래서/.test(x));rz=ef?ef.replace(/^그래서\s*/,''):(gi<=1?'올해는 이 일에 운이 받쳐 주는 해일세.':gi===2?'올해는 이 일이 크게 막히지도 크게 트이지도 않는 해일세.':'올해는 이 일이 더디게 가는 해일세.');if(rz)h+='<p>🔍 <b>왜냐면</b> '+rz+'</p>';}
+    if(!sp&&!calm&&!fitQ){let rz=reasonOf(K,gi,D).replace(/^[^,.]*?(?:운이라|사람이고|사람이라), /,'');const ss=rz.split(/(?<=[.!])\s+/).filter(Boolean);const ef=ss.find(x=>/^그래서/.test(x));rz=ef?ef.replace(/^그래서\s*/,''):(gi<=1?'올해는 이 일에 운이 받쳐 주는 해일세.':gi===2?'올해는 이 일이 크게 막히지도 크게 트이지도 않는 해일세.':'올해는 이 일이 더디게 가는 해일세.');if(rz)h+='<p>🔍 <b>왜냐면</b> '+rz+'</p>';}
     const needWhen=kind==='when'||sp||(act&&!/(붙을|붙나|붙었|합격)/.test(lastQ||''))||/언제|시기|몇 ?월|때/.test(lastQ||'');
     const cal=K.bestDays&&K.bestDays[0]&&K.bestDays[0][0]?calLink(K.bestDays[0][0],D.n):'';
     if((kind!=='when'||sp)&&!calm&&needWhen)h+=cal;if((kind!=='when'||sp)&&!calm&&needWhen)h+='<p>📅 '+W.replace(/ 길게 보면 <b>[^<]*<\/b>이 자네 해일세\./,'')+'</p>';
@@ -1931,7 +1932,8 @@ const TART={exam:[['seodang','chaek'],['gamchal']],jobget:[['daejang','hojak'],[
     if(sp)h+='<p>🔎 조심할 것이랑 좋은 날은 아래 <b>자세한 풀이</b>에 적어 뒀네.</p>';
     h+=fig;
     const priceTip=t==='estate_sell'&&/값|가격|내려|낮춰|깎/.test(lastQ||'')?'값을 더 내리지 말게. 내놓는 곳·조건을 바꾸고, 좋은 달에 다시 걸게.':null;
-    h+='<p class="hanSu">💡 <b>도깨비의 한 수</b> '+(priceTip?priceTip:emo&&t==='gen'?'오늘은 따뜻한 밥 한 끼 먹고 일찍 자게. 그리고 믿는 사람 한 명한테 털어놓게. 그게 제일 큰 부적일세. 많이 힘들면 혼자 참지 말고 꼭 도움을 청하게.':hage(plainTip(D.tips[0])))+'</p>';
+    if(fitQ)h+='<p class="hanSu">💡 <b>도깨비의 한 수</b> 처음부터 크게 벌이지 말고, 부업이나 작은 규모로 <b>석 달</b>만 해 보게. 몸이 먼저 맞는지 알려 주네.</p>';
+    else h+='<p class="hanSu">💡 <b>도깨비의 한 수</b> '+(priceTip?priceTip:emo&&t==='gen'?'오늘은 따뜻한 밥 한 끼 먹고 일찍 자게. 그리고 믿는 사람 한 명한테 털어놓게. 그게 제일 큰 부적일세. 많이 힘들면 혼자 참지 말고 꼭 도움을 청하게.':hage(plainTip(D.tips[0])))+'</p>';
     if(emo)h+='<p class="dkEnd">혼자 끙끙 앓지 말고, 답답하면 또 오게. 내 여기 있네.</p>';
     return h;}
   function labelOf(p){p=p.replace(/[?？!.~]+$/,'').trim();if(/^(그냥 )?말까|^안 ?할까|^말기/.test(p)||!p)return '안 하기';return p;}
@@ -2174,10 +2176,26 @@ const TART={exam:[['seodang','chaek'],['gamchal']],jobget:[['daejang','hojak'],[
     const L=['💼 <b>딱 맞는 일</b>은 <b>'+T.out.join(' · ')+'</b>일세.','🔍 '+JWHY[T.g]];
     if(age>=55)L.push('🌿 지금 나이엔 이 경험을 살린 <b>자문·강의·소일거리</b>가 제일 복되네.');else if(age<=25)L.push('🎓 전공도 이쪽으로 고르면 길이 빨리 트이네.');
     return L;}catch(e){return [];}};
-  window.__jobFit=q=>{try{const h=JOBS.find(q);if(!h)return '';const J=JOBS.pick(base),[n,g,full]=h,rank=J.top.indexOf(g);
-    return rank===0?'💼 <b>'+n+'</b>'+jo(n,'이라면','라면')+' 자네한테 <b>딱 맞는 일</b>일세! 타고난 '+J.G[g].t+' 결 그대로네.':
-      rank===1?'💼 <b>'+n+'</b>도 <b>잘 어울리는 일</b>일세. '+J.G[g].t+' 기운이 뒤에서 받쳐 주네.':
-      '💼 <b>'+n+'</b>도 해낼 수 있네. 다만 자네한테 딱 맞는 건 <b>'+jobTop3(base).out.join('·')+'</b> 쪽일세.';}catch(e){return '';}};
+  // 직업 적합도: 흔한 직업 낱말 → 묶음(십성)·기운(오행)으로 맞는 정도 4단계
+  const JOBKW=[[/의류|옷가게|옷 ?장사|패션|옷/,'재성','木','옷 장사'],[/소매|판매|가게|장사|편의점|마트|쇼핑몰|스마트스토어|온라인 ?판매|매장/,'재성','土','가게·판매'],
+    [/식당|음식점|요식|카페|빵집|베이커리|술집|치킨/,'식상','火','식당·카페'],[/미용|헤어|네일|피부|메이크업|속눈썹/,'식상','火','미용'],[/디자인|디자이너|그림|웹툰|사진|영상|유튜브|방송|크리에이터/,'식상','火','디자인·영상'],
+    [/개발자|프로그래머|코딩|IT|아이티/,'식상','火','개발'],[/학원|과외|강사|선생|교사|교수/,'인성','木','가르치는 일'],[/간호|요양|복지|돌봄|어린이집|보육|사회복지/,'인성','木','돌봄'],
+    [/의사|약사|한의사|치과|물리치료/,'인성','金','의료'],[/상담|코칭|심리/,'인성','水','상담'],[/공무원|경찰|군인|소방|공기업|교도/,'관성','金','공무원·공기관'],
+    [/회사원|직장인|사무직|대기업|중소기업|회사/,'관성','土','회사 일'],[/공인중개|중개사|부동산 ?중개|부동산 ?일|부동산업/,'재성','土','부동산 중개'],[/보험|영업|세일즈/,'재성','金','영업'],
+    [/은행원|은행|금융권|증권사|회계|세무|경리/,'재성','金','돈 다루는 일'],[/무역|수출|수입|여행|관광|해외/,'재성','水','무역·여행'],[/운전|택시|화물|배달|물류|운송|택배/,'비겁','水','운전·물류'],
+    [/건설|인테리어|목수|정비|공장|용접|전기|기술|설비/,'비겁','金','기술·현장'],[/농사|농업|귀농|원예|꽃집|화원/,'비겁','木','농사·꽃'],[/프리랜서|창업|사업|자영업/,'재성','火','내 사업']];
+  const ELW={木:'자라고 꾸미는 일',火:'드러내고 보여 주는 일',土:'쌓고 이어 주는 일',金:'셈하고 다듬는 일',水:'흐르고 오가는 일'};
+  window.__jobFit=q=>{try{q=q||'';if(/투자|매물|매매|팔릴|팔까|살까|사도|사야|집값|땅|코인|주식|이사|전세|월세/.test(q))return '';let hit=JOBKW.find(x=>x[0].test(q));let n,g,el;
+    if(hit){n=hit[3];g=hit[1];el=hit[2];const all=JOBKW.filter(x=>x[0].test(q));if(all.some(x=>x[1]==='재성'&&x[3]==='가게·판매')&&all.some(x=>x[2]==='木'&&x[3]==='옷 장사')){g='재성';el='木';}
+      const src=hit[0].source,mw=q.match(new RegExp('[가-힣A-Za-z]*(?:'+src+')[가-힣A-Za-z]*'));if(mw){let w=mw[0].replace(/(이라면|이면|이랑|에서|으로|이나|라면|하는|할|은|는|이|가|을|를|도|면|로|랑)$/,'');if(w.length>=2&&w.length<=10)n=w;}}
+    else{const h2=JOBS.find(q);if(!h2)return '';n=h2[0];g=h2[1];el='';}
+    const r=base,J=JOBS.pick(r),m=MR.calc(r),rank=J.top.indexOf(g);
+    let sc=(rank===0?2:rank===1?1:m.cnt[g]>=1?0.5:0)+(el&&(el===m.de||el===m.need[0])?1:0);
+    const JSTR={관성:'성실함과 책임감',인성:'배움과 꼼꼼함',식상:'손재주와 말솜씨',재성:'돈 감각',비겁:'추진력과 뚝심'},T3=jobTop3(r),top3=T3.out.join(', '),ew=el?' '+n+jo(n,'은','는')+' '+ELW[el]+'인데, '+(el===m.de||el===m.need[0]?'자네 타고난 기운과 맞아 오래 해도 지치지 않네.':'자네 타고난 기운과는 결이 조금 다르네.'):'';
+    return sc>=3?'💼 <b>'+n+jo(n,'이면','면')+' 딱 맞는 일일세!</b>'+ew+' '+JWHY[g]:
+      sc>=2?'💼 <b>'+n+jo(n,'은','는')+' 잘 맞는 편일세.</b>'+ew+' '+JWHY[g]:
+      sc>=1?'💼 <b>'+n+jo(n,'도','도')+' 해 볼 만하네.</b>'+ew+' 다만 자네한테 제일 맞는 건 <b>'+top3+'</b> 쪽이니, 그 장점을 섞으면 더 잘되네.':
+      '💼 <b>'+n+jo(n,'은','는')+' 자네한테 딱 맞는 쪽은 아니네.</b>'+ew+' 자네한테 딱 맞는 건 <b>'+top3+'</b> 쪽일세. 그래도 하고 싶다면 자네 장점인 <b>'+JSTR[T3.g]+'</b>를 살린 방식으로 하면 해낼 수 있네.';}catch(e){return '';}};
   window.__scoreOf=(t,Y)=>{try{return scoreOf(t,Y);}catch(e){return null;}};
   window.__heroHtml=()=>{try{return softTone(heroHtml());}catch(e){console.error(e);return '';}};
   // 공유용 그림(1080×1350)
@@ -2514,6 +2532,7 @@ const TART={exam:[['seodang','chaek'],['gamchal']],jobget:[['daejang','hojak'],[
     else if(cx.rest&&['jobget','jobmove','promo','career'].includes(hit0))profNote='지금은 일을 쉬고 있으니, 새로 맡을 일·활동으로 보겠네.';
     else if(cx.senior&&hit0==='child')profNote='자녀 일은 자녀 결혼·손주 쪽까지 함께 보겠네.';
     let hit=intentOf(hit0,q);
+    if(window.__jobFit&&window.__jobFit(q)&&/맞아|맞을|맞나|맞는지|어울|적성|해도 될|괜찮|어때|어떨|할까|하면/.test(q)&&T.career&&!/언제|몇 ?월|시기/.test(q))hit='career';
     const pl=placeOf(q),goV=/가야|가려|이사|이동|옮기|옮길|갈까|가면|갈건데|간다|가는|내려가|올라가|이전/.test(q);
     if((pl.said||(pl.to&&goV))&&!/주식|코인|투자/.test(q)){hit=T.move?'move':hit;whereQ=true;}
     pick(hit,q,qkind(q)==='ab'&&!whereQ?q:null);whereQ=false;}
