@@ -1624,7 +1624,7 @@ alDraw();
       v:['시험운이 아주 강해요. 준비한 만큼, 아니 그 이상으로 결과가 나오는 때예요. 원하는 곳에 과감하게 도전해 보세요.','합격 가능성이 좋은 편이에요. 마지막까지 꾸준히 하면 좋은 소식을 들을 수 있어요.','실력만큼 나오는 때예요. 약한 과목이나 면접 준비를 한 번 더 다지면 충분히 해볼 만해요.','변수가 많은 때예요. 한 번에 모든 걸 걸기보다, 다음 기회까지 넉넉히 준비하는 전략이 좋아요.'],
       tips:['시험 날짜와 접수 마감, 서류는 두 번씩 확인하세요. 문서운이 결과를 좌우해요.','공부 책상은 위의 <b>좋은 방위</b> 쪽을 향하게 두면 집중이 잘돼요.','시험 전날은 무리하지 말고 일찍 쉬세요. 휴문(쉼)의 기운이 실력을 지켜 줘요.']},
     jobget:{g:'work',n:'취업',e:'🎓',lq:['官','父'],bad:['孫'],door:{開門:1.5,景門:0.8,生門:0.8},dir:true,
-      kw:['취업','구직','입사','첫 직장','신입','채용','합격 통보','서류 합격','알바','아르바이트'],
+      kw:['취업','구직','입사','면접','첫 직장','신입','채용','합격 통보','서류 합격','알바','아르바이트'],
       why:'취업은 들어갈 직장을 뜻하는 <b>관(官)</b>과 이력서·서류를 뜻하는 <b>부(父)</b>로 보고, 직장의 문인 <b>개문(開門)</b>과 서류의 문인 <b>경문(景門)</b>을 함께 봐요. 손(孫)이 강하면 조건을 너무 따지다 기회를 놓치기 쉬워요.',
       v:['취업운이 아주 좋아요. 원하던 곳에서 연락이 오거나, 생각보다 좋은 조건으로 붙을 수 있어요.','붙을 가능성이 좋아요. 지원을 넓게 하면 좋은 곳에 자리를 잡아요.','조금 시간이 걸리는 흐름이에요. 자격증이나 경력을 하나 더 쌓으면 길이 열려요.','눈높이와 현실이 엇갈리기 쉬운 때예요. 가까운 기회부터 잡고 경력을 쌓아 가세요.'],
       tips:['이력서는 지원하는 곳마다 그 회사에 맞게 고쳐 쓰세요. 문서운이 핵심이에요.','면접은 위의 <b>좋은 날</b>로 잡을 수 있으면 잡아 보세요.','집에서 <b>좋은 방위</b> 쪽에 있는 회사를 먼저 살펴보세요.']},
@@ -1875,6 +1875,7 @@ alDraw();
     travel:['떠난 곳에서 좋은 사람과 기회를 만나기 쉽네','즐겁게 다녀오니 일정만 넉넉히 잡으면 되네','길에서 변수가 생기기 쉬우니 서류와 보험을 챙겨야 하네'],
     people:['도와주는 사람이 곁에 붙기 쉽네','사람 사이는 무난하니 먼저 인사하는 쪽이 얻네','말 한마디가 오해로 번지기 쉬우니 돈 얘기는 섞지 말아야 하네'],
     law:['서류와 증거가 자네 편이 되어 유리하게 풀리기 쉽네','결과는 반반이니 합의 쪽 길도 열어 둬야 하네','길게 끌면 손해가 커지기 쉬우니 전문가와 빨리 정리해야 하네']};
+  const TRES={exam:['답안에 쓴 만큼 점수가 따라와서 좋은 소식이 오기 쉽네','합격선 근처라 마지막 한두 문제가 가르네','기대보다 점수가 덜 나오기 쉬우니 다음 기회도 함께 보게'],jobget:['면접 본 곳에서 좋은 연락이 오기 쉽네','붙을 곳은 있으니 한 군데 결과에 매이지 말게','이번 곳은 인연이 약하니 다른 곳 지원도 이어 가게'],promo:['윗선 평가가 자네 쪽으로 기울기 쉽네','평가는 무난해서 발표가 반반일세','이번엔 다른 사람에게 돌아가기 쉬우니 실적을 쌓아 두게'],law:['판단이 자네 쪽으로 기울기 쉽네','결과는 반반이니 합의 길도 열어 두게','결과가 기대에 못 미치기 쉬우니 다음 수를 준비하게']};
   const TN={exam:'시험',jobget:'취업',jobmove:'이직',promo:'승진',career:'일',money:'돈',invest:'투자',estate:'집 매매',biz:'개업',partner:'계약',loan:'돈 거래',love:'인연',marry:'결혼',reunion:'재회',couple:'부부 사이',child:'아이 일',health:'몸',move:'이사',travel:'떠나는 일',people:'사람 일',law:'다툼'};
   const TOPN={exam:['시험이라… 책상 운부터 펴 보세.','공부 걱정이구먼. 시험 운을 짚어 보지.'],jobget:['취업이라… 자네 이름 불리는 때를 보세.','일자리 얘기구먼. 어디 붙을 운인지 보세.'],jobmove:['옮길까 말까라… 지금 자리부터 짚어 보세.','이직 고민이구먼. 떠날 때인지 보세.'],promo:['승진이라… 윗자리 운을 보세.','자리 오르는 얘기구먼. 어디 보자.'],career:['하는 일 얘기라… 손에 붙는 일을 보세.','진로 고민이구먼. 자네 쓸모를 짚어 보지.'],
     money:['돈 얘기라… 지갑 운부터 열어 보세.','재물이라… 들어오는 길을 보세.'],invest:['투자라… 오를 자리 내릴 자리를 보세.','주식·코인 얘기구먼. 조심스레 보세.'],biz:['가게·사업이라… 손님 운을 보세.','개업 얘기구먼. 문 열 때를 보세.'],partner:['같이 하는 일이라… 손 잡을 운을 보세.','계약 얘기구먼. 도장 운을 짚어 보지.'],loan:['돈 빌려주는 일이라… 돌아올 운을 보세.','빚 얘기구먼. 어디 보자.'],
@@ -1955,8 +1956,14 @@ const TART={exam:[['seodang','chaek'],['gamchal']],jobget:[['daejang','hojak'],[
     const negQ=/새요|샌다|새는|막혀|안 ?돼|안 ?되|힘들|손해|싸워|싸우|아파|떨어|못 ?해|걱정/.test(lastQ||''),okS=negQ?0:gi<=1?1:gi===2?0.5:0;
     const scn=(!sp&&!(emo&&t==='gen'))?(kidQ&&sceneGroup(tb)==='study'?sceneOf(tb,okS,lastQ,'y').replace(/^/,SUBJ[1]+jo(SUBJ[1],'은','는')+' '):kidQ?sceneOf('child',okS,lastQ):sceneOf(tb,okS,lastQ)):'';
     const jf=window.__jobFit&&!chipQ&&!/언제|몇 ?월|시기|때가/.test(lastQ||'')?window.__jobFit(lastQ||''):'',jl=!jf&&/^(career)$/.test(((T[t]&&T[t].base)||t))&&window.__jobLines?window.__jobLines().slice(0,1):[];
+    // 이미 치른 시험·면접 '결과' 묻기: 결론·달·이유·한 수를 '결과'로 한 줄기로 맞춤(고를 달이 아니라 발표 달)
+    const resQ=/^(exam|jobget|promo|law)$/.test(tb0)&&/결과|발표|봤는데|쳤는데|치렀|치른|본 시험|봤어|붙었|떨어졌/.test(lastQ||'');
+    if(resQ){const qv=K.qm?K.qm.v:null,mL=K.qm?'<b>'+(K.qm.lun?'음력 ':'')+K.qm.m+'월</b>':'';const ok=gi<=1||(gi===2&&qv!=null&&qv>=0.8),low=gi===3&&!(qv!=null&&qv>=0.8);
+      v=ok?'👍 <b>좋은 소식 기대해도 되네.</b> '+(mL?mL+' 발표 때 '+(qv>=0.8?'자네 기운도 받쳐 주는 달이라 반가운 연락이 오기 쉽네.':'조금 조마조마해도 결과는 자네 편일세.'):'해 둔 만큼 결과가 따라오네.'):
+        low?'🌱 <b>이번엔 마음을 넉넉히 먹게.</b> '+(mL?mL+' 발표는 기대보다 아쉬울 수 있네. ':'')+'떨어져도 다음 기회가 금방 오니 너무 낙심 말게.':
+        '🙂 <b>붙을 가능성은 충분하네.</b> '+(mL?mL+(qv!=null&&qv<=-0.4?'은 기운이 약한 달이라 발표까지 마음이 조마조마할 걸세. 그래도 결과는 이미 쓴 답안대로 나오네.':'은 그저 그런 달이라 결과는 자네가 해 둔 실력대로 나오네.'):'결과는 자네가 해 둔 실력대로 나오네.');}
     const fitQ=jf&&/맞아|맞을|맞나|맞는지|어울|적성|해도 될|괜찮|어때|어떨|할까|하면/.test(lastQ||'');
-    let h='<p class="dkOpen">'+opn+'</p>'+flowP+(fitQ?'<p class="ansV">'+jf+'</p>':'<p class="ansV">'+v+'</p>')+jl.map(x=>'<p class="jobL">'+x+'</p>').join('')+(scn&&!fitQ?'<p class="scene">🎬 <b>이런 일 생기기 쉽네</b> '+scn+'</p>':'');
+    let h='<p class="dkOpen">'+opn+'</p>'+flowP+(fitQ?'<p class="ansV">'+jf+'</p>':'<p class="ansV">'+v+'</p>')+jl.map(x=>'<p class="jobL">'+x+'</p>').join('')+(scn&&!fitQ?'<p class="scene">🎬 <b>이런 일 생기기 쉽네</b> '+(resQ?scn.replace(/^조금만 애쓰면 /,''):scn)+'</p>':'');
     const fig=artFig(artOf((T[t]&&T[t].base)||t,gi)||artOf(t,gi)).replace(/<figcaption[\s\S]*?<\/figcaption>/,''); // 그림은 풀이 다 읽은 뒤(당부 앞)에
     const W=whenOf(K);
     if(kind==='where'&&!sp&&K.dir){const PL=(lastQ||'').match(/(서울|경기|인천|부산|대구|대전|광주|울산|세종|강원|충청|전라|경상|제주|수도권|지방|시골|외국|해외|[가-힣]{2,4}(?:시|군|구|동))\s*(?:쪽|으로|로)/);
@@ -1969,19 +1976,21 @@ const TART={exam:[['seodang','chaek'],['gamchal']],jobget:[['daejang','hojak'],[
       const needHome=PLc.to&&!PLc.from;
       const pl=needHome?'<p>🏠 아래 <b>지금 사는 곳</b>을 골라 주면 거기서 '+PLc.to+(jo(PLc.to,'이','가'))+' 어느 쪽인지 딱 짚어 주지.</p>':DIR?'':PL?'<p>'+PL[1]+' 쪽으로 마음먹었다면 좋네. 방향보다 <b>날</b>이 더 힘이 세니, 좋은 날에 움직이면 그쪽 기운도 자네 편이 되네.</p>':(K.badDir&&K.badDir.length?'<p>'+K.badDir[0]+'만 되도록 피하면 되네.</p>':'');
       return '<p class="dkOpen">'+(multiI?['그리고 방향 말일세.','방향도 보세.'][multiI-1]||'방향 말일세.':'방향을 묻는구먼. 어디 보자…')+'</p><p class="ansV">'+dd+'</p>'+pl+(multiWhere?'':'<p>📅 '+W+'</p>')+'<p class="hanSu">💡 <b>도깨비의 한 수</b> '+hage(plainTip(D.tips[0]))+'</p>';}
-    if(kind==='when'&&!sp){const nn=D.n.replace(/·방위/,'');h='<p class="dkOpen">'+opn+'</p>'+flowP+'<p class="ansV">'+D.e+' <b>'+(K.bestC?nn+jo(nn,'은','는')+' '+K.bestC+'일세.':nn+jo(nn,'은','는')+' 앞으로 몇 달은 센 때가 없네.')+'</b></p><p>📅 '+whenOf(K,1).replace(/^그 달을 놓치지 말게\. ?/,'')+'</p>'+(K.bestDays&&K.bestDays[0]?calLink(K.bestDays[0][0],D.n):'');}
+    if(resQ&&kind==='when')h=h.replace('<p class="ansV">','<p>발표 날은 이미 정해져 있으니 내가 당길 순 없네. 대신 결과를 짚어 보지.</p><p class="ansV">');
+    if(kind==='when'&&!sp&&!resQ){const nn=D.n.replace(/·방위/,'');h='<p class="dkOpen">'+opn+'</p>'+flowP+'<p class="ansV">'+D.e+' <b>'+(K.bestC?nn+jo(nn,'은','는')+' '+K.bestC+'일세.':nn+jo(nn,'은','는')+' 앞으로 몇 달은 센 때가 없네.')+'</b></p><p>📅 '+whenOf(K,1).replace(/^그 달을 놓치지 말게\. ?/,'')+'</p>'+(K.bestDays&&K.bestDays[0]?calLink(K.bestDays[0][0],D.n):'');}
     if(/이자|대출|빚|원리금/.test(lastQ||'')&&/estate|money|biz|invest|loan/.test(t))h+='<p>💸 이자 걱정 말인데, '+(K.bestC&&!/^내년/.test(K.bestC)&&gi<=1?K.bestC.replace(/\(.*\)/,'')+'까지만 버티게. 그때 풀리네. 새 대출은 늘리지 말게.':(K.bestC?'풀리는 때가 '+K.bestC.replace(/\(.*\)/,'')+jo(K.bestC.replace(/\(.*\)/,''),'이라','라')+' 이자 부담이 길어지네. ':'')+'지금 바로 대출 갈아타기나 일부 상환으로 이자부터 줄이게.')+'</p>';
-    if(K.qm)h+='<p>📌 자네가 짚은 <b>'+(K.qm.lun?'음력 ':'')+K.qm.m+'월</b>은 '+(K.qm.v>=0.8?'<b>좋은 달</b>일세. 그때 움직이게.':K.qm.v<=-0.4?'<b>피할 달</b>일세. 다른 달로 미루게.':'그저 그런 달일세. 더 좋은 달이 있네.')+'</p>';
+    if(K.qm&&!resQ)h+='<p>📌 자네가 짚은 <b>'+(K.qm.lun?'음력 ':'')+K.qm.m+'월</b>은 '+(K.qm.v>=0.8?'<b>좋은 달</b>일세. 그때 움직이게.':K.qm.v<=-0.4?'<b>피할 달</b>일세. 다른 달로 미루게.':'그저 그런 달일세. 더 좋은 달이 있네.')+'</p>';
     const calm=emo&&t==='gen';
-    if(!sp&&!calm&&!fitQ){let rz=reasonOf(K,gi,D).replace(/^[^,.]*?(?:운이라|사람이고|사람이라), /,'');const ss=rz.split(/(?<=[.!])\s+/).filter(Boolean);const ef=ss.find(x=>/^그래서/.test(x));rz=ef?ef.replace(/^그래서\s*/,''):(gi<=1?'올해는 이 일에 운이 받쳐 주는 해일세.':gi===2?'올해는 이 일이 크게 막히지도 크게 트이지도 않는 해일세.':'올해는 이 일이 더디게 가는 해일세.');if(rz)h+='<p>🔍 <b>왜냐면</b> '+rz+'</p>';}
-    const needWhen=kind==='when'||sp||(act&&!/(붙을|붙나|붙었|합격)/.test(lastQ||''))||/언제|시기|몇 ?월|때/.test(lastQ||'');
+    if(!sp&&!calm&&!fitQ){let rz=reasonOf(K,gi,D).replace(/^[^,.]*?(?:운이라|사람이고|사람이라), /,'');const ss=rz.split(/(?<=[.!])\s+/).filter(Boolean);const ef=ss.find(x=>/^그래서/.test(x));rz=resQ?(K.Y===new Date().getFullYear()?'올해는 ':K.Y+'년에는 ')+'<b>'+(TRES[tb0]||TRES.exam)[gi<=1?0:gi===2?1:2]+'</b>.':ef?ef.replace(/^그래서\s*/,''):(gi<=1?'올해는 이 일에 운이 받쳐 주는 해일세.':gi===2?'올해는 이 일이 크게 막히지도 크게 트이지도 않는 해일세.':'올해는 이 일이 더디게 가는 해일세.');if(rz)h+='<p>🔍 <b>왜냐면</b> '+rz+'</p>';}
+    const needWhen=!resQ&&(kind==='when'||sp||(act&&!/(붙을|붙나|붙었|합격)/.test(lastQ||''))||/언제|시기|몇 ?월|때/.test(lastQ||''));
     const cal=K.bestDays&&K.bestDays[0]&&K.bestDays[0][0]?calLink(K.bestDays[0][0],D.n):'';
     if((kind!=='when'||sp)&&!calm&&needWhen)h+=cal;if((kind!=='when'||sp)&&!calm&&needWhen)h+='<p>📅 '+(TN[tb0]&&/^<b>/.test(W)?TN[tb0]+jo(TN[tb0],'은','는')+' ':'')+W.replace(/ 길게 보면 <b>[^<]*<\/b>이 자네 해일세\./,'')+'</p>';
     if(!multiWhere&&K.dir&&K.dir.length&&!sp&&/^(move|estate\w*|travel)$/.test(((T[t]&&T[t].base)||t)))h+='<p>🧭 방향은 <b>'+K.dir.join(', ')+'</b>이 좋네.'+(K.badDir&&K.badDir.length?' '+K.badDir[0]+'만 되도록 피하면 되네.':'')+'</p>';
     if(sp)h+='<p>🔎 조심할 것이랑 좋은 날은 아래 <b>자세한 풀이</b>에 적어 뒀네.</p>';
     h+=fig;
     const priceTip=t==='estate_sell'&&/값|가격|내려|낮춰|깎/.test(lastQ||'')?'값을 더 내리지 말게. 내놓는 곳·조건을 바꾸고, 좋은 달에 다시 걸게.':null;
-    if(fitQ)h+='<p class="hanSu">💡 <b>도깨비의 한 수</b> 처음부터 크게 벌이지 말고, 부업이나 작은 규모로 <b>석 달</b>만 해 보게. 몸이 먼저 맞는지 알려 주네.</p>';
+    if(resQ)h+='<p class="hanSu">💡 <b>도깨비의 한 수</b> 결과 기다리는 동안 손 놓지 말고 <b>다음 걸음</b>(면접 준비·다음 시험 접수) 하나만 미리 해 두게. 그래야 어느 쪽이 나와도 흔들리지 않네.</p>';
+    else if(fitQ)h+='<p class="hanSu">💡 <b>도깨비의 한 수</b> 처음부터 크게 벌이지 말고, 부업이나 작은 규모로 <b>석 달</b>만 해 보게. 몸이 먼저 맞는지 알려 주네.</p>';
     else h+='<p class="hanSu">💡 <b>도깨비의 한 수</b> '+(priceTip?priceTip:emo&&t==='gen'?'오늘은 따뜻한 밥 한 끼 먹고 일찍 자게. 그리고 믿는 사람 한 명한테 털어놓게. 그게 제일 큰 부적일세. 많이 힘들면 혼자 참지 말고 꼭 도움을 청하게.':hage(plainTip(D.tips[0])))+'</p>';
     if(emo)h+='<p class="dkEnd">혼자 끙끙 앓지 말고, 답답하면 또 오게. 내 여기 있네.</p>';
     return h;}
@@ -2548,7 +2557,7 @@ const TART={exam:[['seodang','chaek'],['gamchal']],jobget:[['daejang','hojak'],[
   const chips=$('askChips');chips.innerHTML=GROUPS.map(([g,l])=>'<p class="askG">'+l+'</p><div class="askChips3">'+ORDER.filter(k=>T[k].g===g).map(k=>'<button type="button" data-t="'+k+'">'+T[k].e+' '+T[k].n+'</button>').join('')+'</div>').join('');
   const allChips=()=>[...chips.querySelectorAll('button')];
   function autoQ(t){const D=T[t],Y=new Date().getFullYear()+yrOff;return D.special==='caution'?Y+'년에 조심할 건 뭐예요?':D.special==='samjae'?Y+'년 삼재가 들었나요?':ACT[t]?Y+'년에 '+D.n+', 해도 될까요?':Y+'년 '+D.n+(/운$/.test(D.n)?'':'운')+' 어때요?';}
-  function pick(t,q,ab){if(curHtml&&base===histBase){hist.push(curHtml);hist=hist.slice(-2);}curHtml='';abQ=ab||null;if(curT!==t)prevT=curT;curT=t;lastQ=q||autoQ(t);chipQ=!q;allChips().forEach(x=>x.classList.toggle('on',x.dataset.t===(T[t].base||t)));render();setTimeout(()=>{const c=$('askOut').querySelector('.cur');(c||$('askOut')).scrollIntoView({behavior:'smooth',block:'start'});},60);}
+  function pick(t,q,ab){if(curHtml&&base===histBase&&curT){hist.push(curHtml);hist=hist.slice(-2);}curHtml='';abQ=ab||null;if(curT!==t)prevT=curT;curT=t;lastQ=q||autoQ(t);chipQ=!q;allChips().forEach(x=>x.classList.toggle('on',x.dataset.t===(T[t].base||t)));render();setTimeout(()=>{const c=$('askOut').querySelector('.cur');(c||$('askOut')).scrollIntoView({behavior:'smooth',block:'start'});},60);}
   chips.addEventListener('click',e=>{const b=e.target.closest('button');if(b)pick(b.dataset.t,'');});
   // 질문 속 연도: '2027년'·'27년'·'내후년'·'내년'·'작년' → 올해 기준 몇 해 뒤인지(앞뒤 10년까지)
   const yearOffOf=q=>{const Y0=new Date().getFullYear();let m=/(19\d{2}|20\d{2})\s*년/.exec(q)||/(?:^|[^\d])(\d{2})\s*년(?!\s*(?:생|도생))/.exec(q);
